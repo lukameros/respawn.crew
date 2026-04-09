@@ -5208,35 +5208,44 @@ function closeBigUpdate() {
 
 
 // ═══════════════════════════════════════════════════════
-//  LUKCHEAT ANTI-CHEAT v2.0
+//  LUKCHEAT ANTI-CHEAT v3.0
 // ═══════════════════════════════════════════════════════
 (function LukCheat() {
-  const BAN_KEY    = 'alkocase_lukcheat_ban';
   const BAN_ID_KEY = 'alkocase_lukcheat_id';
 
+  // ── Zkontroluj jestli je aktuální uživatel admin (lukamer) ──
+  function isAdmin() {
+    try {
+      const sess = localStorage.getItem('squad_session');
+      return sess && sess.toLowerCase() === 'lukamer';
+    } catch(e) { return false; }
+  }
+
   function getBanId() {
-    let id = localStorage.getItem(BAN_ID_KEY);
+    let id;
+    try { id = localStorage.getItem(BAN_ID_KEY); } catch(e) {}
     if (!id) {
       id = 'LC-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2,8).toUpperCase();
-      localStorage.setItem(BAN_ID_KEY, id);
+      try { localStorage.setItem(BAN_ID_KEY, id); } catch(e) {}
     }
     return id;
   }
 
-  function showBanScreen() {
-    localStorage.setItem(BAN_KEY, '1');
+  function showBanScreen(reason) {
+    reason = reason || 'DevTools / Console detected';
     const screen = document.getElementById('banScreen');
     const idEl   = document.getElementById('banId');
-    if (idEl) idEl.textContent = 'BAN ID: ' + getBanId();
+    const reasonEl = document.getElementById('banScreen')?.querySelector('.ban-sub + div');
+    if (idEl) idEl.textContent = 'BAN ID: ' + getBanId() + ' | REASON: ' + reason;
     ['introMenu','topNav','mainContent','bigUpdateModal','dailyModal','acModal'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
     });
     if (screen) screen.classList.add('show');
+    // Zablokuj zpět tlačítko
+    history.pushState(null, '', location.href);
+    window.addEventListener('popstate', () => history.pushState(null, '', location.href));
   }
-
-  // Ban check is now handled via Supabase (sbCheckBan) — localStorage ban cleared
-  localStorage.removeItem(BAN_KEY);
 
   let acActive  = false;
   let acTimer   = null;
@@ -5244,6 +5253,7 @@ function closeBigUpdate() {
 
   function startACCountdown() {
     if (acActive) return;
+    if (isAdmin()) return; // ← Lukamer je exempt
     acActive  = true;
     acSeconds = 30;
     const modal = document.getElementById('acModal');
@@ -5260,7 +5270,7 @@ function closeBigUpdate() {
       if (acSeconds <= 0) {
         clearInterval(acTimer);
         acTimer = null;
-        showBanScreen();
+        showBanScreen('DevTools detected');
       }
     }, 1000);
   }
@@ -5274,8 +5284,9 @@ function closeBigUpdate() {
     if (modal) modal.classList.remove('show');
   }
 
-  // Detection 1: keyboard shortcuts
+  // ── DETECTION 1: Klávesové zkratky (F12, Ctrl+Shift+I atd.) ──
   document.addEventListener('keydown', function(e) {
+    if (isAdmin()) return;
     if (e.key === 'F12' ||
         (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].includes(e.key)) ||
         (e.ctrlKey && ['U','u'].includes(e.key))) {
@@ -5285,8 +5296,9 @@ function closeBigUpdate() {
     }
   }, true);
 
-  // Detection 2: devtools docking changes outer/inner size ratio
+  // ── DETECTION 2: Změna velikosti okna (devtools docked) ──
   setInterval(() => {
+    if (isAdmin()) return;
     const wDiff = window.outerWidth  - window.innerWidth;
     const hDiff = window.outerHeight - window.innerHeight;
     if (wDiff > 160 || hDiff > 160) {
@@ -5296,8 +5308,65 @@ function closeBigUpdate() {
     }
   }, 900);
 
+  // ── DETECTION 3: console.log timing trick ──
+  // DevTools zpomaluje toString() volání na RegExp objektech
+  (function devtoolsConsoleCheck() {
+    if (isAdmin()) return;
+    let _count = 0;
+    const _chk = setInterval(() => {
+      if (isAdmin()) { clearInterval(_chk); return; }
+      const t0 = performance.now();
+      for (let i = 0; i < 100; i++) { void ('' + /./); }
+      const dt = performance.now() - t0;
+      if (dt > 50) { _count++; if (_count >= 3) { clearInterval(_chk); startACCountdown(); } }
+      else { _count = 0; }
+    }, 1500);
+  })();
 
+  // ── DETECTION 4: Zablokuj pravé tlačítko myši ──
+  document.addEventListener('contextmenu', function(e) {
+    if (isAdmin()) return;
+    e.preventDefault();
+  });
 
+  // ── DETECTION 5: Debugger heartbeat — zpomalí stránku pokud je debugger otevřen ──
+  (function debuggerCheck() {
+    if (isAdmin()) return;
+    let _last = Date.now();
+    const _id = setInterval(() => {
+      if (isAdmin()) { clearInterval(_id); return; }
+      const now = Date.now();
+      // Pokud uplynulo >3s od posledního ticku (debugger zastavil JS), je to podezřelé
+      if (now - _last > 3000) { startACCountdown(); }
+      _last = now;
+    }, 500);
+  })();
+
+  // ── DETECTION 6: Viditelnost stránky — tab switch při DevTools floating ──
+  document.addEventListener('visibilitychange', () => {
+    if (isAdmin()) return;
+    // Pokud devtools je v separátním okně a user přepíná, zrušíme alarm (FP prevence)
+    if (document.hidden && acActive) cancelACCountdown();
+  });
+
+})();
+
+// ── SPOOFING URL → zobrazí RespawnCrew.cz místo GitHub URL ──
+(function spoofUrl() {
+  try {
+    // Pouze vizuální — mění to co vidí uživatel v title a history
+    document.title = '🔫 AlkoCase — RespawnCrew.cz';
+    // Přepíše cestu v adresním řádku na "hezkou" verzi
+    if (location.hostname.includes('github.io')) {
+      history.replaceState({}, document.title, location.pathname + location.search + location.hash);
+    }
+  } catch(e) {}
+  // Každých 5s obnov title (pro případ že ho stránka přepíše)
+  setInterval(() => {
+    if (document.title !== '🔫 AlkoCase — RespawnCrew.cz') {
+      document.title = '🔫 AlkoCase — RespawnCrew.cz';
+    }
+  }, 5000);
 })();
 
 loadState();
@@ -7512,26 +7581,52 @@ async function sbRemoveBan(username) {
   return await sbFetch('banlist?username=eq.' + encodeURIComponent(username), { method: 'DELETE' });
 }
 async function sbCheckBan(username) {
-  if (!username) return false;
+  if (!username) return null;
   const data = await sbFetch('banlist?username=eq.' + encodeURIComponent(username) + '&limit=1');
-  return Array.isArray(data) && data.length > 0;
+  if (Array.isArray(data) && data.length > 0) return data[0];
+  return null;
 }
 
-// Check ban on login
+// ── PERMANENTNÍ BAN — kontrola při každém načtení + každých 60s ──
+async function runBanCheck() {
+  const username = state.username || localStorage.getItem('squad_session');
+  if (!username) return;
+  // Admin (lukamer) je vždy exempt
+  if (username.toLowerCase() === 'lukamer') return;
+  const banEntry = await sbCheckBan(username);
+  if (banEntry) {
+    const reason = banEntry.reason || 'Porušení pravidel';
+    const bannedAt = banEntry.banned_at ? new Date(banEntry.banned_at).toLocaleDateString('cs-CZ') : '';
+    const idEl = document.getElementById('banId');
+    if (idEl) idEl.textContent = 'NICK: ' + username + ' | Důvod: ' + reason + (bannedAt ? ' | Datum: ' + bannedAt : '');
+    // Skryj vše a zobraz ban screen
+    ['introMenu','topNav','mainContent','bigUpdateModal','dailyModal','acModal'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    const screen = document.getElementById('banScreen');
+    if (screen) screen.classList.add('show');
+    // Zablokuj navigaci zpět
+    history.pushState(null, '', location.href);
+    window.addEventListener('popstate', () => history.pushState(null, '', location.href));
+    // Každých 30s znovu zkontroluj (pro případ odbanování)
+    setTimeout(async () => {
+      const stillBanned = await sbCheckBan(username);
+      if (!stillBanned) location.reload(); // Odbanoval admin → obnov stránku
+    }, 30000);
+  }
+}
+
+// Spusť kontrolu při loadu (po 2s aby se Supabase stihl init)
+setTimeout(runBanCheck, 2000);
+// A pak každých 60s (pro rychlou reakci na nový ban)
+setInterval(runBanCheck, 60000);
+
+// Check ban on login (legacy hook)
 const _origSbInit = window.supabaseInit || (async()=>{});
 window.supabaseInit = async function() {
   await _origSbInit();
-  if (state.username) {
-    // Admin nikdy nesmí být bannutý vlastním systémem
-    if ((state.username || '').toLowerCase() === 'lukamer') return;
-    const banned = await sbCheckBan(state.username);
-    if (banned) {
-      const data = await sbFetch('banlist?username=eq.' + encodeURIComponent(state.username) + '&limit=1');
-      const reason = (Array.isArray(data) && data[0]) ? (data[0].reason || 'Porušení pravidel') : 'Porušení pravidel';
-      document.getElementById('banId') && (document.getElementById('banId').textContent = 'NICK: ' + state.username + ' | Důvod: ' + reason);
-      showBanScreen();
-    }
-  }
+  await runBanCheck();
 };
 
 // ── ADMIN ACTIONS ──────────────────────────────────────────────────────
