@@ -656,3 +656,384 @@ async function gcInit() {
 }
 
 setTimeout(gcInit, 1200);
+
+// ═══════════════════════════════════════════════════════════════════
+//  DUEL 1v1 — Kliker Race (Level 1 → 10)
+//  Supabase table: duel_event
+//  Columns: id text PK, active bool, player1 text, player2 text,
+//           p1_level int, p2_level int, p1_hp_pct int, p2_hp_pct int,
+//           winner text, started_at timestamptz, ended_at timestamptz,
+//           updated_at timestamptz
+// ═══════════════════════════════════════════════════════════════════
+
+const DUEL_ID = 'duel_main';
+const DUEL_MAX_LEVEL = 10;
+
+// Enemy HP values for duel levels 1-10 (same as main clicker)
+const DUEL_ENEMIES = [
+  { level:1,  name:'Základní Bedna',  img:'case_cs2',       hp:180  },
+  { level:2,  name:'Toxic Box',        img:'case_banger',    hp:420  },
+  { level:3,  name:'Arctic Box',       img:'case_cyber',     hp:900  },
+  { level:4,  name:'Thunder Box',      img:'case_orange',    hp:1800 },
+  { level:5,  name:'Inferno Box',      img:'case_topsecret', hp:3200 },
+  { level:6,  name:'Shadow Box',       img:'case_cs2',       hp:5500 },
+  { level:7,  name:'Covert Box',       img:'case_cyber',     hp:9000 },
+  { level:8,  name:'Phantom Box',      img:'case_topsecret', hp:14000},
+  { level:9,  name:'Dragon Box',       img:'case_orange',    hp:22000},
+  { level:10, name:'⭐ Legendary Box', img:'case_topsecret', hp:35000},
+];
+
+let duelState = {
+  active: false,
+  player1: null,
+  player2: null,
+  p1_level: 1,
+  p2_level: 1,
+  p1_hp_pct: 100,
+  p2_hp_pct: 100,
+  winner: null,
+};
+
+// My local duel clicker
+let duelMyRole = null;       // 'p1' | 'p2' | null
+let duelLocalLevel = 1;
+let duelLocalHp = 180;       // current HP of my enemy
+let duelLocalMaxHp = 180;
+let duelClickDmg = 5;        // base click damage (scales with level * 3)
+let duelSyncInterval = null;
+let duelAnimFrame = null;
+let duelFinished = false;
+let duelLastPush = 0;
+
+// ── FETCH ──────────────────────────────────────────────────────────
+async function duelPull() {
+  const data = await gcFetch('duel_event?id=eq.' + DUEL_ID + '&limit=1');
+  if (!data || !data.length) return null;
+  return data[0];
+}
+
+async function duelPush(fields) {
+  return gcFetch('duel_event?id=eq.' + DUEL_ID, {
+    method: 'PATCH',
+    body: JSON.stringify({ ...fields, updated_at: new Date().toISOString() })
+  });
+}
+
+async function duelUpsertJoin(role, nick) {
+  const field = role === 'p1' ? { player1: nick, p1_level: 1, p1_hp_pct: 100 }
+                              : { player2: nick, p2_level: 1, p2_hp_pct: 100 };
+  return duelPush(field);
+}
+
+// ── JOIN DUEL ──────────────────────────────────────────────────────
+window.duelJoin = async function() {
+  const nick = (window.state && state.username) || (window.squadNick) || 'Anon';
+  const d = await duelPull();
+  if (!d || !d.active) { showToast('Duel není aktivní!', 'error'); return; }
+
+  // Already joined?
+  if (d.player1 === nick || d.player2 === nick) {
+    showToast('Už jsi v duelu!', 'info'); return;
+  }
+  // Assign slot
+  if (!d.player1) {
+    duelMyRole = 'p1';
+    await duelUpsertJoin('p1', nick);
+    showToast('⚔️ Připojil ses jako Hráč 1!', 'success');
+  } else if (!d.player2) {
+    duelMyRole = 'p2';
+    await duelUpsertJoin('p2', nick);
+    showToast('⚔️ Připojil ses jako Hráč 2!', 'success');
+  } else {
+    showToast('Duel je plný! Čekej na výsledek.', 'info'); return;
+  }
+  duelLocalLevel = 1;
+  duelFinished = false;
+  duelInitLevel();
+  renderDuelPage();
+};
+
+// ── CLICKER LOGIC ─────────────────────────────────────────────────
+function duelInitLevel() {
+  const e = DUEL_ENEMIES[duelLocalLevel - 1];
+  duelLocalMaxHp = e.hp;
+  duelLocalHp = e.hp;
+  duelClickDmg = Math.max(1, Math.floor(e.hp / 60)); // ~60 clicks per level
+  duelRenderMyBar();
+}
+
+function duelRenderMyBar() {
+  const pct = Math.max(0, (duelLocalHp / duelLocalMaxHp) * 100);
+  const bar = document.getElementById('duelMyHpBar');
+  const txt = document.getElementById('duelMyHpTxt');
+  const lvl = document.getElementById('duelMyLvl');
+  if (bar) bar.style.width = pct + '%';
+  if (txt) txt.textContent = Math.ceil(duelLocalHp).toLocaleString('cs-CZ') + ' / ' + duelLocalMaxHp.toLocaleString('cs-CZ') + ' HP';
+  if (lvl) lvl.textContent = 'LVL ' + duelLocalLevel + ' / ' + DUEL_MAX_LEVEL;
+}
+
+window.duelClick = function(e) {
+  if (duelFinished || !duelMyRole || !duelState.active) return;
+  if (!duelState.player1 || !duelState.player2) {
+    showToast('Čekej než se připojí soupeř!', 'info'); return;
+  }
+
+  // Floating damage number
+  const area = document.getElementById('duelMyClickArea');
+  if (area && e) {
+    const rect = area.getBoundingClientRect();
+    const floater = document.createElement('div');
+    const isCrit = Math.random() < 0.1;
+    const dmg = isCrit ? duelClickDmg * 3 : duelClickDmg;
+    floater.textContent = (isCrit ? '💥 ' : '') + '-' + dmg.toLocaleString();
+    floater.style.cssText = `position:absolute;left:${(e.clientX||rect.left+rect.width/2)-rect.left}px;top:${(e.clientY||rect.top+rect.height/2)-rect.top-20}px;color:${isCrit?'#fbbf24':'#ff6b6b'};font-family:Oswald,sans-serif;font-size:${isCrit?'1rem':'0.82rem'};font-weight:700;pointer-events:none;animation:clkFloat 0.8s ease-out forwards;z-index:10`;
+    area.style.position = 'relative';
+    area.appendChild(floater);
+    setTimeout(() => floater.remove(), 800);
+    duelLocalHp -= dmg;
+  } else {
+    duelLocalHp -= duelClickDmg;
+  }
+
+  if (duelLocalHp <= 0) {
+    duelLocalHp = 0;
+    duelRenderMyBar();
+    // Level complete
+    if (duelLocalLevel >= DUEL_MAX_LEVEL) {
+      // WON!
+      duelFinished = true;
+      const nick = (window.state && state.username) || (window.squadNick) || 'Anon';
+      duelPush({
+        winner: nick,
+        active: false,
+        ended_at: new Date().toISOString(),
+        [duelMyRole === 'p1' ? 'p1_level' : 'p2_level']: DUEL_MAX_LEVEL + 1,
+        [duelMyRole === 'p1' ? 'p1_hp_pct' : 'p2_hp_pct']: 0,
+      });
+      duelGrantWinnerReward(true);
+      renderDuelPage();
+      return;
+    }
+    duelLocalLevel++;
+    duelInitLevel();
+    showToast('✅ Level ' + (duelLocalLevel-1) + ' poražen! → LVL ' + duelLocalLevel, 'success');
+  } else {
+    duelRenderMyBar();
+  }
+
+  // Push progress to supabase (throttled to every 1.5s)
+  const now = Date.now();
+  if (now - duelLastPush > 1500) {
+    duelLastPush = now;
+    const hpPct = Math.round((duelLocalHp / duelLocalMaxHp) * 100);
+    duelPush({
+      [duelMyRole === 'p1' ? 'p1_level' : 'p2_level']: duelLocalLevel,
+      [duelMyRole === 'p1' ? 'p1_hp_pct' : 'p2_hp_pct']: hpPct,
+    });
+  }
+};
+
+// ── REWARDS ───────────────────────────────────────────────────────
+function duelGrantWinnerReward(isWinner) {
+  if (typeof shopCases === 'undefined' || !shopCases.length) return;
+  const count = isWinner ? 10 : Math.floor(Math.random() * 6); // 0-5
+  if (count === 0) {
+    if (!isWinner) showToast('💀 Prohrál jsi… žádné bedny!', 'error');
+    return;
+  }
+  for (let i = 0; i < count; i++) {
+    const cas = shopCases[Math.floor(Math.random() * shopCases.length)];
+    if (cas && window.state && typeof state.inventory !== 'undefined') {
+      if (!state.clickerChests) state.clickerChests = [];
+      state.clickerChests.push({ uid: Date.now() + i, level: duelLocalLevel, name: cas.name, img: cas.img, caseId: cas.id, obtainedAt: Date.now() });
+    }
+  }
+  if (typeof saveState === 'function') saveState();
+  const msg = isWinner
+    ? `🏆 VÝHRA! Získal jsi ${count} náhodných beden!`
+    : `📦 Útěcha: získal jsi ${count} náhodných beden.`;
+  showToast(msg, isWinner ? 'success' : 'info');
+}
+
+// ── SYNC ─────────────────────────────────────────────────────────
+async function duelSync() {
+  const d = await duelPull();
+  if (!d) return;
+  const wasActive = duelState.active;
+  duelState = { ...duelState, ...d };
+
+  // Detect opponent won while I'm still playing
+  if (!duelFinished && duelMyRole && d.active === false && d.winner) {
+    const myNick = (window.state && state.username) || (window.squadNick) || 'Anon';
+    if (d.winner !== myNick) {
+      duelFinished = true;
+      duelGrantWinnerReward(false);
+    }
+  }
+
+  if (window.currentPage === 'events' && window.currentEventsTab === 'duel') {
+    renderDuelPage();
+  }
+}
+
+// ── RENDER ────────────────────────────────────────────────────────
+window.renderDuelPage = async function() {
+  const container = document.getElementById('eventsPageContent');
+  if (!container) return;
+
+  const d = await duelPull();
+  if (d) { duelState = { ...duelState, ...d }; }
+
+  const myNick = (window.state && state.username) || (window.squadNick) || 'Anon';
+  if (!duelMyRole && d) {
+    if (d.player1 === myNick) { duelMyRole = 'p1'; duelInitLevel(); }
+    else if (d.player2 === myNick) { duelMyRole = 'p2'; duelInitLevel(); }
+  }
+
+  // ── NOT ACTIVE ──
+  if (!d || !d.active) {
+    const hasWinner = d && d.winner;
+    container.innerHTML = `
+      <div style="text-align:center;max-width:600px;margin:0 auto;padding:20px 0">
+        ${hasWinner ? `
+        <div style="background:linear-gradient(135deg,rgba(196,146,39,0.15),rgba(0,0,0,0));border:1px solid rgba(196,146,39,0.35);border-radius:8px;padding:28px;margin-bottom:20px">
+          <div style="font-size:2.5rem;margin-bottom:10px">🏆</div>
+          <div style="font-family:Oswald,sans-serif;font-size:1.3rem;letter-spacing:3px;color:#c9a227">VÝHERCE DUELU</div>
+          <div style="font-size:1.5rem;font-weight:700;color:#fff;margin:10px 0">${d.winner}</div>
+          <div style="font-size:0.72rem;color:#6a7a9a">Poražený hráč obdržel 0–5 náhodných beden jako útěchu.</div>
+        </div>` : ''}
+        <div style="background:var(--panel);border:1px solid var(--border2);border-radius:8px;padding:36px 28px">
+          <div style="font-size:3rem;margin-bottom:12px">⚔️</div>
+          <div style="font-family:Oswald,sans-serif;font-size:1.1rem;letter-spacing:3px;color:var(--muted)">Duel momentálně neprobíhá</div>
+          <div style="font-size:0.8rem;color:var(--muted2);margin-top:8px;line-height:1.6">Admin spustí nový duel z Admin Panelu → záložka ⚔️ DUEL</div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  // ── ACTIVE ──
+  const p1 = d.player1 || null;
+  const p2 = d.player2 || null;
+  const bothJoined = p1 && p2;
+  const amPlayer = duelMyRole !== null;
+  const myEn = DUEL_ENEMIES[Math.min(duelLocalLevel, DUEL_MAX_LEVEL) - 1];
+  const oppLevel = duelMyRole === 'p1' ? d.p2_level : d.p1_level;
+  const oppHpPct = duelMyRole === 'p1' ? d.p2_hp_pct : d.p1_hp_pct;
+  const oppNick  = duelMyRole === 'p1' ? (d.player2 || '???') : (d.player1 || '???');
+  const oppEn = DUEL_ENEMIES[Math.min(oppLevel, DUEL_MAX_LEVEL) - 1];
+
+  // Level progress dots
+  function levelDots(curLvl, hpPct, color) {
+    return DUEL_ENEMIES.map((e, i) => {
+      const done    = curLvl > e.level;
+      const current = curLvl === e.level;
+      const pct     = current ? (100 - hpPct) : (done ? 100 : 0);
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1">
+        <div style="width:26px;height:26px;border-radius:50%;background:${done?color:'var(--border2)'};border:2px solid ${done||current?color:'var(--border)'};display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:${done?'#111':current?color:'var(--muted)'}">
+          ${done?'✓':e.level}
+        </div>
+        ${current ? `<div style="width:26px;height:3px;background:var(--border2);border-radius:2px;overflow:hidden"><div style="width:${pct}%;height:100%;background:${color};transition:width 0.3s"></div></div>` : `<div style="width:26px;height:3px"></div>`}
+      </div>`;
+    }).join('');
+  }
+
+  container.innerHTML = `
+    <div style="max-width:800px;margin:0 auto">
+      <!-- Header -->
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-family:Oswald,sans-serif;font-size:0.8rem;letter-spacing:4px;color:#8847ff">⚔️ DUEL 1v1 — KLIKER RACE</div>
+        <div style="font-size:0.62rem;color:var(--muted2);margin-top:4px">První hráč co sundá LVL 1–10 vyhraje <strong style="color:#c9a227">10 beden</strong> · Poražený dostane 0–5 beden</div>
+      </div>
+
+      ${!bothJoined ? `
+      <!-- WAITING FOR PLAYERS -->
+      <div style="background:var(--panel);border:1px solid rgba(136,71,255,0.3);border-radius:8px;padding:24px;text-align:center;margin-bottom:16px">
+        <div style="font-size:1.5rem;margin-bottom:8px">⏳</div>
+        <div style="font-family:Oswald,sans-serif;font-size:0.9rem;letter-spacing:2px;color:#8847ff">ČEKÁM NA HRÁČE</div>
+        <div style="margin-top:12px;display:flex;gap:12px;justify-content:center">
+          <div style="background:#050709;border:1px solid rgba(136,71,255,0.3);border-radius:6px;padding:10px 20px;min-width:120px">
+            <div style="font-size:0.58rem;color:#3a4a6a;letter-spacing:2px">HRÁČ 1</div>
+            <div style="font-family:Oswald,sans-serif;font-size:0.85rem;color:${p1?'#4ade80':'#3a4a6a'};margin-top:4px">${p1 || '— volné —'}</div>
+          </div>
+          <div style="display:flex;align-items:center;font-size:1.2rem;color:#3a4a6a">vs</div>
+          <div style="background:#050709;border:1px solid rgba(136,71,255,0.3);border-radius:6px;padding:10px 20px;min-width:120px">
+            <div style="font-size:0.58rem;color:#3a4a6a;letter-spacing:2px">HRÁČ 2</div>
+            <div style="font-family:Oswald,sans-serif;font-size:0.85rem;color:${p2?'#4ade80':'#3a4a6a'};margin-top:4px">${p2 || '— volné —'}</div>
+          </div>
+        </div>
+        ${!amPlayer ? `<button onclick="duelJoin()" style="margin-top:16px;background:rgba(136,71,255,0.2);border:1px solid rgba(136,71,255,0.5);color:#a78bfa;border-radius:4px;padding:10px 28px;font-family:Oswald,sans-serif;font-size:0.85rem;letter-spacing:2px;cursor:pointer">⚔️ PŘIPOJIT SE</button>` : `<div style="margin-top:12px;font-size:0.75rem;color:#4ade80">✅ Jsi přihlášen — čekej na soupeře…</div>`}
+      </div>` : ''}
+
+      ${bothJoined ? `
+      <!-- RACE UI -->
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:start">
+
+        <!-- MY SIDE -->
+        <div style="background:var(--panel);border:1px solid ${amPlayer?'rgba(74,222,128,0.3)':'rgba(255,255,255,0.08)'};border-radius:8px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:10px">
+          <div style="font-family:Oswald,sans-serif;font-size:0.7rem;letter-spacing:3px;color:${amPlayer?'#4ade80':'#6a7a9a'}">${amPlayer?(duelMyRole==='p1'?p1:p2)+' (TY)':p1}</div>
+          <!-- Level dots -->
+          <div style="display:flex;align-items:center;width:100%;gap:2px">${levelDots(amPlayer?duelLocalLevel:d.p1_level, amPlayer?Math.round((duelLocalHp/duelLocalMaxHp)*100):d.p1_hp_pct, '#4ade80')}</div>
+          <!-- Enemy -->
+          <div id="${amPlayer?'duelMyClickArea':'duelP1Area'}" onclick="${amPlayer?'duelClick(event)':''}" style="cursor:${amPlayer&&bothJoined?'pointer':'default'};width:130px;height:130px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 50%,rgba(74,222,128,0.1) 0%,transparent 70%);border:1px solid rgba(74,222,128,0.2);border-radius:50%;${amPlayer?'animation:enemyPulse 2s ease-in-out infinite':''}">
+            <img src="assets/${amPlayer?myEn.img:DUEL_ENEMIES[Math.min(d.p1_level,DUEL_MAX_LEVEL)-1].img}.png" style="width:100px;height:100px;object-fit:contain;pointer-events:none;filter:drop-shadow(0 0 12px rgba(74,222,128,0.4))">
+          </div>
+          <div style="width:100%">
+            <div style="display:flex;justify-content:space-between;font-size:0.58rem;color:#4ade80;font-family:'Share Tech Mono',monospace;margin-bottom:3px">
+              <span id="${amPlayer?'duelMyLvl':'duelP1Lvl'}">LVL ${amPlayer?duelLocalLevel:d.p1_level} / ${DUEL_MAX_LEVEL}</span>
+            </div>
+            <div style="height:14px;background:var(--bg3);border:1px solid var(--border2);border-radius:3px;overflow:hidden">
+              <div id="${amPlayer?'duelMyHpBar':'duelP1HpBar'}" style="height:100%;width:${amPlayer?Math.max(0,(duelLocalHp/duelLocalMaxHp)*100):d.p1_hp_pct}%;background:linear-gradient(90deg,#16a34a,#4ade80);transition:width 0.15s"></div>
+            </div>
+            <div style="font-size:0.58rem;color:#3a4a6a;font-family:'Share Tech Mono',monospace;margin-top:2px" id="${amPlayer?'duelMyHpTxt':'duelP1HpTxt'}">${amPlayer?Math.ceil(duelLocalHp).toLocaleString()+' / '+duelLocalMaxHp.toLocaleString()+' HP':d.p1_hp_pct+'% HP'}</div>
+          </div>
+          ${amPlayer?`<div style="font-size:0.6rem;color:#3a4a6a;letter-spacing:1px">Klikej na bednu!</div>`:''}
+        </div>
+
+        <!-- VS -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding-top:50px">
+          <div style="font-family:Oswald,sans-serif;font-size:1.6rem;font-weight:700;color:#3a4a6a;letter-spacing:4px">VS</div>
+          <div style="width:2px;height:60px;background:linear-gradient(180deg,#3a4a6a,transparent)"></div>
+        </div>
+
+        <!-- OPPONENT / P2 SIDE -->
+        <div style="background:var(--panel);border:1px solid ${amPlayer?'rgba(239,68,68,0.3)':'rgba(255,255,255,0.08)'};border-radius:8px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:10px">
+          <div style="font-family:Oswald,sans-serif;font-size:0.7rem;letter-spacing:3px;color:${amPlayer?'#ef4444':'#6a7a9a'}">${amPlayer?oppNick:p2} ${amPlayer?'(SOUPEŘ)':''}</div>
+          <!-- Level dots -->
+          <div style="display:flex;align-items:center;width:100%;gap:2px">${levelDots(amPlayer?oppLevel:d.p2_level, amPlayer?oppHpPct:d.p2_hp_pct, '#ef4444')}</div>
+          <!-- Enemy -->
+          <div style="width:130px;height:130px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 50%,rgba(239,68,68,0.1) 0%,transparent 70%);border:1px solid rgba(239,68,68,0.2);border-radius:50%">
+            <img src="assets/${amPlayer?(oppEn?oppEn.img:DUEL_ENEMIES[0].img):DUEL_ENEMIES[Math.min(d.p2_level,DUEL_MAX_LEVEL)-1].img}.png" style="width:100px;height:100px;object-fit:contain;pointer-events:none;filter:drop-shadow(0 0 12px rgba(239,68,68,0.4))">
+          </div>
+          <div style="width:100%">
+            <div style="display:flex;justify-content:space-between;font-size:0.58rem;color:#ef4444;font-family:'Share Tech Mono',monospace;margin-bottom:3px">
+              <span>LVL ${amPlayer?oppLevel:d.p2_level} / ${DUEL_MAX_LEVEL}</span>
+            </div>
+            <div style="height:14px;background:var(--bg3);border:1px solid var(--border2);border-radius:3px;overflow:hidden">
+              <div style="height:100%;width:${amPlayer?oppHpPct:d.p2_hp_pct}%;background:linear-gradient(90deg,#991b1b,#ef4444);transition:width 0.3s"></div>
+            </div>
+            <div style="font-size:0.58rem;color:#3a4a6a;font-family:'Share Tech Mono',monospace;margin-top:2px">${amPlayer?oppHpPct:d.p2_hp_pct}% HP</div>
+          </div>
+        </div>
+      </div>
+
+      ${!amPlayer ? `
+      <div style="text-align:center;margin-top:16px">
+        <div style="font-size:0.72rem;color:#6a7a9a">Duel probíhá — sleduj live výsledky!</div>
+      </div>` : ''}
+      ` : ''}
+    </div>`;
+};
+
+// ── DUEL SYNC INIT ────────────────────────────────────────────────
+async function duelInit() {
+  const d = await duelPull();
+  if (d) {
+    duelState = { ...duelState, ...d };
+    const myNick = (window.state && state.username) || (window.squadNick) || 'Anon';
+    if (d.player1 === myNick) { duelMyRole = 'p1'; duelInitLevel(); }
+    else if (d.player2 === myNick) { duelMyRole = 'p2'; duelInitLevel(); }
+  }
+  duelSyncInterval = setInterval(duelSync, 2500);
+}
+
+setTimeout(duelInit, 1800);

@@ -2882,13 +2882,17 @@ button:active:not(:disabled) { transform: scale(0.96) !important; }
     <div class="page-header" style="background:linear-gradient(90deg,rgba(255,60,60,0.12),rgba(0,207,255,0.06));">
       <span class="ph-icon">🎪</span>
       <div>
-        <h2 style="color:#ff4444;text-shadow:0 0 20px rgba(255,68,68,0.5)">GlobalCase</h2>
+        <h2 style="color:#ff4444;text-shadow:0 0 20px rgba(255,68,68,0.5)" id="eventsPageTitle">GlobalCase</h2>
         <div class="ph-sub" id="eventsHeaderSub">Speciální operace</div>
       </div>
       <div id="eventsActivePulse" style="margin-left:auto;display:none;align-items:center;gap:8px;background:rgba(255,68,68,0.1);border:1px solid rgba(255,68,68,0.4);border-radius:4px;padding:6px 14px;">
         <div style="width:8px;height:8px;border-radius:50%;background:#ff4444;box-shadow:0 0 8px #ff4444;animation:ibBlink 0.8s ease infinite"></div>
         <span style="font-family:Oswald,sans-serif;font-size:0.8rem;letter-spacing:2px;color:#ff4444;font-weight:700">LIVE EVENT</span>
       </div>
+    </div>
+    <div style="display:flex;gap:4px;padding:0 28px 0;border-bottom:1px solid var(--border2)">
+      <button id="evTab_gc" onclick="switchEventsTab('gc')" style="background:rgba(255,68,68,0.12);border:1px solid rgba(255,68,68,0.4);border-bottom:2px solid #ff4444;color:#ff4444;font-family:Oswald,sans-serif;letter-spacing:2px;font-size:0.75rem;padding:8px 18px;border-radius:4px 4px 0 0;cursor:pointer;white-space:nowrap">🏆 GLOBAL CASE</button>
+      <button id="evTab_duel" onclick="switchEventsTab('duel')" style="background:transparent;border:1px solid var(--border2);border-bottom:none;color:var(--muted);font-family:Oswald,sans-serif;letter-spacing:2px;font-size:0.75rem;padding:8px 18px;border-radius:4px 4px 0 0;cursor:pointer;white-space:nowrap">⚔️ DUEL 1v1</button>
     </div>
     <div id="eventsPageContent" style="flex:1;overflow-y:auto;padding:20px 28px;"></div>
   </div>
@@ -3106,10 +3110,10 @@ const bottles = [
   { id:'xm1014',  name:'XM1014 | Death Marks',     rarity:'r-pink',   rarityName:'Classified', rarityColor:'#d32ee6', weight:1.8,  value:750,
     svg:`<img src="assets/weapon_xm1014.png" class="weapon-img" alt="XM1014 | Death Marks">`},
   // ── Covert ──────────────────────────────────────────
-  { id:'awp',     name:'AWP | Dragon Gold',         rarity:'r-red',    rarityName:'Covert',     rarityColor:'#eb4b4b', weight:0.6,  value:1200,
+  { id:'awp',     name:'AWP | Dragon Gold',         rarity:'r-red',    rarityName:'Covert',     rarityColor:'#eb4b4b', weight:0.25,  value:1200,
     svg:`<img src="assets/weapon_awp.png"    class="weapon-img" alt="AWP | Dragon Gold">`},
   // ── Gold ────────────────────────────────────────────
-  { id:'sawoff',  name:'Sawed-Off | Pirate King ★', rarity:'r-gold',   rarityName:'★ Gold',     rarityColor:'#c9a227', weight:0.4,  value:3000,
+  { id:'sawoff',  name:'Sawed-Off | Pirate King ★', rarity:'r-gold',   rarityName:'★ Gold',     rarityColor:'#c9a227', weight:0.12,  value:3000,
     svg:`<img src="assets/weapon_sawoff.png" class="weapon-img" alt="Sawed-Off | Pirate King ★">`},
 
 
@@ -3138,17 +3142,17 @@ const bottles = [
     svg:`<img src="assets/weapon_new_deagle_silver.png" class="weapon-img" alt="Desert Eagle | Chrome">`},
   { id:'new_mp7',         name:'MP7 | Tactical Ops',         rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:13, value:140,
     svg:`<img src="assets/weapon_new_mp7.png" class="weapon-img" alt="MP7 | Tactical Ops">`},
-  { id:'new_ak_wood',     name:'AK-47 | Mahogany',           rarity:'r-red',    rarityName:'Covert',     rarityColor:'#eb4b4b', weight:0.8,  value:1100,
+  { id:'new_ak_wood',     name:'AK-47 | Mahogany',           rarity:'r-red',    rarityName:'Covert',     rarityColor:'#eb4b4b', weight:0.3,  value:1100,
     svg:`<img src="assets/weapon_new_ak_wood.png" class="weapon-img" alt="AK-47 | Mahogany">`},
   { id:'new_uzi',         name:'Uzi | Sandstorm',            rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:14, value:105,
     svg:`<img src="assets/weapon_new_uzi.png" class="weapon-img" alt="Uzi | Sandstorm">`},
   { id:'new_deagle_dark', name:'Desert Eagle | Blackout',    rarity:'r-pink',   rarityName:'Classified', rarityColor:'#d32ee6', weight:1.8,value:650,
     svg:`<img src="assets/weapon_new_deagle_dark.png" class="weapon-img" alt="Desert Eagle | Blackout">`},
-  { id:'new_m249',        name:'M249 | Jungle Patrol',       rarity:'r-red',    rarityName:'Covert',     rarityColor:'#eb4b4b', weight:0.8,  value:1400,
+  { id:'new_m249',        name:'M249 | Jungle Patrol',       rarity:'r-red',    rarityName:'Covert',     rarityColor:'#eb4b4b', weight:0.3,  value:1400,
     svg:`<img src="assets/weapon_new_m249.png" class="weapon-img" alt="M249 | Jungle Patrol">`},
   { id:'new_scar',        name:'SCAR-L | Ivory Ghost',       rarity:'r-pink',   rarityName:'Classified', rarityColor:'#d32ee6', weight:1.8,value:720,
     svg:`<img src="assets/weapon_new_scar.png" class="weapon-img" alt="SCAR-L | Ivory Ghost">`},
-  { id:'new_m249_white',  name:'M249 | Arctic Wolf ★',       rarity:'r-gold',   rarityName:'★ Gold',     rarityColor:'#c9a227', weight:0.12,value:3500,
+  { id:'new_m249_white',  name:'M249 | Arctic Wolf ★',       rarity:'r-gold',   rarityName:'★ Gold',     rarityColor:'#c9a227', weight:0.04,value:3500,
     svg:`<img src="assets/weapon_new_m249_white.png" class="weapon-img" alt="M249 | Arctic Wolf ★">`},
   { id:'new_revolver',    name:'Revolver | Silver Blade',    rarity:'r-pink',   rarityName:'Classified', rarityColor:'#d32ee6', weight:1.8,value:600,
     svg:`<img src="assets/weapon_new_revolver.png" class="weapon-img" alt="Revolver | Silver Blade">`},
@@ -3170,9 +3174,9 @@ const bottles = [
     svg:`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:76px;height:58px;font-size:1.8rem">💰</div>`},
   { id:'cash_big',    name:'Hotovost — $600',     rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:2.5,value:600,  isMoney:true, cashAmount:600,
     svg:`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:76px;height:58px;font-size:1.8rem">💸</div>`},
-  { id:'cash_jackpot',name:'Jackpot — $1500',     rarity:'r-red',    rarityName:'Covert',      rarityColor:'#eb4b4b', weight:0.8,value:1500, isMoney:true, cashAmount:1500,
+  { id:'cash_jackpot',name:'Jackpot — $1500',     rarity:'r-red',    rarityName:'Covert',      rarityColor:'#eb4b4b', weight:0.3,value:1500, isMoney:true, cashAmount:1500,
     svg:`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:76px;height:58px;font-size:1.8rem">🏦</div>`},
-  { id:'cash_mega',   name:'Mega Jackpot — $5000',rarity:'r-gold',   rarityName:'★ Gold',      rarityColor:'#c9a227', weight:0.12,value:5000, isMoney:true, cashAmount:5000,
+  { id:'cash_mega',   name:'Mega Jackpot — $5000',rarity:'r-gold',   rarityName:'★ Gold',      rarityColor:'#c9a227', weight:0.04,value:5000, isMoney:true, cashAmount:5000,
     svg:`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:76px;height:58px;font-size:2rem">🤑</div>`},
 ];
 
@@ -4109,39 +4113,39 @@ function getCasePoolBottle(caseId = activeCaseId, premium = false) {
   if (!pool.length) pool = [...bottles];
 
   const caseOdds = {
-    classic:   { 'r-blue': 71, 'r-purple': 22, 'r-pink': 5,  'r-red': 1,  'r-gold': 1  },
-    toxic:     { 'r-blue': 67, 'r-purple': 24, 'r-pink': 6,  'r-red': 2,  'r-gold': 1  },
-    arctic:    { 'r-blue': 65, 'r-purple': 25, 'r-pink': 7,  'r-red': 2,  'r-gold': 1  },
-    thunder:   { 'r-blue': 56, 'r-purple': 28, 'r-pink': 10, 'r-red': 4,  'r-gold': 2  },
-    inferno:   { 'r-blue': 50, 'r-purple': 30, 'r-pink': 12, 'r-red': 6,  'r-gold': 2  },
-    shadow:    { 'r-blue': 45, 'r-purple': 31, 'r-pink': 14, 'r-red': 7,  'r-gold': 3  },
-    covert:    { 'r-blue': 37, 'r-purple': 32, 'r-pink': 18, 'r-red': 10, 'r-gold': 3  },
-    phantom:   { 'r-blue': 30, 'r-purple': 34, 'r-pink': 20, 'r-red': 12, 'r-gold': 4  },
-    dragon:    { 'r-blue': 24, 'r-purple': 35, 'r-pink': 24, 'r-red': 13, 'r-gold': 4  },
-    gold:      { 'r-blue': 17, 'r-purple': 33, 'r-pink': 28, 'r-red': 16, 'r-gold': 6  },
-    crystal:   { 'r-blue': 12, 'r-purple': 31, 'r-pink': 31, 'r-red': 19, 'r-gold': 7  },
-    legendary: { 'r-blue': 0,  'r-purple': 25, 'r-pink': 35, 'r-red': 30, 'r-gold': 10 },
-    tempest:   { 'r-blue': 65, 'r-purple': 25, 'r-pink': 7,  'r-red': 2,  'r-gold': 1  },
-    pyramid:   { 'r-blue': 67, 'r-purple': 24, 'r-pink': 6,  'r-red': 2,  'r-gold': 1  },
-    velocity:  { 'r-blue': 55, 'r-purple': 28, 'r-pink': 11, 'r-red': 4,  'r-gold': 2  },
-    diamond:   { 'r-blue': 35, 'r-purple': 32, 'r-pink': 20, 'r-red': 10, 'r-gold': 3  },
-    frostbite: { 'r-blue': 30, 'r-purple': 33, 'r-pink': 22, 'r-red': 11, 'r-gold': 4  },
-    csz:       { 'r-blue': 53, 'r-purple': 29, 'r-pink': 11, 'r-red': 5,  'r-gold': 2  },
-    cyberskull:{ 'r-blue': 28, 'r-purple': 34, 'r-pink': 24, 'r-red': 10, 'r-gold': 4  },
-    infernd1:  { 'r-blue': 22, 'r-purple': 35, 'r-pink': 26, 'r-red': 13, 'r-gold': 4  },
-    tactical:  { 'r-blue': 50, 'r-purple': 30, 'r-pink': 13, 'r-red': 5,  'r-gold': 2  },
-    infernd2:  { 'r-blue': 0,  'r-purple': 22, 'r-pink': 38, 'r-red': 30, 'r-gold': 10 },
-    silvertech:{ 'r-blue': 10, 'r-purple': 30, 'r-pink': 33, 'r-red': 20, 'r-gold': 7  },
-    firebox:   { 'r-blue': 60, 'r-purple': 27, 'r-pink': 9,  'r-red': 3,  'r-gold': 1  },
-    icebox:    { 'r-blue': 58, 'r-purple': 28, 'r-pink': 10, 'r-red': 3,  'r-gold': 1  },
-    cyberbox:  { 'r-blue': 50, 'r-purple': 30, 'r-pink': 12, 'r-red': 6,  'r-gold': 2  },
-    nuclearbox:{ 'r-blue': 45, 'r-purple': 32, 'r-pink': 14, 'r-red': 7,  'r-gold': 2  },
-    energybox: { 'r-blue': 35, 'r-purple': 32, 'r-pink': 20, 'r-red': 9,  'r-gold': 4  },
-    lunarbox:  { 'r-blue': 25, 'r-purple': 33, 'r-pink': 25, 'r-red': 12, 'r-gold': 5  },
-    dangerzone:{ 'r-blue': 15, 'r-purple': 30, 'r-pink': 30, 'r-red': 18, 'r-gold': 7  },
-    biohazard: { 'r-blue': 12, 'r-purple': 28, 'r-pink': 32, 'r-red': 20, 'r-gold': 8  },
-    ancientbox:{ 'r-blue': 10, 'r-purple': 25, 'r-pink': 33, 'r-red': 22, 'r-gold': 10 },
-    demonbox:  { 'r-blue': 5,  'r-purple': 20, 'r-pink': 30, 'r-red': 28, 'r-gold': 17 },
+    classic:   { 'r-blue': 71, 'r-purple': 22, 'r-pink': 5,  'r-red':  0.55,  'r-gold': 0.45  },
+    toxic:     { 'r-blue': 67, 'r-purple': 24, 'r-pink': 6,  'r-red':  1.1,  'r-gold': 0.45  },
+    arctic:    { 'r-blue': 65, 'r-purple': 25, 'r-pink': 7,  'r-red':  1.1,  'r-gold': 0.45  },
+    thunder:   { 'r-blue': 56, 'r-purple': 28, 'r-pink': 10, 'r-red':  2.2,  'r-gold': 0.9  },
+    inferno:   { 'r-blue': 50, 'r-purple': 30, 'r-pink': 12, 'r-red':  3.3,  'r-gold': 0.9  },
+    shadow:    { 'r-blue': 45, 'r-purple': 31, 'r-pink': 14, 'r-red':  3.85,  'r-gold': 1.35  },
+    covert:    { 'r-blue': 37, 'r-purple': 32, 'r-pink': 18, 'r-red':  5.5, 'r-gold': 1.35  },
+    phantom:   { 'r-blue': 30, 'r-purple': 34, 'r-pink': 20, 'r-red':  6.6, 'r-gold': 1.8  },
+    dragon:    { 'r-blue': 24, 'r-purple': 35, 'r-pink': 24, 'r-red':  7.15, 'r-gold': 1.8  },
+    gold:      { 'r-blue': 17, 'r-purple': 33, 'r-pink': 28, 'r-red':  8.8, 'r-gold': 2.7  },
+    crystal:   { 'r-blue': 12, 'r-purple': 31, 'r-pink': 31, 'r-red':  10.45, 'r-gold': 3.15  },
+    legendary: { 'r-blue': 0,  'r-purple': 25, 'r-pink': 35, 'r-red':  16.5, 'r-gold': 4.5 },
+    tempest:   { 'r-blue': 65, 'r-purple': 25, 'r-pink': 7,  'r-red':  1.1,  'r-gold': 0.45  },
+    pyramid:   { 'r-blue': 67, 'r-purple': 24, 'r-pink': 6,  'r-red':  1.1,  'r-gold': 0.45  },
+    velocity:  { 'r-blue': 55, 'r-purple': 28, 'r-pink': 11, 'r-red':  2.2,  'r-gold': 0.9  },
+    diamond:   { 'r-blue': 35, 'r-purple': 32, 'r-pink': 20, 'r-red':  5.5, 'r-gold': 1.35  },
+    frostbite: { 'r-blue': 30, 'r-purple': 33, 'r-pink': 22, 'r-red':  6.05, 'r-gold': 1.8  },
+    csz:       { 'r-blue': 53, 'r-purple': 29, 'r-pink': 11, 'r-red':  2.75,  'r-gold': 0.9  },
+    cyberskull:{ 'r-blue': 28, 'r-purple': 34, 'r-pink': 24, 'r-red':  5.5, 'r-gold': 1.8  },
+    infernd1:  { 'r-blue': 22, 'r-purple': 35, 'r-pink': 26, 'r-red':  7.15, 'r-gold': 1.8  },
+    tactical:  { 'r-blue': 50, 'r-purple': 30, 'r-pink': 13, 'r-red':  2.75,  'r-gold': 0.9  },
+    infernd2:  { 'r-blue': 0,  'r-purple': 22, 'r-pink': 38, 'r-red':  16.5, 'r-gold': 4.5 },
+    silvertech:{ 'r-blue': 10, 'r-purple': 30, 'r-pink': 33, 'r-red':  11.0, 'r-gold': 3.15  },
+    firebox:   { 'r-blue': 60, 'r-purple': 27, 'r-pink': 9,  'r-red':  1.65,  'r-gold': 0.45  },
+    icebox:    { 'r-blue': 58, 'r-purple': 28, 'r-pink': 10, 'r-red':  1.65,  'r-gold': 0.45  },
+    cyberbox:  { 'r-blue': 50, 'r-purple': 30, 'r-pink': 12, 'r-red':  3.3,  'r-gold': 0.9  },
+    nuclearbox:{ 'r-blue': 45, 'r-purple': 32, 'r-pink': 14, 'r-red':  3.85,  'r-gold': 0.9  },
+    energybox: { 'r-blue': 35, 'r-purple': 32, 'r-pink': 20, 'r-red':  4.95,  'r-gold': 1.8  },
+    lunarbox:  { 'r-blue': 25, 'r-purple': 33, 'r-pink': 25, 'r-red':  6.6, 'r-gold': 2.25  },
+    dangerzone:{ 'r-blue': 15, 'r-purple': 30, 'r-pink': 30, 'r-red':  9.9, 'r-gold': 3.15  },
+    biohazard: { 'r-blue': 12, 'r-purple': 28, 'r-pink': 32, 'r-red':  11.0, 'r-gold': 3.6  },
+    ancientbox:{ 'r-blue': 10, 'r-purple': 25, 'r-pink': 33, 'r-red':  12.1, 'r-gold': 4.5 },
+    demonbox:  { 'r-blue': 5,  'r-purple': 20, 'r-pink': 30, 'r-red':  15.4, 'r-gold': 7.65 },
   };
 
   let odds = caseOdds[caseId] || caseOdds.classic;
@@ -6871,6 +6875,50 @@ setTimeout(startPriceSystem, 500);
   </div>
 </div>
 
+
+<!-- STOCK NOVINKY MODAL -->
+<div class="modal-overlay" id="stockNewsModal" onclick="if(event.target===this)this.classList.remove('show')" style="z-index:1200">
+  <div class="modal-box" style="max-width:420px;border-color:rgba(0,207,255,0.25);background:#070a12">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <span style="font-size:1.4rem" id="stockNewsIcon">📰</span>
+      <div>
+        <div style="font-family:Oswald,sans-serif;font-size:1rem;letter-spacing:3px;color:#c8d8e8" id="stockNewsTitle">NOVINKY</div>
+        <div style="font-size:0.6rem;color:#3a4a6a;letter-spacing:1px" id="stockNewsTicker">—</div>
+      </div>
+    </div>
+    <div style="background:#050709;border:1px solid rgba(0,207,255,0.1);border-radius:6px;padding:20px;min-height:120px;display:flex;align-items:center;justify-content:center">
+      <div style="text-align:center">
+        <div style="font-size:2rem;margin-bottom:10px">🚧</div>
+        <div style="font-family:Oswald,sans-serif;font-size:0.8rem;letter-spacing:3px;color:#3a4a6a">BRZY K DISPOZICI</div>
+        <div style="font-size:0.65rem;color:#2a3a5a;margin-top:6px">Novinky pro tento titul budou přidány v příštím updatu.</div>
+      </div>
+    </div>
+    <button class="btn-modal-ok" onclick="document.getElementById('stockNewsModal').classList.remove('show')" style="margin-top:14px;border-color:rgba(0,207,255,0.3);color:#00cfff">Zavřít</button>
+  </div>
+</div>
+
+<!-- AVATAR MODAL -->
+<div class="modal-overlay" id="avatarModal" onclick="if(event.target===this)this.classList.remove('show')" style="z-index:1200">
+  <div class="modal-box" style="max-width:480px;border-color:rgba(139,92,246,0.3);background:#070a12;padding:0;overflow:hidden">
+    <div style="background:linear-gradient(135deg,#0d0f1a,#12091f);padding:20px 20px 0">
+      <div style="font-family:Oswald,sans-serif;font-size:1rem;letter-spacing:4px;color:#8b5cf6;margin-bottom:4px">PROFIL HRÁČE</div>
+      <div style="font-size:0.6rem;color:#3a4a6a;letter-spacing:2px" id="avatarModalName">—</div>
+    </div>
+    <!-- Player stats -->
+    <div style="padding:16px 20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px" id="avatarStats">
+    </div>
+    <!-- Avatar picker -->
+    <div style="padding:0 20px 8px">
+      <div style="font-size:0.58rem;color:#3a4a6a;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">✦ VYBER SVŮJ AVATAR ✦</div>
+      <div style="display:flex;gap:12px;justify-content:center" id="avatarChoices"></div>
+      <div style="font-size:0.55rem;color:#2a3a5a;text-align:center;margin-top:8px">Klikni na avatar pro výběr</div>
+    </div>
+    <div style="padding:14px 20px;border-top:1px solid rgba(255,255,255,0.05);text-align:center">
+      <button class="btn-modal-ok" onclick="document.getElementById('avatarModal').classList.remove('show')" style="border-color:rgba(139,92,246,0.4);color:#8b5cf6">Zavřít</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ═══════════════════════════════════════════════
 //  STOCKS — Gray Market Exchange
@@ -6962,7 +7010,7 @@ function tickStocks() {
     renderStocks();
   }
 }
-setInterval(tickStocks, 3000);
+setInterval(tickStocks, 8000);
 initStocks();
 
 function saveStocks() {
@@ -6972,6 +7020,13 @@ function saveStocks() {
 function renderStocks() {
   const list = document.getElementById('stocksList');
   if (!list) return;
+  // Save current input values so re-render doesn't wipe them
+  const savedInputs = {};
+  STOCKS.forEach(s => {
+    const bi = document.getElementById('sinv_' + s.id);
+    const si = document.getElementById('ssell_' + s.id);
+    savedInputs[s.id] = { buy: bi ? bi.value : '', sell: si ? si.value : '' };
+  });
   list.innerHTML = STOCKS.map(s => {
     const hist = stockHistory[s.id];
     const price = hist[hist.length-1];
@@ -7038,9 +7093,18 @@ function renderStocks() {
         <input id="ssell_${s.id}" type="number" min="1" placeholder="$ prodat" style="flex:1;min-width:0;background:#050709;border:1px solid #2a1515;color:#8a9ab0;border-radius:3px;padding:6px 8px;font-size:0.72rem;font-family:'Share Tech Mono',monospace">
         <button onclick="sellStock('${s.id}')" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.4);color:#ef4444;border-radius:3px;padding:6px 12px;font-family:Oswald,sans-serif;font-size:0.7rem;letter-spacing:1px;cursor:pointer;white-space:nowrap">PRODAT</button>` : ''}
         <button onclick="showStockChart('${s.id}')" style="background:transparent;border:1px solid #1a2030;color:#3a4a5a;border-radius:3px;padding:6px 10px;font-size:0.75rem;cursor:pointer" title="Detailní graf">📈</button>
+        <button onclick="showStockNews('${s.id}')" style="background:rgba(0,207,255,0.07);border:1px solid rgba(0,207,255,0.28);color:#00cfff;border-radius:3px;padding:6px 10px;font-family:Oswald,sans-serif;font-size:0.68rem;letter-spacing:1px;cursor:pointer;white-space:nowrap">📰 NOVINKY</button>
       </div>
     </div>`;
   }).join('');
+
+  // Restore input values after re-render
+  STOCKS.forEach(s => {
+    const bi = document.getElementById('sinv_' + s.id);
+    const si = document.getElementById('ssell_' + s.id);
+    if (bi && savedInputs[s.id]) bi.value = savedInputs[s.id].buy;
+    if (si && savedInputs[s.id]) si.value = savedInputs[s.id].sell;
+  });
 
   // Draw enhanced mini charts
   STOCKS.forEach(s => {
@@ -7183,6 +7247,222 @@ window.showStockChart = function(id) {
 };
 
 window.renderStocks = renderStocks; // immediate export
+
+// ─── STOCK NOVINKY ──────────────────────────────
+window.showStockNews = function(id) {
+  const s = STOCKS.find(x => x.id === id);
+  if (!s) return;
+  document.getElementById('stockNewsIcon').textContent = s.icon;
+  document.getElementById('stockNewsTitle').textContent = s.name + ' — NOVINKY';
+  document.getElementById('stockNewsTicker').textContent = '[' + s.ticker + '] · ' + s.mood.toUpperCase();
+  document.getElementById('stockNewsModal').classList.add('show');
+};
+
+// ─── AVATAR MODAL ───────────────────────────────
+const AVATAR_DEFS = [
+  // Each avatar is [id, svgPath, label, gradient]
+  {id:'av_skull',    label:'Skull',    grad:'#eb4b4b,#7a1010',
+   svg:`<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+    <defs><radialGradient id="g1" cx="50%" cy="40%" r="55%"><stop offset="0%" stop-color="#ff6b6b"/><stop offset="100%" stop-color="#7a1010"/></radialGradient></defs>
+    <circle cx="32" cy="28" r="22" fill="url(#g1)"/>
+    <ellipse cx="32" cy="46" rx="14" ry="8" fill="url(#g1)"/>
+    <rect x="25" y="44" width="5" height="8" rx="2" fill="#0a0a0a"/>
+    <rect x="34" y="44" width="5" height="8" rx="2" fill="#0a0a0a"/>
+    <ellipse cx="24" cy="27" rx="6" ry="7" fill="#0a0a0a"/>
+    <ellipse cx="40" cy="27" rx="6" ry="7" fill="#0a0a0a"/>
+    <ellipse cx="24" cy="27" rx="3" ry="4" fill="#ff4444" opacity="0.6"/>
+    <ellipse cx="40" cy="27" rx="3" ry="4" fill="#ff4444" opacity="0.6"/>
+    <path d="M28 38 Q32 36 36 38" stroke="#0a0a0a" stroke-width="2" fill="none"/>
+    <circle cx="32" cy="12" r="4" fill="#ff4444" opacity="0.5"/>
+   </svg>`},
+  {id:'av_cyber',    label:'Cyber',    grad:'#00cfff,#0044aa',
+   svg:`<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+    <defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00cfff"/><stop offset="100%" stop-color="#0044aa"/></linearGradient></defs>
+    <rect x="12" y="8" width="40" height="48" rx="8" fill="url(#g2)" opacity="0.9"/>
+    <rect x="18" y="18" width="10" height="10" rx="2" fill="#0a0a0a"/>
+    <rect x="36" y="18" width="10" height="10" rx="2" fill="#0a0a0a"/>
+    <rect x="20" y="20" width="6" height="6" rx="1" fill="#00cfff" opacity="0.8"/>
+    <rect x="38" y="20" width="6" height="6" rx="1" fill="#00cfff" opacity="0.8"/>
+    <path d="M22 38 L42 38" stroke="#0a0a0a" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="12" y1="32" x2="6" y2="28" stroke="#00cfff" stroke-width="2" opacity="0.6"/>
+    <line x1="52" y1="32" x2="58" y2="28" stroke="#00cfff" stroke-width="2" opacity="0.6"/>
+    <rect x="14" y="8" width="4" height="2" rx="1" fill="#00cfff" opacity="0.5"/>
+    <rect x="46" y="8" width="4" height="2" rx="1" fill="#00cfff" opacity="0.5"/>
+   </svg>`},
+  {id:'av_ghost',    label:'Ghost',    grad:'#8b5cf6,#3b0a6b',
+   svg:`<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+    <defs><radialGradient id="g3" cx="50%" cy="35%" r="60%"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#3b0a6b"/></radialGradient></defs>
+    <path d="M16 56 Q16 30 32 14 Q48 30 48 56 Q44 52 40 56 Q36 52 32 56 Q28 52 24 56 Q20 52 16 56Z" fill="url(#g3)"/>
+    <ellipse cx="25" cy="33" rx="5" ry="6" fill="#0a0a0a"/>
+    <ellipse cx="39" cy="33" rx="5" ry="6" fill="#0a0a0a"/>
+    <ellipse cx="25" cy="34" rx="2.5" ry="3" fill="#8b5cf6" opacity="0.8"/>
+    <ellipse cx="39" cy="34" rx="2.5" ry="3" fill="#8b5cf6" opacity="0.8"/>
+    <circle cx="32" cy="18" r="5" fill="#c084fc" opacity="0.4"/>
+   </svg>`},
+  {id:'av_wolf',     label:'Wolf',     grad:'#94a3b8,#1e293b',
+   svg:`<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+    <defs><linearGradient id="g4" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#cbd5e1"/><stop offset="100%" stop-color="#334155"/></linearGradient></defs>
+    <ellipse cx="32" cy="36" rx="18" ry="16" fill="url(#g4)"/>
+    <ellipse cx="32" cy="26" rx="14" ry="13" fill="url(#g4)"/>
+    <polygon points="20,18 16,6 26,16" fill="#94a3b8"/>
+    <polygon points="44,18 48,6 38,16" fill="#94a3b8"/>
+    <polygon points="21,17 17,8 26,15" fill="#475569"/>
+    <polygon points="43,17 47,8 38,15" fill="#475569"/>
+    <ellipse cx="26" cy="26" rx="4" ry="4.5" fill="#1e293b"/>
+    <ellipse cx="38" cy="26" rx="4" ry="4.5" fill="#1e293b"/>
+    <ellipse cx="26" cy="26" rx="2" ry="2.5" fill="#60a5fa" opacity="0.9"/>
+    <ellipse cx="38" cy="26" rx="2" ry="2.5" fill="#60a5fa" opacity="0.9"/>
+    <ellipse cx="32" cy="32" rx="5" ry="3" fill="#1e293b"/>
+    <ellipse cx="32" cy="31" rx="3" ry="2" fill="#f87171" opacity="0.5"/>
+   </svg>`},
+  {id:'av_viper',    label:'Viper',    grad:'#22c55e,#052e16',
+   svg:`<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+    <defs><radialGradient id="g5" cx="50%" cy="40%" r="55%"><stop offset="0%" stop-color="#4ade80"/><stop offset="100%" stop-color="#052e16"/></radialGradient></defs>
+    <ellipse cx="32" cy="32" rx="20" ry="22" fill="url(#g5)"/>
+    <path d="M22 10 Q32 4 42 10" stroke="#22c55e" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <ellipse cx="25" cy="28" rx="5" ry="5.5" fill="#0a0a0a"/>
+    <ellipse cx="39" cy="28" rx="5" ry="5.5" fill="#0a0a0a"/>
+    <ellipse cx="25" cy="29" rx="2.5" ry="3" fill="#86efac" opacity="0.9"/>
+    <ellipse cx="39" cy="29" rx="2.5" ry="3" fill="#86efac" opacity="0.9"/>
+    <path d="M27 40 Q32 43 37 40" stroke="#0a0a0a" stroke-width="1.5" fill="none"/>
+    <path d="M30 42 L29 46 M34 42 L35 46" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="32" cy="18" rx="8" ry="5" fill="#16a34a" opacity="0.5"/>
+   </svg>`},
+  {id:'av_demon',    label:'Demon',    grad:'#f97316,#431407',
+   svg:`<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+    <defs><radialGradient id="g6" cx="50%" cy="45%" r="55%"><stop offset="0%" stop-color="#fb923c"/><stop offset="100%" stop-color="#431407"/></radialGradient></defs>
+    <ellipse cx="32" cy="34" rx="20" ry="18" fill="url(#g6)"/>
+    <polygon points="14,22 10,6 22,18" fill="#ef4444"/>
+    <polygon points="50,22 54,6 42,18" fill="#ef4444"/>
+    <polygon points="15,21 12,9 21,17" fill="#b91c1c"/>
+    <polygon points="49,21 52,9 43,17" fill="#b91c1c"/>
+    <ellipse cx="25" cy="32" rx="5.5" ry="5" fill="#0a0a0a"/>
+    <ellipse cx="39" cy="32" rx="5.5" ry="5" fill="#0a0a0a"/>
+    <ellipse cx="25" cy="32" rx="2.5" ry="2.5" fill="#ff6b35" opacity="0.9"/>
+    <ellipse cx="39" cy="32" rx="2.5" ry="2.5" fill="#ff6b35" opacity="0.9"/>
+    <path d="M24 42 Q32 46 40 42" stroke="#0a0a0a" stroke-width="2" fill="none"/>
+    <path d="M26 44 L25 48 M38 44 L39 48" stroke="#f97316" stroke-width="1.5"/>
+   </svg>`},
+  {id:'av_ice',      label:'Ice',      grad:'#7dd3fc,#0c4a6e',
+   svg:`<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+    <defs><radialGradient id="g7" cx="50%" cy="35%" r="60%"><stop offset="0%" stop-color="#bae6fd"/><stop offset="100%" stop-color="#0c4a6e"/></radialGradient></defs>
+    <path d="M32 8 L38 24 L54 24 L42 34 L46 50 L32 40 L18 50 L22 34 L10 24 L26 24 Z" fill="url(#g7)" opacity="0.9"/>
+    <ellipse cx="27" cy="27" rx="4" ry="4" fill="#0c4a6e"/>
+    <ellipse cx="37" cy="27" rx="4" ry="4" fill="#0c4a6e"/>
+    <ellipse cx="27" cy="27" rx="2" ry="2" fill="#e0f2fe" opacity="0.9"/>
+    <ellipse cx="37" cy="27" rx="2" ry="2" fill="#e0f2fe" opacity="0.9"/>
+    <path d="M26 34 Q32 37 38 34" stroke="#0c4a6e" stroke-width="2" fill="none"/>
+   </svg>`},
+  {id:'av_gold',     label:'Gold',     grad:'#fbbf24,#78350f',
+   svg:`<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+    <defs><radialGradient id="g8" cx="50%" cy="35%" r="60%"><stop offset="0%" stop-color="#fde68a"/><stop offset="100%" stop-color="#92400e"/></radialGradient></defs>
+    <circle cx="32" cy="32" r="24" fill="url(#g8)"/>
+    <polygon points="32,10 36,22 50,22 39,30 43,44 32,36 21,44 25,30 14,22 28,22" fill="#78350f" opacity="0.8"/>
+    <polygon points="32,13 35,21 44,21 37,27 40,37 32,31 24,37 27,27 20,21 29,21" fill="#fde68a" opacity="0.6"/>
+    <circle cx="32" cy="30" r="5" fill="#78350f" opacity="0.6"/>
+    <circle cx="32" cy="30" r="3" fill="#fbbf24"/>
+   </svg>`},
+];
+
+function openAvatarModal() {
+  // Stats
+  const statsEl = document.getElementById('avatarStats');
+  const nameEl  = document.getElementById('avatarModalName');
+  nameEl.textContent = (typeof squadNick !== 'undefined' ? squadNick : (document.getElementById('userNameDisplay')?.textContent || 'Hráč')).toUpperCase() + ' · PROFIL';
+
+  // Gather stats
+  const inv = state.inventory || [];
+  const goldCount = inv.filter(i => { const b = getBottleById ? getBottleById(i.bottle_id) : null; return b && b.rarity === 'r-gold'; }).length;
+  const totalOpened = state.totalOpened || 0;
+  const lvl = state.playerLevel || 1;
+  const money = Math.round(state.money || 0);
+  const coins = state.coins || 0;
+  const invCount = inv.length;
+
+  const statItems = [
+    { icon:'⬆️', label:'Level',       val: lvl },
+    { icon:'📦', label:'Otevřeno',    val: totalOpened },
+    { icon:'🎒', label:'Inventář',    val: invCount + ' ks' },
+    { icon:'💰', label:'Balance',     val: '$' + money.toLocaleString() },
+    { icon:'💎', label:'Coins',       val: coins },
+    { icon:'⭐', label:'Gold drops',  val: goldCount },
+  ];
+  statsEl.innerHTML = statItems.map(s => `
+    <div style="background:#050709;border:1px solid rgba(255,255,255,0.06);border-radius:5px;padding:8px 6px;text-align:center">
+      <div style="font-size:1.1rem">${s.icon}</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:0.78rem;color:#c8d8e8;font-weight:700;margin:2px 0">${s.val}</div>
+      <div style="font-size:0.52rem;color:#3a4a6a;letter-spacing:1px;text-transform:uppercase">${s.label}</div>
+    </div>`).join('');
+
+  // Pick 3 random avatars
+  const pool = [...AVATAR_DEFS];
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  const chosen = pool.slice(0, 3);
+  const savedAv = localStorage.getItem('rc_avatar') || '';
+
+  document.getElementById('avatarChoices').innerHTML = chosen.map(av => `
+    <div onclick="selectAvatar('${av.id}')" id="avcard_${av.id}" style="cursor:pointer;text-align:center;padding:10px 12px;border-radius:8px;border:2px solid ${savedAv===av.id ? '#8b5cf6' : 'rgba(255,255,255,0.07)'};background:${savedAv===av.id ? 'rgba(139,92,246,0.1)' : '#050709'};transition:border 0.2s">
+      <div style="width:64px;height:64px;border-radius:50%;overflow:hidden;margin:0 auto 6px;box-shadow:0 0 16px ${av.grad.split(',')[0]}55">${av.svg}</div>
+      <div style="font-family:Oswald,sans-serif;font-size:0.65rem;letter-spacing:2px;color:#8a9ab0">${av.label}</div>
+    </div>`).join('');
+
+  document.getElementById('avatarModal').classList.add('show');
+}
+
+window.selectAvatar = function(id) {
+  localStorage.setItem('rc_avatar', id);
+  // Highlight selected
+  document.querySelectorAll('[id^="avcard_"]').forEach(el => {
+    const isSelected = el.id === 'avcard_' + id;
+    el.style.borderColor = isSelected ? '#8b5cf6' : 'rgba(255,255,255,0.07)';
+    el.style.background  = isSelected ? 'rgba(139,92,246,0.1)' : '#050709';
+  });
+  // Update main avatar bubble
+  const av = AVATAR_DEFS.find(a => a.id === id);
+  if (av) {
+    const avatarEl = document.getElementById('userAvatar');
+    if (avatarEl) {
+      avatarEl.innerHTML = av.svg;
+      avatarEl.style.padding = '0';
+      avatarEl.style.overflow = 'hidden';
+    }
+  }
+  showToast('Avatar změněn: ' + (av ? av.label : id) + ' ✨', 'success');
+};
+
+// Attach avatar click to userAvatar pill
+(function attachAvatarClick() {
+  function doAttach() {
+    const el = document.getElementById('userAvatar');
+    if (el) {
+      el.style.cursor = 'pointer';
+      el.title = 'Profil & Avatar';
+      el.addEventListener('click', openAvatarModal);
+      // Restore saved avatar if any
+      const savedAv = localStorage.getItem('rc_avatar');
+      if (savedAv) {
+        const av = AVATAR_DEFS.find(a => a.id === savedAv);
+        if (av) {
+          el.innerHTML = av.svg;
+          el.style.padding = '0';
+          el.style.overflow = 'hidden';
+        }
+      }
+    } else {
+      setTimeout(doAttach, 400);
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', doAttach);
+  } else {
+    doAttach();
+  }
+})();
+
+
 
 // ═══════════════════════════════════════════════
 //  BAZOŠ — 7-day expiry, auto-return to inventory
@@ -7871,6 +8151,20 @@ setTimeout(supabaseInit, 500);
         <button class="adm-btn"         onclick="admGcRefreshStatus()">🔄 Refresh</button>
       </div>
 
+      <div style="height:1px;background:var(--border2);margin:14px 0"></div>
+
+      <div class="adm-section-title">⚔️ DUEL 1v1 — KLIKER RACE</div>
+      <div style="font-size:0.68rem;color:#3a4a6a;margin-bottom:8px;line-height:1.6">
+        Hráči závodí kdo dřív sundá bedny <strong style="color:#8847ff">LVL 1–10</strong>.<br>
+        Vítěz → <strong style="color:#c9a227">10 náhodných beden</strong> · Poražený → <strong style="color:#6a7a9a">0–5 beden</strong> útěcha.
+      </div>
+      <div id="admDuelStatus" style="font-size:0.78rem;color:#6a7a9a;margin-bottom:8px;font-family:'Share Tech Mono',monospace;padding:7px 10px;background:#050709;border:1px solid #1a2030;border-radius:4px">Načítám stav duelu…</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;">
+        <button class="adm-btn success" onclick="admDuelStart()">⚔️ SPUSTIT DUEL</button>
+        <button class="adm-btn danger"  onclick="admDuelStop()">🛑 ZASTAVIT</button>
+        <button class="adm-btn"         onclick="admDuelRefresh()">🔄 Refresh</button>
+      </div>
+
       <div class="adm-log" id="admEventLog"></div>
     </div>
 
@@ -7893,6 +8187,8 @@ setTimeout(supabaseInit, 500);
       <div id="admCategoryList"></div>
       <div class="adm-log" id="admCatLog"></div>
     </div>
+
+
 
   </div>
 </div>
@@ -7926,6 +8222,7 @@ function closeAdminPanel() {
 function admSwitchTab(tab) {
   document.querySelectorAll('.adm-panel').forEach(p => p.classList.remove('active'));
   if (tab === 'event' && typeof admGcRefreshStatus === 'function') admGcRefreshStatus();
+  if (tab === 'event' && typeof admDuelRefresh === 'function') admDuelRefresh();
   document.querySelectorAll('.adm-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('adm-panel-' + tab).classList.add('active');
   event.target.classList.add('active');
@@ -8238,6 +8535,112 @@ function admToggleCategory(caseId) {
   localStorage.setItem('adm_disabled_cases', JSON.stringify([...window.adminDisabledCases]));
   admRenderCategories();
   if (currentPage === 'shop') renderShop();
+}
+
+// ── EVENTS PAGE TAB SWITCHER ─────────────────────────────────────────
+let currentEventsTab = 'gc';
+window.switchEventsTab = function(tab) {
+  currentEventsTab = tab;
+  const gcBtn   = document.getElementById('evTab_gc');
+  const duelBtn = document.getElementById('evTab_duel');
+  const titleEl = document.getElementById('eventsPageTitle');
+  const ON  = 'background:rgba(255,68,68,0.12);border:1px solid rgba(255,68,68,0.4);border-bottom:2px solid #ff4444;color:#ff4444;';
+  const OFF = 'background:transparent;border:1px solid var(--border2);border-bottom:none;color:var(--muted);';
+  if (gcBtn)   gcBtn.style.cssText   = (tab==='gc'   ? ON : OFF) + 'font-family:Oswald,sans-serif;letter-spacing:2px;font-size:0.75rem;padding:8px 18px;border-radius:4px 4px 0 0;cursor:pointer;white-space:nowrap';
+  if (duelBtn) duelBtn.style.cssText = (tab==='duel' ? ON : OFF) + 'font-family:Oswald,sans-serif;letter-spacing:2px;font-size:0.75rem;padding:8px 18px;border-radius:4px 4px 0 0;cursor:pointer;white-space:nowrap';
+  if (titleEl) titleEl.textContent = tab === 'gc' ? 'GlobalCase' : 'Duel 1v1';
+  if (tab === 'gc'   && typeof renderEventsPage === 'function') renderEventsPage();
+  if (tab === 'duel' && typeof renderDuelPage   === 'function') renderDuelPage();
+};
+
+// Patch renderEventsPage so it only renders when gc tab is active
+const _origRenderEventsPage = window.renderEventsPage;
+if (_origRenderEventsPage) {
+  window.renderEventsPage = async function() {
+    if (window.currentEventsTab === 'duel') return;
+    return _origRenderEventsPage();
+  };
+}
+
+// ── ADMIN DUEL FUNCTIONS ─────────────────────────────────────────────
+async function admDuelRefresh() {
+  const el = document.getElementById('admDuelStatus');
+  if (!el) return;
+  el.textContent = 'Načítám…';
+  try {
+    const data = await gcFetch('duel_event?id=eq.duel_main&limit=1');
+    if (!data || !data.length) {
+      el.innerHTML = '<span style="color:#ff4444">⚠️ Tabulka neexistuje nebo duel ještě nebyl spuštěn.</span>';
+    } else {
+      const d = data[0];
+      if (d.active) {
+        el.innerHTML = `<span style="color:#4ade80">✅ AKTIVNÍ — ${d.player1||'?'} vs ${d.player2||'?'} | P1 LVL ${d.p1_level} | P2 LVL ${d.p2_level}${d.winner ? ' | 🏆 Vítěz: '+d.winner : ''}</span>`;
+      } else {
+        el.innerHTML = `<span style="color:#6a7a9a">🔴 Neaktivní${d.winner ? ' | Poslední výherce: '+d.winner : ''}</span>`;
+      }
+    }
+  } catch(e) {
+    el.innerHTML = '<span style="color:#ff4444">Chyba: ' + e.message + '</span>';
+  }
+}
+
+async function admDuelStart() {
+  const log = 'admDuelLog';
+  admLog(log, 'Spouštím duel…');
+  try {
+    // Upsert duel record
+    await gcFetch('duel_event', {
+      method: 'POST',
+      headers: { 'Prefer': 'resolution=merge-duplicates' },
+      body: JSON.stringify({
+        id: 'duel_main',
+        active: true,
+        player1: null,
+        player2: null,
+        p1_level: 1,
+        p2_level: 1,
+        p1_hp_pct: 100,
+        p2_hp_pct: 100,
+        winner: null,
+        started_at: new Date().toISOString(),
+        ended_at: null,
+        updated_at: new Date().toISOString()
+      })
+    });
+    admLog(log, '✅ Duel 1v1 spuštěn! Hráči se mohou připojit v sekci Eventy.');
+    showToast('⚔️ Duel 1v1 spuštěn!', 'success');
+    admDuelRefresh();
+    gcUpdateEventActiveBadge(true);
+    if (typeof renderDuelPage === 'function') renderDuelPage();
+  } catch(e) {
+    admLog(log, '❌ Chyba: ' + e.message);
+  }
+}
+
+async function admDuelStop() {
+  const log = 'admDuelLog';
+  admLog(log, 'Zastavuji duel…');
+  try {
+    await gcFetch('duel_event?id=eq.duel_main', {
+      method: 'PATCH',
+      body: JSON.stringify({ active: false, ended_at: new Date().toISOString() })
+    });
+    admLog(log, '🛑 Duel zastaven.');
+    showToast('🛑 Duel 1v1 zastaven.', 'error');
+    admDuelRefresh();
+    if (typeof renderDuelPage === 'function') renderDuelPage();
+  } catch(e) {
+    admLog(log, '❌ Chyba: ' + e.message);
+  }
+}
+
+// Hook into admSwitchTab to also refresh duel
+const _origAdmSwitch = window.admSwitchTab;
+if (_origAdmSwitch) {
+  window.admSwitchTab = function(tab) {
+    _origAdmSwitch(tab);
+    if (tab === 'duel') admDuelRefresh();
+  };
 }
 </script>
 <script src="events.js"></script>
