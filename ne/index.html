@@ -178,6 +178,10 @@ body::before {
   border-radius: 2px; padding: 2px 6px;
   white-space: nowrap; flex-shrink: 0;
 }
+.player-level-wrap {
+  display: flex; align-items: center; gap: 6px;
+  flex-shrink: 0; min-width: 0; max-width: 130px;
+}
 .plvl-bar-wrap {
   flex: 1; display: flex; flex-direction: column; gap: 2px;
 }
@@ -283,7 +287,7 @@ body::before {
 
 .indicator {
   position: absolute; top:0; bottom:0; left:50%; transform:translateX(-50%);
-  width:3px; z-index:4; pointer-events:none;
+  width:3px; z-index:4; pointer-events:none; display:block;
 }
 .indicator::before {
   content: '';
@@ -709,20 +713,6 @@ body::before {
   border-radius:2px; cursor:pointer; transition:all 0.2s;
 }
 .btn-w-sell:hover { background:#eb4b4b33; }
-.btn-w-again {
-  background: linear-gradient(135deg, var(--gold), var(--gold2));
-  color:#111; border:none;
-  padding: 10px 24px; font-family:'Oswald',sans-serif; font-size:0.9rem;
-  font-weight:700; letter-spacing:3px; text-transform:uppercase;
-  border-radius:2px; cursor:pointer; transition:all 0.2s;
-}
-.btn-w-again:hover { box-shadow:0 4px 20px rgba(0,207,255,0.4); }
-
-/* ── TOAST ──────────────────────────────────────── */
-#toastWrap {
-  position: fixed; bottom:24px; right:24px; z-index:300;
-  display:flex; flex-direction:column; gap:8px; align-items:flex-end;
-}
 .toast {
   background: var(--panel2); border: 1px solid var(--border2);
   border-radius: 3px; padding: 10px 16px;
@@ -1709,10 +1699,12 @@ body::after {
   91%{ transform:translate(-2px,0); }
   92%{ transform:translate(0); opacity:1; }
 }
-.ban-sub { font-family:'Share Tech Mono',monospace; font-size:0.9rem; color:#3a0010; letter-spacing:4px; margin-bottom:36px; }
-.ban-id { font-family:'Share Tech Mono',monospace; font-size:0.65rem; color:#220010; letter-spacing:2px; margin-bottom:12px; }
-.ban-luk { font-family:'Share Tech Mono',monospace; font-size:0.58rem; color:#1a0008; letter-spacing:3px; margin-top:40px; }
-.ban-line { width:200px; height:1px; background:#1a0008; margin:16px auto; }
+.ban-sub { font-family:'Share Tech Mono',monospace; font-size:0.9rem; color:#ff6b6b; letter-spacing:4px; margin-bottom:36px; text-shadow:0 0 10px rgba(255,0,0,0.4); }
+.ban-id { font-family:'Share Tech Mono',monospace; font-size:0.72rem; color:#c8d0e0; letter-spacing:2px; margin-bottom:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(235,75,75,0.3); border-radius:4px; padding:8px 18px; max-width:600px; text-align:center; }
+.ban-info { font-family:'Share Tech Mono',monospace; font-size:0.78rem; color:#a0b0c0; letter-spacing:1px; line-height:2.2; text-align:center; }
+.ban-info span { color:#eb4b4b; font-weight:700; }
+.ban-luk { font-family:'Share Tech Mono',monospace; font-size:0.6rem; color:#6a7a9a; letter-spacing:3px; margin-top:40px; }
+.ban-line { width:300px; height:1px; background:rgba(235,75,75,0.3); margin:16px auto; }
 
 /* ══ BG ORBS ══════════════════════════════════════════════════════ */
 .bg-orb {
@@ -2497,10 +2489,10 @@ button:active:not(:disabled) { transform: scale(0.96) !important; }
   <div class="ban-sub">ANTI-CHEAT PROTECTION TRIGGERED</div>
   <div class="ban-id" id="banId"></div>
   <div class="ban-line"></div>
-  <div style="font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:#2a0012;letter-spacing:2px;line-height:2">
-    REASON: DevTools / Console detected<br>
-    STATUS: Permanent ban applied<br>
-    APPEAL: Not available
+  <div class="ban-info">
+    REASON: <span>DevTools / Console detected</span><br>
+    STATUS: <span>Permanent ban applied</span><br>
+    APPEAL: <span style="color:#6a7a9a">Not available</span>
   </div>
   <div class="ban-luk">PROTECTED BY LUKCHEAT • ALKOCASE 2026</div>
 </div>
@@ -2613,15 +2605,21 @@ button:active:not(:disabled) { transform: scale(0.96) !important; }
 
 <!-- TOP NAV -->
 <nav id="topNav">
-  <div class="logo" data-text="AlkoCase">AlkoCase<span>v2.0</span></div>
+  <div class="player-level-wrap" id="playerLevelWrap">
+      <div class="plvl-badge" id="plvlBadge">LVL 1</div>
+      <div class="plvl-bar-wrap">
+        <div class="plvl-label" id="plvlLabel">0 / 100 XP</div>
+        <div class="plvl-bar-bg"><div class="plvl-bar-fill" id="plvlFill" style="width:0%"></div></div>
+      </div>
+    </div>
   <div class="nav-sep"></div>
   <div class="nav-tabs">
     <div class="nav-tab active" onclick="switchTab('clicker')" id="tab-clicker">
       <span class="tab-icon">⚔️</span> Kliker
     </div>
-    <div class="nav-tab" onclick="showLockedEvents()" id="tab-events" style="position:relative">
-      <span class="tab-icon">🎪</span> Eventy
-      <span style="position:absolute;top:4px;right:6px;font-size:0.5rem;background:rgba(0,207,255,0.15);border:1px solid rgba(0,207,255,0.3);border-radius:10px;padding:1px 5px;color:var(--gold2);letter-spacing:1px">BRZY</span>
+    <div class="nav-tab" onclick="switchTab('events')" id="tab-events" style="position:relative">
+      <span class="tab-icon">🎪</span> <span class="tab-label">Eventy</span>
+      <span id="eventActiveBadge" style="display:none;position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:#ff4444;box-shadow:0 0 8px #ff4444;animation:ibBlink 1s ease infinite"></span>
     </div>
     <div id="tab-case" style="display:none"></div>
     <div class="nav-tab" onclick="switchTab('inventory')" id="tab-inventory">
@@ -2664,13 +2662,6 @@ button:active:not(:disabled) { transform: scale(0.96) !important; }
     <div class="user-pill" title="Přihlášen přes THE SQUAD">
       <div class="user-avatar" id="userAvatar">?</div>
       <span class="user-name" id="userNameDisplay">Hráč</span>
-    </div>
-    <div class="player-level-wrap" id="playerLevelWrap">
-      <div class="plvl-badge" id="plvlBadge">LVL 1</div>
-      <div class="plvl-bar-wrap">
-        <div class="plvl-label" id="plvlLabel">0 / 100 XP</div>
-        <div class="plvl-bar-bg"><div class="plvl-bar-fill" id="plvlFill" style="width:0%"></div></div>
-      </div>
     </div>
   </div>
 
@@ -2885,6 +2876,22 @@ button:active:not(:disabled) { transform: scale(0.96) !important; }
     </div>
   </div>
 
+
+  <!-- u2563u2550u2550 EVENTS PAGE u2563u2550u2550 -->
+  <div class="page" id="pageEvents">
+    <div class="page-header" style="background:linear-gradient(90deg,rgba(255,60,60,0.12),rgba(0,207,255,0.06));">
+      <span class="ph-icon">🎪</span>
+      <div>
+        <h2 style="color:#ff4444;text-shadow:0 0 20px rgba(255,68,68,0.5)">GlobalCase</h2>
+        <div class="ph-sub" id="eventsHeaderSub">Speciální operace</div>
+      </div>
+      <div id="eventsActivePulse" style="margin-left:auto;display:none;align-items:center;gap:8px;background:rgba(255,68,68,0.1);border:1px solid rgba(255,68,68,0.4);border-radius:4px;padding:6px 14px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#ff4444;box-shadow:0 0 8px #ff4444;animation:ibBlink 0.8s ease infinite"></div>
+        <span style="font-family:Oswald,sans-serif;font-size:0.8rem;letter-spacing:2px;color:#ff4444;font-weight:700">LIVE EVENT</span>
+      </div>
+    </div>
+    <div id="eventsPageContent" style="flex:1;overflow-y:auto;padding:20px 28px;"></div>
+  </div>
   <!-- ═══ BURZA PAGE ═══ -->
   <div class="page" id="pageCeny">
     <div class="page-header">
@@ -2945,7 +2952,6 @@ button:active:not(:disabled) { transform: scale(0.96) !important; }
     <div class="winner-btns">
       <button class="btn-w-sell" id="btnWinSell">Prodat za <span id="sellQuickVal"></span></button>
       <button class="btn-w-close" id="btnWinClose">Schovat</button>
-      <button class="btn-w-again" id="btnWinAgain">Znovu 🎰</button>
     </div>
   </div>
 </div>
@@ -3079,28 +3085,28 @@ const SPIN_COST_COIN = 1;
 
 const bottles = [
   // ── Common ──────────────────────────────────────────
-  { id:'mac10',   name:'MAC-10 | Inferno',        rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:28, value:90,
+  { id:'mac10',   name:'MAC-10 | Inferno',        rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:20, value:90,
     svg:`<img src="assets/weapon_mac10.png"  class="weapon-img" alt="MAC-10 | Inferno">`},
-  { id:'p90',     name:'P90 | Plague',             rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:24, value:110,
+  { id:'p90',     name:'P90 | Plague',             rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:17, value:110,
     svg:`<img src="assets/weapon_p90.png"    class="weapon-img" alt="P90 | Plague">`},
-  { id:'m4a1',    name:'M4A1-S | Gold Edition',    rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:20, value:130,
+  { id:'m4a1',    name:'M4A1-S | Gold Edition',    rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:14, value:130,
     svg:`<img src="assets/weapon_m4a1.png"   class="weapon-img" alt="M4A1-S | Gold Edition">`},
   // ── Rare ────────────────────────────────────────────
-  { id:'mp5',     name:'MP5 | Skull Camouflage',   rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:16, value:200,
+  { id:'mp5',     name:'MP5 | Skull Camouflage',   rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:11, value:200,
     svg:`<img src="assets/weapon_mp5.png"    class="weapon-img" alt="MP5 | Skull Camouflage">`},
-  { id:'tec9',    name:'TEC-9 | Arctic Spirit',    rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:14, value:250,
+  { id:'tec9',    name:'TEC-9 | Arctic Spirit',    rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:10, value:250,
     svg:`<img src="assets/weapon_tec9.png"   class="weapon-img" alt="TEC-9 | Arctic Spirit">`},
-  { id:'sg553',   name:'SG 553 | Dragon Fire',     rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:12, value:300,
+  { id:'sg553',   name:'SG 553 | Dragon Fire',     rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:8, value:300,
     svg:`<img src="assets/weapon_sg553.png"  class="weapon-img" alt="SG 553 | Dragon Fire">`},
-  { id:'ak47',    name:'AK-47 | Inferno',           rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:10, value:380,
+  { id:'ak47',    name:'AK-47 | Inferno',           rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:7, value:380,
     svg:`<img src="assets/weapon_ak47.png"   class="weapon-img" alt="AK-47 | Inferno">`},
   // ── Classified ──────────────────────────────────────
-  { id:'nova',    name:'Nova | Hellfire',           rarity:'r-pink',   rarityName:'Classified', rarityColor:'#d32ee6', weight:4,  value:550,
+  { id:'nova',    name:'Nova | Hellfire',           rarity:'r-pink',   rarityName:'Classified', rarityColor:'#d32ee6', weight:2.5,  value:550,
     svg:`<img src="assets/weapon_nova.png"   class="weapon-img" alt="Nova | Hellfire">`},
-  { id:'xm1014',  name:'XM1014 | Death Marks',     rarity:'r-pink',   rarityName:'Classified', rarityColor:'#d32ee6', weight:3,  value:750,
+  { id:'xm1014',  name:'XM1014 | Death Marks',     rarity:'r-pink',   rarityName:'Classified', rarityColor:'#d32ee6', weight:1.8,  value:750,
     svg:`<img src="assets/weapon_xm1014.png" class="weapon-img" alt="XM1014 | Death Marks">`},
   // ── Covert ──────────────────────────────────────────
-  { id:'awp',     name:'AWP | Dragon Gold',         rarity:'r-red',    rarityName:'Covert',     rarityColor:'#eb4b4b', weight:1,  value:1200,
+  { id:'awp',     name:'AWP | Dragon Gold',         rarity:'r-red',    rarityName:'Covert',     rarityColor:'#eb4b4b', weight:0.6,  value:1200,
     svg:`<img src="assets/weapon_awp.png"    class="weapon-img" alt="AWP | Dragon Gold">`},
   // ── Gold ────────────────────────────────────────────
   { id:'sawoff',  name:'Sawed-Off | Pirate King ★', rarity:'r-gold',   rarityName:'★ Gold',     rarityColor:'#c9a227', weight:0.4,  value:3000,
@@ -3118,63 +3124,91 @@ const bottles = [
     svg:`<img src="assets/weapon_new_glock.png" class="weapon-img" alt="Glock-18 | Urban Steel">`},
   { id:'new_ak_light',    name:'AK-47 | Ivory Birch',        rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:6,  value:400,
     svg:`<img src="assets/weapon_new_ak_light.png" class="weapon-img" alt="AK-47 | Ivory Birch">`},
-  { id:'new_deagle_white',name:'Desert Eagle | Pearl',       rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:12, value:280,
+  { id:'new_deagle_white',name:'Desert Eagle | Pearl',       rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:8,  value:280,
     svg:`<img src="assets/weapon_new_deagle_white.png" class="weapon-img" alt="Desert Eagle | Pearl">`},
-  { id:'new_bullpup_white',name:'Steyr AUG | Ghost White',   rarity:'r-pink',   rarityName:'Classified', rarityColor:'#d32ee6', weight:3,  value:620,
+  { id:'new_bullpup_white',name:'Steyr AUG | Ghost White',   rarity:'r-pink',   rarityName:'Classified', rarityColor:'#d32ee6', weight:1.8,value:620,
     svg:`<img src="assets/weapon_new_bullpup_white.png" class="weapon-img" alt="Steyr AUG | Ghost White">`},
-  { id:'new_deagle2',     name:'Desert Eagle | Sculptor',    rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:11, value:300,
+  { id:'new_deagle2',     name:'Desert Eagle | Sculptor',    rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:7,  value:300,
     svg:`<img src="assets/weapon_new_deagle2.png" class="weapon-img" alt="Desert Eagle | Sculptor">`},
-  { id:'new_ak_dark',     name:'AK-47 | Dark Walnut',        rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:10, value:360,
+  { id:'new_ak_dark',     name:'AK-47 | Dark Walnut',        rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:7,  value:360,
     svg:`<img src="assets/weapon_new_ak_dark.png" class="weapon-img" alt="AK-47 | Dark Walnut">`},
-  { id:'new_famas',       name:'FAMAS | Iron Curtain',       rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:13, value:240,
+  { id:'new_famas',       name:'FAMAS | Iron Curtain',       rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:9,  value:240,
     svg:`<img src="assets/weapon_new_famas.png" class="weapon-img" alt="FAMAS | Iron Curtain">`},
-  { id:'new_deagle_silver',name:'Desert Eagle | Chrome',     rarity:'r-pink',   rarityName:'Classified', rarityColor:'#d32ee6', weight:4,  value:580,
+  { id:'new_deagle_silver',name:'Desert Eagle | Chrome',     rarity:'r-pink',   rarityName:'Classified', rarityColor:'#d32ee6', weight:2.2,value:580,
     svg:`<img src="assets/weapon_new_deagle_silver.png" class="weapon-img" alt="Desert Eagle | Chrome">`},
-  { id:'new_mp7',         name:'MP7 | Tactical Ops',         rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:18, value:140,
+  { id:'new_mp7',         name:'MP7 | Tactical Ops',         rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:13, value:140,
     svg:`<img src="assets/weapon_new_mp7.png" class="weapon-img" alt="MP7 | Tactical Ops">`},
-  { id:'new_ak_wood',     name:'AK-47 | Mahogany',           rarity:'r-red',    rarityName:'Covert',     rarityColor:'#eb4b4b', weight:1.5,  value:1100,
+  { id:'new_ak_wood',     name:'AK-47 | Mahogany',           rarity:'r-red',    rarityName:'Covert',     rarityColor:'#eb4b4b', weight:0.8,  value:1100,
     svg:`<img src="assets/weapon_new_ak_wood.png" class="weapon-img" alt="AK-47 | Mahogany">`},
-  { id:'new_uzi',         name:'Uzi | Sandstorm',            rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:19, value:105,
+  { id:'new_uzi',         name:'Uzi | Sandstorm',            rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:14, value:105,
     svg:`<img src="assets/weapon_new_uzi.png" class="weapon-img" alt="Uzi | Sandstorm">`},
-  { id:'new_deagle_dark', name:'Desert Eagle | Blackout',    rarity:'r-pink',   rarityName:'Classified', rarityColor:'#d32ee6', weight:3,  value:650,
+  { id:'new_deagle_dark', name:'Desert Eagle | Blackout',    rarity:'r-pink',   rarityName:'Classified', rarityColor:'#d32ee6', weight:1.8,value:650,
     svg:`<img src="assets/weapon_new_deagle_dark.png" class="weapon-img" alt="Desert Eagle | Blackout">`},
-  { id:'new_m249',        name:'M249 | Jungle Patrol',       rarity:'r-red',    rarityName:'Covert',     rarityColor:'#eb4b4b', weight:1.5,  value:1400,
+  { id:'new_m249',        name:'M249 | Jungle Patrol',       rarity:'r-red',    rarityName:'Covert',     rarityColor:'#eb4b4b', weight:0.8,  value:1400,
     svg:`<img src="assets/weapon_new_m249.png" class="weapon-img" alt="M249 | Jungle Patrol">`},
-  { id:'new_scar',        name:'SCAR-L | Ivory Ghost',       rarity:'r-pink',   rarityName:'Classified', rarityColor:'#d32ee6', weight:3,  value:720,
+  { id:'new_scar',        name:'SCAR-L | Ivory Ghost',       rarity:'r-pink',   rarityName:'Classified', rarityColor:'#d32ee6', weight:1.8,value:720,
     svg:`<img src="assets/weapon_new_scar.png" class="weapon-img" alt="SCAR-L | Ivory Ghost">`},
-  { id:'new_m249_white',  name:'M249 | Arctic Wolf ★',       rarity:'r-gold',   rarityName:'★ Gold',     rarityColor:'#c9a227', weight:0.3,value:3500,
+  { id:'new_m249_white',  name:'M249 | Arctic Wolf ★',       rarity:'r-gold',   rarityName:'★ Gold',     rarityColor:'#c9a227', weight:0.12,value:3500,
     svg:`<img src="assets/weapon_new_m249_white.png" class="weapon-img" alt="M249 | Arctic Wolf ★">`},
-  { id:'new_revolver',    name:'Revolver | Silver Blade',    rarity:'r-pink',   rarityName:'Classified', rarityColor:'#d32ee6', weight:3,  value:600,
+  { id:'new_revolver',    name:'Revolver | Silver Blade',    rarity:'r-pink',   rarityName:'Classified', rarityColor:'#d32ee6', weight:1.8,value:600,
     svg:`<img src="assets/weapon_new_revolver.png" class="weapon-img" alt="Revolver | Silver Blade">`},
-  { id:'new_sawedoff',    name:'Sawed-Off | Quick Draw',     rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:10, value:350,
+  { id:'new_sawedoff',    name:'Sawed-Off | Quick Draw',     rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:7,  value:350,
     svg:`<img src="assets/weapon_new_sawedoff.png" class="weapon-img" alt="Sawed-Off | Quick Draw">`},
 
+  // ── 📦 BEDNY JAKO ODMĚNA ────────────────────────────
+  { id:'case_reward_1x', name:'Bonus Bedna ×1 🎁',   rarity:'r-blue',   rarityName:'Mil-Spec',   rarityColor:'#4d79ff', weight:8,  value:120,  isCaseReward:true, caseCount:1,
+    svg:`<img src="assets/case_cs2.png" style="width:90px;height:120px;object-fit:contain;display:block;filter:drop-shadow(0 0 8px #4d79ff88)" alt="Bonus Bedna">`},
+  { id:'case_reward_2x', name:'Bonus Bedny ×2 🎁🎁',  rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:4,  value:280,  isCaseReward:true, caseCount:2,
+    svg:`<img src="assets/case_cyber.png" style="width:90px;height:120px;object-fit:contain;display:block;filter:drop-shadow(0 0 10px #8847ff88)" alt="Bonus Bedny">`},
+  { id:'case_reward_3x', name:'Jackpot Bedny ×3 👑',  rarity:'r-pink',   rarityName:'Classified', rarityColor:'#d32ee6', weight:1.5,value:600,  isCaseReward:true, caseCount:3,
+    svg:`<img src="assets/case_topsecret.png" style="width:90px;height:120px;object-fit:contain;display:block;filter:drop-shadow(0 0 14px #d32ee688)" alt="Jackpot Bedny">`},
+
   // ── 💰 PENĚŽNÍ VÝHRY ─────────────────────────────────
-  { id:'cash_small',  name:'Hotovost — $100',     rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:18, value:100,  isMoney:true, cashAmount:100,
+  { id:'cash_small',  name:'Hotovost — $100',     rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:12, value:100,  isMoney:true, cashAmount:100,
     svg:`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:76px;height:58px;font-size:1.8rem">💵</div>`},
-  { id:'cash_medium', name:'Hotovost — $250',     rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:8,  value:250,  isMoney:true, cashAmount:250,
+  { id:'cash_medium', name:'Hotovost — $250',     rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:5,  value:250,  isMoney:true, cashAmount:250,
     svg:`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:76px;height:58px;font-size:1.8rem">💰</div>`},
-  { id:'cash_big',    name:'Hotovost — $600',     rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:4,  value:600,  isMoney:true, cashAmount:600,
+  { id:'cash_big',    name:'Hotovost — $600',     rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:2.5,value:600,  isMoney:true, cashAmount:600,
     svg:`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:76px;height:58px;font-size:1.8rem">💸</div>`},
-  { id:'cash_jackpot',name:'Jackpot — $1500',     rarity:'r-red',    rarityName:'Covert',      rarityColor:'#eb4b4b', weight:1.5,value:1500, isMoney:true, cashAmount:1500,
+  { id:'cash_jackpot',name:'Jackpot — $1500',     rarity:'r-red',    rarityName:'Covert',      rarityColor:'#eb4b4b', weight:0.8,value:1500, isMoney:true, cashAmount:1500,
     svg:`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:76px;height:58px;font-size:1.8rem">🏦</div>`},
-  { id:'cash_mega',   name:'Mega Jackpot — $5000',rarity:'r-gold',   rarityName:'★ Gold',      rarityColor:'#c9a227', weight:0.3,value:5000, isMoney:true, cashAmount:5000,
+  { id:'cash_mega',   name:'Mega Jackpot — $5000',rarity:'r-gold',   rarityName:'★ Gold',      rarityColor:'#c9a227', weight:0.12,value:5000, isMoney:true, cashAmount:5000,
     svg:`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:76px;height:58px;font-size:2rem">🤑</div>`},
 ];
 
 
 // Clicker level → case mapping
 const CLICKER_CHEST_MAP = [
-  { caseId:'classic',   name:'Classic Box',       img:'case_cs2'      },  // lvl 1
-  { caseId:'toxic',     name:'Toxic Box',          img:'case_banger'   },  // lvl 2
-  { caseId:'arctic',    name:'Arctic Box',         img:'case_cyber'    },  // lvl 3
-  { caseId:'thunder',   name:'Thunder Box',        img:'case_orange'   },  // lvl 4
-  { caseId:'inferno',   name:'Inferno Box',        img:'case_banger'   },  // lvl 5
-  { caseId:'shadow',    name:'Shadow Box',         img:'case_cs2'      },  // lvl 6
-  { caseId:'covert',    name:'Covert Box',         img:'case_cyber'    },  // lvl 7
-  { caseId:'phantom',   name:'Phantom Box',        img:'case_topsecret'},  // lvl 8
-  { caseId:'dragon',    name:'Dragon Box',         img:'case_topsecret'},  // lvl 9
-  { caseId:'legendary', name:'⭐ Legendary Box',  img:'case_orange'   },  // lvl 10
+  { caseId:'classic',   name:'Classic Box',        img:'case_cs2'          },  // lvl 1
+  { caseId:'toxic',     name:'Toxic Box',           img:'case_banger'       },  // lvl 2
+  { caseId:'arctic',    name:'Arctic Box',          img:'case_cyber'        },  // lvl 3
+  { caseId:'thunder',   name:'Thunder Box',         img:'case_orange'       },  // lvl 4
+  { caseId:'inferno',   name:'Inferno Box',         img:'case_topsecret'    },  // lvl 5
+  { caseId:'shadow',    name:'Shadow Box',          img:'case_cs2'          },  // lvl 6
+  { caseId:'covert',    name:'Covert Box',          img:'case_cyber'        },  // lvl 7
+  { caseId:'phantom',   name:'Phantom Box',         img:'case_topsecret'    },  // lvl 8
+  { caseId:'dragon',    name:'Dragon Box',          img:'case_orange'       },  // lvl 9
+  { caseId:'legendary', name:'⭐ Legendary Box',   img:'case_topsecret'    },  // lvl 10
+  { caseId:'gold',      name:'Gold Box',            img:'case_cs2'          },  // lvl 11
+  { caseId:'crystal',   name:'Crystal Box',         img:'case_cyber'        },  // lvl 12
+  { caseId:'tempest',   name:'Tempest Cage',        img:'case_tempest_cage' },  // lvl 13
+  { caseId:'pyramid',   name:'Ancient Box',         img:'case_pyramid_case' },  // lvl 14
+  { caseId:'velocity',  name:'Velocity Case',       img:'case_velocity_case'},  // lvl 15
+  { caseId:'diamond',   name:'Diamond Case',        img:'case_diamond_case' },  // lvl 16
+  { caseId:'frostbite', name:'Frostbite Box',       img:'case_arctic_wolf'  },  // lvl 17
+  { caseId:'csz',       name:'CSZ Case',            img:'case_csz'          },  // lvl 18
+  { caseId:'infernd1',  name:'Infernd Case',        img:'case_infernd_pink' },  // lvl 19
+  { caseId:'silvertech',name:'Silver Tech Box',     img:'case_silver_tri'   },  // lvl 20
+  { caseId:'firebox',   name:'Fire Box',            img:'case_fire_box'     },  // lvl 21
+  { caseId:'icebox',    name:'Ice Box',             img:'case_ice_box'      },  // lvl 22
+  { caseId:'cyberbox',  name:'Cyber Box',           img:'case_cyber_box'    },  // lvl 23
+  { caseId:'nuclearbox',name:'Nuclear Box',         img:'case_nuclear_box'  },  // lvl 24
+  { caseId:'energybox', name:'Energy Box',          img:'case_energy_box'   },  // lvl 25
+  { caseId:'lunarbox',  name:'Lunar Box',           img:'case_lunar_box'    },  // lvl 26
+  { caseId:'dangerzone',name:'Danger Zone',         img:'case_danger_zone'  },  // lvl 27
+  { caseId:'biohazard', name:'Biohazard Box',       img:'case_biohazard_box'},  // lvl 28
+  { caseId:'ancientbox',name:'Ancient Box',         img:'case_ancient_box'  },  // lvl 29
+  { caseId:'demonbox',  name:'💀 Demon Box',        img:'case_demon_box'    },  // lvl 30
 ];
 
 // ── State ──────────────────────────────────────────────
@@ -3303,7 +3337,7 @@ function switchTab(tab) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const tabEl = document.getElementById(`tab-${tab}`);
   if (tabEl) tabEl.classList.add('active');
-  const pageMap = { clicker:'pageClicker', case:'pageCaseOpener', inventory:'pageInventory', shop:'pageShop', bazos:'pageBazos', leaderboard:'pageLeaderboard', mise:'pageMise', achiementy:'pageAchiementy', gameska:'pageGameska', ceny:'pageCeny' };
+  const pageMap = { clicker:'pageClicker', case:'pageCaseOpener', inventory:'pageInventory', shop:'pageShop', bazos:'pageBazos', leaderboard:'pageLeaderboard', mise:'pageMise', achiementy:'pageAchiementy', gameska:'pageGameska', ceny:'pageCeny', events:'pageEvents' };
   document.getElementById(pageMap[tab]).classList.add('active');
   currentPage = tab;
   if (tab === 'inventory') renderInventory();
@@ -3313,6 +3347,7 @@ function switchTab(tab) {
   if (tab === 'mise')      renderMissions();
   if (tab === 'achiementy') renderAchievements();
   if (tab === 'gameska')   initGameskaPage();
+  if (tab === 'events')    { if (typeof renderEventsPage === 'function') renderEventsPage(); }
   if (tab === 'ceny')      { renderCenyPage(); if (typeof window.renderStocks === 'function') window.renderStocks(); }
 }
 window.switchTab = switchTab;
@@ -3516,6 +3551,42 @@ function showWinner(bottle, premium, fromShop = true) {
   const isRare = ['r-red','r-pink','r-gold'].includes(bottle.rarity);
   playWin(isRare || premium);
 
+  // Case Reward drop — přidat bedny do inventáře
+  if (bottle.isCaseReward) {
+    const count = bottle.caseCount || 1;
+    const caseIds = Object.keys(casePools);
+    for (let i = 0; i < count; i++) {
+      const rndCaseId = caseIds[Math.floor(Math.random() * caseIds.length)];
+      const sc = getCaseById(rndCaseId) || getCaseById('classic');
+      if (!state.clickerChests) state.clickerChests = [];
+      state.clickerChests.push({
+        uid: uid(), caseId: rndCaseId,
+        name: sc ? sc.name : rndCaseId,
+        img: sc ? sc.caseImg : 'case_cs2',
+        level: 1, obtainedAt: new Date().toLocaleDateString('cs-CZ')
+      });
+    }
+    saveState();
+    document.getElementById('winnerBottle').innerHTML = `<div style="font-size:4rem;filter:drop-shadow(0 0 30px #8847ff)">📦</div>`;
+    document.getElementById('winnerName').textContent = bottle.name;
+    const rar = document.getElementById('winnerRarity');
+    rar.textContent = `📦 ${count}× BEDNA DO INVENTÁŘE!`;
+    rar.style.background = bottle.rarityColor + '22';
+    rar.style.color = bottle.rarityColor;
+    rar.style.border = `1px solid ${bottle.rarityColor}66`;
+    document.getElementById('winnerValue').textContent = `${count} bedna/bedny přidány do inventáře!`;
+    document.getElementById('sellQuickVal').textContent = '';
+    document.getElementById('btnWinSell').style.display = 'none';
+    const xpEl = document.getElementById('winnerXpGain');
+    if (xpEl) { xpEl.textContent = fromShop ? `+${XP_PER_RARITY[bottle.rarity]||10} XP` : ''; }
+    if (fromShop) gainXP(bottle.rarity);
+    document.getElementById('winnerOverlay').classList.add('show');
+    bindWinnerButtons();
+    spawnConfetti(bottle.rarityColor);
+    showToast(`📦 ${count}× Bedna přidána do inventáře!`, 'success');
+    return;
+  }
+
   // Money prize — add cash directly, don't store in inventory
   if (bottle.isMoney) {
     const cash = bottle.cashAmount;
@@ -3586,6 +3657,12 @@ function showWinner(bottle, premium, fromShop = true) {
 function closeWinner(spinAgain) {
   document.getElementById('winnerOverlay').classList.remove('show');
   document.getElementById('confettiWrap').innerHTML = '';
+  // Pokud výhra pochází z kliker bedny → automaticky zpět na clicker
+  if (window._winnerFromClicker) {
+    window._winnerFromClicker = false;
+    switchTab('clicker');
+    return;
+  }
   buildTrack();
   initPos();
   if (spinAgain) spinCaseCustomFree(false);
@@ -3617,7 +3694,6 @@ window.quickSellWinner = quickSellWinner;
 function bindWinnerButtons() {
   const btnSell = document.getElementById('btnWinSell');
   const btnClose = document.getElementById('btnWinClose');
-  const btnAgain = document.getElementById('btnWinAgain');
   const overlay = document.getElementById('winnerOverlay');
 
   if (btnSell) {
@@ -3634,14 +3710,6 @@ function bindWinnerButtons() {
     });
   }
 
-  if (btnAgain && !btnAgain.dataset.bound) {
-    btnAgain.dataset.bound = '1';
-    btnAgain.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      closeWinner(true);
-    });
-  }
 
   if (overlay && !overlay.dataset.bound) {
     overlay.dataset.bound = '1';
@@ -3996,18 +4064,18 @@ const shopCases = [
 
 // CS2-style: každá bedna má vlastní loot pool
 const casePools = {
-  classic:   ['mac10','p90','m4a1','new_mp7','new_glock','new_uzi','mp5','cash_small'],
-  toxic:     ['mac10','p90','mp5','tec9','sg553','nova','new_famas','new_sawedoff','cash_small','cash_medium'],
-  arctic:    ['p90','m4a1','mp5','tec9','sg553','xm1014','new_mp5alt','new_deagle_white','cash_small','cash_medium'],
-  thunder:   ['m4a1','tec9','sg553','ak47','nova','awp','new_sniper','new_deagle2','new_ak_light','cash_small','cash_medium','cash_big'],
-  inferno:   ['tec9','sg553','ak47','nova','xm1014','awp','new_deagle_silver','new_uzi','new_revolver','new_scar','cash_medium','cash_big'],
-  shadow:    ['sg553','ak47','nova','awp','new_deagle_silver','new_uzi','new_ak_dark','new_m4','new_revolver','cash_medium','cash_big'],
-  covert:    ['ak47','nova','awp','new_deagle2','new_m249','new_uzi','new_scar','new_ak_wood','new_bullpup_white','cash_medium','cash_big','cash_jackpot'],
-  phantom:   ['ak47','nova','awp','new_deagle_silver','new_uzi','new_scar','new_ak_dark','new_m4','new_revolver','cash_big','cash_jackpot'],
-  dragon:    ['ak47','awp','new_scar','new_ak_wood','new_ak_dark','new_deagle_dark','new_sniper','new_bullpup_white','new_m249','cash_big','cash_jackpot'],
-  gold:      ['awp','new_scar','new_ak_light','new_m4','new_mp7','new_famas','new_deagle_white','new_sniper','new_m249_white','cash_big','cash_jackpot','cash_mega'],
-  crystal:   ['new_scar','new_ak_light','new_m4','new_mp7','new_famas','new_m249_white','new_deagle_white','new_bullpup_white','new_deagle_dark','cash_jackpot','cash_mega'],
-  legendary: ['new_ak_wood','new_ak_dark','new_ak_light','new_m4','new_mp7','new_famas','new_m249_white','new_deagle_dark','new_deagle_white','new_sniper','new_bullpup_white','sawoff','new_m249_white','cash_jackpot','cash_mega'],
+  classic:   ['mac10','p90','m4a1','new_mp7','new_glock','new_uzi','mp5','cash_small','case_reward_1x'],
+  toxic:     ['mac10','p90','mp5','tec9','sg553','nova','new_famas','new_sawedoff','cash_small','cash_medium','case_reward_1x'],
+  arctic:    ['p90','m4a1','mp5','tec9','sg553','xm1014','new_mp5alt','new_deagle_white','cash_small','cash_medium','case_reward_1x'],
+  thunder:   ['m4a1','tec9','sg553','ak47','nova','awp','new_sniper','new_deagle2','new_ak_light','cash_small','cash_medium','cash_big','case_reward_1x','case_reward_2x'],
+  inferno:   ['tec9','sg553','ak47','nova','xm1014','awp','new_deagle_silver','new_uzi','new_revolver','new_scar','cash_medium','cash_big','case_reward_1x','case_reward_2x'],
+  shadow:    ['sg553','ak47','nova','awp','new_deagle_silver','new_uzi','new_ak_dark','new_m4','new_revolver','cash_medium','cash_big','case_reward_2x'],
+  covert:    ['ak47','nova','awp','new_deagle2','new_m249','new_uzi','new_scar','new_ak_wood','new_bullpup_white','cash_medium','cash_big','cash_jackpot','case_reward_2x'],
+  phantom:   ['ak47','nova','awp','new_deagle_silver','new_uzi','new_scar','new_ak_dark','new_m4','new_revolver','cash_big','cash_jackpot','case_reward_2x'],
+  dragon:    ['ak47','awp','new_scar','new_ak_wood','new_ak_dark','new_deagle_dark','new_sniper','new_bullpup_white','new_m249','cash_big','cash_jackpot','case_reward_2x','case_reward_3x'],
+  gold:      ['awp','new_scar','new_ak_light','new_m4','new_mp7','new_famas','new_deagle_white','new_sniper','new_m249_white','cash_big','cash_jackpot','cash_mega','case_reward_3x'],
+  crystal:   ['new_scar','new_ak_light','new_m4','new_mp7','new_famas','new_m249_white','new_deagle_white','new_bullpup_white','new_deagle_dark','cash_jackpot','cash_mega','case_reward_3x'],
+  legendary: ['new_ak_wood','new_ak_dark','new_ak_light','new_m4','new_mp7','new_famas','new_m249_white','new_deagle_dark','new_deagle_white','new_sniper','new_bullpup_white','sawoff','new_m249_white','cash_jackpot','cash_mega','case_reward_3x'],
   tempest:   ['mac10','p90','m4a1','new_mp7','tec9','sg553','nova','new_famas','cash_small','cash_medium'],
   pyramid:   ['mac10','p90','mp5','tec9','sg553','nova','new_famas','new_sawedoff','cash_small','cash_medium'],
   velocity:  ['m4a1','tec9','sg553','ak47','nova','awp','new_sniper','new_deagle2','new_ak_light','cash_medium'],
@@ -4277,9 +4345,40 @@ function renderBazosListings() {
 
   el.innerHTML = `<div class="bazos-section-title">📢 Aktivní inzeráty (${listings.length})</div>` +
     listings.map(l => {
+      const isMe = l.seller === state.username;
+      const isCase = l.type === 'case';
+
+      if (isCase) {
+        // Case listing
+        const sc = getCaseById(l.caseId);
+        if (!sc) return '';
+        const color = sc.rarityColor || '#4d79ff';
+        const daysLeft = Math.max(0, 7 - Math.floor((Date.now() - (l.listedAtTs||Date.now())) / 86400000));
+        return `
+          <div class="bazos-listing-card">
+            <div class="blc-rarity-bar" style="background:${color}"></div>
+            <div class="blc-bottle"><img src="assets/case_${sc.caseImg}.png" style="height:56px;width:auto;object-fit:contain"></div>
+            <div class="blc-info">
+              <div class="blc-name">${sc.emoji || '📦'} ${sc.name}</div>
+              <div class="blc-rarity" style="color:${color}">BEDNA · ${sc.rarity}</div>
+              <div class="blc-seller">👤 ${l.seller} · ${l.listedAt}</div>
+              <div style="font-size:0.6rem;font-family:'Share Tech Mono',monospace;color:${daysLeft<=1?'#ef4444':daysLeft<=3?'#f59e0b':'#4a5a6a'}">⏱ Vyprší za: ${daysLeft} dní</div>
+            </div>
+            <div class="blc-right">
+              <div class="blc-price">$${l.price}</div>
+              <div style="font-size:0.65rem;color:#f59e0b;margin-top:-4px">+10% taxa serveru</div>
+              ${isMe
+                ? `<button class="btn-remove-listing" onclick="removeListing('${l.uid}')">Stáhnout</button>`
+                : `<button class="btn-buy-listing" onclick="buyListing('${l.uid}')">Koupit $${Math.ceil(l.price*1.1)}</button>`
+              }
+            </div>
+          </div>`;
+      }
+
+      // Weapon listing
       const b = getBottleById(l.bottle_id);
       if (!b) return '';
-      const isMe = l.seller === state.username;
+      const daysLeft2 = Math.max(0, 7 - Math.floor((Date.now() - (l.listedAtTs||Date.now())) / 86400000));
       return `
         <div class="bazos-listing-card">
           <div class="blc-rarity-bar" style="background:${b.rarityColor}"></div>
@@ -4288,9 +4387,7 @@ function renderBazosListings() {
             <div class="blc-name">${b.name}</div>
             <div class="blc-rarity" style="color:${b.rarityColor}">${b.rarityName}</div>
             <div class="blc-seller">👤 ${l.seller} · ${l.listedAt}</div>
-            <div style="font-size:0.6rem;font-family:'Share Tech Mono',monospace;color:${(() => { const daysLeft = Math.max(0, 7 - Math.floor((Date.now() - (l.listedAtTs||Date.now())) / 86400000)); return daysLeft <= 1 ? '#ef4444' : daysLeft <= 3 ? '#f59e0b' : '#4a5a6a'; })()}">
-              ⏱ Vyprší za: ${(() => { const daysLeft = Math.max(0, 7 - Math.floor((Date.now() - (l.listedAtTs||Date.now())) / 86400000)); return daysLeft + ' dní'; })()}
-            </div>
+            <div style="font-size:0.6rem;font-family:'Share Tech Mono',monospace;color:${daysLeft2<=1?'#ef4444':daysLeft2<=3?'#f59e0b':'#4a5a6a'}">⏱ Vyprší za: ${daysLeft2} dní</div>
           </div>
           <div class="blc-right">
             <div class="blc-price">$${l.price}</div>
@@ -4305,12 +4402,13 @@ function renderBazosListings() {
 }
 
 function renderBazosSidebar() {
-  const myItems = state.inventory.filter(i => !state.bazosListings.find(l => l.uid === i.uid));
+  const myWeapons = state.inventory.filter(i => !state.bazosListings.find(l => l.uid === i.uid));
+  const myChests = (state.clickerChests || []).filter(ch => !state.bazosListings.find(l => l.uid === ch.uid));
   const el = document.getElementById('bazosMyItems');
   const noEl = document.getElementById('bazosNoItems');
   const form = document.getElementById('bazosSellForm');
 
-  if (!myItems.length) {
+  if (!myWeapons.length && !myChests.length) {
     el.innerHTML = '';
     noEl.style.display = 'block';
     form.style.display = 'none';
@@ -4318,36 +4416,75 @@ function renderBazosSidebar() {
   }
   noEl.style.display = 'none';
 
-  el.innerHTML = myItems.map(item => {
-    const b = getBottleById(item.bottle_id);
-    if (!b) return '';
+  const chestHtml = myChests.map(ch => {
+    const sc = getCaseById(ch.caseId);
+    if (!sc) return '';
     return `
-      <div class="bazos-sell-item ${selectedBazosItem === item.uid ? 'selected' : ''}" onclick="selectBazosItem('${item.uid}', getLivePrice('${item.bottle_id}'))">
-        <div class="bsi-bottle">${b.svg}</div>
+      <div class="bazos-sell-item ${selectedBazosItem === ch.uid ? 'selected' : ''}" onclick="selectBazosItem('${ch.uid}', ${getCaseLivePrice(ch.caseId)}, true, '${ch.caseId}')">
+        <div class="bsi-bottle"><img src="assets/case_${sc.caseImg}.png" style="height:40px;width:auto;object-fit:contain"></div>
         <div class="bsi-info">
-          <div class="bsi-name">${b.name}</div>
-          <div class="bsi-val">$${getLivePrice(item.bottle_id)} <span style="font-size:0.55rem;color:var(--muted)">LIVE</span></div>
+          <div class="bsi-name">${sc.emoji||'📦'} ${sc.name}</div>
+          <div class="bsi-val">$${getCaseLivePrice(ch.caseId)} <span style="font-size:0.55rem;color:var(--muted)">LIVE</span></div>
         </div>
       </div>`;
   }).join('');
 
+  el.innerHTML = (chestHtml ? `<div style="font-size:0.6rem;letter-spacing:2px;color:var(--muted);padding:4px 0 2px;font-family:'Share Tech Mono',monospace">📦 BEDNY</div>${chestHtml}<div style="font-size:0.6rem;letter-spacing:2px;color:var(--muted);padding:8px 0 2px;font-family:'Share Tech Mono',monospace">🔫 ZBRANĚ</div>` : '') +
+    myWeapons.map(item => {
+      const b = getBottleById(item.bottle_id);
+      if (!b) return '';
+      return `
+        <div class="bazos-sell-item ${selectedBazosItem === item.uid ? 'selected' : ''}" onclick="selectBazosItem('${item.uid}', getLivePrice('${item.bottle_id}'))">
+          <div class="bsi-bottle">${b.svg}</div>
+          <div class="bsi-info">
+            <div class="bsi-name">${b.name}</div>
+            <div class="bsi-val">$${getLivePrice(item.bottle_id)} <span style="font-size:0.55rem;color:var(--muted)">LIVE</span></div>
+          </div>
+        </div>`;
+    }).join('');
+
   form.style.display = selectedBazosItem ? 'block' : 'none';
 }
 
-function selectBazosItem(uid, val) {
+function selectBazosItem(uid, val, isCase, caseId) {
   selectedBazosItem = uid;
+  window._selectedBazosIsCase = isCase || false;
+  window._selectedBazosCaseId = caseId || null;
   document.getElementById('bazosPrice').value = Math.floor(val * 0.85);
   renderBazosSidebar();
 }
 
 function listItem() {
   if (!selectedBazosItem) return;
-  const item = state.inventory.find(i => i.uid === selectedBazosItem);
-  if (!item) return;
   const price = parseInt(document.getElementById('bazosPrice').value);
   if (!price || price < 1) { showToast('Zadej platnou cenu!', 'error'); return; }
-  const b = getBottleById(item.bottle_id);
 
+  if (window._selectedBazosIsCase) {
+    // List a case chest
+    const ch = (state.clickerChests || []).find(c => c.uid === selectedBazosItem);
+    if (!ch) return;
+    const sc = getCaseById(ch.caseId);
+    state.bazosListings.push({
+      uid: ch.uid,
+      type: 'case',
+      caseId: ch.caseId,
+      seller: state.username || 'Anonym',
+      price: price,
+      listedAt: new Date().toLocaleDateString('cs-CZ'),
+      listedAtTs: Date.now()
+    });
+    selectedBazosItem = null;
+    window._selectedBazosIsCase = false;
+    saveState();
+    showToast(`${sc ? sc.name : 'Bedna'} dána na Bazoš za $${price}! 📦`, 'info');
+    renderBazos();
+    return;
+  }
+
+  // List a weapon
+  const item = state.inventory.find(i => i.uid === selectedBazosItem);
+  if (!item) return;
+  const b = getBottleById(item.bottle_id);
   state.bazosListings.push({
     uid: item.uid,
     bottle_id: item.bottle_id,
@@ -4356,7 +4493,6 @@ function listItem() {
     listedAt: new Date().toLocaleDateString('cs-CZ'),
     listedAtTs: Date.now()
   });
-
   selectedBazosItem = null;
   saveState();
   checkAchievement('bazos_sell1');
@@ -4370,19 +4506,48 @@ function buyListing(listingUid) {
   const tax = Math.ceil(listing.price * 0.10);
   const totalCost = listing.price + tax;
   if (state.money < totalCost) { showToast(`Nedostatek $! Potřebuješ $${totalCost} (cena + 10% taxa serveru)`, 'error'); return; }
-  const b = getBottleById(listing.bottle_id);
 
   state.money -= totalCost;
 
-  // Kupující dostane item
-  if (listing.seller !== state.username) {
-    state.inventory.push({ uid: uid(), bottle_id: listing.bottle_id, wonAt: new Date().toLocaleDateString('cs-CZ'), value: b.value, listed: false });
-  } else {
-    // Když si kupuješ vlastní item zpět, vrať item do inventáře a nepočítej prodej
-    state.inventory.push({ uid: uid(), bottle_id: listing.bottle_id, wonAt: new Date().toLocaleDateString('cs-CZ'), value: b.value, listed: false });
+  if (listing.type === 'case') {
+    // Bedna → jde do clickerChests
+    const sc = getCaseById(listing.caseId);
+    if (!state.clickerChests) state.clickerChests = [];
+    // Odstraň bednu z inventáře prodávajícího (pokud je to ten samý hráč, vrať mu ji)
+    if (listing.seller !== state.username) {
+      // Koupená bedna od jiného → přidej do svých clickerChests
+      state.clickerChests.push({
+        uid: uid(), caseId: listing.caseId,
+        name: sc ? sc.name : listing.caseId,
+        img: sc ? sc.caseImg : 'case_cs2',
+        level: 1, obtainedAt: new Date().toLocaleDateString('cs-CZ')
+      });
+    } else {
+      // Kupuješ vlastní bednu zpět
+      state.clickerChests.push({
+        uid: uid(), caseId: listing.caseId,
+        name: sc ? sc.name : listing.caseId,
+        img: sc ? sc.caseImg : 'case_cs2',
+        level: 1, obtainedAt: new Date().toLocaleDateString('cs-CZ')
+      });
+    }
+    const sellerPayout = Math.floor(listing.price * 0.90);
+    if (listing.seller === state.username) { addMoney(sellerPayout); }
+    state.bazosListings = state.bazosListings.filter(l => l.uid !== listingUid);
+    updateCurrencyDisplay(); saveState();
+    showToast(`📦 ${sc ? sc.name : 'Bedna'} koupena za $${listing.price} + $${tax} taxa · přidána do tvých beden!`, 'success');
+    renderBazos();
+    return;
   }
 
-  // 90% jde prodávajícímu, 10% je taxa serveru
+  // Weapon purchase
+  const b = getBottleById(listing.bottle_id);
+  if (listing.seller !== state.username) {
+    state.inventory.push({ uid: uid(), bottle_id: listing.bottle_id, wonAt: new Date().toLocaleDateString('cs-CZ'), value: b ? b.value : 0, listed: false });
+  } else {
+    state.inventory.push({ uid: uid(), bottle_id: listing.bottle_id, wonAt: new Date().toLocaleDateString('cs-CZ'), value: b ? b.value : 0, listed: false });
+  }
+
   const sellerPayout = Math.floor(listing.price * 0.90);
   if (listing.seller === state.username) {
     addMoney(sellerPayout);
@@ -4537,16 +4702,36 @@ function spinCaseCustom(boosted) {
 //  CLICKER GAME
 // ─────────────────────────────────────────────────────
 const clkEnemyTypes = [
-  { level:1,  name:'Základní Bedna', img:'case_cs2',       hp:150,   reward:12  },
-  { level:2,  name:'Modrá Bedna',   img:'case_banger',    hp:320,   reward:28  },
-  { level:3,  name:'Stříbrná Bedna',img:'case_cyber',     hp:600,   reward:55  },
-  { level:4,  name:'Oranžová Bedna',img:'case_orange',    hp:1100,  reward:95  },
-  { level:5,  name:'Danger Box',    img:'case_banger',    hp:2000,  reward:160 },
-  { level:6,  name:'Gold Box',      img:'case_cs2',       hp:3500,  reward:280 },
-  { level:7,  name:'Esport Box',    img:'case_cyber',     hp:6000,  reward:450 },
-  { level:8,  name:'Treasure Box',  img:'case_topsecret', hp:10000, reward:700 },
-  { level:9,  name:'Top Secret',    img:'case_topsecret', hp:18000, reward:1100},
-  { level:10, name:'⭐ ULTRA BOX',  img:'case_orange',    hp:35000, reward:2500},
+  { level:1,  name:'Základní Bedna',  img:'case_cs2',           hp:180,    reward:12   },
+  { level:2,  name:'Toxic Box',        img:'case_banger',        hp:420,    reward:30   },
+  { level:3,  name:'Arctic Box',       img:'case_cyber',         hp:900,    reward:60   },
+  { level:4,  name:'Thunder Box',      img:'case_orange',        hp:1800,   reward:110  },
+  { level:5,  name:'Inferno Box',      img:'case_topsecret',     hp:3200,   reward:180  },
+  { level:6,  name:'Shadow Box',       img:'case_cs2',           hp:5500,   reward:300  },
+  { level:7,  name:'Covert Box',       img:'case_cyber',         hp:9000,   reward:480  },
+  { level:8,  name:'Phantom Box',      img:'case_topsecret',     hp:14000,  reward:750  },
+  { level:9,  name:'Dragon Box',       img:'case_orange',        hp:22000,  reward:1200 },
+  { level:10, name:'⭐ Legendary Box', img:'case_topsecret',     hp:35000,  reward:2000, armor:true },
+  { level:11, name:'Gold Box',         img:'case_cs2',           hp:52000,  reward:2800, armor:true },
+  { level:12, name:'Crystal Box',      img:'case_cyber',         hp:75000,  reward:3800, armor:true },
+  { level:13, name:'Tempest Cage',     img:'case_tempest_cage',  hp:105000, reward:5000, armor:true },
+  { level:14, name:'Ancient Box',      img:'case_pyramid_case',  hp:145000, reward:6500, armor:true },
+  { level:15, name:'Velocity Case',    img:'case_velocity_case', hp:195000, reward:8500, armor:true },
+  { level:16, name:'Diamond Case',     img:'case_diamond_case',  hp:260000, reward:11000,armor:true },
+  { level:17, name:'Frostbite Box',    img:'case_arctic_wolf',   hp:340000, reward:14000,armor:true },
+  { level:18, name:'CSZ Case',         img:'case_csz',           hp:440000, reward:18000,armor:true },
+  { level:19, name:'Infernd Case',     img:'case_infernd_pink',  hp:560000, reward:23000,armor:true },
+  { level:20, name:'Silver Tech Box',  img:'case_silver_tri',    hp:700000, reward:29000,armor:true },
+  { level:21, name:'Fire Box',         img:'case_fire_box',      hp:880000, reward:37000,armor:true },
+  { level:22, name:'Ice Box',          img:'case_ice_box',       hp:1100000,reward:46000,armor:true },
+  { level:23, name:'Cyber Box',        img:'case_cyber_box',     hp:1350000,reward:58000,armor:true },
+  { level:24, name:'Nuclear Box',      img:'case_nuclear_box',   hp:1650000,reward:72000,armor:true },
+  { level:25, name:'Energy Box',       img:'case_energy_box',    hp:2000000,reward:90000,armor:true },
+  { level:26, name:'Lunar Box',        img:'case_lunar_box',     hp:2500000,reward:110000,armor:true},
+  { level:27, name:'Danger Zone',      img:'case_danger_zone',   hp:3100000,reward:140000,armor:true},
+  { level:28, name:'Biohazard Box',    img:'case_biohazard_box', hp:3900000,reward:175000,armor:true},
+  { level:29, name:'Ancient Box',      img:'case_ancient_box',   hp:5000000,reward:220000,armor:true},
+  { level:30, name:'💀 DEMON BOX',     img:'case_demon_box',     hp:7000000,reward:300000,armor:true},
 ];
 
 let clkState = {
@@ -4571,6 +4756,14 @@ function clkSpawnEnemy() {
   const e = clkEnemyTypes[clkState.level - 1];
   clkState.currentHp = e.hp;
   clkState.maxHp = e.hp;
+  // Armor systém — od lvl 10 má bedna armor (35% z celkových HP)
+  if (e.armor) {
+    clkState.armorMax = Math.floor(e.hp * 0.35);
+    clkState.currentArmor = clkState.armorMax;
+  } else {
+    clkState.armorMax = 0;
+    clkState.currentArmor = 0;
+  }
   document.getElementById('clkEnemyName').textContent = e.name;
   document.getElementById('clkEnemyLabel').textContent = `Level ${e.level} — Bedna`;
   document.getElementById('clkLevelBadge').textContent = `LVL ${e.level}`;
@@ -4583,15 +4776,28 @@ function clkSpawnEnemy() {
 }
 
 function clkUpdateHpBar() {
-  const pct = Math.max(0, clkState.currentHp / clkState.maxHp * 100);
+  const hasArmor = clkState.armorMax > 0;
   const bar = document.getElementById('clkHpBar');
-  bar.style.width = pct + '%';
-  // Color: green → yellow → red
-  const r = Math.floor(255 * (1 - pct/100) * 2);
-  const g = Math.floor(255 * (pct/100) * 2);
-  const rc = Math.min(255, r); const gc = Math.min(255, g);
-  bar.style.background = `linear-gradient(90deg, rgb(${rc},${gc},50), rgb(${Math.min(255,rc+40)},${Math.min(255,gc+40)},80))`;
-  document.getElementById('clkHpText').textContent = `${Math.max(0,clkState.currentHp)} / ${clkState.maxHp}`;
+  const hpText = document.getElementById('clkHpText');
+
+  if (hasArmor && clkState.currentArmor > 0) {
+    // Zobraz armor bar (šedá/modrá)
+    const armorPct = Math.max(0, clkState.currentArmor / clkState.armorMax * 100);
+    bar.style.width = armorPct + '%';
+    bar.style.background = 'linear-gradient(90deg, #4a6fa5, #7aafff)';
+    hpText.textContent = `🛡️ ARMOR ${Math.max(0,clkState.currentArmor)} / ${clkState.armorMax}`;
+    hpText.style.color = '#7aafff';
+  } else {
+    // Normální HP bar
+    hpText.style.color = '';
+    const pct = Math.max(0, clkState.currentHp / clkState.maxHp * 100);
+    bar.style.width = pct + '%';
+    const r = Math.floor(255 * (1 - pct/100) * 2);
+    const g = Math.floor(255 * (pct/100) * 2);
+    const rc = Math.min(255, r); const gc = Math.min(255, g);
+    bar.style.background = `linear-gradient(90deg, rgb(${rc},${gc},50), rgb(${Math.min(255,rc+40)},${Math.min(255,gc+40)},80))`;
+    hpText.textContent = `${Math.max(0,clkState.currentHp)} / ${clkState.maxHp}`;
+  }
   // Low HP warning
   const hpPct2 = clkState.currentHp / clkState.maxHp;
   const wrap2 = document.getElementById('clkEnemyImgWrap');
@@ -4614,12 +4820,28 @@ function clkUpdateHpBar() {
 
 /* clkEnemyDied replaced */
 
+// ── Armor systém — poškození jde nejprve do armoru ──
+function clkApplyDamage(dmg) {
+  if (clkState.currentArmor > 0) {
+    const armorDmg = Math.min(clkState.currentArmor, dmg);
+    clkState.currentArmor -= armorDmg;
+    const overflow = dmg - armorDmg;
+    if (clkState.currentArmor <= 0) {
+      clkState.currentArmor = 0;
+      showToast('🛡️ Armor zničen! HP odkryto!', 'error');
+    }
+    if (overflow > 0) clkState.currentHp -= overflow;
+  } else {
+    clkState.currentHp -= dmg;
+  }
+  if (clkState.currentHp <= 0) clkEnemyDied();
+  else clkUpdateHpBar();
+}
+
 function clkAutoTick() {
   if (clkState.autoDps <= 0) return;
   if (currentPage !== 'clicker') return;
-  clkState.currentHp -= clkState.autoDps;
-  if (clkState.currentHp <= 0) clkEnemyDied();
-  else clkUpdateHpBar();
+  clkApplyDamage(clkState.autoDps);
 }
 
 setInterval(clkAutoTick, 1000);
@@ -4884,7 +5106,7 @@ function clickEnemy(e) {
     dmg = Math.floor(dmg * comboMult);
   }
   clkState.totalClicks++;
-  clkState.currentHp -= dmg;
+  clkApplyDamage(dmg);
   updateCombo();
   if(clkState.totalClicks%20===0) saveState();
 
@@ -4914,12 +5136,6 @@ function clickEnemy(e) {
   const enemy = document.getElementById('clkEnemyImgWrap');
   enemy.style.transform = `scale(0.92) rotate(${(Math.random()-0.5)*8}deg)`;
   setTimeout(() => enemy.style.transform = '', 100);
-
-  if (clkState.currentHp <= 0) {
-    clkEnemyDied();
-  } else {
-    clkUpdateHpBar();
-  }
 }
 
 function clkEnemyDied() {
@@ -4945,8 +5161,8 @@ function clkEnemyDied() {
   const chestInfo = CLICKER_CHEST_MAP[(clkState.level - 1) % CLICKER_CHEST_MAP.length];
   setTimeout(() => showKillChestDialog(chestInfo, clkState.level), 350);
 
-  // Level up (cycle through 1-10)
-  if (clkState.level < 10) {
+  // Level up (cycle through 1-30)
+  if (clkState.level < 30) {
     clkState.level++;
   } else {
     clkState.level = 1;
@@ -5026,6 +5242,7 @@ function spinCaseCustomFree(boosted) {
         document.getElementById('btnSpin').disabled = false;
         document.getElementById('btnCoinSpin').disabled = false;
         document.getElementById('mainCaseBox').classList.remove('spinning');
+        window._winnerFromClicker = true;
         setTimeout(() => showWinner(winner, boosted, false), 450);
       }
     }
@@ -5172,6 +5389,9 @@ function killChestOpenNow() {
 //  BIG ANNOYING UPDATE MODAL
 // ─────────────────────────────────────────────────────
 function initBigUpdate() {
+  // Popup při prvním spuštění vypnut
+  localStorage.setItem('alkocase_update_v2', '1');
+  return;
   const seen = localStorage.getItem('alkocase_update_v2');
   if (seen) return;
 
@@ -5862,7 +6082,7 @@ function initGameskaPage() {
 // ── INTRO MENU
 // ─────────────────────────────────────────────────────
 window.showLockedEvents = function() {
-  document.getElementById('eventsModal').classList.add('show');
+  switchTab('events');
 };
 
 window.showLockedAlko = function() {
@@ -6160,11 +6380,13 @@ document.addEventListener('click', function(e) {
 //  💹 GLOBAL WEAPON PRICES SYSTEM
 // ═══════════════════════════════════════════════════════════════
 
-const PRICE_KEY  = 'alkocase_prices_v2';
+const PRICE_KEY      = 'alkocase_prices_v2';
+const CASE_PRICE_KEY = 'alkocase_case_prices_v2';
 const HIST_KEY   = 'alkocase_price_hist_v2';
 const PRICE_INTERVAL = 14 * 60 * 60 * 1000;
 const MAX_HISTORY = 24; // data points per weapon
-let priceData    = {};   // { weaponId: { price, lastUpdate } }
+let priceData     = {};   // { weaponId: { price, lastUpdate } }
+let casePriceData = {};  // { caseId: { price, lastChange, lastUpdate } }
 let priceHistory = {};   // { weaponId: [{price, ts, label}] }
 let cenyFilter   = 'all';
 let priceCountdown = 14 * 60 * 60;
@@ -6174,8 +6396,30 @@ let activePriceChart = null;
 
 // All weapons (non-cash) from bottles array
 function getAllWeapons() {
-  return bottles.filter(b => !b.isMoney);
+  return bottles.filter(b => !b.isMoney && !b.isCaseReward);
 }
+
+// All shop cases for market
+function getAllCasesForMarket() {
+  return shopCases.map(c => ({
+    id: 'case_' + c.id,
+    caseId: c.id,
+    name: c.name,
+    emoji: c.emoji || '📦',
+    basePrice: c.price,
+    rarityColor: c.rarityColor || '#4d79ff',
+    rarityName: c.rarity || 'STANDARD',
+    caseImg: c.caseImg
+  }));
+}
+
+function getCaseLivePrice(caseId) {
+  const key = 'case_' + caseId;
+  if (casePriceData[key] && casePriceData[key].price) return casePriceData[key].price;
+  const sc = getCaseById(caseId);
+  return sc ? sc.price : 100;
+}
+window.getCaseLivePrice = getCaseLivePrice;
 
 function initPrices() {
   try {
@@ -6207,12 +6451,23 @@ function initPrices() {
       }
     }
   });
+  // Init case prices
+  try {
+    const stored = localStorage.getItem(CASE_PRICE_KEY);
+    if (stored) casePriceData = JSON.parse(stored);
+  } catch(e) { casePriceData = {}; }
+  getAllCasesForMarket().forEach(cs => {
+    if (!casePriceData[cs.id]) {
+      casePriceData[cs.id] = { price: cs.basePrice, lastChange: '+0.00%', lastUpdate: now };
+    }
+  });
   savePrices();
 }
 
 function savePrices() {
   try { localStorage.setItem(PRICE_KEY, JSON.stringify(priceData)); } catch(e) {}
   try { localStorage.setItem(HIST_KEY, JSON.stringify(priceHistory)); } catch(e) {}
+  try { localStorage.setItem(CASE_PRICE_KEY, JSON.stringify(casePriceData)); } catch(e) {}
 }
 
 // Returns current live market price for a weapon (falls back to base value)
@@ -6231,8 +6486,10 @@ function updatePrices() {
   weapons.forEach(w => {
     if (!priceData[w.id]) priceData[w.id] = { price: w.value, lastChange:'+0.00%', lastUpdate: now };
     const oldPrice = priceData[w.id].price;
-    // Random ±6.5% change
-    const pct = (Math.random() * 13 - 6.5) / 100;
+    // Random 0-3% změna každých 14 hodin
+    const magnitude = Math.random() * 3 / 100;
+    const direction = Math.random() < 0.5 ? 1 : -1;
+    const pct = magnitude * direction;
     const newPrice = Math.max(1, Math.round(oldPrice * (1 + pct)));
     const actualPct = ((newPrice - oldPrice) / oldPrice * 100);
     priceData[w.id].price = newPrice;
@@ -6244,6 +6501,20 @@ function updatePrices() {
     if (priceHistory[w.id].length > MAX_HISTORY) {
       priceHistory[w.id].shift();
     }
+  });
+
+  // Update case prices (0-2% random change)
+  getAllCasesForMarket().forEach(cs => {
+    if (!casePriceData[cs.id]) casePriceData[cs.id] = { price: cs.basePrice, lastChange:'+0.00%', lastUpdate: now };
+    const oldP = casePriceData[cs.id].price;
+    const mag2 = Math.random() * 3 / 100;
+    const dir2 = Math.random() < 0.5 ? 1 : -1;
+    const pct2 = mag2 * dir2;
+    const newP = Math.max(10, Math.round(oldP * (1 + pct2)));
+    const acp  = ((newP - oldP) / oldP * 100);
+    casePriceData[cs.id].price = newP;
+    casePriceData[cs.id].lastChange = (acp >= 0 ? '+' : '') + acp.toFixed(2) + '%';
+    casePriceData[cs.id].lastUpdate = now;
   });
 
   localStorage.setItem('alkocase_price_lastupd', Date.now().toString());
@@ -6261,21 +6532,18 @@ function updatePrices() {
 function startPriceSystem() {
   initPrices();
   updateCenyTicker();
-  // Update every 30s
-  priceUpdateInterval = setInterval(updatePrices, PRICE_INTERVAL);
-  // Countdown display
   const lastUpd = parseInt(localStorage.getItem('alkocase_price_lastupd') || '0');
   const elapsed = Date.now() - lastUpd;
-  priceCountdown = Math.max(1, Math.floor((PRICE_INTERVAL - elapsed) / 1000));
-
-  function fmtCountdown(sec) {
-    const h = Math.floor(sec / 3600);
-    const m = Math.floor((sec % 3600) / 60);
-    const s = sec % 60;
-    return h > 0 ? h + 'h ' + m + 'm' : m > 0 ? m + 'm ' + s + 's' : s + 's';
+  // If 14h already elapsed since last update, fire immediately
+  if (elapsed >= PRICE_INTERVAL || lastUpd === 0) {
+    updatePrices();
   }
-
-  // Countdown removed — update info hidden from BURZA
+  // Then schedule next update at the right time
+  const nextIn = lastUpd === 0 ? PRICE_INTERVAL : Math.max(1000, PRICE_INTERVAL - elapsed);
+  setTimeout(function schedulePriceUpdate() {
+    updatePrices();
+    priceUpdateInterval = setInterval(updatePrices, PRICE_INTERVAL);
+  }, nextIn);
 }
 
 function getWeaponImg(bottle) {
@@ -6288,13 +6556,41 @@ function renderCenyPage() {
   if (!wrap) return;
 
   const weapons = getAllWeapons().filter(w => cenyFilter === 'all' || w.rarity === cenyFilter);
+  const cases = cenyFilter === 'all' ? getAllCasesForMarket() : [];
 
-  if (!weapons.length) {
-    wrap.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">Žádné zbraně v tomto filtru.</div>';
+  let html = '';
+
+  // Cases section
+  if (cases.length) {
+    html += `<div style="font-family:'Oswald',sans-serif;font-size:0.7rem;letter-spacing:3px;color:var(--muted);padding:10px 0 6px;text-transform:uppercase">📦 BEDNY — MARKET CENY</div>`;
+    html += cases.map(cs => {
+      const pd = casePriceData['case_' + cs.caseId] || { price: cs.basePrice, lastChange: '+0.00%' };
+      const ch = pd.lastChange || '+0.00%';
+      const isUp = ch.startsWith('+') && !ch.startsWith('+0.00');
+      const isDown = ch.startsWith('-');
+      const changeClass = isUp ? 'up' : isDown ? 'down' : 'flat';
+      const changeArrow = isUp ? '▲' : isDown ? '▼' : '●';
+      return `<div class="ceny-row" style="--row-color:${cs.rarityColor}">
+        <img src="assets/case_${cs.caseImg}.png" class="ceny-row-img" alt="${cs.name}" onerror="this.style.opacity='0.3'">
+        <div>
+          <div class="ceny-row-name">${cs.emoji} ${cs.name}</div>
+          <div class="ceny-row-rarity" style="color:${cs.rarityColor}">${cs.rarityName}</div>
+        </div>
+        <div><span style="background:${cs.rarityColor}22;color:${cs.rarityColor};border:1px solid ${cs.rarityColor}44;border-radius:2px;padding:2px 7px;font-size:0.6rem;letter-spacing:1px;font-family:'Share Tech Mono',monospace">${cs.rarityName}</span></div>
+        <div class="ceny-row-price">$${pd.price.toLocaleString('cs-CZ')}</div>
+        <div class="ceny-row-change ${changeClass}">${changeArrow} ${ch}</div>
+        <div style="font-size:0.6rem;color:var(--muted);font-family:'Share Tech Mono',monospace">BEDNA</div>
+      </div>`;
+    }).join('');
+    html += `<div style="font-family:'Oswald',sans-serif;font-size:0.7rem;letter-spacing:3px;color:var(--muted);padding:14px 0 6px;text-transform:uppercase">🔫 ZBRANĚ — MARKET CENY</div>`;
+  }
+
+  if (!weapons.length && !cases.length) {
+    wrap.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">Žádné položky v tomto filtru.</div>';
     return;
   }
 
-  wrap.innerHTML = weapons.map(w => {
+  html += weapons.map(w => {
     const pd = priceData[w.id] || { price: w.value, lastChange: '+0.00%' };
     const ch = pd.lastChange || '+0.00%';
     const isUp = ch.startsWith('+') && !ch.startsWith('+0.00');
@@ -6321,6 +6617,8 @@ function renderCenyPage() {
       <button class="ceny-row-action" onclick="event.stopPropagation();showPriceChart('${w.id}')">📈 Graf</button>
     </div>`;
   }).join('');
+
+  wrap.innerHTML = html;
 
   // Draw spark lines
   weapons.forEach(w => {
@@ -6679,69 +6977,128 @@ function renderStocks() {
     const price = hist[hist.length-1];
     const prev = hist[hist.length-2] || price;
     const chg = ((price - prev) / prev * 100).toFixed(2);
-    const isUp = chg > 0;
+    const chg24 = hist.length >= 2 ? ((price - hist[Math.max(0, hist.length-20)]) / hist[Math.max(0, hist.length-20)] * 100).toFixed(2) : '0.00';
+    const isUp = chg >= 0;
     const h = stockHoldings[s.id];
-    const pnl = h.shares > 0 ? ((price - h.avgCost) * h.shares).toFixed(2) : null;
-    const pnlColor = pnl > 0 ? '#4ade80' : '#ef4444';
+    const invested = h.shares > 0 ? (h.avgCost * h.shares) : 0;
+    const currentVal = h.shares > 0 ? (price * h.shares) : 0;
+    const pnlAbs = h.shares > 0 ? (currentVal - invested) : 0;
+    const pnlPct = h.shares > 0 ? ((currentVal - invested) / invested * 100) : 0;
+    const pnlColor = pnlAbs >= 0 ? '#4ade80' : '#ef4444';
+    const sparkId = 'schart_' + s.id;
 
-    return `<div style="background:#07090f;border:1px solid #1a1e2e;border-radius:4px;padding:10px 12px;position:relative;overflow:hidden">
-      <div style="position:absolute;top:0;left:0;width:3px;height:100%;background:${s.color}"></div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-        <span style="font-size:1.3rem">${s.icon}</span>
+    return `<div style="background:linear-gradient(135deg,#070a12,#050810);border:1px solid ${s.color}22;border-radius:6px;padding:12px 14px;position:relative;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.4)">
+      <div style="position:absolute;top:0;left:0;width:3px;height:100%;background:${s.color};box-shadow:0 0 8px ${s.color}88"></div>
+      <div style="position:absolute;top:0;right:0;width:80px;height:80px;background:radial-gradient(circle at 100% 0%,${s.color}08 0%,transparent 70%);pointer-events:none"></div>
+
+      <!-- Header row -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="font-size:1.4rem">${s.icon}</span>
         <div style="flex:1">
-          <div style="font-family:Oswald,sans-serif;font-size:0.85rem;letter-spacing:2px;color:#8a9ab0">${s.name}
-            <span style="font-size:0.6rem;background:#111520;color:#3a4a5a;border:1px solid #1a2030;border-radius:3px;padding:1px 5px;margin-left:4px">${s.ticker}</span>
+          <div style="font-family:Oswald,sans-serif;font-size:0.9rem;letter-spacing:2px;color:#c8d8e8;display:flex;align-items:center;gap:6px">
+            ${s.name}
+            <span style="font-size:0.58rem;background:${s.color}22;color:${s.color};border:1px solid ${s.color}44;border-radius:3px;padding:1px 6px">${s.ticker}</span>
+            <span style="font-size:0.55rem;color:#3a4a5a;font-style:italic">${s.mood === 'bullish' ? '📈 bullish' : s.mood === 'bearish' ? '📉 bearish' : '⚡ volatile'}</span>
           </div>
-          <div style="font-size:0.6rem;color:#3a4a5a;margin-top:1px;font-style:italic">${s.desc}</div>
+          <div style="font-size:0.6rem;color:#3a4a6a;margin-top:1px">${s.desc}</div>
         </div>
         <div style="text-align:right">
-          <div style="font-family:'Share Tech Mono',monospace;font-size:1rem;color:#8a9ab0">$${price.toFixed(2)}</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:1.1rem;color:${isUp ? '#4ade80' : '#ef4444'};font-weight:700">$${price.toFixed(2)}</div>
           <div style="font-size:0.65rem;color:${isUp ? '#4ade80' : '#ef4444'}">${isUp ? '▲' : '▼'} ${Math.abs(chg)}%</div>
+          <div style="font-size:0.55rem;color:#3a4a5a">24h: ${parseFloat(chg24) >= 0 ? '+' : ''}${chg24}%</div>
         </div>
       </div>
-      <canvas id="schart_${s.id}" width="100%" height="40" style="width:100%;height:40px;display:block;margin-bottom:8px"></canvas>
-      ${h.shares > 0 ? `<div style="font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:#4a5a6a;margin-bottom:6px">
-        Držíš: ${h.shares} ks · avg $${h.avgCost.toFixed(2)} · P&L: <span style="color:${pnlColor}">${pnl > 0 ? '+' : ''}${pnl}</span>
-      </div>` : ''}
+
+      <!-- Chart -->
+      <canvas id="${sparkId}" height="52" style="width:100%;height:52px;display:block;margin-bottom:10px;border-radius:3px"></canvas>
+
+      <!-- Holdings info -->
+      ${h.shares > 0 ? `
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:4px;padding:8px 10px;margin-bottom:8px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px">
+        <div style="text-align:center">
+          <div style="font-size:0.58rem;color:#3a4a6a;letter-spacing:1px;text-transform:uppercase">Investováno</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:#8a9ab0">$${invested.toFixed(2)}</div>
+        </div>
+        <div style="text-align:center;border-left:1px solid #1a2030;border-right:1px solid #1a2030">
+          <div style="font-size:0.58rem;color:#3a4a6a;letter-spacing:1px;text-transform:uppercase">Hodnota</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:#8a9ab0">$${currentVal.toFixed(2)}</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:0.58rem;color:#3a4a6a;letter-spacing:1px;text-transform:uppercase">Výnos</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:${pnlColor};font-weight:700">${pnlAbs >= 0 ? '+' : ''}${pnlAbs.toFixed(2)} <span style="font-size:0.6rem">(${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(1)}%)</span></div>
+        </div>
+      </div>
+      <div style="font-size:0.6rem;color:#3a4a5a;margin-bottom:8px">Ks: ${h.shares.toFixed(4)} · prům. cena: $${h.avgCost.toFixed(2)}</div>` : ''}
+
+      <!-- Actions -->
       <div style="display:flex;gap:6px;align-items:center">
-        <input id="sinv_${s.id}" type="number" min="1" placeholder="$ investovat" style="flex:1;background:#050709;border:1px solid #1a2030;color:#8a9ab0;border-radius:3px;padding:5px 8px;font-size:0.72rem;font-family:'Share Tech Mono',monospace">
-        <button onclick="buyStock('${s.id}')" style="background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);color:#4ade80;border-radius:3px;padding:5px 10px;font-family:Oswald,sans-serif;font-size:0.7rem;letter-spacing:1px;cursor:pointer">KOUPIT</button>
-        ${h.shares > 0 ? `<button onclick="sellStock('${s.id}')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#ef4444;border-radius:3px;padding:5px 10px;font-family:Oswald,sans-serif;font-size:0.7rem;letter-spacing:1px;cursor:pointer">PRODAT</button>` : ''}
-        <button onclick="showStockChart('${s.id}')" style="background:transparent;border:1px solid #1a2030;color:#3a4a5a;border-radius:3px;padding:5px 10px;font-size:0.7rem;cursor:pointer">📈</button>
+        <input id="sinv_${s.id}" type="number" min="1" placeholder="$ investovat" style="flex:1;min-width:0;background:#050709;border:1px solid #1a2030;color:#8a9ab0;border-radius:3px;padding:6px 8px;font-size:0.72rem;font-family:'Share Tech Mono',monospace">
+        <button onclick="buyStock('${s.id}')" style="background:rgba(74,222,128,0.12);border:1px solid rgba(74,222,128,0.4);color:#4ade80;border-radius:3px;padding:6px 12px;font-family:Oswald,sans-serif;font-size:0.7rem;letter-spacing:1px;cursor:pointer;white-space:nowrap">KOUPIT</button>
+        ${h.shares > 0 ? `
+        <input id="ssell_${s.id}" type="number" min="1" placeholder="$ prodat" style="flex:1;min-width:0;background:#050709;border:1px solid #2a1515;color:#8a9ab0;border-radius:3px;padding:6px 8px;font-size:0.72rem;font-family:'Share Tech Mono',monospace">
+        <button onclick="sellStock('${s.id}')" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.4);color:#ef4444;border-radius:3px;padding:6px 12px;font-family:Oswald,sans-serif;font-size:0.7rem;letter-spacing:1px;cursor:pointer;white-space:nowrap">PRODAT</button>` : ''}
+        <button onclick="showStockChart('${s.id}')" style="background:transparent;border:1px solid #1a2030;color:#3a4a5a;border-radius:3px;padding:6px 10px;font-size:0.75rem;cursor:pointer" title="Detailní graf">📈</button>
       </div>
     </div>`;
   }).join('');
 
-  // Draw mini charts
+  // Draw enhanced mini charts
   STOCKS.forEach(s => {
     const canvas = document.getElementById('schart_' + s.id);
     if (!canvas) return;
     const hist = stockHistory[s.id];
     if (hist.length < 2) return;
+    const W = canvas.offsetWidth || 300, H = 52;
+    canvas.width = W; canvas.height = H;
     const ctx = canvas.getContext('2d');
-    const W = canvas.offsetWidth || 300, H = 40;
-    canvas.width = W;
-    const prices = hist.slice(-40);
+    const prices = hist.slice(-50);
     const mn = Math.min(...prices), mx = Math.max(...prices), rng = mx - mn || 1;
     const isUp = prices[prices.length-1] >= prices[0];
-    ctx.clearRect(0,0,W,H);
-    // Fill
+    const lineColor = isUp ? '#4ade80' : '#ef4444';
+    const py = p => H - 6 - ((p - mn) / rng) * (H - 12);
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+    [0.25, 0.5, 0.75].forEach(t => {
+      const y = Math.round(H * t) + 0.5;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    });
+
+    // Fill gradient
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, isUp ? 'rgba(74,222,128,0.18)' : 'rgba(239,68,68,0.18)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.beginPath();
-    prices.forEach((p,i) => {
-      const x = (i/(prices.length-1))*W, y = H - ((p-mn)/rng)*(H-4)-2;
-      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    prices.forEach((p, i) => {
+      const x = (i / (prices.length - 1)) * W;
+      i === 0 ? ctx.moveTo(x, py(p)) : ctx.lineTo(x, py(p));
     });
     ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
-    ctx.fillStyle = isUp ? 'rgba(74,222,128,0.06)' : 'rgba(239,68,68,0.06)';
-    ctx.fill();
-    // Line
+    ctx.fillStyle = grad; ctx.fill();
+
+    // Line with shadow
+    ctx.shadowColor = lineColor; ctx.shadowBlur = 4;
     ctx.beginPath();
-    prices.forEach((p,i) => {
-      const x = (i/(prices.length-1))*W, y = H - ((p-mn)/rng)*(H-4)-2;
-      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    prices.forEach((p, i) => {
+      const x = (i / (prices.length - 1)) * W;
+      i === 0 ? ctx.moveTo(x, py(p)) : ctx.lineTo(x, py(p));
     });
-    ctx.strokeStyle = isUp ? '#4ade80' : '#ef4444';
-    ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.strokeStyle = lineColor; ctx.lineWidth = 2; ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Last price dot
+    const lastX = W, lastY = py(prices[prices.length - 1]);
+    ctx.beginPath(); ctx.arc(lastX - 2, lastY, 3, 0, Math.PI * 2);
+    ctx.fillStyle = lineColor; ctx.fill();
+
+    // Min/max labels
+    ctx.font = '9px Share Tech Mono, monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.fillText('$' + mx.toFixed(1), 4, 11);
+    ctx.fillText('$' + mn.toFixed(1), 4, H - 3);
   });
 }
 
@@ -6768,11 +7125,23 @@ window.sellStock = function(id) {
   const h = stockHoldings[id];
   if (!h || h.shares <= 0) { showToast('Nic nemáš k prodeji!', 'error'); return; }
   const price = stockHistory[id][stockHistory[id].length-1];
-  const payout = h.shares * price;
+  const inp = document.getElementById('ssell_' + id);
+  const sellAmt = inp ? parseFloat(inp.value) : 0;
+  let sharesToSell, payout;
+  if (sellAmt > 0) {
+    sharesToSell = Math.min(h.shares, sellAmt / price);
+    payout = sharesToSell * price;
+    h.shares -= sharesToSell;
+    if (h.shares < 0.0001) { h.shares = 0; h.avgCost = 0; }
+  } else {
+    // Sell all
+    payout = h.shares * price;
+    h.shares = 0; h.avgCost = 0;
+  }
   addMoney(payout);
-  h.shares = 0; h.avgCost = 0;
   saveStocks(); saveState(); updateCurrencyDisplay();
-  showToast(`Prodal jsi všechny ${s.ticker} za $${payout.toFixed(2)} 💸`, 'info');
+  showToast(`Prodal jsi ${s.ticker} za $${payout.toFixed(2)} 💸`, 'info');
+  if (inp) inp.value = '';
   renderStocks();
 };
 
@@ -7493,6 +7862,15 @@ setTimeout(supabaseInit, 500);
         <button class="adm-btn danger" onclick="admEvent('crash')">💥 Market Crash (-20%)</button>
         <button class="adm-btn success" onclick="admEvent('boom')">🚀 Market Boom (+20%)</button>
       </div>
+
+      <div class="adm-section-title" style="margin-top:14px;">🏆 GLOBAL CHEST EVENT</div>
+      <div id="admGcStatus" style="font-size:0.8rem;color:#6a7a9a;margin-bottom:10px;font-family:'Share Tech Mono',monospace;">Načítám stav…</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;">
+        <button class="adm-btn success" onclick="admGcStart(1)">🏆 SPUSTIT EVENT</button>
+        <button class="adm-btn danger"  onclick="admGcStop()">🛑 ZASTAVIT</button>
+        <button class="adm-btn"         onclick="admGcRefreshStatus()">🔄 Refresh</button>
+      </div>
+
       <div class="adm-log" id="admEventLog"></div>
     </div>
 
@@ -7538,19 +7916,23 @@ function admLog(id, msg, ok = true) {
 function openAdminPanel() {
   if ((state.username || '').toLowerCase() !== 'lukamer') return;
   document.getElementById('adminOverlay').classList.add('show');
-  admLoadOnline();
+  admStartOnlineRefresh();
 }
 function closeAdminPanel() {
   document.getElementById('adminOverlay').classList.remove('show');
+  admStopOnlineRefresh();
 }
 
 function admSwitchTab(tab) {
   document.querySelectorAll('.adm-panel').forEach(p => p.classList.remove('active'));
+  if (tab === 'event' && typeof admGcRefreshStatus === 'function') admGcRefreshStatus();
   document.querySelectorAll('.adm-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('adm-panel-' + tab).classList.add('active');
   event.target.classList.add('active');
   if (tab === 'banlist') admLoadBanlist();
-  if (tab === 'online')  admLoadOnline();
+  if (tab === 'online')  { admStopOnlineRefresh(); admStartOnlineRefresh(); }
+  // Zastavit refresh pokud přejdeme na jiný tab
+  if (tab !== 'online')  admStopOnlineRefresh();
   if (tab === 'categories') admRenderCategories();
 }
 
@@ -7619,8 +8001,8 @@ async function runBanCheck() {
 
 // Spusť kontrolu při loadu (po 2s aby se Supabase stihl init)
 setTimeout(runBanCheck, 2000);
-// A pak každých 60s (pro rychlou reakci na nový ban)
-setInterval(runBanCheck, 60000);
+// Každých 10s — ban se projeví do 10 sekund od zbanování adminem
+setInterval(runBanCheck, 10000);
 
 // Check ban on login (legacy hook)
 const _origSbInit = window.supabaseInit || (async()=>{});
@@ -7630,20 +8012,33 @@ window.supabaseInit = async function() {
 };
 
 // ── ADMIN ACTIONS ──────────────────────────────────────────────────────
+let _admOnlineInterval = null;
+
 async function admLoadOnline() {
   try {
-    // Use live_activity — players active in last 5 minutes
     const since = Date.now() - 5 * 60 * 1000;
     const data = await sbFetch('live_activity?order=created_at.desc&limit=500');
     if (!Array.isArray(data)) { admLog('admOnlineNicks','Chyba načítání',false); return; }
     const recent = new Map();
     data.forEach(r => { if ((r.created_at||0) >= since) recent.set(r.username, r.created_at); });
     const nicks = [...recent.keys()];
-    document.getElementById('admOnlineCount').textContent = nicks.length || 0;
-    document.getElementById('admOnlineNicks').innerHTML = nicks.length
+    const countEl = document.getElementById('admOnlineCount');
+    const nicksEl = document.getElementById('admOnlineNicks');
+    if (countEl) countEl.textContent = nicks.length || 0;
+    if (nicksEl) nicksEl.innerHTML = nicks.length
       ? nicks.map(n => `<span style="display:inline-block;background:rgba(124,58,237,0.2);border-radius:4px;padding:1px 8px;margin:2px">${n}</span>`).join('')
       : '<span style="color:#6a7a9a">Nikdo aktivní</span>';
-  } catch(e) { document.getElementById('admOnlineNicks').textContent = 'Chyba: ' + e.message; }
+  } catch(e) { const el = document.getElementById('admOnlineNicks'); if(el) el.textContent = 'Chyba: ' + e.message; }
+}
+
+// Auto-refresh každých 5s pokud je online tab otevřen
+function admStartOnlineRefresh() {
+  admLoadOnline();
+  if (_admOnlineInterval) return;
+  _admOnlineInterval = setInterval(admLoadOnline, 5000);
+}
+function admStopOnlineRefresh() {
+  if (_admOnlineInterval) { clearInterval(_admOnlineInterval); _admOnlineInterval = null; }
 }
 
 async function admLoadBanlist() {
@@ -7711,6 +8106,59 @@ function admAddCurrency() {
   if (type === 'money') { addMoney(amt); admLog('admCurrLog', '+$' + amt.toLocaleString('cs-CZ') + ' přidáno'); }
   else { addCoins(amt); admLog('admCurrLog', '+' + amt + ' 💎 přidáno'); }
   showToast('💰 Přidáno ' + (type==='money'?'$'+amt:amt+'💎'), 'success');
+}
+
+async function admGcRefreshStatus() {
+  const el = document.getElementById('admGcStatus');
+  if (!el) return;
+  el.textContent = 'Načítám…';
+  try {
+    const chest = await gcPullChest();
+    if (!chest) {
+      el.innerHTML = '<span style="color:#ff4444">⚠️ Záznam neexistuje v DB (ještě nebyl spuštěn)</span>';
+    } else if (chest.active) {
+      const pct = chest.max_hp > 0 ? Math.round(chest.current_hp / chest.max_hp * 100) : 0;
+      el.innerHTML = `<span style="color:#3addff">✅ AKTIVNÍ — Level ${chest.level} | HP: ${chest.current_hp.toLocaleString()} / ${chest.max_hp.toLocaleString()} (${pct}%)</span>`;
+    } else {
+      el.innerHTML = `<span style="color:#6a7a9a">🔴 Neaktivní — poslední Level ${chest.level}${chest.killed_at ? ', zabit: ' + new Date(chest.killed_at).toLocaleString('cs-CZ') : ''}</span>`;
+    }
+  } catch(e) {
+    el.innerHTML = '<span style="color:#ff4444">Chyba při načítání stavu</span>';
+  }
+}
+
+async function admGcStart(level) {
+  const log = 'admEventLog';
+  admLog(log, `Spouštím Global Chest Level ${level}…`);
+  try {
+    await gcSpawnNextLevel(level);
+    admLog(log, `✅ Global Chest Level ${level} spuštěn!`);
+    showToast(`🏆 Global Chest Level ${level} spuštěn!`, 'success');
+    admGcRefreshStatus();
+    gcUpdateEventActiveBadge(true);
+    if (typeof renderEventsPage === 'function') renderEventsPage();
+  } catch(e) {
+    admLog(log, '❌ Chyba: ' + e.message);
+  }
+}
+
+async function admGcStop() {
+  const log = 'admEventLog';
+  admLog(log, 'Zastavuji Global Chest…');
+  try {
+    await gcFetch('global_chest?id=eq.' + GC_CHEST_ID, {
+      method: 'PATCH',
+      body: JSON.stringify({ active: false, killed_at: new Date().toISOString() })
+    });
+    gcState.active = false;
+    admLog(log, '🛑 Global Chest zastaven.');
+    showToast('🛑 Global Chest event zastaven.', 'error');
+    admGcRefreshStatus();
+    gcUpdateEventActiveBadge(false);
+    if (typeof renderEventsPage === 'function') renderEventsPage();
+  } catch(e) {
+    admLog(log, '❌ Chyba: ' + e.message);
+  }
 }
 
 function admEvent(type) {
@@ -7792,3 +8240,4 @@ function admToggleCategory(caseId) {
   if (currentPage === 'shop') renderShop();
 }
 </script>
+<script src="events.js"></script>
