@@ -5,11 +5,11 @@
 
 // ── GLOBAL CHEST CONFIG ─────────────────────────────────────────────
 const GLOBAL_CHEST_LEVELS = [
-  { level: 1, hp: 500000,   armor: Math.floor(500000 * 0.15),   img: 'case_cs2',          name: 'Global Chest I',       color: '#4d79ff' },
-  { level: 2, hp: 1000000,  armor: Math.floor(1000000 * 0.15),  img: 'case_cyber',        name: 'Global Chest II',      color: '#8847ff' },
-  { level: 3, hp: 1500000,  armor: Math.floor(1500000 * 0.15),  img: 'case_topsecret',    name: 'Global Chest III',     color: '#d32ee6' },
-  { level: 4, hp: 2000000,  armor: Math.floor(2000000 * 0.15),  img: 'case_danger_zone',  name: 'Global Chest IV',      color: '#eb4b4b' },
-  { level: 5, hp: 2500000,  armor: Math.floor(2500000 * 0.15),  img: 'case_demon_box',    name: '💀 GLOBAL CHEST MAX',  color: '#c9a227' },
+  { level: 1, hp: 350000,   armor: Math.floor(350000 * 0.05),   img: 'case_cs2',          name: 'Global Chest I',       color: '#4d79ff' },
+  { level: 2, hp: 700000,   armor: Math.floor(700000 * 0.05),   img: 'case_cyber',        name: 'Global Chest II',      color: '#8847ff' },
+  { level: 3, hp: 1050000,  armor: Math.floor(1050000 * 0.05),  img: 'case_topsecret',    name: 'Global Chest III',     color: '#d32ee6' },
+  { level: 4, hp: 1400000,  armor: Math.floor(1400000 * 0.05),  img: 'case_danger_zone',  name: 'Global Chest IV',      color: '#eb4b4b' },
+  { level: 5, hp: 1750000,  armor: Math.floor(1750000 * 0.05),  img: 'case_demon_box',    name: '💀 GLOBAL CHEST MAX',  color: '#c9a227' },
 ];
 
 // Supabase table: global_chest
@@ -249,6 +249,18 @@ function gcClickChest(e) {
     setTimeout(() => float.remove(), 700);
   }
 
+  // Squish animation on chest image
+  const gcImg = document.querySelector('#gcChestClickArea img');
+  if (gcImg) {
+    const rotDir = (Math.random() - 0.5) * 12;
+    gcImg.style.transition = 'transform 0.07s cubic-bezier(.2,.8,.3,1)';
+    gcImg.style.transform = `scale(0.88) rotate(${rotDir}deg)`;
+    setTimeout(() => {
+      gcImg.style.transform = 'scale(1.04) rotate(0deg)';
+      setTimeout(() => { gcImg.style.transform = ''; }, 80);
+    }, 75);
+  }
+
   // Flush to server debounced (every 300ms)
   clearTimeout(gcFlushTimeout);
   gcFlushTimeout = setTimeout(gcFlushToServer, 300);
@@ -447,7 +459,7 @@ window.renderEventsPage = async function() {
   const costAuto = gcGetUpgCost(2000,  upg.lvlAuto || 0);
 
   container.innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;max-width:1100px;margin:0 auto;height:100%">
+    <div style="display:grid;grid-template-columns:1fr 380px;gap:24px;max-width:100%;margin:0 auto;height:100%">
 
       <!-- LEFT: Chest area -->
       <div style="display:flex;flex-direction:column;align-items:center;gap:16px">
@@ -480,8 +492,8 @@ window.renderEventsPage = async function() {
 
         <!-- Chest image — clickable -->
         <div id="gcChestClickArea" onclick="gcClickChest(event)" style="position:relative;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation">
-          <div style="width:280px;height:280px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 50%,${cfg.color}22 0%,transparent 70%);border:2px solid ${cfg.color}44;border-radius:50%;box-shadow:0 0 40px ${cfg.color}22,inset 0 0 30px ${cfg.color}11;animation:enemyPulse 2s ease-in-out infinite;transition:transform 0.08s">
-            <img src="assets/${cfg.img}.png" style="width:220px;height:220px;object-fit:contain;filter:drop-shadow(0 0 24px ${cfg.color}88);animation:enemyFloat 2.5s ease-in-out infinite;pointer-events:none">
+          <div style="width:340px;height:340px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 50%,${cfg.color}22 0%,transparent 70%);border:2px solid ${cfg.color}44;border-radius:50%;box-shadow:0 0 50px ${cfg.color}33,inset 0 0 40px ${cfg.color}11;animation:enemyPulse 2s ease-in-out infinite;transition:transform 0.08s">
+            <img src="assets/${cfg.img}.png" style="width:280px;height:280px;object-fit:contain;filter:drop-shadow(0 0 30px ${cfg.color}aa);animation:enemyFloat 2.5s ease-in-out infinite;pointer-events:none">
           </div>
           <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,${cfg.color},#f0cc60);color:#111;font-family:'Oswald',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:2px;padding:2px 12px;border-radius:20px;white-space:nowrap">GLOBAL LVL ${gcState.level}</div>
         </div>
@@ -704,6 +716,9 @@ let duelSyncInterval = null;
 let duelAnimFrame = null;
 let duelFinished = false;
 let duelLastPush = 0;
+let duelCountdownDone = false;
+let duelCountdownInterval = null;
+let duelCountdownValue = 5;
 
 // ── FETCH ──────────────────────────────────────────────────────────
 async function duelPull() {
@@ -726,8 +741,21 @@ async function duelUpsertJoin(role, nick) {
 }
 
 // ── JOIN DUEL ──────────────────────────────────────────────────────
+
+// Spolehlivé načtení niku - z state, localStorage, nebo display elementu
+function duelGetMyNick() {
+  if (window.state && state.username && state.username !== 'Hráč' && state.username !== 'Nepřihlášen') return state.username;
+  const sq = localStorage.getItem('squad_session');
+  if (sq && sq.length > 1) return sq;
+  const el = document.getElementById('userNameDisplay');
+  if (el && el.textContent && el.textContent !== 'Hráč' && el.textContent !== 'Nepřihlášen') return el.textContent;
+  return null; // nepřihlášen
+}
+
 window.duelJoin = async function() {
-  const nick = (window.state && state.username) || (window.squadNick) || 'Anon';
+  const nick = duelGetMyNick();
+  if (!nick) { showToast('Nejsi přihlášen! Přihlaš se přes THE SQUAD.', 'error'); return; }
+
   const d = await duelPull();
   if (!d || !d.active) { showToast('Duel není aktivní!', 'error'); return; }
 
@@ -745,11 +773,58 @@ window.duelJoin = async function() {
     await duelUpsertJoin('p2', nick);
     showToast('⚔️ Připojil ses jako Hráč 2!', 'success');
   } else {
-    showToast('Duel je plný! Čekej na výsledek.', 'info'); return;
+    showToast('Duel je plný — čekej na výsledek.', 'info'); return;
   }
   duelLocalLevel = 1;
   duelFinished = false;
   duelInitLevel();
+  renderDuelPage();
+};
+
+// Odpojení ze slotu (pouze pokud hra ještě nezačala = druhý hráč nepřipojen)
+window.duelLeave = async function() {
+  const nick = duelGetMyNick();
+  if (!nick || !duelMyRole) return;
+  const d = await duelPull();
+  if (!d) return;
+  // Nelze odejít pokud jsou oba připojeni a hra probíhá
+  if (d.player1 && d.player2 && duelCountdownDone) {
+    showToast('Hra už běží — použij Opustit Duel!', 'error'); return;
+  }
+  const field = duelMyRole === 'p1' ? { player1: null, p1_level: 1, p1_hp_pct: 100 }
+                                    : { player2: null, p2_level: 1, p2_hp_pct: 100 };
+  await duelPush(field);
+  duelMyRole = null;
+  duelFinished = false;
+  duelCountdownDone = false;
+  clearInterval(duelCountdownInterval);
+  showToast('Odpojil ses ze slotu.', 'info');
+  renderDuelPage();
+};
+
+// Opuštění celého duelu — zruší zápas pro oba, notifikuje "Zápas zrušen"
+window.duelQuit = async function() {
+  const nick = duelGetMyNick();
+  if (!nick) return;
+  if (!confirm('Opravdu opustit duel? Zapas bude zrusen — zacne novy pro dalsi 2 hrace.')) return;
+  // Reset to fresh duel — stays active, both slots empty, new game ready
+  await duelPush({
+    active: true,
+    player1: null,
+    player2: null,
+    p1_level: 1,
+    p2_level: 1,
+    p1_hp_pct: 100,
+    p2_hp_pct: 100,
+    winner: null,
+    ended_at: null,
+    cancelled: false,
+  });
+  duelMyRole = null;
+  duelFinished = false;
+  duelCountdownDone = false;
+  clearInterval(duelCountdownInterval);
+  showToast('Zapas zrusen — novy duel ceka na hrace!', 'error');
   renderDuelPage();
 };
 
@@ -777,6 +852,9 @@ window.duelClick = function(e) {
   if (!duelState.player1 || !duelState.player2) {
     showToast('Čekej než se připojí soupeř!', 'info'); return;
   }
+  if (!duelCountdownDone) {
+    showToast('Čekej na odpočet!', 'info'); return;
+  }
 
   // Floating damage number
   const area = document.getElementById('duelMyClickArea');
@@ -790,6 +868,17 @@ window.duelClick = function(e) {
     area.style.position = 'relative';
     area.appendChild(floater);
     setTimeout(() => floater.remove(), 800);
+    // Squish animation
+    const duelImg = area.querySelector('img');
+    if (duelImg) {
+      const rot = (Math.random() - 0.5) * 14;
+      duelImg.style.transition = 'transform 0.07s cubic-bezier(.2,.8,.3,1)';
+      duelImg.style.transform = `scale(0.87) rotate(${rot}deg)`;
+      setTimeout(() => {
+        duelImg.style.transform = isCrit ? 'scale(1.08) rotate(0deg)' : 'scale(1.03) rotate(0deg)';
+        setTimeout(() => { duelImg.style.transform = ''; }, 80);
+      }, 70);
+    }
     duelLocalHp -= dmg;
   } else {
     duelLocalHp -= duelClickDmg;
@@ -802,7 +891,7 @@ window.duelClick = function(e) {
     if (duelLocalLevel >= DUEL_MAX_LEVEL) {
       // WON!
       duelFinished = true;
-      const nick = (window.state && state.username) || (window.squadNick) || 'Anon';
+      const nick = duelGetMyNick() || '';
       duelPush({
         winner: nick,
         active: false,
@@ -856,23 +945,70 @@ function duelGrantWinnerReward(isWinner) {
 }
 
 // ── SYNC ─────────────────────────────────────────────────────────
+
+// ── COUNTDOWN BEFORE DUEL STARTS ─────────────────────────────────
+function duelStartCountdown() {
+  if (duelCountdownDone) return;
+  duelCountdownValue = 5;
+  clearInterval(duelCountdownInterval);
+  // Show overlay countdown in the page
+  const showCD = (v) => {
+    const el = document.getElementById('duelCountdownOverlay');
+    if (!el) return;
+    if (v <= 0) {
+      el.innerHTML = `<div style="font-family:Oswald,sans-serif;font-size:3rem;font-weight:900;color:#4ade80;animation:winnerPop 0.3s ease-out;text-shadow:0 0 30px #4ade80">BOJUJ! ⚔️</div>`;
+      setTimeout(() => { el.style.display = 'none'; }, 800);
+    } else {
+      el.style.display = 'flex';
+      el.innerHTML = `<div style="font-family:Oswald,sans-serif;font-size:4rem;font-weight:900;color:#fff;animation:winnerPop 0.3s ease-out;text-shadow:0 0 40px rgba(255,255,255,0.5)">${v}</div>`;
+    }
+  };
+  showCD(duelCountdownValue);
+  duelCountdownInterval = setInterval(() => {
+    duelCountdownValue--;
+    showCD(duelCountdownValue);
+    if (duelCountdownValue <= 0) {
+      clearInterval(duelCountdownInterval);
+      duelCountdownDone = true;
+      if (window.currentPage === 'events' && window.currentEventsTab === 'duel') renderDuelPage();
+    }
+  }, 1000);
+}
+
 async function duelSync() {
   const d = await duelPull();
   if (!d) return;
+  const hadBothBefore = !!(duelState.player1 && duelState.player2);
   const wasActive = duelState.active;
   duelState = { ...duelState, ...d };
+  // Detect moment BOTH players just joined → start countdown
+  const hasBothNow = !!(d.player1 && d.player2);
+  if (!hadBothBefore && hasBothNow && d.active && !duelCountdownDone) {
+    duelStartCountdown();
+  }
 
   // Detect opponent won while I'm still playing
   if (!duelFinished && duelMyRole && d.active === false && d.winner) {
-    const myNick = (window.state && state.username) || (window.squadNick) || 'Anon';
-    if (d.winner !== myNick) {
+    const myNick = duelGetMyNick() || '';
+    if (myNick && d.winner !== myNick) {
       duelFinished = true;
       duelGrantWinnerReward(false);
     }
   }
 
-  if (window.currentPage === 'events' && window.currentEventsTab === 'duel') {
-    renderDuelPage();
+  if (window.currentPage === 'events' && (window.currentEventsTab === 'duel' || !window.currentEventsTab)) {
+    // Lightweight update: just update opponent bars without full re-render
+    const oppBar = document.getElementById(duelMyRole === 'p1' ? 'duelOppHpBar' : 'duelP1HpBar');
+    const oppLvl = document.getElementById(duelMyRole === 'p1' ? 'duelOppLvl' : 'duelP1Lvl');
+    const oppHpPct = duelMyRole === 'p1' ? (d.p2_hp_pct || 100) : (d.p1_hp_pct || 100);
+    const oppLvlNum = duelMyRole === 'p1' ? (d.p2_level || 1) : (d.p1_level || 1);
+    if (oppBar) oppBar.style.width = oppHpPct + '%';
+    if (oppLvl) oppLvl.textContent = 'LVL ' + oppLvlNum + ' / ' + DUEL_MAX_LEVEL;
+    // Full re-render only on big state changes (player joins/leaves, winner, countdown)
+    const stateChanged = wasActive !== duelState.active ||
+      (d.player1 !== duelState.player1) || (d.player2 !== duelState.player2) ||
+      !!d.winner || (!hadBothBefore && hasBothNow);
+    if (stateChanged) renderDuelPage();
   }
 }
 
@@ -884,7 +1020,7 @@ window.renderDuelPage = async function() {
   const d = await duelPull();
   if (d) { duelState = { ...duelState, ...d }; }
 
-  const myNick = (window.state && state.username) || (window.squadNick) || 'Anon';
+  const myNick = duelGetMyNick() || '';
   if (!duelMyRole && d) {
     if (d.player1 === myNick) { duelMyRole = 'p1'; duelInitLevel(); }
     else if (d.player2 === myNick) { duelMyRole = 'p2'; duelInitLevel(); }
@@ -893,8 +1029,18 @@ window.renderDuelPage = async function() {
   // ── NOT ACTIVE ──
   if (!d || !d.active) {
     const hasWinner = d && d.winner;
+    const wasCancelled = d && d.cancelled && !hasWinner;
+    duelMyRole = null;
+    duelCountdownDone = false;
+    clearInterval(duelCountdownInterval);
     container.innerHTML = `
       <div style="text-align:center;max-width:600px;margin:0 auto;padding:20px 0">
+        ${wasCancelled ? `
+        <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:24px;margin-bottom:20px">
+          <div style="font-size:2rem;margin-bottom:8px">&#9888;</div>
+          <div style="font-family:Oswald,sans-serif;font-size:1rem;letter-spacing:3px;color:#ef4444">ZAPAS ZRUSEN</div>
+          <div style="font-size:0.75rem;color:#6a7a9a;margin-top:6px">Jeden z hracu opustil duel. Ceka se na novy zapas.</div>
+        </div>` : ''}
         ${hasWinner ? `
         <div style="background:linear-gradient(135deg,rgba(196,146,39,0.15),rgba(0,0,0,0));border:1px solid rgba(196,146,39,0.35);border-radius:8px;padding:28px;margin-bottom:20px">
           <div style="font-size:2.5rem;margin-bottom:10px">🏆</div>
@@ -938,11 +1084,17 @@ window.renderDuelPage = async function() {
   }
 
   container.innerHTML = `
-    <div style="max-width:800px;margin:0 auto">
+    <div style="max-width:100%;margin:0 auto">
+      <!-- Countdown overlay -->
+      <div id="duelCountdownOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:999;align-items:center;justify-content:center;flex-direction:column;backdrop-filter:blur(4px)"></div>
+
       <!-- Header -->
-      <div style="text-align:center;margin-bottom:16px">
-        <div style="font-family:Oswald,sans-serif;font-size:0.8rem;letter-spacing:4px;color:#8847ff">⚔️ DUEL 1v1 — KLIKER RACE</div>
-        <div style="font-size:0.62rem;color:var(--muted2);margin-top:4px">První hráč co sundá LVL 1–10 vyhraje <strong style="color:#c9a227">10 beden</strong> · Poražený dostane 0–5 beden</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div>
+          <div style="font-family:Oswald,sans-serif;font-size:0.8rem;letter-spacing:4px;color:#8847ff">⚔️ DUEL 1v1 — KLIKER RACE</div>
+          <div style="font-size:0.62rem;color:var(--muted2);margin-top:4px">První hráč co sundá LVL 1–10 vyhraje <strong style="color:#c9a227">10 beden</strong> · Poražený dostane 0–5 beden</div>
+        </div>
+        ${amPlayer ? `<button onclick="duelQuit()" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.35);color:#ef4444;border-radius:4px;padding:7px 14px;font-family:Oswald,sans-serif;font-size:0.68rem;letter-spacing:1px;cursor:pointer;white-space:nowrap;flex-shrink:0">🚪 Opustit duel</button>` : ''}
       </div>
 
       ${!bothJoined ? `
@@ -961,9 +1113,26 @@ window.renderDuelPage = async function() {
             <div style="font-family:Oswald,sans-serif;font-size:0.85rem;color:${p2?'#4ade80':'#3a4a6a'};margin-top:4px">${p2 || '— volné —'}</div>
           </div>
         </div>
-        ${!amPlayer ? `<button onclick="duelJoin()" style="margin-top:16px;background:rgba(136,71,255,0.2);border:1px solid rgba(136,71,255,0.5);color:#a78bfa;border-radius:4px;padding:10px 28px;font-family:Oswald,sans-serif;font-size:0.85rem;letter-spacing:2px;cursor:pointer">⚔️ PŘIPOJIT SE</button>` : `<div style="margin-top:12px;font-size:0.75rem;color:#4ade80">✅ Jsi přihlášen — čekej na soupeře…</div>`}
+        ${!amPlayer ? `
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:16px">
+            <button onclick="duelJoin()" style="background:rgba(136,71,255,0.2);border:1px solid rgba(136,71,255,0.5);color:#a78bfa;border-radius:4px;padding:10px 28px;font-family:Oswald,sans-serif;font-size:0.85rem;letter-spacing:2px;cursor:pointer">⚔️ PŘIPOJIT SE</button>
+            ${!p1 && !p2 ? '<div style="font-size:0.62rem;color:#3a4a6a">Budeš první — čeká se na druhého hráče.</div>' : ''}
+          </div>` : `
+          <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:16px">
+            <div style="font-size:0.75rem;color:#4ade80;display:flex;align-items:center;gap:6px">
+              <div style="width:8px;height:8px;border-radius:50%;background:#4ade80;animation:ibBlink 1s ease infinite"></div>
+              Připojen jako <strong>${duelMyRole==='p1'?p1:p2}</strong> — čekej na soupeře…
+            </div>
+            <button onclick="duelLeave()" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#ef4444;border-radius:4px;padding:7px 20px;font-family:Oswald,sans-serif;font-size:0.72rem;letter-spacing:2px;cursor:pointer">✖ ODPOJIT SE</button>
+          </div>`}
       </div>` : ''}
 
+      ${bothJoined && !duelCountdownDone ? `
+      <!-- COUNTDOWN NOTICE -->
+      <div style="text-align:center;background:rgba(136,71,255,0.08);border:1px solid rgba(136,71,255,0.25);border-radius:6px;padding:12px;margin-bottom:12px">
+        <div style="font-family:Oswald,sans-serif;font-size:0.8rem;letter-spacing:3px;color:#a78bfa">⏱ ODPOČET ZAČÍNÁ…</div>
+        <div style="font-size:0.65rem;color:#6a7a9a;margin-top:4px">Oba hráči připojeni — připravte se!</div>
+      </div>` : ''}
       ${bothJoined ? `
       <!-- RACE UI -->
       <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:start">
@@ -974,8 +1143,8 @@ window.renderDuelPage = async function() {
           <!-- Level dots -->
           <div style="display:flex;align-items:center;width:100%;gap:2px">${levelDots(amPlayer?duelLocalLevel:d.p1_level, amPlayer?Math.round((duelLocalHp/duelLocalMaxHp)*100):d.p1_hp_pct, '#4ade80')}</div>
           <!-- Enemy -->
-          <div id="${amPlayer?'duelMyClickArea':'duelP1Area'}" onclick="${amPlayer?'duelClick(event)':''}" style="cursor:${amPlayer&&bothJoined?'pointer':'default'};width:130px;height:130px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 50%,rgba(74,222,128,0.1) 0%,transparent 70%);border:1px solid rgba(74,222,128,0.2);border-radius:50%;${amPlayer?'animation:enemyPulse 2s ease-in-out infinite':''}">
-            <img src="assets/${amPlayer?myEn.img:DUEL_ENEMIES[Math.min(d.p1_level,DUEL_MAX_LEVEL)-1].img}.png" style="width:100px;height:100px;object-fit:contain;pointer-events:none;filter:drop-shadow(0 0 12px rgba(74,222,128,0.4))">
+          <div id="${amPlayer?'duelMyClickArea':'duelP1Area'}" onclick="${amPlayer?'duelClick(event)':''}" style="cursor:${amPlayer&&bothJoined?'pointer':'default'};width:180px;height:180px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 50%,rgba(74,222,128,0.1) 0%,transparent 70%);border:1px solid rgba(74,222,128,0.2);border-radius:50%;${amPlayer?'animation:enemyPulse 2s ease-in-out infinite':''}">
+            <img src="assets/${amPlayer?myEn.img:DUEL_ENEMIES[Math.min(d.p1_level,DUEL_MAX_LEVEL)-1].img}.png" style="width:140px;height:140px;object-fit:contain;pointer-events:none;filter:drop-shadow(0 0 16px rgba(74,222,128,0.5))">
           </div>
           <div style="width:100%">
             <div style="display:flex;justify-content:space-between;font-size:0.58rem;color:#4ade80;font-family:'Share Tech Mono',monospace;margin-bottom:3px">
@@ -1001,15 +1170,15 @@ window.renderDuelPage = async function() {
           <!-- Level dots -->
           <div style="display:flex;align-items:center;width:100%;gap:2px">${levelDots(amPlayer?oppLevel:d.p2_level, amPlayer?oppHpPct:d.p2_hp_pct, '#ef4444')}</div>
           <!-- Enemy -->
-          <div style="width:130px;height:130px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 50%,rgba(239,68,68,0.1) 0%,transparent 70%);border:1px solid rgba(239,68,68,0.2);border-radius:50%">
-            <img src="assets/${amPlayer?(oppEn?oppEn.img:DUEL_ENEMIES[0].img):DUEL_ENEMIES[Math.min(d.p2_level,DUEL_MAX_LEVEL)-1].img}.png" style="width:100px;height:100px;object-fit:contain;pointer-events:none;filter:drop-shadow(0 0 12px rgba(239,68,68,0.4))">
+          <div style="width:180px;height:180px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 50%,rgba(239,68,68,0.1) 0%,transparent 70%);border:1px solid rgba(239,68,68,0.2);border-radius:50%">
+            <img src="assets/${amPlayer?(oppEn?oppEn.img:DUEL_ENEMIES[0].img):DUEL_ENEMIES[Math.min(d.p2_level,DUEL_MAX_LEVEL)-1].img}.png" style="width:140px;height:140px;object-fit:contain;pointer-events:none;filter:drop-shadow(0 0 16px rgba(239,68,68,0.5))">
           </div>
           <div style="width:100%">
             <div style="display:flex;justify-content:space-between;font-size:0.58rem;color:#ef4444;font-family:'Share Tech Mono',monospace;margin-bottom:3px">
-              <span>LVL ${amPlayer?oppLevel:d.p2_level} / ${DUEL_MAX_LEVEL}</span>
+              <span id="duelOppLvl">LVL ${amPlayer?oppLevel:d.p2_level} / ${DUEL_MAX_LEVEL}</span>
             </div>
             <div style="height:14px;background:var(--bg3);border:1px solid var(--border2);border-radius:3px;overflow:hidden">
-              <div style="height:100%;width:${amPlayer?oppHpPct:d.p2_hp_pct}%;background:linear-gradient(90deg,#991b1b,#ef4444);transition:width 0.3s"></div>
+              <div id="duelOppHpBar" style="height:100%;width:${amPlayer?oppHpPct:d.p2_hp_pct}%;background:linear-gradient(90deg,#991b1b,#ef4444);transition:width 0.3s"></div>
             </div>
             <div style="font-size:0.58rem;color:#3a4a6a;font-family:'Share Tech Mono',monospace;margin-top:2px">${amPlayer?oppHpPct:d.p2_hp_pct}% HP</div>
           </div>
@@ -1029,7 +1198,7 @@ async function duelInit() {
   const d = await duelPull();
   if (d) {
     duelState = { ...duelState, ...d };
-    const myNick = (window.state && state.username) || (window.squadNick) || 'Anon';
+    const myNick = duelGetMyNick() || '';
     if (d.player1 === myNick) { duelMyRole = 'p1'; duelInitLevel(); }
     else if (d.player2 === myNick) { duelMyRole = 'p2'; duelInitLevel(); }
   }

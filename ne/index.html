@@ -4630,7 +4630,9 @@ function renderLeaderboard() {
     return `
       <div class="lb-row ${isMe ? 'me' : ''}">
         <div class="lb-rank ${rankClass}">${rankEmoji[i] || i + 1}</div>
-        <div class="lb-avatar" style="background:linear-gradient(135deg,${rarityColors[e.bestRarity] || '#4d79ff'},#1a1d27)">${initials}</div>
+        <div class="lb-avatar" style="${isMe && localStorage.getItem('rc_avatar') ? 'background:none;padding:0;overflow:hidden' : 'background:linear-gradient(135deg,' + (rarityColors[e.bestRarity] || '#4d79ff') + ',#1a1d27)'}">
+          ${(() => { if (isMe) { const avId = localStorage.getItem('rc_avatar'); if (avId && typeof AVATAR_DEFS !== 'undefined') { const avDef = AVATAR_DEFS.find(a => a.id === avId); if (avDef) return avDef.svg; } } return initials; })()}
+        </div>
         <div class="lb-name">${e.username} ${isMe ? '<span style="color:var(--gold);font-size:0.7rem">(ty)</span>' : ''}</div>
         <div class="lb-stats">
           <div class="lb-stat-item"><span>${e.score}</span><span>SKÓRE</span></div>
@@ -6899,13 +6901,13 @@ setTimeout(startPriceSystem, 500);
 
 <!-- AVATAR MODAL -->
 <div class="modal-overlay" id="avatarModal" onclick="if(event.target===this)this.classList.remove('show')" style="z-index:1200">
-  <div class="modal-box" style="max-width:480px;border-color:rgba(139,92,246,0.3);background:#070a12;padding:0;overflow:hidden">
+  <div class="modal-box" style="max-width:560px;width:95%;border-color:rgba(139,92,246,0.3);background:#070a12;padding:0;overflow:hidden">
     <div style="background:linear-gradient(135deg,#0d0f1a,#12091f);padding:20px 20px 0">
       <div style="font-family:Oswald,sans-serif;font-size:1rem;letter-spacing:4px;color:#8b5cf6;margin-bottom:4px">PROFIL HRÁČE</div>
       <div style="font-size:0.6rem;color:#3a4a6a;letter-spacing:2px" id="avatarModalName">—</div>
     </div>
     <!-- Player stats -->
-    <div style="padding:16px 20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px" id="avatarStats">
+    <div style="padding:16px 20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px" id="avatarStats">
     </div>
     <!-- Avatar picker -->
     <div style="padding:0 20px 8px">
@@ -7388,10 +7390,10 @@ function openAvatarModal() {
     { icon:'⭐', label:'Gold drops',  val: goldCount },
   ];
   statsEl.innerHTML = statItems.map(s => `
-    <div style="background:#050709;border:1px solid rgba(255,255,255,0.06);border-radius:5px;padding:8px 6px;text-align:center">
-      <div style="font-size:1.1rem">${s.icon}</div>
-      <div style="font-family:'Share Tech Mono',monospace;font-size:0.78rem;color:#c8d8e8;font-weight:700;margin:2px 0">${s.val}</div>
-      <div style="font-size:0.52rem;color:#3a4a6a;letter-spacing:1px;text-transform:uppercase">${s.label}</div>
+    <div style="background:#0d1117;border:1px solid rgba(139,92,246,0.18);border-radius:8px;padding:12px 8px;text-align:center">
+      <div style="font-size:1.4rem;margin-bottom:4px">${s.icon}</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:0.9rem;color:#e2e8f0;font-weight:700;margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.val}</div>
+      <div style="font-size:0.6rem;color:#64748b;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px">${s.label}</div>
     </div>`).join('');
 
   // Pick 3 random avatars
@@ -7420,8 +7422,8 @@ window.selectAvatar = function(id) {
     el.style.borderColor = isSelected ? '#8b5cf6' : 'rgba(255,255,255,0.07)';
     el.style.background  = isSelected ? 'rgba(139,92,246,0.1)' : '#050709';
   });
-  // Update main avatar bubble
   const av = AVATAR_DEFS.find(a => a.id === id);
+  // Update main nav avatar bubble
   if (av) {
     const avatarEl = document.getElementById('userAvatar');
     if (avatarEl) {
@@ -7429,6 +7431,17 @@ window.selectAvatar = function(id) {
       avatarEl.style.padding = '0';
       avatarEl.style.overflow = 'hidden';
     }
+    // Update MY leaderboard row avatar(s)
+    const myNick = (window.state && state.username) || '';
+    document.querySelectorAll('.lb-avatar').forEach(el => {
+      const row = el.closest('.lb-row');
+      if (row && row.classList.contains('me')) {
+        el.innerHTML = av.svg;
+        el.style.background = 'none';
+        el.style.padding = '0';
+        el.style.overflow = 'hidden';
+      }
+    });
   }
   showToast('Avatar změněn: ' + (av ? av.label : id) + ' ✨', 'success');
 };
@@ -8541,6 +8554,7 @@ function admToggleCategory(caseId) {
 let currentEventsTab = 'gc';
 window.switchEventsTab = function(tab) {
   currentEventsTab = tab;
+  window.currentEventsTab = tab;
   const gcBtn   = document.getElementById('evTab_gc');
   const duelBtn = document.getElementById('evTab_duel');
   const titleEl = document.getElementById('eventsPageTitle');
