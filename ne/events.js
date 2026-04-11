@@ -725,6 +725,7 @@ let duelLastPush = 0;
 let duelCountdownDone = false;
 let duelCountdownInterval = null;
 let duelCountdownValue = 5;
+let duelSpectating = false;
 
 // ── FETCH ──────────────────────────────────────────────────────────
 async function duelPull() {
@@ -1036,6 +1037,12 @@ async function duelSync() {
     }
   }
 
+  // Auto-stop spectating when duel ends
+  if (duelSpectating && (!d.active || d.winner)) {
+    duelSpectating = false;
+    showToast('📺 Duel skončil — sledování ukončeno.', 'info');
+  }
+
   if (window.currentPage === 'events' && (window.currentEventsTab === 'duel' || !window.currentEventsTab)) {
     // Lightweight update: just update opponent bars without full re-render
     const oppBar = document.getElementById(duelMyRole === 'p1' ? 'duelOppHpBar' : 'duelP1HpBar');
@@ -1044,6 +1051,15 @@ async function duelSync() {
     const oppLvlNum = duelMyRole === 'p1' ? (d.p2_level || 1) : (d.p1_level || 1);
     if (oppBar) oppBar.style.width = oppHpPct + '%';
     if (oppLvl) oppLvl.textContent = 'LVL ' + oppLvlNum + ' / ' + DUEL_MAX_LEVEL;
+    // Update spectator bars if spectating
+    if (duelSpectating) {
+      const sp1 = document.getElementById('specP1Bar');
+      const sp2 = document.getElementById('specP2Bar');
+      if (sp1) sp1.style.width = (d.p1_hp_pct || 100) + '%';
+      if (sp2) sp2.style.width = (d.p2_hp_pct || 100) + '%';
+      const sl1 = document.querySelector('#specP1Bar')?.closest('[style]')?.parentElement?.querySelector('.specP1Lvl');
+      // Just re-render spectator section lightweight — update via the bars above is enough
+    }
     // Full re-render only on big state changes (player joins/leaves, winner, countdown)
     const stateChanged = wasActive !== duelState.active ||
       (d.player1 !== duelState.player1) || (d.player2 !== duelState.player2) ||
@@ -1227,10 +1243,50 @@ window.renderDuelPage = async function() {
 
       ${!amPlayer ? `
       <div style="text-align:center;margin-top:16px">
-        <div style="font-size:0.72rem;color:#6a7a9a">Duel probíhá — sleduj live výsledky!</div>
+        ${duelSpectating
+          ? `<div style="background:rgba(0,207,255,0.06);border:1px solid rgba(0,207,255,0.25);border-radius:8px;padding:14px 20px;margin-bottom:10px">
+               <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px">
+                 <div style="width:8px;height:8px;border-radius:50%;background:#3addff;box-shadow:0 0 8px #3addff;animation:ibBlink 1s ease infinite"></div>
+                 <span style="font-family:Oswald,sans-serif;font-size:0.78rem;letter-spacing:3px;color:#3addff">LIVE SPECTATOR</span>
+               </div>
+               <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;font-size:0.7rem">
+                 <div style="text-align:center">
+                   <div style="color:#4ade80;font-family:Oswald,sans-serif;font-size:0.72rem;letter-spacing:2px;margin-bottom:6px">${p1}</div>
+                   <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:3px;height:10px;overflow:hidden;width:100%">
+                     <div id="specP1Bar" style="height:100%;width:${d.p1_hp_pct||100}%;background:linear-gradient(90deg,#16a34a,#4ade80);transition:width 0.3s"></div>
+                   </div>
+                   <div style="color:#4ade80;font-size:0.58rem;margin-top:3px;font-family:'Share Tech Mono',monospace">LVL ${d.p1_level||1} / ${DUEL_MAX_LEVEL}</div>
+                 </div>
+                 <div style="color:#3a4a6a;font-family:Oswald,sans-serif;font-size:1rem;font-weight:700">VS</div>
+                 <div style="text-align:center">
+                   <div style="color:#ef4444;font-family:Oswald,sans-serif;font-size:0.72rem;letter-spacing:2px;margin-bottom:6px">${p2}</div>
+                   <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:3px;height:10px;overflow:hidden;width:100%">
+                     <div id="specP2Bar" style="height:100%;width:${d.p2_hp_pct||100}%;background:linear-gradient(90deg,#991b1b,#ef4444);transition:width 0.3s"></div>
+                   </div>
+                   <div style="color:#ef4444;font-size:0.58rem;margin-top:3px;font-family:'Share Tech Mono',monospace">LVL ${d.p2_level||1} / ${DUEL_MAX_LEVEL}</div>
+                 </div>
+               </div>
+             </div>
+             <button onclick="duelStopSpectate()" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#ef4444;border-radius:4px;padding:7px 20px;font-family:Oswald,sans-serif;font-size:0.72rem;letter-spacing:2px;cursor:pointer">⛔ PŘESTAT SLEDOVAT</button>`
+          : `${bothJoined
+              ? `<button onclick="duelSpectate()" style="background:rgba(0,207,255,0.1);border:1px solid rgba(0,207,255,0.35);color:#3addff;border-radius:4px;padding:9px 24px;font-family:Oswald,sans-serif;font-size:0.8rem;letter-spacing:2px;cursor:pointer">📺 SLEDOVAT LIVE</button>
+                 <div style="font-size:0.6rem;color:#3a4a6a;margin-top:8px">Sleduj průběh duelu v reálném čase</div>`
+              : `<div style="font-size:0.72rem;color:#6a7a9a">Čeká se na hráče…</div>`}`
+        }
       </div>` : ''}
       ` : ''}
     </div>`;
+};
+
+// ── SPECTATOR MODE ────────────────────────────────────────────────
+window.duelSpectate = function() {
+  duelSpectating = true;
+  renderDuelPage();
+  showToast('📺 Sleduješ duel live!', 'info');
+};
+window.duelStopSpectate = function() {
+  duelSpectating = false;
+  renderDuelPage();
 };
 
 // ── DUEL SYNC INIT ────────────────────────────────────────────────

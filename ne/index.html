@@ -993,6 +993,10 @@ body::after {
 }
 .bf6-statusbar .sb-dot { width:5px;height:5px;border-radius:50%;background:var(--gold);box-shadow:0 0 6px var(--gold);animation:sbBlink 1.4s ease infinite; }
 @keyframes sbBlink { 0%,100%{opacity:1}50%{opacity:0.2} }
+@keyframes prestigeGlow {
+  from { box-shadow: 0 0 8px rgba(245,158,11,0.3), 0 0 20px rgba(245,158,11,0.1); }
+  to   { box-shadow: 0 0 18px rgba(245,158,11,0.7), 0 0 40px rgba(245,158,11,0.3); }
+}
 .bf6-statusbar .sb-label { color:var(--gold2); }
 
 /* ── SHOP REVAMP ────────────────────────────────── */
@@ -2816,6 +2820,9 @@ button:active:not(:disabled) { transform: scale(0.96) !important; }
       </div>
 
       <div class="clicker-sidebar">
+        <!-- Prestige badge -->
+        <div id="clkPrestigeBadge" style="display:none;align-items:center;justify-content:center;gap:6px;background:rgba(0,0,0,0.4);border-radius:5px;padding:6px 10px;margin-bottom:4px"></div>
+
         <!-- Stats -->
         <div class="clk-section-title">📊 Statistiky</div>
         <div class="clk-stat-row">
@@ -2872,12 +2879,14 @@ button:active:not(:disabled) { transform: scale(0.96) !important; }
         </div>
 
 
+        <!-- Prestige -->
+        <div class="clk-section-title" style="margin-top:8px">✨ Prestige</div>
+        <div id="btnPrestige"></div>
+
       </div>
     </div>
   </div>
 
-
-  <!-- u2563u2550u2550 EVENTS PAGE u2563u2550u2550 -->
   <div class="page" id="pageEvents">
     <div class="page-header" style="background:linear-gradient(90deg,rgba(255,60,60,0.12),rgba(0,207,255,0.06));">
       <span class="ph-icon">🎪</span>
@@ -3003,13 +3012,13 @@ button:active:not(:disabled) { transform: scale(0.96) !important; }
   </div>
 </div>
 
-<!-- ANNOYING UPDATE MODAL (v2.0) -->
+<!-- ANNOYING UPDATE MODAL (v0.3) -->
 <div id="bigUpdateModal">
   <div class="bum-card">
     <div class="bum-glow-strip"></div>
     <div class="bum-header">
       <div class="bum-badge">🔥 NOVÝ UPDATE</div>
-      <div class="bum-title">Update v2.0</div>
+      <div class="bum-title">Update v0.3</div>
       <div class="bum-version">AlkoCase // 2026</div>
     </div>
     <div class="bum-glow-strip"></div>
@@ -3018,22 +3027,23 @@ button:active:not(:disabled) { transform: scale(0.96) !important; }
         Velká aktualizace je tady! Přečti si co je nového — to chceš vědět.
       </div>
 
-      <div class="bum-section-title">⚡ Novinky</div>
+      <div class="bum-section-title">⚡ Novinky v0.3</div>
       <ul class="bum-list">
-        <li data-icon="⚔️"><strong>Kliker přidán</strong> <span class="bum-new">NOVÉ</span><span>Klikej na bedny v Klikeru, zabíjej je a sbírej odměny. Vylepši se přes upgrade strom!</span></li>
-        <li data-icon="📦"><strong>Systém beden v klikeru</strong> <span class="bum-new">NOVÉ</span><span>Po zabití bedny si vyber: dej ji do inventáře nebo otevři rovnou!</span></li>
-        <li data-icon="🔍"><strong>Náhled obsahu bedny</strong> <span class="bum-new">NOVÉ</span><span>Klikni na bednu ve Shopu a uvidíš co může padnout — jako v CS2!</span></li>
-        <li data-icon="🎨"><strong>Blue Tactical Theme</strong> <span class="bum-new">NOVÉ</span><span>Kompletní redesign hry do profesionálního CS2 modrého stylu.</span></li>
-        <li data-icon="🏆"><strong>Achievement systém</strong> <span class="bum-new">NOVÉ</span><span>Sbírej achievementy za otevírání beden, combo klikání a gold dropy.</span></li>
-        <li data-icon="🎁"><strong>Denní odměny</strong> <span class="bum-new">NOVÉ</span><span>Přihlašuj se každý den a získej stále lepší odměny — 7-denní streak!</span></li>
+        <li data-icon="✨"><strong>Prestige systém</strong> <span class="bum-new">NOVÉ</span><span>3 úrovně prestiže (⭐ Bronze → 💎 Diamond → 👑 Crown). Každá prestige: +50% DMG, +50% bonusy z upgradů, +80% HP beden. Resetuje postup a dolary — budeš silnější!</span></li>
+        <li data-icon="📺"><strong>Duel Spectator Mode</strong> <span class="bum-new">NOVÉ</span><span>Nejsi v duelu? Sleduj live průběh! Real-time HP bary obou hráčů — sledování se automaticky ukončí po konci hry.</span></li>
       </ul>
 
-      <div class="bum-section-title">🔧 Opravy</div>
+      <div class="bum-section-title">🔧 Opravy v0.3</div>
       <ul class="bum-list">
-        <li data-icon="🔫"><strong>M4A1-S a AK-47 obrázky</strong> <span class="bum-fixed">OPRAVENO</span><span>Opraveny bílé nedořezky u M4A1 a AK-47 skinů.</span></li>
-        <li data-icon="📊"><strong>Odstraněny % šance</strong> <span class="bum-fixed">OPRAVENO</span><span>Šance na dropliste jsou skryté — zjisti sám co padne!</span></li>
-        <li data-icon="🏅"><strong>Žebříček — jen reální hráči</strong> <span class="bum-fixed">OPRAVENO</span><span>Odstraněni všichni fake boti ze žebříčku.</span></li>
-        <li data-icon="⚡"><strong>Performance vylepšení</strong> <span class="bum-fixed">OPRAVENO</span><span>Smoother animace a lepší odezva při klikání.</span></li>
+        <li data-icon="⚔️"><strong>Duel odpočet — Hráč 2</strong> <span class="bum-fixed">OPRAVENO</span><span>Hráč 2 se zasekával na čekání místo spuštění odpočtu. Race condition mezi renderDuelPage a duelSync opravena.</span></li>
+      </ul>
+
+      <div class="bum-section-title" style="margin-top:16px;border-top:1px solid var(--border);padding-top:16px;opacity:0.5">📜 Předchozí — v2.0</div>
+      <ul class="bum-list" style="opacity:0.55">
+        <li data-icon="⚔️"><strong>Kliker přidán</strong><span>Klikej na bedny v Klikeru, zabíjej je a sbírej odměny.</span></li>
+        <li data-icon="📦"><strong>Systém beden v klikeru</strong><span>Po zabití bedny si vyber: inventář nebo otevřít rovnou.</span></li>
+        <li data-icon="🏆"><strong>Achievement systém</strong><span>Sbírej achievementy za otevírání beden, combo klikání a gold dropy.</span></li>
+        <li data-icon="🎁"><strong>Denní odměny</strong><span>7-denní streak přihlašování.</span></li>
       </ul>
     </div>
     <div class="bum-footer">
@@ -4584,6 +4594,7 @@ function updateLeaderboard() {
   const bestRar = myRarities.sort((a, b) => rarityRank[b] - rarityRank[a])[0] || 'r-blue';
   const score = state.stats.casesOpened * 10 + state.stats.totalEarned + (rarityRank[bestRar] || 1) * 50;
 
+  const prestige = clkState ? (clkState.prestige || 0) : 0;
   const lb = state.leaderboard;
   const existing = lb.find(e => e.username === state.username);
   if (existing) {
@@ -4591,8 +4602,9 @@ function updateLeaderboard() {
     existing.totalEarned = state.stats.totalEarned;
     existing.bestRarity  = bestRar;
     existing.score = score;
+    existing.prestige = prestige;
   } else {
-    lb.push({ username: state.username, casesOpened: state.stats.casesOpened, totalEarned: state.stats.totalEarned, bestRarity: bestRar, score });
+    lb.push({ username: state.username, casesOpened: state.stats.casesOpened, totalEarned: state.stats.totalEarned, bestRarity: bestRar, score, prestige });
   }
 
   // Add some fake bot entries if lb is small
@@ -4633,7 +4645,7 @@ function renderLeaderboard() {
         <div class="lb-avatar" style="${isMe && localStorage.getItem('rc_avatar') ? 'background:none;padding:0;overflow:hidden;border-radius:50%' : 'background:linear-gradient(135deg,' + (rarityColors[e.bestRarity] || '#4d79ff') + ',#1a1d27)'}">
           ${(() => { if (isMe) { const avId = localStorage.getItem('rc_avatar'); if (avId && typeof AVATAR_DEFS !== 'undefined') { const avDef = AVATAR_DEFS.find(a => a.id === avId); if (avDef) return '<div style=\"width:36px;height:36px;border-radius:50%;overflow:hidden\">' + avDef.svg + '</div>'; } } return initials; })()}
         </div>
-        <div class="lb-name">${e.username} ${isMe ? '<span style="color:var(--gold);font-size:0.7rem">(ty)</span>' : ''}</div>
+        <div class="lb-name">${e.username} ${isMe ? '<span style="color:var(--gold);font-size:0.7rem">(ty)</span>' : ''}${e.prestige > 0 ? `<span style="margin-left:6px;font-size:0.85rem" title="${['','Bronze Prestige','Diamond Prestige','Crown Prestige'][e.prestige]||''}">${['','⭐','💎','👑'][e.prestige]||''}</span>` : ''}</div>
         <div class="lb-stats">
           <div class="lb-stat-item"><span>${e.score}</span><span>SKÓRE</span></div>
           <div class="lb-stat-item"><span>${e.casesOpened}</span><span>BEDNY</span></div>
@@ -4752,19 +4764,218 @@ let clkState = {
   upgCrit: 0,
   kills: 0,
   totalClicks: 0,
+  prestige: 0,
 };
 
 function clkGetUpgCost(base, level) {
   return Math.floor(base * Math.pow(1.6, level));
 }
 
+// ── PRESTIGE SYSTEM ───────────────────────────────────────────────
+const CLK_MAX_PRESTIGE = 3;
+const PRESTIGE_ICONS   = ['', '⭐', '💎', '👑'];
+const PRESTIGE_COLORS  = ['', '#f59e0b', '#3addff', '#c9a227'];
+const PRESTIGE_NAMES   = ['', 'BRONZE PRESTIGE', 'DIAMOND PRESTIGE', 'CROWN PRESTIGE'];
+// Requirement: kill the level-30 boss (kills divisible by 30 reached at least once)
+// We track: prestige available when kills >= 30 * (prestige+1)
+function clkPrestigeRequired(p) { return 30 * (p + 1); } // kills needed for next prestige
+function clkDmgMult()  { return 1 + (clkState.prestige || 0) * 0.5; }
+function clkUpgMult()  { return 1 + (clkState.prestige || 0) * 0.5; }
+function clkHpMult()   { return 1 + (clkState.prestige || 0) * 0.8; }
+
+function clkCanPrestige() {
+  const p = clkState.prestige || 0;
+  if (p >= CLK_MAX_PRESTIGE) return false;
+  return clkState.kills >= clkPrestigeRequired(p);
+}
+
+function doPrestige() {
+  const p = clkState.prestige || 0;
+  if (p >= CLK_MAX_PRESTIGE) { showToast('Maximální prestige dosaženo! 👑', 'info'); return; }
+  if (!clkCanPrestige()) {
+    const needed = clkPrestigeRequired(p);
+    showToast(`Potřebuješ ${needed} zabití pro Prestige ${p+1}!`, 'error');
+    return;
+  }
+  const newP = p + 1;
+  // Reset clicker progress
+  clkState.level      = 1;
+  clkState.kills      = 0;
+  clkState.totalClicks= 0;
+  clkState.upgClick   = 0;
+  clkState.upgAuto    = 0;
+  clkState.upgCrit    = 0;
+  clkState.prestige   = newP;
+  // Recalculate stats with new prestige multiplier
+  clkState.clickDmg   = Math.floor(1 * clkDmgMult());
+  clkState.autoDps    = 0;
+  clkState.critChance = 0;
+  // Reset dollars
+  state.money = 0;
+  updateCurrencyDisplay();
+  clkSpawnEnemy();
+  clkUpdateUpgradeButtons();
+  saveState();
+  showPrestigeCanvas(newP);
+  showToast(`${PRESTIGE_ICONS[newP]} ${PRESTIGE_NAMES[newP]} odemčen! +50% DMG, +80% HP enemáků`, 'success');
+  renderPrestigeBadge();
+}
+
+function renderPrestigeBadge() {
+  const el = document.getElementById('clkPrestigeBadge');
+  const btnEl = document.getElementById('btnPrestige');
+  const p = clkState.prestige || 0;
+  if (el) {
+    if (p > 0) {
+      el.style.display = 'flex';
+      el.innerHTML = `<span style="font-size:1.1rem">${PRESTIGE_ICONS[p]}</span><span style="font-family:Oswald,sans-serif;font-size:0.62rem;letter-spacing:2px;color:${PRESTIGE_COLORS[p]}">${PRESTIGE_NAMES[p]}</span>`;
+    } else {
+      el.style.display = 'none';
+    }
+  }
+  if (btnEl) {
+    const canP = clkCanPrestige();
+    const nextP = p + 1;
+    if (p >= CLK_MAX_PRESTIGE) {
+      btnEl.style.display = 'none';
+    } else {
+      btnEl.style.display = 'block';
+      const needed = clkPrestigeRequired(p);
+      btnEl.innerHTML = canP
+        ? `<div style="background:linear-gradient(135deg,rgba(${nextP===1?'245,158,11':nextP===2?'58,221,255':'201,162,39'},0.18),rgba(0,0,0,0));border:1px solid rgba(${nextP===1?'245,158,11':nextP===2?'58,221,255':'201,162,39'},0.55);border-radius:6px;padding:10px 12px;cursor:pointer;animation:prestigeGlow 1.5s ease-in-out infinite alternate" onclick="doPrestige()">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+                  <span style="font-size:1.3rem">${PRESTIGE_ICONS[nextP]}</span>
+                  <span style="font-family:Oswald,sans-serif;font-size:0.75rem;letter-spacing:2px;color:${PRESTIGE_COLORS[nextP]}">${PRESTIGE_NAMES[nextP]}</span>
+                </div>
+                <div style="font-size:0.6rem;color:#6a9a6a;line-height:1.5">✅ Dostupné! Klikni pro Prestige</div>
+                <div style="font-size:0.58rem;color:#4a6a4a;margin-top:3px">⚠ Resetuje postup + dolary<br>+50% DMG · +50% Upgrade bonus · +80% HP beden</div>
+              </div>`
+        : `<div style="background:rgba(30,30,40,0.6);border:1px solid var(--border);border-radius:6px;padding:10px 12px;opacity:0.75">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                  <span style="font-size:1.1rem;filter:grayscale(1)">${PRESTIGE_ICONS[nextP]}</span>
+                  <span style="font-family:Oswald,sans-serif;font-size:0.72rem;letter-spacing:2px;color:var(--muted)">${PRESTIGE_NAMES[nextP]}</span>
+                </div>
+                <div style="font-size:0.6rem;color:#3a4a5a">Potřeba: ${needed} zabití (máš ${clkState.kills})</div>
+                <div style="height:4px;background:var(--bg3);border-radius:2px;margin-top:6px;overflow:hidden">
+                  <div style="height:100%;width:${Math.min(100,clkState.kills/needed*100).toFixed(1)}%;background:linear-gradient(90deg,#3a4a5a,${PRESTIGE_COLORS[nextP]});transition:width 0.3s"></div>
+                </div>
+              </div>`;
+    }
+  }
+}
+
+function showPrestigeCanvas(prestigeLevel) {
+  // Create or reuse canvas overlay
+  let cv = document.getElementById('prestigeCanvas');
+  if (!cv) {
+    cv = document.createElement('canvas');
+    cv.id = 'prestigeCanvas';
+    cv.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;pointer-events:none';
+    document.body.appendChild(cv);
+  }
+  cv.width  = window.innerWidth;
+  cv.height = window.innerHeight;
+  const ctx = cv.getContext('2d');
+  const color = PRESTIGE_COLORS[prestigeLevel];
+  const icon  = PRESTIGE_ICONS[prestigeLevel];
+  const W = cv.width, H = cv.height;
+
+  // Particles
+  const particles = Array.from({ length: 180 }, () => ({
+    x: W / 2, y: H / 2,
+    vx: (Math.random() - 0.5) * 22,
+    vy: (Math.random() - 0.5) * 22 - 4,
+    size: Math.random() * 7 + 2,
+    alpha: 1,
+    hue: Math.random() * 60 - 30,
+    shape: Math.random() > 0.5 ? 'circle' : 'star',
+    spin: (Math.random() - 0.5) * 0.3,
+    angle: 0,
+  }));
+
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Radial flash
+    if (frame < 20) {
+      const r = frame * 40;
+      const grad = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, r);
+      grad.addColorStop(0, color + 'cc');
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    // Particles
+    particles.forEach(p => {
+      p.x  += p.vx;
+      p.y  += p.vy;
+      p.vy += 0.35;
+      p.vx *= 0.98;
+      p.alpha -= 0.012;
+      p.angle += p.spin;
+      if (p.alpha <= 0) return;
+
+      ctx.save();
+      ctx.globalAlpha = p.alpha;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angle);
+
+      if (p.shape === 'star') {
+        ctx.fillStyle = color;
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = color;
+        ctx.beginPath();
+        for (let i = 0; i < 5; i++) {
+          const a = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+          const b = ((i * 4 + 2) * Math.PI) / 5 - Math.PI / 2;
+          i === 0 ? ctx.moveTo(Math.cos(a)*p.size, Math.sin(a)*p.size) : ctx.lineTo(Math.cos(a)*p.size, Math.sin(a)*p.size);
+          ctx.lineTo(Math.cos(b)*(p.size*0.45), Math.sin(b)*(p.size*0.45));
+        }
+        ctx.closePath();
+        ctx.fill();
+      } else {
+        ctx.fillStyle = color;
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = color;
+        ctx.beginPath();
+        ctx.arc(0, 0, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    });
+
+    // Big center icon
+    if (frame < 80) {
+      const scale = frame < 15 ? frame / 15 : 1 - (frame - 15) / 80;
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, scale) * 0.95;
+      ctx.font = `${Math.floor(Math.max(0, scale) * 140)}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.shadowBlur = 60;
+      ctx.shadowColor = color;
+      ctx.fillText(icon, W / 2, H / 2);
+      ctx.restore();
+    }
+
+    frame++;
+    if (frame < 120) requestAnimationFrame(draw);
+    else { ctx.clearRect(0, 0, W, H); }
+  }
+  draw();
+}
+
 function clkSpawnEnemy() {
   const e = clkEnemyTypes[clkState.level - 1];
-  clkState.currentHp = e.hp;
-  clkState.maxHp = e.hp;
+  const hpMult = clkHpMult();
+  const baseHp = Math.floor(e.hp * hpMult);
+  clkState.currentHp = baseHp;
+  clkState.maxHp = baseHp;
   // Armor systém — od lvl 10 má bedna armor (35% z celkových HP)
   if (e.armor) {
-    clkState.armorMax = Math.floor(e.hp * 0.35);
+    clkState.armorMax = Math.floor(baseHp * 0.35);
     clkState.currentArmor = clkState.armorMax;
   } else {
     clkState.armorMax = 0;
@@ -4862,10 +5073,11 @@ function clkUpdateUpgradeButtons() {
   document.getElementById('btnClkUpgClick').disabled = state.money < clickCost;
   document.getElementById('btnClkUpgAuto').disabled  = state.money < autoCost;
   document.getElementById('btnClkUpgCrit').disabled  = state.money < critCost;
-  document.getElementById('clkUpgClickLvl').textContent = `Lvl ${clkState.upgClick} · +${clkState.clickDmg} DMG`;
-  document.getElementById('clkUpgAutoLvl').textContent  = `Lvl ${clkState.upgAuto} · ${clkState.autoDps} DPS`;
+  document.getElementById('clkUpgClickLvl').textContent = `Lvl ${clkState.upgClick} · +${clkState.clickDmg} DMG${clkState.prestige?(' ×'+clkDmgMult().toFixed(1)):''}`;
+  document.getElementById('clkUpgAutoLvl').textContent  = `Lvl ${clkState.upgAuto} · ${clkState.autoDps} DPS${clkState.prestige?(' ×'+clkUpgMult().toFixed(1)):''}`;
   document.getElementById('clkUpgCritLvl').textContent  = `Lvl ${clkState.upgCrit} · ${Math.floor(clkState.critChance*100)}% crit`;
   document.getElementById('clkAutoLabel').textContent   = clkState.autoDps > 0 ? `AUTO: ${clkState.autoDps}/s` : 'AUTO: OFF';
+  renderPrestigeBadge();
 }
 
 function buyClickUpgrade() {
@@ -4873,7 +5085,7 @@ function buyClickUpgrade() {
   if (state.money < cost) { showToast('Nedostatek $!', 'error'); return; }
   state.money -= cost; updateCurrencyDisplay(); saveState();
   clkState.upgClick++;
-  clkState.clickDmg = 1 + Math.floor(clkState.upgClick * 0.5);
+  clkState.clickDmg = Math.floor((1 + Math.floor(clkState.upgClick * 0.5)) * clkDmgMult());
   showToast(`⚔️ Síla kliku: +${clkState.clickDmg} DMG!`, 'info');
   clkUpdateUpgradeButtons();
 }
@@ -4883,7 +5095,7 @@ function buyAutoUpgrade() {
   if (state.money < cost) { showToast('Nedostatek $!', 'error'); return; }
   state.money -= cost; updateCurrencyDisplay(); saveState();
   clkState.upgAuto++;
-  clkState.autoDps = Math.max(0, Math.floor(clkState.upgAuto * 0.5));
+  clkState.autoDps = Math.max(0, Math.floor(clkState.upgAuto * 0.5 * clkUpgMult()));
   showToast(`🤖 Auto-klik: ${clkState.autoDps}/s!`, 'info');
   clkUpdateUpgradeButtons();
 }
@@ -4893,7 +5105,7 @@ function buyCritUpgrade() {
   if (state.money < cost) { showToast('Nedostatek $!', 'error'); return; }
   state.money -= cost; updateCurrencyDisplay(); saveState();
   clkState.upgCrit++;
-  clkState.critChance = Math.min(0.35, clkState.upgCrit * 0.05);
+  clkState.critChance = Math.min(0.70, clkState.upgCrit * 0.05 * clkUpgMult());
   showToast(`💥 Crit: ${Math.floor(clkState.critChance*100)}% šance!`, 'info');
   clkUpdateUpgradeButtons();
 }
@@ -5395,15 +5607,12 @@ function killChestOpenNow() {
 //  BIG ANNOYING UPDATE MODAL
 // ─────────────────────────────────────────────────────
 function initBigUpdate() {
-  // Popup při prvním spuštění vypnut
-  localStorage.setItem('alkocase_update_v2', '1');
-  return;
-  const seen = localStorage.getItem('alkocase_update_v2');
+  const seen = localStorage.getItem('alkocase_update_v03');
   if (seen) return;
 
   const modal = document.getElementById('bigUpdateModal');
   const fill = document.getElementById('bumWaitFill');
-  const countdown = document.getElementById('bumCountdown');
+  const countdown = null; // no countdown element in v0.3 modal
   const closeBtn = document.getElementById('btnBumClose');
   const waitText = document.getElementById('bumWaitText');
 
@@ -5414,21 +5623,20 @@ function initBigUpdate() {
   const timer = setInterval(() => {
     const elapsed = Date.now() - start;
     const pct = Math.min(100, (elapsed / WAIT) * 100);
-    fill.style.width = pct + '%';
+    if (fill) fill.style.width = pct + '%';
     const remaining = Math.max(0, Math.ceil((WAIT - elapsed) / 1000));
-    countdown.textContent = remaining + 's';
+    if (countdown) countdown.textContent = remaining + 's';
     if (elapsed >= WAIT) {
       clearInterval(timer);
-      closeBtn.disabled = false;
-      waitText.textContent = '✓ Můžeš pokračovat!';
-      waitText.style.color = '#4ade80';
-      closeBtn.style.animation = 'spinBtnPulse 1s ease-in-out infinite';
+      if (closeBtn) closeBtn.disabled = false;
+      if (waitText) { waitText.textContent = '✓ Můžeš pokračovat!'; waitText.style.color = '#4ade80'; }
+      if (closeBtn) closeBtn.style.animation = 'spinBtnPulse 1s ease-in-out infinite';
     }
   }, 80);
 }
 
 function closeBigUpdate() {
-  localStorage.setItem('alkocase_update_v2', '1');
+  localStorage.setItem('alkocase_update_v03', '1');
   document.getElementById('bigUpdateModal').classList.add('hidden');
 }
 
@@ -5598,6 +5806,7 @@ function closeBigUpdate() {
 loadState();
 clkSpawnEnemy();
 clkUpdateUpgradeButtons();
+renderPrestigeBadge();
 
 // Clean fake bot entries — keep only real player entry
 if (state.username) {
@@ -7847,6 +8056,7 @@ async function sbUpsertLeaderboard(entry) {
       total_earned: entry.totalEarned,
       best_rarity: entry.bestRarity,
       score: entry.score,
+      prestige: entry.prestige || 0,
       updated_at: new Date().toISOString()
     })
   });
@@ -7862,7 +8072,8 @@ async function sbFetchLeaderboard() {
       casesOpened: row.cases_opened,
       totalEarned: row.total_earned,
       bestRarity: row.best_rarity,
-      score: row.score
+      score: row.score,
+      prestige: row.prestige || 0
     };
     const idx = state.leaderboard.findIndex(e => e.username === entry.username);
     if (idx >= 0) state.leaderboard[idx] = entry;
