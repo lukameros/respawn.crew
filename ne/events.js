@@ -803,6 +803,14 @@ window.duelJoin = async function() {
     duelMyRole = 'p2';
     await duelUpsertJoin('p2', nick);
     showToast('⚔️ Připojil ses jako Hráč 2!', 'success');
+    // P2 is the second player — both are now joined → start countdown immediately
+    // (duelSync would miss this because renderDuelPage() updates duelState first)
+    duelLocalLevel = 1;
+    duelFinished = false;
+    duelInitLevel();
+    if (!duelCountdownDone) duelStartCountdown();
+    renderDuelPage();
+    return;
   } else {
     showToast('Duel je plný — čekej na výsledek.', 'info'); return;
   }
