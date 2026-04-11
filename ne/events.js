@@ -862,6 +862,13 @@ function duelRenderMyBar() {
   if (bar) bar.style.width = pct + '%';
   if (txt) txt.textContent = Math.ceil(duelLocalHp).toLocaleString('cs-CZ') + ' / ' + duelLocalMaxHp.toLocaleString('cs-CZ') + ' HP';
   if (lvl) lvl.textContent = 'LVL ' + duelLocalLevel + ' / ' + DUEL_MAX_LEVEL;
+  // Keep chest image in sync with current level
+  const en = DUEL_ENEMIES[Math.min(duelLocalLevel, DUEL_MAX_LEVEL) - 1];
+  const myImg = document.getElementById('duelMyEnemyImg');
+  if (myImg && en && myImg.src.indexOf(en.img) === -1) myImg.src = 'assets/' + en.img + '.png';
+  // Update level dots for my side
+  const leftDots = document.getElementById('duelDotsLeft');
+  if (leftDots) leftDots.innerHTML = levelDotsHtml(duelLocalLevel, Math.round(pct), '#4ade80');
 }
 
 window.duelClick = function(e) {
@@ -923,6 +930,9 @@ window.duelClick = function(e) {
     }
     duelLocalLevel++;
     duelInitLevel();
+    duelRenderMyBar();
+    // Update chest image to next level immediately
+    // image updated by duelRenderMyBar() call above
     showToast('✅ Level ' + (duelLocalLevel-1) + ' poražen! → LVL ' + duelLocalLevel, 'success');
   } else {
     duelRenderMyBar();
@@ -930,7 +940,7 @@ window.duelClick = function(e) {
 
   // Push progress to supabase (throttled to every 1.5s)
   const now = Date.now();
-  if (now - duelLastPush > 1500) {
+  if (now - duelLastPush > 300) {
     duelLastPush = now;
     const hpPct = Math.round((duelLocalHp / duelLocalMaxHp) * 100);
     duelPush({
@@ -1007,8 +1017,8 @@ async function duelSync() {
 
   const hasBothNow = !!(d.player1 && d.player2);
 
-  // Detect BOTH just joined → start countdown
-  if (!hadBothBefore && hasBothNow && d.active && !duelCountdownDone) {
+  // Detect BOTH joined → start countdown (regardless of hadBothBefore to fix P1 race condition)
+  if (hasBothNow && d.active && !duelCountdownDone) {
     duelStartCountdown();
   }
 
@@ -1068,26 +1078,35 @@ function duelLiveUpdate(d) {
   const el = (id) => document.getElementById(id);
 
   if (amPlayer) {
+    // Always sync my own bar (HP, level text, dots)
+    duelRenderMyBar();
+    // Opponent side (from DB)
     const oppBar = el('duelOppHpBar');
     const oppLvl = el('duelOppLvl');
     if (oppBar) oppBar.style.width = oppHpPct + '%';
     if (oppLvl) oppLvl.textContent = 'LVL ' + oppLvlNum + ' / ' + DUEL_MAX_LEVEL;
-
-    // Update level dots for opponent
     const oppImg = el('duelOppImg');
     if (oppImg) {
       const en = DUEL_ENEMIES[Math.min(oppLvlNum, DUEL_MAX_LEVEL) - 1];
       if (en) oppImg.src = 'assets/' + en.img + '.png';
     }
-    // Update progress dots containers
+    // My side (from local state — always fresh)
+    const myBar = el('duelMyHpBar');
+    const myLvl = el('duelMyLvl');
+    const myTxt = el('duelMyHpTxt');
+    const myHpPct = Math.round((duelLocalHp / duelLocalMaxHp) * 100);
+    if (myBar) myBar.style.width = myHpPct + '%';
+    if (myLvl) myLvl.textContent = 'LVL ' + duelLocalLevel + ' / ' + DUEL_MAX_LEVEL;
+    if (myTxt) myTxt.textContent = Math.ceil(duelLocalHp).toLocaleString('cs-CZ') + ' / ' + duelLocalMaxHp.toLocaleString('cs-CZ') + ' HP';
+    if (myImg) {
+      const myEn = DUEL_ENEMIES[Math.min(duelLocalLevel, DUEL_MAX_LEVEL) - 1];
+      if (myEn) myImg.src = 'assets/' + myEn.img + '.png';
+    }
+    // Level dots for both sides
     const leftDots  = el('duelDotsLeft');
     const rightDots = el('duelDotsRight');
-    if (leftDots && rightDots) {
-      const myLvl = duelLocalLevel;
-      const myHpPct = Math.round((duelLocalHp / duelLocalMaxHp) * 100);
-      leftDots.innerHTML  = levelDotsHtml(myLvl, myHpPct, '#4ade80');
-      rightDots.innerHTML = levelDotsHtml(oppLvlNum, oppHpPct, '#ef4444');
-    }
+    if (leftDots) leftDots.innerHTML  = levelDotsHtml(duelLocalLevel, myHpPct, '#4ade80');
+    if (rightDots) rightDots.innerHTML = levelDotsHtml(oppLvlNum, oppHpPct, '#ef4444');
   } else {
     // Spectator / non-player: update both sides
     const p1Bar = el('duelP1HpBar');
@@ -1263,7 +1282,7 @@ window.renderDuelPage = async function() {
           <div id="duelDotsLeft" style="display:flex;align-items:center;width:100%;gap:2px">${levelDotsHtml(amPlayer?duelLocalLevel:d.p1_level, amPlayer?Math.round((duelLocalHp/duelLocalMaxHp)*100):d.p1_hp_pct, '#4ade80')}</div>
           <!-- Enemy -->
           <div id="${amPlayer?'duelMyClickArea':'duelP1Area'}" onclick="${amPlayer?'duelClick(event)':''}" style="cursor:${amPlayer&&bothJoined?'pointer':'default'};width:180px;height:180px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 50%,rgba(74,222,128,0.1) 0%,transparent 70%);border:1px solid rgba(74,222,128,0.2);border-radius:50%;${amPlayer?'animation:enemyPulse 2s ease-in-out infinite':''}">
-            <img src="assets/${amPlayer?myEn.img:DUEL_ENEMIES[Math.min(d.p1_level,DUEL_MAX_LEVEL)-1].img}.png" style="width:140px;height:140px;object-fit:contain;pointer-events:none;filter:drop-shadow(0 0 16px rgba(74,222,128,0.5))">
+            <img id="duelMyEnemyImg" src="assets/${amPlayer?myEn.img:DUEL_ENEMIES[Math.min(d.p1_level,DUEL_MAX_LEVEL)-1].img}.png" style="width:140px;height:140px;object-fit:contain;pointer-events:none;filter:drop-shadow(0 0 16px rgba(74,222,128,0.5))">
           </div>
           <div style="width:100%">
             <div style="display:flex;justify-content:space-between;font-size:0.58rem;color:#4ade80;font-family:'Share Tech Mono',monospace;margin-bottom:3px">
@@ -1391,7 +1410,7 @@ async function duelInit() {
     if (d.player1 === myNick) { duelMyRole = 'p1'; duelInitLevel(); }
     else if (d.player2 === myNick) { duelMyRole = 'p2'; duelInitLevel(); }
   }
-  duelSyncInterval = setInterval(duelSync, 2500);
+  duelSyncInterval = setInterval(duelSync, 1000);
 }
 
 setTimeout(duelInit, 1800);
