@@ -722,7 +722,8 @@ let duelSyncInterval = null;
 let duelAnimFrame = null;
 let duelFinished = false;
 let duelLastPush = 0;
-let duelCountdownDone = false;
+let duelCountdownDone    = false;
+let duelCountdownStarted = false;   // prevents restart every sync tick
 let duelCountdownInterval = null;
 let duelCountdownValue = 5;
 let duelSpectating = false;
@@ -836,7 +837,8 @@ window.duelLeave = async function() {
   await duelPush(field);
   duelMyRole = null;
   duelFinished = false;
-  duelCountdownDone = false;
+  duelCountdownDone    = false;
+  duelCountdownStarted = false;
   clearInterval(duelCountdownInterval);
   showToast('Odpojil ses ze slotu.', 'info');
   renderDuelPage();
@@ -976,7 +978,8 @@ function duelGrantWinnerReward(isWinner) {
 
 // ── COUNTDOWN BEFORE DUEL STARTS ─────────────────────────────────
 function duelStartCountdown() {
-  if (duelCountdownDone) return;
+  if (duelCountdownDone || duelCountdownStarted) return;
+  duelCountdownStarted = true;
   duelCountdownValue = 5;
   clearInterval(duelCountdownInterval);
   // Show overlay countdown in the page
@@ -1017,8 +1020,8 @@ async function duelSync() {
 
   const hasBothNow = !!(d.player1 && d.player2);
 
-  // Detect BOTH joined → start countdown (regardless of hadBothBefore to fix P1 race condition)
-  if (hasBothNow && d.active && !duelCountdownDone) {
+  // Detect BOTH joined → start countdown once (duelCountdownStarted prevents repeat calls every tick)
+  if (hasBothNow && d.active && !duelCountdownDone && !duelCountdownStarted) {
     duelStartCountdown();
   }
 
@@ -1027,9 +1030,10 @@ async function duelSync() {
   if (duelMyRole && myNick) {
     const mySlotNow = duelMyRole === 'p1' ? d.player1 : d.player2;
     if (!mySlotNow || mySlotNow !== myNick) {
-      duelMyRole    = null;
-      duelFinished  = false;
-      duelCountdownDone = false;
+      duelMyRole           = null;
+      duelFinished         = false;
+      duelCountdownDone    = false;
+      duelCountdownStarted = false;
       clearInterval(duelCountdownInterval);
     }
   }
@@ -1169,7 +1173,8 @@ window.renderDuelPage = async function() {
     const hasWinner = d && d.winner;
     const wasCancelled = d && d.cancelled && !hasWinner;
     duelMyRole = null;
-    duelCountdownDone = false;
+    duelCountdownDone    = false;
+    duelCountdownStarted = false;
     clearInterval(duelCountdownInterval);
     container.innerHTML = `
       <div style="text-align:center;max-width:600px;margin:0 auto;padding:20px 0">
@@ -1212,19 +1217,6 @@ window.renderDuelPage = async function() {
     <div style="max-width:100%;margin:0 auto">
       <!-- Countdown overlay (preserved across re-renders via savedCD) -->
       <div id="duelCountdownOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:999;align-items:center;justify-content:center;flex-direction:column;backdrop-filter:blur(4px)"></div>
-
-      <!-- Custom quit confirm modal -->
-      <div id="duelQuitModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
-        <div style="background:#0e1623;border:1px solid rgba(239,68,68,0.4);border-radius:10px;padding:28px 32px;max-width:360px;width:90%;text-align:center;box-shadow:0 0 40px rgba(239,68,68,0.2)">
-          <div style="font-size:2rem;margin-bottom:12px">🚪</div>
-          <div style="font-family:Oswald,sans-serif;font-size:1rem;letter-spacing:3px;color:#ef4444;margin-bottom:8px">OPUSTIT DUEL?</div>
-          <div style="font-size:0.75rem;color:#6a7a9a;line-height:1.6;margin-bottom:20px">Zápas bude zrušen pro oba hráče.<br>Lobby se resetuje pro další 2 hráče.</div>
-          <div style="display:flex;gap:10px;justify-content:center">
-            <button onclick="duelQuitConfirm()" style="background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.5);color:#ef4444;border-radius:5px;padding:9px 24px;font-family:Oswald,sans-serif;font-size:0.78rem;letter-spacing:2px;cursor:pointer">✔ OPUSTIT</button>
-            <button onclick="document.getElementById('duelQuitModal').style.display='none'" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--muted);border-radius:5px;padding:9px 24px;font-family:Oswald,sans-serif;font-size:0.78rem;letter-spacing:2px;cursor:pointer">✖ ZRUŠIT</button>
-          </div>
-        </div>
-      </div>
 
       <!-- Header -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
@@ -1384,7 +1376,8 @@ window.duelQuitConfirm = async function() {
   });
   duelMyRole        = null;
   duelFinished      = false;
-  duelCountdownDone = false;
+  duelCountdownDone    = false;
+  duelCountdownStarted = false;
   clearInterval(duelCountdownInterval);
   showToast('Zápas zrušen — nové lobby čeká na hráče!', 'error');
   renderDuelPage();
@@ -1403,6 +1396,23 @@ window.duelStopSpectate = function() {
 
 // ── DUEL SYNC INIT ────────────────────────────────────────────────
 async function duelInit() {
+  // Create persistent quit modal on body — survives re-renders
+  if (!document.getElementById('duelQuitModal')) {
+    const m = document.createElement('div');
+    m.id = 'duelQuitModal';
+    m.style.cssText = 'display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:9998;align-items:center;justify-content:center;backdrop-filter:blur(4px)';
+    m.innerHTML = `
+      <div style="background:#0e1623;border:1px solid rgba(239,68,68,0.4);border-radius:10px;padding:28px 32px;max-width:360px;width:90%;text-align:center;box-shadow:0 0 40px rgba(239,68,68,0.2)">
+        <div style="font-size:2rem;margin-bottom:12px">🚪</div>
+        <div style="font-family:Oswald,sans-serif;font-size:1rem;letter-spacing:3px;color:#ef4444;margin-bottom:8px">OPUSTIT DUEL?</div>
+        <div style="font-size:0.75rem;color:#6a7a9a;line-height:1.6;margin-bottom:20px">Zápas bude zrušen pro oba hráče.<br>Lobby se resetuje pro další 2 hráče.</div>
+        <div style="display:flex;gap:10px;justify-content:center">
+          <button onclick="duelQuitConfirm()" style="background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.5);color:#ef4444;border-radius:5px;padding:9px 24px;font-family:Oswald,sans-serif;font-size:0.78rem;letter-spacing:2px;cursor:pointer">✔ OPUSTIT</button>
+          <button onclick="document.getElementById('duelQuitModal').style.display='none'" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--muted);border-radius:5px;padding:9px 24px;font-family:Oswald,sans-serif;font-size:0.78rem;letter-spacing:2px;cursor:pointer">✖ ZRUŠIT</button>
+        </div>
+      </div>`;
+    document.body.appendChild(m);
+  }
   const d = await duelPull();
   if (d) {
     duelState = { ...duelState, ...d };
