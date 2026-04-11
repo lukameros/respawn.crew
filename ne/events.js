@@ -89,7 +89,7 @@ async function gcPullParticipants() {
 
 async function gcPushDamage(dmg, clicks) {
   if (!dmg || dmg <= 0) return;
-  const username = (window.state && state.username) ? state.username : 'Anonym';
+  const username = (window.state && state.username && state.username !== 'Hráč' && state.username !== 'Nepřihlášen') ? state.username : (localStorage.getItem('squad_session') || localStorage.getItem('rc_nick') || 'Hráč');
   await gcFetch('global_chest_clicks', {
     method: 'POST',
     headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
@@ -249,17 +249,20 @@ function gcClickChest(e) {
     setTimeout(() => float.remove(), 700);
   }
 
-  // Squish animation on chest image
-  const gcImg = document.querySelector('#gcChestClickArea img');
-  if (gcImg) {
-    const rotDir = (Math.random() - 0.5) * 12;
-    gcImg.style.transition = 'transform 0.07s cubic-bezier(.2,.8,.3,1)';
-    gcImg.style.transform = `scale(0.88) rotate(${rotDir}deg)`;
-    setTimeout(() => {
-      gcImg.style.transform = 'scale(1.04) rotate(0deg)';
-      setTimeout(() => { gcImg.style.transform = ''; }, 80);
-    }, 75);
-  }
+  // Squish animation on chest image — instant feedback
+  (function doGcSquish() {
+    const area = document.getElementById('gcChestClickArea');
+    const img = area ? area.querySelector('img') : null;
+    if (!img) return;
+    const rot = (Math.random() - 0.5) * 14;
+    img.style.transition = 'none';
+    img.style.transform = `scale(0.86) rotate(${rot}deg)`;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      img.style.transition = 'transform 0.18s cubic-bezier(.15,1.4,.5,1)';
+      img.style.transform = isCrit ? 'scale(1.08) rotate(0deg)' : 'scale(1.03) rotate(0deg)';
+      setTimeout(() => { img.style.transition = 'transform 0.12s ease'; img.style.transform = ''; }, 180);
+    }));
+  })();
 
   // Flush to server debounced (every 300ms)
   clearTimeout(gcFlushTimeout);
@@ -282,6 +285,9 @@ function gcUpdateChestHpBar() {
   const hpText = document.getElementById('gcHpText');
   const armorBar = document.getElementById('gcArmorBar');
   const armorText = document.getElementById('gcArmorText');
+  // Live damage counter — update instantly on every click
+  const dmgEl = document.getElementById('gcMyDmgLive');
+  if (dmgEl) dmgEl.textContent = gcState.myDamage.toLocaleString('cs-CZ');
   if (!hpBar) return;
 
   const cfg = GLOBAL_CHEST_LEVELS[(gcState.level || 1) - 1];
@@ -499,7 +505,7 @@ window.renderEventsPage = async function() {
         </div>
 
         <div style="font-size:0.75rem;color:var(--muted);letter-spacing:1px;text-align:center">Klikej na bednu — poškozuj ji spolu s ostatními hráči!</div>
-        <div style="font-family:'Share Tech Mono',monospace;font-size:0.78rem;color:${cfg.color}">Tvoje poškození: <strong>${gcState.myDamage.toLocaleString('cs-CZ')}</strong></div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:0.78rem;color:${cfg.color}">Tvoje poškození: <strong id="gcMyDmgLive">${gcState.myDamage.toLocaleString('cs-CZ')}</strong></div>
       </div>
 
       <!-- RIGHT: Upgrades + participants -->
@@ -744,17 +750,42 @@ async function duelUpsertJoin(role, nick) {
 
 // Spolehlivé načtení niku - z state, localStorage, nebo display elementu
 function duelGetMyNick() {
-  if (window.state && state.username && state.username !== 'Hráč' && state.username !== 'Nepřihlášen') return state.username;
+  // 1. Main state username
+  if (window.state && state.username &&
+      state.username !== 'Hráč' && state.username !== 'Nepřihlášen' && state.username !== 'Anonym') return state.username;
+  // 2. THE SQUAD localStorage session
   const sq = localStorage.getItem('squad_session');
   if (sq && sq.length > 1) return sq;
+  // 3. Custom nick saved for duel/gh-pages
+  const rn = localStorage.getItem('rc_nick');
+  if (rn && rn.length > 1) return rn;
+  // 4. Nav display element
   const el = document.getElementById('userNameDisplay');
-  if (el && el.textContent && el.textContent !== 'Hráč' && el.textContent !== 'Nepřihlášen') return el.textContent;
-  return null; // nepřihlášen
+  if (el && el.textContent && el.textContent !== 'Hráč' && el.textContent !== 'Nepřihlášen' && el.textContent !== 'Anonym') return el.textContent;
+  return null;
+}
+
+// Ask for nick if not set (for GitHub Pages users without THE SQUAD)
+function duelAskNick() {
+  const existing = duelGetMyNick();
+  if (existing) return existing;
+  const nick = prompt('Zadej svůj herní nick pro duel:', '');
+  if (nick && nick.trim().length > 1) {
+    const clean = nick.trim().slice(0, 20);
+    localStorage.setItem('rc_nick', clean);
+    if (window.state) state.username = clean;
+    const el = document.getElementById('userNameDisplay');
+    if (el) el.textContent = clean;
+    const av = document.getElementById('userAvatar');
+    if (av && !localStorage.getItem('rc_avatar')) av.textContent = clean.slice(0,2).toUpperCase();
+    return clean;
+  }
+  return null;
 }
 
 window.duelJoin = async function() {
-  const nick = duelGetMyNick();
-  if (!nick) { showToast('Nejsi přihlášen! Přihlaš se přes THE SQUAD.', 'error'); return; }
+  const nick = duelAskNick();
+  if (!nick) { showToast('Zadej nick pro připojení do duelu!', 'error'); return; }
 
   const d = await duelPull();
   if (!d || !d.active) { showToast('Duel není aktivní!', 'error'); return; }
@@ -868,16 +899,17 @@ window.duelClick = function(e) {
     area.style.position = 'relative';
     area.appendChild(floater);
     setTimeout(() => floater.remove(), 800);
-    // Squish animation
-    const duelImg = area.querySelector('img');
+    // Squish animation — instant via rAF
+    const duelImg = area ? area.querySelector('img') : null;
     if (duelImg) {
-      const rot = (Math.random() - 0.5) * 14;
-      duelImg.style.transition = 'transform 0.07s cubic-bezier(.2,.8,.3,1)';
-      duelImg.style.transform = `scale(0.87) rotate(${rot}deg)`;
-      setTimeout(() => {
-        duelImg.style.transform = isCrit ? 'scale(1.08) rotate(0deg)' : 'scale(1.03) rotate(0deg)';
-        setTimeout(() => { duelImg.style.transform = ''; }, 80);
-      }, 70);
+      const rot = (Math.random() - 0.5) * 16;
+      duelImg.style.transition = 'none';
+      duelImg.style.transform = `scale(0.85) rotate(${rot}deg)`;
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        duelImg.style.transition = 'transform 0.2s cubic-bezier(.15,1.5,.5,1)';
+        duelImg.style.transform = isCrit ? 'scale(1.1) rotate(0deg)' : 'scale(1.04) rotate(0deg)';
+        setTimeout(() => { duelImg.style.transition = 'transform 0.12s ease'; duelImg.style.transform = ''; }, 200);
+      }));
     }
     duelLocalHp -= dmg;
   } else {

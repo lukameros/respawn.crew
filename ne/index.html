@@ -4630,8 +4630,8 @@ function renderLeaderboard() {
     return `
       <div class="lb-row ${isMe ? 'me' : ''}">
         <div class="lb-rank ${rankClass}">${rankEmoji[i] || i + 1}</div>
-        <div class="lb-avatar" style="${isMe && localStorage.getItem('rc_avatar') ? 'background:none;padding:0;overflow:hidden' : 'background:linear-gradient(135deg,' + (rarityColors[e.bestRarity] || '#4d79ff') + ',#1a1d27)'}">
-          ${(() => { if (isMe) { const avId = localStorage.getItem('rc_avatar'); if (avId && typeof AVATAR_DEFS !== 'undefined') { const avDef = AVATAR_DEFS.find(a => a.id === avId); if (avDef) return avDef.svg; } } return initials; })()}
+        <div class="lb-avatar" style="${isMe && localStorage.getItem('rc_avatar') ? 'background:none;padding:0;overflow:hidden;border-radius:50%' : 'background:linear-gradient(135deg,' + (rarityColors[e.bestRarity] || '#4d79ff') + ',#1a1d27)'}">
+          ${(() => { if (isMe) { const avId = localStorage.getItem('rc_avatar'); if (avId && typeof AVATAR_DEFS !== 'undefined') { const avDef = AVATAR_DEFS.find(a => a.id === avId); if (avDef) return '<div style=\"width:36px;height:36px;border-radius:50%;overflow:hidden\">' + avDef.svg + '</div>'; } } return initials; })()}
         </div>
         <div class="lb-name">${e.username} ${isMe ? '<span style="color:var(--gold);font-size:0.7rem">(ty)</span>' : ''}</div>
         <div class="lb-stats">
