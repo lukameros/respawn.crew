@@ -3414,7 +3414,6 @@ body.theme-easter .nav-link:hover {
   display:none; position:fixed; inset:0; z-index:5000;
   background:rgba(0,0,0,0.95);
   align-items:center; justify-content:center;
-  backdrop-filter:blur(4px);
 }
 #stickerPlaceOverlay.show { display:flex; animation:fadeIn 0.2s ease; }
 .spo-panel {
@@ -3468,10 +3467,11 @@ body.theme-easter .nav-link:hover {
 #spo-cursor-sticker {
   position:fixed; pointer-events:none; z-index:9999;
   transform:translate(-50%,-65%);
-  transition:left 0.04s,top 0.04s;
-  opacity:0.8;
+  opacity:0;
+  display:none;
 }
-#spo-cursor-sticker img { width:48px; height:48px; object-fit:contain; }
+#spo-cursor-sticker.active { display:block; opacity:0.85; }
+#spo-cursor-sticker img { width:52px; height:52px; object-fit:contain; }
 .spo-footer {
   padding:10px 18px 14px;
   border-top:1px solid rgba(255,255,255,0.06);
@@ -3563,8 +3563,8 @@ body.theme-easter .nav-link:hover {
 </div>
 
 <!-- ═══ STICKER — PLACEMENT OVERLAY ═══ -->
+<div id="spo-cursor-sticker"><img id="spo-cursor-img" src="" alt=""></div>
 <div id="stickerPlaceOverlay">
-  <div id="spo-cursor-sticker"><img id="spo-cursor-img" src="" alt=""></div>
   <div class="spo-panel">
     <div class="spo-header">
       <div>
@@ -4492,13 +4492,16 @@ function renderInventory() {
         '</div>'
       : '';
 
-    // Bottom action button
+    // Bottom action button(s)
     let actionBtn;
     if (isSticker) {
       if (listed) {
         actionBtn = '<div class="btn-sell" style="color:var(--muted);border-color:var(--border2);cursor:default" onclick="event.stopPropagation()">Na Bazoši 📋</div>';
       } else {
-        actionBtn = `<button class="btn-sticker-apply" onclick="event.stopPropagation();openStickerApply('${item.uid}')">🎨 Aplikovat</button>`;
+        // Stickers: both Apply and Sell
+        actionBtn =
+          `<button class="btn-sticker-apply" onclick="event.stopPropagation();openStickerApply('${item.uid}')">🎨 Aplikovat</button>` +
+          `<button class="btn-sell" style="margin-top:4px" onclick="event.stopPropagation();sellFromInventory('${item.uid}')">Prodat ($${Math.floor(liveVal*0.75)})</button>`;
       }
     } else {
       if (listed) {
@@ -5557,10 +5560,23 @@ function buyListing(listingUid) {
 
   // Weapon purchase
   const b = getBottleById(listing.bottle_id);
+  // Find original item to preserve applied stickers
+  const origItem = state.inventory.find(i => i.uid === listingUid);
+  const inheritedStickers = (origItem && origItem.appliedStickers) ? origItem.appliedStickers : [];
+
+  const newItem = {
+    uid: uid(),
+    bottle_id: listing.bottle_id,
+    wonAt: new Date().toLocaleDateString('cs-CZ'),
+    value: b ? b.value : 0,
+    listed: false,
+  };
+  if (inheritedStickers.length) newItem.appliedStickers = inheritedStickers;
+
   if (listing.seller !== state.username) {
-    state.inventory.push({ uid: uid(), bottle_id: listing.bottle_id, wonAt: new Date().toLocaleDateString('cs-CZ'), value: b ? b.value : 0, listed: false });
+    state.inventory.push(newItem);
   } else {
-    state.inventory.push({ uid: uid(), bottle_id: listing.bottle_id, wonAt: new Date().toLocaleDateString('cs-CZ'), value: b ? b.value : 0, listed: false });
+    state.inventory.push(newItem);
   }
 
   const _pSell = typeof getPerkSellMult === "function" ? getPerkSellMult() : 1;
@@ -6759,27 +6775,42 @@ document.addEventListener('keydown', function(e) {
     // Show already-applied stickers on stage
     _renderPlacedStickersOnStage(wItem.appliedStickers || []);
 
-    // Cursor sticker
-    document.getElementById('spo-cursor-img').src = _stickerData.src;
+    // Cursor sticker follows mouse
+    _showCursorSticker(_stickerData.src);
 
     // Save button — disabled until placement chosen
     const btn = document.getElementById('btnSpoSave');
     btn.disabled = true;
     btn.style.opacity = '0.4';
     btn.style.cursor  = 'not-allowed';
-
     document.getElementById('spo-status').textContent = 'Klikni na zbraň kde chceš sticker umístit';
 
     document.getElementById('stickerPlaceOverlay').classList.add('show');
-
-    // Follow cursor
-    document.getElementById('stickerPlaceOverlay').addEventListener('mousemove', _onCursorMove);
   };
 
-  function _onCursorMove(e) {
+  let _cursorMoveHandler = null;
+
+  function _showCursorSticker(src) {
     const cs = document.getElementById('spo-cursor-sticker');
-    cs.style.left = e.clientX + 'px';
-    cs.style.top  = e.clientY + 'px';
+    const ci = document.getElementById('spo-cursor-img');
+    if (!cs || !ci) return;
+    ci.src = src;
+    cs.classList.add('active');
+    if (_cursorMoveHandler) document.removeEventListener('mousemove', _cursorMoveHandler);
+    _cursorMoveHandler = function(e) {
+      cs.style.left = e.clientX + 'px';
+      cs.style.top  = e.clientY + 'px';
+    };
+    document.addEventListener('mousemove', _cursorMoveHandler);
+  }
+
+  function _hideCursorSticker() {
+    const cs = document.getElementById('spo-cursor-sticker');
+    if (cs) cs.classList.remove('active');
+    if (_cursorMoveHandler) {
+      document.removeEventListener('mousemove', _cursorMoveHandler);
+      _cursorMoveHandler = null;
+    }
   }
 
   function _renderPlacedStickersOnStage(stickers) {
@@ -6826,9 +6857,11 @@ document.addEventListener('keydown', function(e) {
 
     // Enable save
     const btn = document.getElementById('btnSpoSave');
-    btn.disabled = false;
-    btn.style.opacity = '1';
-    btn.style.cursor  = 'pointer';
+    if (btn) {
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      btn.style.cursor  = 'pointer';
+    }
     document.getElementById('spo-status').textContent = '✅ Sticker umístěn — klikni Uložit';
   };
 
@@ -6860,6 +6893,7 @@ document.addEventListener('keydown', function(e) {
 
     showToast(`🎨 ${_stickerData.name} aplikován!`, 'success');
 
+    _hideCursorSticker();
     cancelStickerPlace();
     renderInventory();
 
@@ -6873,12 +6907,8 @@ document.addEventListener('keydown', function(e) {
   // ── Cancel / close ────────────────────────────────────
   window.cancelStickerPlace = function() {
     const ov = document.getElementById('stickerPlaceOverlay');
-    if (ov) {
-      ov.classList.remove('show');
-      ov.removeEventListener('mousemove', _onCursorMove);
-    }
-    const cs = document.getElementById('spo-cursor-sticker');
-    if (cs) { cs.style.left = '-999px'; cs.style.top = '-999px'; }
+    if (ov) ov.classList.remove('show');
+    _hideCursorSticker();
     _pendingPlacement = null;
   };
 
