@@ -3313,9 +3313,9 @@ body.theme-easter .nav-link:hover {
     <div id="wip-footer">
       <div id="wip-hint">
         <span id="wip-hint-icon">👆</span>
-        <span>TÁHNI PRO ROTACI — POTÁHNI PRSTEM / MYŠÍ</span>
+        <span>TÁHNI DO STRAN PRO ROTACI</span>
       </div>
-      <div id="wip-degree">ROT: <span id="wip-rot-readout">0° / 0°</span></div>
+      <div id="wip-degree">ROT: <span id="wip-rot-readout">0°</span></div>
       <button id="wip-btn-close" onclick="closeWeaponImgPreview()">✕ ZAVŘÍT</button>
     </div>
   </div>
@@ -6315,7 +6315,7 @@ window.closeCasePreview = closeCasePreview;
     }
 
     if (readout) {
-      readout.textContent = Math.round(wipRotY) + '° / ' + Math.round(wipRotX) + '°';
+      readout.textContent = Math.round(wipRotY) + '°';
     }
   }
 
@@ -6324,12 +6324,11 @@ window.closeCasePreview = closeCasePreview;
     function loop() {
       if (!wipInertia || wipDragging) { wipInertia = false; return; }
       wipVelY *= 0.93;
-      wipVelX *= 0.93;
+      wipVelX = 0;
       wipRotY += wipVelY;
-      wipRotX += wipVelX;
-      wipRotX = Math.max(-35, Math.min(35, wipRotX));
+      wipRotY = Math.max(-80, Math.min(80, wipRotY));
       applyTransform();
-      if (Math.abs(wipVelY) > 0.05 || Math.abs(wipVelX) > 0.05) {
+      if (Math.abs(wipVelY) > 0.05) {
         wipRaf = requestAnimationFrame(loop);
       } else {
         wipInertia = false;
@@ -6351,9 +6350,9 @@ window.closeCasePreview = closeCasePreview;
     const dx = e.clientX - wipLastX;
     const dy = e.clientY - wipLastY;
     wipVelY = dx * 0.45;
-    wipVelX = -dy * 0.3;
+    wipVelX = 0;
     wipRotY += wipVelY;
-    wipRotX += wipVelX;
+    wipRotY = Math.max(-80, Math.min(80, wipRotY));
     wipRotX = Math.max(-35, Math.min(35, wipRotX));
     wipLastX = e.clientX;
     wipLastY = e.clientY;
@@ -6378,9 +6377,9 @@ window.closeCasePreview = closeCasePreview;
     const dx = e.touches[0].clientX - wipLastX;
     const dy = e.touches[0].clientY - wipLastY;
     wipVelY = dx * 0.5;
-    wipVelX = -dy * 0.32;
+    wipVelX = 0;
     wipRotY += wipVelY;
-    wipRotX += wipVelX;
+    wipRotY = Math.max(-80, Math.min(80, wipRotY));
     wipRotX = Math.max(-35, Math.min(35, wipRotX));
     wipLastX = e.touches[0].clientX;
     wipLastY = e.touches[0].clientY;
@@ -9464,6 +9463,12 @@ window.listItem = async function() {
   // Push the newest listing
   const newest = state.bazosListings[state.bazosListings.length - 1];
   if (newest) await sbInsertBazos(newest);
+};
+
+const _origRemoveListing = removeListing;
+window.removeListing = async function(uid) {
+  _origRemoveListing(uid);
+  await sbDeleteBazos(uid);
 };
 
 const _origBuyListing = buyListing;
