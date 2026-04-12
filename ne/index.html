@@ -654,7 +654,7 @@ body::before {
 .lb-rank.top2 { color: #94a3b8; }
 .lb-rank.top3 { color: #cd7f32; }
 .lb-avatar { width:36px; height:36px; border-radius:50%; background: linear-gradient(135deg, var(--r-purple), var(--r-blue)); display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; color:#fff; flex-shrink:0; }
-.lb-name { font-size:0.95rem; font-weight:700; flex:1; }
+.lb-name { font-size:0.95rem; font-weight:700; flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; gap:2px; }
 .lb-stats { display:flex; gap:20px; font-size:0.75rem; color: var(--muted); font-family:'Share Tech Mono',monospace; }
 .lb-stat-item { display:flex; flex-direction:column; align-items:flex-end; }
 .lb-stat-item span:first-child { color: var(--white); font-size: 0.85rem; }
@@ -754,6 +754,16 @@ body::before {
   border-radius:1px;
 }
 @keyframes cFall { to { transform: translateY(110vh) rotate(720deg); opacity:0; } }
+
+/* ── GLOBAL CASE CLICK ANIMATIONS ─ */
+@keyframes gcRipple {
+  0%   { transform:scale(0.2); opacity:1; }
+  100% { transform:scale(1);   opacity:0; }
+}
+@keyframes gcCritFlash {
+  0%   { opacity:1; }
+  100% { opacity:0; }
+}
 
 /* ── MODAL ──────────────────────────────────────── */
 .modal-overlay {
@@ -2109,6 +2119,9 @@ button:active:not(:disabled) { transform: scale(0.96) !important; }
 /* ══ CENY PAGE ══════════════════════════════════════════════════ */
 #pageCeny {
   background: radial-gradient(ellipse at 50% 0%, rgba(0,207,255,0.06) 0%, transparent 60%);
+  display: flex !important;
+  flex-direction: column;
+  overflow: hidden !important;
 }
 .ceny-filter-bar {
   display: flex; gap: 8px; padding: 12px 28px;
@@ -2128,10 +2141,13 @@ button:active:not(:disabled) { transform: scale(0.96) !important; }
   background: rgba(0,207,255,0.08);
 }
 .ceny-table-wrap {
-  flex: 1; overflow-y: auto; padding: 16px 28px;
+  flex: 1; overflow-y: auto; padding: 16px 28px 60px;
+  min-height: 0;
 }
-.ceny-table-wrap::-webkit-scrollbar { width: 4px; }
-.ceny-table-wrap::-webkit-scrollbar-thumb { background: var(--border2); }
+.ceny-table-wrap::-webkit-scrollbar { width: 6px; }
+.ceny-table-wrap::-webkit-scrollbar-track { background: var(--bg2); }
+.ceny-table-wrap::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+.ceny-table-wrap::-webkit-scrollbar-thumb:hover { background: var(--gold2); }
 .ceny-table-header {
   display: grid;
   grid-template-columns: 80px 1fr 120px 100px 80px 100px;
@@ -3032,19 +3048,19 @@ body.theme-easter .nav-link:hover {
       </div>
     </div>
     <!-- Sub-tabs -->
-    <div style="display:flex;gap:4px;margin-bottom:12px;border-bottom:1px solid var(--border2);padding-bottom:0">
+    <div style="display:flex;gap:4px;border-bottom:1px solid var(--border2);padding:0 0 0 0;flex-shrink:0;">
       <button id="burzaTabZbrane" onclick="switchBurzaTab('zbrane')" style="background:rgba(0,207,255,0.12);border:1px solid rgba(0,207,255,0.35);border-bottom:2px solid var(--gold2);color:var(--gold2);font-family:Oswald,sans-serif;letter-spacing:2px;font-size:0.75rem;padding:7px 18px;border-radius:4px 4px 0 0;cursor:pointer">💹 ZBRANĚ</button>
       <button id="burzaTabStocks" onclick="switchBurzaTab('stocks')" style="background:transparent;border:1px solid var(--border2);border-bottom:none;color:var(--muted);font-family:Oswald,sans-serif;letter-spacing:2px;font-size:0.75rem;padding:7px 18px;border-radius:4px 4px 0 0;cursor:pointer">📊 STOCKS</button>
     </div>
 
     <!-- ZBRANĚ sub-panel -->
-    <div id="burzaPanelZbrane">
-      <div class="ceny-global-ticker">
+    <div id="burzaPanelZbrane" style="display:flex;flex-direction:column;flex:1;min-height:0;">
+      <div class="ceny-global-ticker" style="flex-shrink:0;">
         <div class="ceny-ticker-inner" id="cenyTickerInner">
           <span>LIVE MARKET ONLINE</span>
         </div>
       </div>
-      <div class="ceny-filter-bar">
+      <div class="ceny-filter-bar" style="flex-shrink:0;">
         <button class="ceny-filter-btn active" id="cfAll" onclick="filterCeny('all')">Vše</button>
         <button class="ceny-filter-btn" id="cfBlue" onclick="filterCeny('r-blue')"><span style="color:#4d79ff">■</span> Mil-Spec</button>
         <button class="ceny-filter-btn" id="cfPurple" onclick="filterCeny('r-purple')"><span style="color:#8847ff">■</span> Rare</button>
@@ -3052,14 +3068,14 @@ body.theme-easter .nav-link:hover {
         <button class="ceny-filter-btn" id="cfRed" onclick="filterCeny('r-red')"><span style="color:#eb4b4b">■</span> Covert</button>
         <button class="ceny-filter-btn" id="cfGold" onclick="filterCeny('r-gold')"><span style="color:#c9a227">■</span> Gold</button>
       </div>
-      <div class="ceny-table-header">
-        <span></span><span>Zbraň</span><span>Vzácnost</span><span>Cena</span><span>Změna</span><span></span>
+      <div class="ceny-table-header" style="flex-shrink:0;">
+        <span></span><span>Zbraň</span><span>Vzácnost</span><span>Cena</span><span>Změna &amp; Graf</span><span></span>
       </div>
       <div class="ceny-table-wrap" id="cenyTableWrap"></div>
     </div>
 
     <!-- STOCKS sub-panel -->
-    <div id="burzaPanelStocks" style="display:none">
+    <div id="burzaPanelStocks" style="display:none;flex:1;overflow-y:auto;padding:16px 28px 60px;">
       <div style="font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:#7a8ea8;letter-spacing:2px;margin-bottom:10px;padding:6px 10px;background:#050709;border:1px solid #1a2535;border-radius:3px">
         ⚠ GRAY MARKET EXCHANGE v1.3 · NEREGULOVANÝ TRH · OBCHODUJTE NA VLASTNÍ RIZIKO
       </div>
@@ -3110,7 +3126,200 @@ body.theme-easter .nav-link:hover {
   </div>
 </div>
 
-<!-- KILL CHEST DIALOG -->
+<!-- WEAPON IMAGE PREVIEW OVERLAY — CS2 INSPECT STYLE -->
+<style>
+#weaponImgPreviewOverlay {
+  display:none;
+  position:fixed;inset:0;z-index:3000;
+  background:rgba(0,0,0,0.97);
+  align-items:center;justify-content:center;
+}
+#weaponImgPreviewOverlay.show { display:flex; animation:fadeIn 0.2s ease; }
+#wip-backdrop {
+  position:absolute;inset:0;
+  cursor:pointer;
+}
+#wip-glow {
+  position:absolute;inset:0;
+  pointer-events:none;
+  transition:background 0.4s ease;
+}
+/* scanline overlay */
+#weaponImgPreviewOverlay::after {
+  content:'';
+  position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.06) 2px,rgba(0,0,0,0.06) 4px);
+  z-index:1;
+}
+#wip-panel {
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;
+  width:min(96vw,900px);
+  max-height:96vh;
+  user-select:none;
+}
+
+/* header */
+#wip-header {
+  display:flex;align-items:center;gap:14px;
+  padding:14px 20px 10px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  flex-shrink:0;
+}
+#wip-top-label {
+  font-family:'Share Tech Mono',monospace;font-size:0.55rem;
+  letter-spacing:5px;color:rgba(255,255,255,0.25);
+  text-transform:uppercase;
+}
+#wip-top-name {
+  font-family:'Oswald',sans-serif;font-size:1.4rem;
+  font-weight:700;letter-spacing:3px;
+  color:#fff;text-transform:uppercase;
+  text-shadow:0 0 30px currentColor;
+}
+#wipRarity {
+  font-family:'Oswald',sans-serif;font-size:0.6rem;
+  letter-spacing:3px;text-transform:uppercase;
+  padding:3px 14px;border-radius:2px;
+}
+#wip-close {
+  margin-left:auto;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.4);
+  width:36px;height:36px;
+  border-radius:3px;font-size:1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;flex-shrink:0;
+}
+#wip-close:hover { color:#fff;border-color:rgba(255,255,255,0.4); }
+
+/* 3D inspect stage */
+#wip-stage {
+  flex:1;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  padding:20px 0;
+  min-height:0;
+  cursor:grab;
+  overflow:hidden;
+}
+#wip-stage:active { cursor:grabbing; }
+#wip-scene {
+  position:relative;
+  display:flex;align-items:center;justify-content:center;
+  transform-style:preserve-3d;
+  perspective:900px;
+}
+#wip-img-wrap {
+  position:relative;
+  transform-style:preserve-3d;
+  transition:none;
+  will-change:transform;
+}
+#wipImg {
+  display:block;
+  width:auto;height:auto;
+  max-width:min(75vw,660px);
+  max-height:60vh;
+  object-fit:contain;
+  background:transparent;
+  filter:drop-shadow(0 20px 60px rgba(0,0,0,0.8));
+  pointer-events:none;
+  transition:filter 0.3s ease;
+}
+/* shine overlay */
+#wip-shine {
+  position:absolute;inset:-10%;
+  border-radius:50%;
+  pointer-events:none;
+  transition:background 0.05s linear;
+  mix-blend-mode:screen;
+}
+/* floor shadow */
+#wip-shadow {
+  position:absolute;
+  bottom:-18px;left:10%;right:10%;
+  height:30px;
+  background:radial-gradient(ellipse at center,rgba(0,0,0,0.7) 0%,transparent 70%);
+  pointer-events:none;
+  filter:blur(8px);
+  transform:scaleY(0.3) skewX(var(--wip-skew,0deg));
+  transform-origin:center top;
+  transition:transform 0.05s linear;
+}
+/* background cross-hair grid */
+#wip-grid {
+  position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+
+/* footer */
+#wip-footer {
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 20px 14px;
+  border-top:1px solid rgba(255,255,255,0.06);
+  flex-shrink:0;
+}
+#wip-hint {
+  font-family:'Share Tech Mono',monospace;font-size:0.6rem;
+  color:rgba(255,255,255,0.2);letter-spacing:3px;
+  display:flex;align-items:center;gap:8px;
+}
+#wip-hint-icon { font-size:1rem;opacity:0.4;animation:wipHintSway 2s ease-in-out infinite; }
+@keyframes wipHintSway { 0%,100%{transform:translateX(0)} 50%{transform:translateX(4px)} }
+#wip-degree {
+  font-family:'Share Tech Mono',monospace;font-size:0.6rem;
+  color:rgba(255,255,255,0.18);letter-spacing:2px;
+}
+#wip-btn-close {
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.5);
+  font-family:'Oswald',sans-serif;font-size:0.75rem;
+  letter-spacing:2px;padding:7px 20px;
+  border-radius:2px;cursor:pointer;transition:all 0.2s;
+}
+#wip-btn-close:hover { background:rgba(255,255,255,0.1);color:#fff; }
+</style>
+<div id="weaponImgPreviewOverlay">
+  <div id="wip-backdrop" onclick="closeWeaponImgPreview()"></div>
+  <div id="wip-glow"></div>
+  <div id="wip-panel">
+    <!-- header -->
+    <div id="wip-header">
+      <div>
+        <div id="wip-top-label">INSPECT — WEAPON</div>
+        <div id="wip-top-name"></div>
+      </div>
+      <div id="wipRarity"></div>
+      <button id="wip-close" onclick="closeWeaponImgPreview()">✕</button>
+    </div>
+    <!-- 3D stage -->
+    <div id="wip-stage">
+      <div id="wip-grid"></div>
+      <div id="wip-scene">
+        <div id="wip-img-wrap">
+          <img id="wipImg" src="" alt="">
+          <div id="wip-shine"></div>
+          <div id="wip-shadow"></div>
+        </div>
+      </div>
+    </div>
+    <!-- footer -->
+    <div id="wip-footer">
+      <div id="wip-hint">
+        <span id="wip-hint-icon">👆</span>
+        <span>TÁHNI PRO ROTACI — POTÁHNI PRSTEM / MYŠÍ</span>
+      </div>
+      <div id="wip-degree">ROT: <span id="wip-rot-readout">0° / 0°</span></div>
+      <button id="wip-btn-close" onclick="closeWeaponImgPreview()">✕ ZAVŘÍT</button>
+    </div>
+  </div>
+</div>
 <div id="killChestDialog">
   <div class="kcd-card">
     <div class="kcd-badge">🎯 BEDNA ZNIČENA</div>
@@ -3419,7 +3628,7 @@ const CLICKER_CHEST_MAP = [
   { caseId:'gold',      name:'Gold Box',            img:'case_cs2'          },  // lvl 11
   { caseId:'crystal',   name:'Crystal Box',         img:'case_cyber'        },  // lvl 12
   { caseId:'tempest',   name:'Tempest Cage',        img:'case_tempest_cage' },  // lvl 13
-  { caseId:'pyramid',   name:'Ancient Box',         img:'case_pyramid_case' },  // lvl 14
+  { caseId:'pyramid',   name:'Pyramid Box',         img:'case_pyramid_case' },  // lvl 14
   { caseId:'velocity',  name:'Velocity Case',       img:'case_velocity_case'},  // lvl 15
   { caseId:'diamond',   name:'Diamond Case',        img:'case_diamond_case' },  // lvl 16
   { caseId:'frostbite', name:'Frostbite Box',       img:'case_arctic_wolf'  },  // lvl 17
@@ -3871,6 +4080,16 @@ function showWinner(bottle, premium, fromShop = true) {
     const xp = fromShop ? (XP_PER_RARITY[bottle.rarity] || 10) : 0;
     xpEl.textContent = fromShop ? `+${xp} XP` : '';
   }
+  // Make winner bottle image clickable for big preview
+  const bottleEl = document.getElementById('winnerBottle');
+  if (bottleEl) {
+    const imgSrc = bottle.svg.match(/src="([^"]+)"/)?.[1] || '';
+    if (imgSrc) {
+      bottleEl.style.cursor = 'pointer';
+      bottleEl.title = '🔍 Klikni pro náhled';
+      bottleEl.onclick = (e) => { e.stopPropagation(); showWeaponImgPreview(imgSrc, bottle.name, bottle.rarityName, bottle.rarityColor); };
+    }
+  }
   document.getElementById('winnerOverlay').classList.add('show');
   bindWinnerButtons();
   try{sbPushActivity(bottle.name,bottle.rarityName,bottle.rarityColor);}catch(e){}
@@ -3990,15 +4209,17 @@ function renderInventory() {
     if (!b) return '';
     const liveVal = getLivePrice(item.bottle_id);
     const listed = state.bazosListings.find(l => l.uid === item.uid);
-    return '<div class="inv-card ' + b.rarity + '">' +
+    const imgSrc = b.svg.match(/src="([^"]+)"/)?.[1] || '';
+    const previewCall = imgSrc ? `onclick="showWeaponImgPreview('${imgSrc}','${b.name.replace(/'/g,"\\'")}','${b.rarityName}','${b.rarityColor}')"` : '';
+    return '<div class="inv-card ' + b.rarity + '" style="cursor:pointer" ' + previewCall + '>' +
       '<div class="bottle-svg">' + b.svg + '</div>' +
       '<div class="inv-card-name">' + b.name + '</div>' +
       '<div class="inv-card-rarity" style="color:' + b.rarityColor + '">' + b.rarityName + '</div>' +
       '<div class="inv-card-val">$' + liveVal + ' <span style="font-size:0.55rem;color:var(--muted);letter-spacing:1px">LIVE</span></div>' +
       '<div class="inv-card-date">' + item.wonAt + '</div>' +
       (listed
-        ? '<div class="btn-sell" style="color:var(--muted);border-color:var(--border2);cursor:default">Na Bazoši 📋</div>'
-        : '<button class="btn-sell" onclick="sellFromInventory(\'' + item.uid + '\')">Prodat ($' + Math.floor(liveVal*0.7) + ')</button>'
+        ? '<div class="btn-sell" style="color:var(--muted);border-color:var(--border2);cursor:default" onclick="event.stopPropagation()">Na Bazoši 📋</div>'
+        : '<button class="btn-sell" onclick="event.stopPropagation();sellFromInventory(\'' + item.uid + '\')">Prodat ($' + Math.floor(liveVal*0.7) + ')</button>'
       ) + '</div>';
   }).join('');
 
@@ -4129,7 +4350,7 @@ const shopCases = [
     caseImg:'tempest_cage',
   },
   {
-    id:'pyramid',   name:'Ancient Box',      emoji:'🔺',
+    id:'pyramid',   name:'Pyramid Box',      emoji:'🔺',
     rarity:'RARE', rarityColor:'#c9a227',
     desc:'Záhadná pyramida ze starověku. Nikdo neví co skrývá.',
     price:160, currency:'money', costLabel:'$160',
@@ -4474,12 +4695,12 @@ const casePools = {
   gold:      ['awp','new_scar','new_ak_light','new_m4','new_mp7','new_famas','new_deagle_white','new_sniper','new_m249_white','cash_big','cash_jackpot','cash_mega','case_reward_3x'],
   crystal:   ['new_scar','new_ak_light','new_m4','new_mp7','new_famas','new_m249_white','new_deagle_white','new_bullpup_white','new_deagle_dark','cash_jackpot','cash_mega','case_reward_3x'],
   legendary: ['new_ak_wood','new_ak_dark','new_ak_light','new_m4','new_mp7','new_famas','new_m249_white','new_deagle_dark','new_deagle_white','new_sniper','new_bullpup_white','sawoff','new_m249_white','cash_jackpot','cash_mega','case_reward_3x'],
-  tempest:   ['mac10','p90','m4a1','new_mp7','tec9','sg553','nova','new_famas','cash_small','cash_medium'],
-  pyramid:   ['mac10','p90','mp5','tec9','sg553','nova','new_famas','new_sawedoff','cash_small','cash_medium'],
-  velocity:  ['m4a1','tec9','sg553','ak47','nova','awp','new_sniper','new_deagle2','new_ak_light','cash_medium'],
-  diamond:   ['ak47','nova','awp','new_deagle2','new_m249','new_uzi','new_scar','new_ak_wood','new_bullpup_white','cash_big','cash_jackpot'],
-  frostbite: ['ak47','nova','awp','new_deagle_silver','new_uzi','new_scar','new_ak_dark','new_m4','cash_big','cash_jackpot'],
-  csz:       ['m4a1','tec9','sg553','ak47','nova','awp','new_ak_light','new_deagle_white','cash_medium','cash_big'],
+  tempest:   ['mac10','p90','m4a1','new_mp7','tec9','sg553','nova','new_famas','new_revolver','new_sawedoff','cash_small','cash_medium'],
+  pyramid:   ['mac10','mp5','m4a1','tec9','nova','new_famas','new_sawedoff','new_mp5alt','new_glock','new_uzi','cash_small','cash_medium'],
+  velocity:  ['m4a1','tec9','sg553','ak47','nova','awp','new_sniper','new_deagle2','new_ak_light','new_revolver','cash_medium'],
+  diamond:   ['ak47','nova','awp','new_deagle2','new_m249','new_ak_light','new_scar','new_ak_wood','new_bullpup_white','cash_big','cash_jackpot'],
+  frostbite: ['ak47','awp','new_deagle_silver','new_uzi','new_scar','new_ak_dark','new_m4','new_revolver','new_m249','new_sniper','cash_big','cash_jackpot'],
+  csz:       ['m4a1','tec9','sg553','ak47','nova','awp','new_ak_light','new_deagle_white','new_mp5alt','new_mp7','cash_medium','cash_big'],
   cyberskull:['ak47','nova','awp','new_deagle2','new_m249','new_scar','new_ak_wood','new_bullpup_white','cash_big','cash_jackpot'],
   infernd1:  ['ak47','awp','new_scar','new_ak_wood','new_ak_dark','new_deagle_dark','new_sniper','new_bullpup_white','cash_big','cash_jackpot'],
   tactical:  ['m4a1','ak47','nova','awp','new_sniper','new_ak_dark','new_deagle_silver','new_scar','cash_medium','cash_big'],
@@ -4563,6 +4784,29 @@ function getCasePoolBottle(caseId = activeCaseId, premium = false) {
     biohazard: { 'r-blue': 12, 'r-purple': 28, 'r-pink': 32, 'r-red':  11.0, 'r-gold': 3.6  },
     ancientbox:{ 'r-blue': 10, 'r-purple': 25, 'r-pink': 33, 'r-red':  12.1, 'r-gold': 4.5 },
     demonbox:  { 'r-blue': 5,  'r-purple': 20, 'r-pink': 30, 'r-red':  15.4, 'r-gold': 7.65 },
+    // ── CRATE SERIES ──
+    crate01:   { 'r-blue': 68, 'r-purple': 23, 'r-pink': 6,  'r-red':  1.1,  'r-gold': 0.45 },
+    crate02:   { 'r-blue': 65, 'r-purple': 25, 'r-pink': 7,  'r-red':  1.65, 'r-gold': 0.45 },
+    crate03:   { 'r-blue': 60, 'r-purple': 27, 'r-pink': 9,  'r-red':  2.2,  'r-gold': 0.90 },
+    crate04:   { 'r-blue': 57, 'r-purple': 28, 'r-pink': 10, 'r-red':  2.75, 'r-gold': 0.90 },
+    crate05:   { 'r-blue': 52, 'r-purple': 29, 'r-pink': 12, 'r-red':  3.30, 'r-gold': 0.90 },
+    crate06:   { 'r-blue': 45, 'r-purple': 31, 'r-pink': 15, 'r-red':  3.85, 'r-gold': 1.35 },
+    crate07:   { 'r-blue': 40, 'r-purple': 32, 'r-pink': 18, 'r-red':  4.40, 'r-gold': 1.35 },
+    crate08:   { 'r-blue': 35, 'r-purple': 32, 'r-pink': 20, 'r-red':  5.50, 'r-gold': 1.80 },
+    crate09:   { 'r-blue': 28, 'r-purple': 33, 'r-pink': 24, 'r-red':  6.60, 'r-gold': 1.80 },
+    crate10:   { 'r-blue': 22, 'r-purple': 34, 'r-pink': 27, 'r-red':  7.15, 'r-gold': 2.25 },
+    crate11:   { 'r-blue': 15, 'r-purple': 32, 'r-pink': 30, 'r-red':  9.35, 'r-gold': 2.70 },
+    crate12:   { 'r-blue': 10, 'r-purple': 28, 'r-pink': 32, 'r-red':  12.1, 'r-gold': 3.60 },
+    crate13:   { 'r-blue': 5,  'r-purple': 22, 'r-pink': 35, 'r-red':  14.3, 'r-gold': 4.50 },
+    crate14:   { 'r-blue': 3,  'r-purple': 18, 'r-pink': 35, 'r-red':  16.5, 'r-gold': 5.40 },
+    crate15:   { 'r-blue': 0,  'r-purple': 15, 'r-pink': 32, 'r-red':  18.7, 'r-gold': 7.65 },
+    // ── SPECIALTY CASES ──
+    knifecase:   { 'r-blue': 50, 'r-purple': 28, 'r-pink': 14, 'r-red': 5.50, 'r-gold': 2.25 },
+    glovebox:    { 'r-blue': 45, 'r-purple': 30, 'r-pink': 16, 'r-red': 6.05, 'r-gold': 2.25 },
+    stickerbox:  { 'r-blue': 60, 'r-purple': 28, 'r-pink': 9,  'r-red': 2.20, 'r-gold': 0.90 },
+    crewcapsule: { 'r-blue': 0,  'r-purple': 0,  'r-pink': 0,  'r-red': 0,    'r-gold': 100  },
+    arsenalbox:  { 'r-blue': 50, 'r-purple': 28, 'r-pink': 14, 'r-red': 5.50, 'r-gold': 0.90 },
+    elitearsenal:{ 'r-blue': 10, 'r-purple': 25, 'r-pink': 35, 'r-red': 16.5, 'r-gold': 4.50 },
   };
 
   let odds = caseOdds[caseId] || caseOdds.classic;
@@ -5060,13 +5304,45 @@ function renderLeaderboard() {
     const isMe = e.username === state.username;
     const rankClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
     const initials = e.username.slice(0, 2).toUpperCase();
+    const prestigeIcons  = ['','⭐','💎','👑'];
+    const prestigeNames  = ['','Bronze Prestige','Diamond Prestige','Crown Prestige'];
+    const prestigeColors = ['','#f59e0b','#3addff','#c9a227'];
+    const pIcon  = (e.prestige > 0) ? prestigeIcons[e.prestige]  || '' : '';
+    const pName  = (e.prestige > 0) ? prestigeNames[e.prestige]  || '' : '';
+    const pColor = (e.prestige > 0) ? prestigeColors[e.prestige] || '' : '';
+
+    // Build avatar HTML — fix SVG scaling: replace hardcoded 64x64 with 36x36
+    let avatarHtml = initials;
+    let avatarStyle = `background:linear-gradient(135deg,${rarityColors[e.bestRarity] || '#4d79ff'},#1a1d27)`;
+    if (isMe) {
+      const avId = localStorage.getItem('rc_avatar');
+      if (avId && typeof AVATAR_DEFS !== 'undefined') {
+        const avDef = AVATAR_DEFS.find(a => a.id === avId);
+        if (avDef) {
+          // Scale the SVG from 64x64 → 36x36 so it fills the circle properly
+          const scaledSvg = avDef.svg
+            .replace(/width="64"/, 'width="36"')
+            .replace(/height="64"/, 'height="36"');
+          avatarHtml = `<div style="width:36px;height:36px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center">${scaledSvg}</div>`;
+          avatarStyle = 'background:none;padding:0;overflow:hidden;border-radius:50%';
+        }
+      }
+    }
+
     return `
       <div class="lb-row ${isMe ? 'me' : ''}">
         <div class="lb-rank ${rankClass}">${rankEmoji[i] || i + 1}</div>
-        <div class="lb-avatar" style="${isMe && localStorage.getItem('rc_avatar') ? 'background:none;padding:0;overflow:hidden;border-radius:50%' : 'background:linear-gradient(135deg,' + (rarityColors[e.bestRarity] || '#4d79ff') + ',#1a1d27)'}">
-          ${(() => { if (isMe) { const avId = localStorage.getItem('rc_avatar'); if (avId && typeof AVATAR_DEFS !== 'undefined') { const avDef = AVATAR_DEFS.find(a => a.id === avId); if (avDef) return '<div style=\"width:36px;height:36px;border-radius:50%;overflow:hidden\">' + avDef.svg + '</div>'; } } return initials; })()}
+        <div class="lb-avatar" style="${avatarStyle}">${avatarHtml}</div>
+        <div class="lb-name" style="display:flex;flex-direction:column;gap:2px;min-width:0">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span>${e.username}</span>
+            ${isMe ? '<span style="color:var(--gold);font-size:0.7rem">(ty)</span>' : ''}
+          </div>
+          ${e.prestige > 0 ? `<div style="display:flex;align-items:center;gap:4px;margin-top:1px">
+            <span style="font-size:0.72rem">${pIcon}</span>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:1px;color:${pColor}">${pName}</span>
+          </div>` : ''}
         </div>
-        <div class="lb-name">${e.username} ${isMe ? '<span style="color:var(--gold);font-size:0.7rem">(ty)</span>' : ''}${e.prestige > 0 ? `<span style="margin-left:6px;font-size:0.85rem" title="${['','Bronze Prestige','Diamond Prestige','Crown Prestige'][e.prestige]||''}">${['','⭐','💎','👑'][e.prestige]||''}</span>` : ''}</div>
         <div class="lb-stats">
           <div class="lb-stat-item"><span>${e.score}</span><span>SKÓRE</span></div>
           <div class="lb-stat-item"><span>${e.casesOpened}</span><span>BEDNY</span></div>
@@ -5154,7 +5430,7 @@ const clkEnemyTypes = [
   { level:11, name:'Gold Box',         img:'case_cs2',           hp:52000,  reward:2800, armor:true },
   { level:12, name:'Crystal Box',      img:'case_cyber',         hp:75000,  reward:3800, armor:true },
   { level:13, name:'Tempest Cage',     img:'case_tempest_cage',  hp:105000, reward:5000, armor:true },
-  { level:14, name:'Ancient Box',      img:'case_pyramid_case',  hp:145000, reward:6500, armor:true },
+  { level:14, name:'Pyramid Box',      img:'case_pyramid_case',  hp:145000, reward:6500, armor:true },
   { level:15, name:'Velocity Case',    img:'case_velocity_case', hp:195000, reward:8500, armor:true },
   { level:16, name:'Diamond Case',     img:'case_diamond_case',  hp:260000, reward:11000,armor:true },
   { level:17, name:'Frostbite Box',    img:'case_arctic_wolf',   hp:340000, reward:14000,armor:true },
@@ -5978,13 +6254,18 @@ function showCasePreview(caseId) {
         <span class="cp-rarity-count" style="border-color:${col}33;color:${col}">${items.length} položek</span>
       </div>
       <div class="cp-items-row">
-        ${items.map(b => `
-          <div class="cp-item" style="--item-color:${b.rarityColor}">
-            <img src="${b.svg.match(/src="([^"]+)"/)?.[1] || ''}" class="ci-img" alt="${b.name}" onerror="this.style.display='none'">
+        ${items.map(b => {
+          const imgSrc = b.svg.match(/src="([^"]+)"/)?.[1] || '';
+          const safeName = b.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+          const previewCall = imgSrc ? `onclick="event.stopPropagation();showWeaponImgPreview('${imgSrc}','${safeName}','${b.rarityName}','${b.rarityColor}')"` : '';
+          return `
+          <div class="cp-item" style="--item-color:${b.rarityColor};cursor:${imgSrc?'pointer':'default'}" ${previewCall} title="${imgSrc?'🔍 Klikni pro náhled':''}">
+            <img src="${imgSrc}" class="ci-img" alt="${b.name}" onerror="this.style.display='none'">
             <div class="ci-name">${b.name}</div>
             <div class="ci-rarity" style="color:${b.rarityColor}">${b.rarityName}</div>
-            <div class="ci-val">$${b.value}</div>
-          </div>`).join('')}
+            ${imgSrc ? '<div style="font-size:0.48rem;color:rgba(255,255,255,0.28);letter-spacing:1px;margin-top:1px">🔍 NÁHLED</div>' : ''}
+          </div>`;
+        }).join('')}
       </div>
     </div>`;
   });
@@ -5999,6 +6280,182 @@ function closeCasePreview() {
   previewCaseId = null;
 }
 window.closeCasePreview = closeCasePreview;
+
+// ─────────────────────────────────────────────────────
+//  WEAPON IMAGE PREVIEW — CS2 3D INSPECT
+// ─────────────────────────────────────────────────────
+(function() {
+  let wipRotY = 12, wipRotX = -4;
+  let wipDragging = false;
+  let wipLastX = 0, wipLastY = 0;
+  let wipVelY = 0, wipVelX = 0;
+  let wipRaf = null;
+  let wipInertia = false;
+
+  function applyTransform() {
+    const wrap = document.getElementById('wip-img-wrap');
+    const shine = document.getElementById('wip-shine');
+    const shadow = document.getElementById('wip-shadow');
+    const readout = document.getElementById('wip-rot-readout');
+    if (!wrap) return;
+
+    wrap.style.transform = `perspective(900px) rotateX(${wipRotX}deg) rotateY(${wipRotY}deg)`;
+
+    // Shine moves opposite to rotation — looks like light reflection
+    if (shine) {
+      const sx = 50 - wipRotY * 1.2;
+      const sy = 50 + wipRotX * 1.4;
+      shine.style.background = `radial-gradient(ellipse at ${sx}% ${sy}%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.04) 35%, transparent 65%)`;
+    }
+
+    // Shadow skews with Y rotation
+    if (shadow) {
+      shadow.style.setProperty('--wip-skew', (wipRotY * 0.4) + 'deg');
+      shadow.style.transform = `scaleY(0.3) skewX(${wipRotY * 0.4}deg) translateY(${wipRotX * 0.5}px)`;
+    }
+
+    if (readout) {
+      readout.textContent = Math.round(wipRotY) + '° / ' + Math.round(wipRotX) + '°';
+    }
+  }
+
+  function startInertia() {
+    wipInertia = true;
+    function loop() {
+      if (!wipInertia || wipDragging) { wipInertia = false; return; }
+      wipVelY *= 0.93;
+      wipVelX *= 0.93;
+      wipRotY += wipVelY;
+      wipRotX += wipVelX;
+      wipRotX = Math.max(-35, Math.min(35, wipRotX));
+      applyTransform();
+      if (Math.abs(wipVelY) > 0.05 || Math.abs(wipVelX) > 0.05) {
+        wipRaf = requestAnimationFrame(loop);
+      } else {
+        wipInertia = false;
+      }
+    }
+    if (wipRaf) cancelAnimationFrame(wipRaf);
+    wipRaf = requestAnimationFrame(loop);
+  }
+
+  function onMouseDown(e) {
+    wipDragging = true;
+    wipInertia = false;
+    wipVelY = 0; wipVelX = 0;
+    wipLastX = e.clientX;
+    wipLastY = e.clientY;
+  }
+  function onMouseMove(e) {
+    if (!wipDragging) return;
+    const dx = e.clientX - wipLastX;
+    const dy = e.clientY - wipLastY;
+    wipVelY = dx * 0.45;
+    wipVelX = -dy * 0.3;
+    wipRotY += wipVelY;
+    wipRotX += wipVelX;
+    wipRotX = Math.max(-35, Math.min(35, wipRotX));
+    wipLastX = e.clientX;
+    wipLastY = e.clientY;
+    applyTransform();
+  }
+  function onMouseUp() {
+    if (!wipDragging) return;
+    wipDragging = false;
+    startInertia();
+  }
+
+  function onTouchStart(e) {
+    wipDragging = true;
+    wipInertia = false;
+    wipVelY = 0; wipVelX = 0;
+    wipLastX = e.touches[0].clientX;
+    wipLastY = e.touches[0].clientY;
+  }
+  function onTouchMove(e) {
+    if (!wipDragging) return;
+    e.preventDefault();
+    const dx = e.touches[0].clientX - wipLastX;
+    const dy = e.touches[0].clientY - wipLastY;
+    wipVelY = dx * 0.5;
+    wipVelX = -dy * 0.32;
+    wipRotY += wipVelY;
+    wipRotX += wipVelX;
+    wipRotX = Math.max(-35, Math.min(35, wipRotX));
+    wipLastX = e.touches[0].clientX;
+    wipLastY = e.touches[0].clientY;
+    applyTransform();
+  }
+  function onTouchEnd() {
+    if (!wipDragging) return;
+    wipDragging = false;
+    startInertia();
+  }
+
+  // Attach events to stage
+  function attachWipEvents() {
+    const stage = document.getElementById('wip-stage');
+    if (!stage) { setTimeout(attachWipEvents, 300); return; }
+    stage.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+    stage.addEventListener('touchstart', onTouchStart, { passive: true });
+    stage.addEventListener('touchmove', onTouchMove, { passive: false });
+    stage.addEventListener('touchend', onTouchEnd);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', attachWipEvents);
+  } else {
+    attachWipEvents();
+  }
+
+  window._wipApplyTransform = applyTransform;
+  window._wipResetRot = function() {
+    wipRotY = 12; wipRotX = -4;
+    wipVelY = 0; wipVelX = 0;
+    wipInertia = false;
+    applyTransform();
+  };
+})();
+
+window.showWeaponImgPreview = function(imgSrc, name, rarityName, rarityColor) {
+  const overlay = document.getElementById('weaponImgPreviewOverlay');
+  if (!overlay) return;
+
+  // Populate
+  document.getElementById('wipImg').src = imgSrc || '';
+  document.getElementById('wip-top-name').textContent = name || '';
+  document.getElementById('wip-top-name').style.color = rarityColor || '#fff';
+  document.getElementById('wip-top-name').style.textShadow = `0 0 30px ${rarityColor || '#fff'}44`;
+
+  const rarEl = document.getElementById('wipRarity');
+  rarEl.textContent = rarityName || '';
+  rarEl.style.background = (rarityColor || '#4d79ff') + '22';
+  rarEl.style.color = rarityColor || '#4d79ff';
+  rarEl.style.border = '1px solid ' + (rarityColor || '#4d79ff') + '55';
+
+  // Glow background
+  const glow = document.getElementById('wip-glow');
+  if (glow) glow.style.background = `radial-gradient(ellipse at 50% 50%, ${rarityColor || '#00cfff'}12 0%, transparent 65%)`;
+
+  // Drop shadow color on image
+  const img = document.getElementById('wipImg');
+  if (img) img.style.filter = `drop-shadow(0 20px 60px rgba(0,0,0,0.8)) drop-shadow(0 0 40px ${rarityColor || '#00cfff'}44)`;
+
+  // Reset rotation + show
+  if (window._wipResetRot) window._wipResetRot();
+  overlay.classList.add('show');
+};
+
+window.closeWeaponImgPreview = function() {
+  const overlay = document.getElementById('weaponImgPreviewOverlay');
+  if (overlay) overlay.classList.remove('show');
+};
+
+// ESC closes preview
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeWeaponImgPreview();
+});
 
 function confirmOpenCase() {
   if (!previewCaseId) return;
@@ -6518,6 +6975,7 @@ const PERKS = [
   { id:'p18', tier:6, icon:'👑', name:'Král Klikání',  bonus:'+50% Click DMG',  cost:2800, req:['p14','p15'],effect:'clickDmg',  val:0.50 },
   { id:'p19', tier:6, icon:'🌊', name:'Vlna Štěstí',   bonus:'+20% Rare šance', cost:2800, req:['p15','p16'],effect:'rareLuck',  val:0.20 },
   { id:'p20', tier:6, icon:'🏆', name:'Legenda',        bonus:'+30% Vše',        cost:2800, req:['p17','p19'],effect:'allBonus',  val:0.30 },
+  { id:'p21', tier:6, icon:'💀', name:'Nesmrtelný',     bonus:'$20 / min pasivně',cost:2800,req:['p18','p20'],effect:'passive',   val:20   },
 ];
 
 // Owned perks — persisted
@@ -6970,13 +7428,15 @@ window.switchBurzaTab = function(tab) {
   const btnZ = document.getElementById('burzaTabZbrane');
   const btnS = document.getElementById('burzaTabStocks');
   if (tab === 'zbrane') {
-    panelZ.style.display = ''; panelS.style.display = 'none';
-    btnZ.style.cssText += ';background:rgba(0,207,255,0.12);border-color:rgba(0,207,255,0.35);border-bottom:2px solid var(--gold2);color:var(--gold2)';
-    btnS.style.cssText += ';background:transparent;border-color:var(--border2);border-bottom:none;color:var(--muted)';
+    if (panelZ) panelZ.style.display = 'flex';
+    if (panelS) panelS.style.display = 'none';
+    if (btnZ) btnZ.style.cssText += ';background:rgba(0,207,255,0.12);border-color:rgba(0,207,255,0.35);border-bottom:2px solid var(--gold2);color:var(--gold2)';
+    if (btnS) btnS.style.cssText += ';background:transparent;border-color:var(--border2);border-bottom:none;color:var(--muted)';
   } else {
-    panelZ.style.display = 'none'; panelS.style.display = '';
-    btnS.style.cssText += ';background:rgba(0,207,255,0.12);border-color:rgba(0,207,255,0.35);border-bottom:2px solid var(--gold2);color:var(--gold2)';
-    btnZ.style.cssText += ';background:transparent;border-color:var(--border2);border-bottom:none;color:var(--muted)';
+    if (panelZ) panelZ.style.display = 'none';
+    if (panelS) panelS.style.display = '';
+    if (btnS) btnS.style.cssText += ';background:rgba(0,207,255,0.12);border-color:rgba(0,207,255,0.35);border-bottom:2px solid var(--gold2);color:var(--gold2)';
+    if (btnZ) btnZ.style.cssText += ';background:transparent;border-color:var(--border2);border-bottom:none;color:var(--muted)';
     if (typeof window.renderStocks==='function') window.renderStocks();
     else if (typeof renderStocks==='function') renderStocks();
   }
@@ -7497,7 +7957,7 @@ function renderCenyPage() {
       </div>
       <div><span style="background:${w.rarityColor}22;color:${w.rarityColor};border:1px solid ${w.rarityColor}44;border-radius:2px;padding:2px 7px;font-size:0.6rem;letter-spacing:1px;font-family:'Share Tech Mono',monospace">${w.rarityName}</span></div>
       <div class="ceny-row-price">$${pd.price.toLocaleString('cs-CZ')}</div>
-      <div class="ceny-row-change ${changeClass}">${changeArrow} ${ch}</div>
+      <div class="ceny-row-change ${changeClass}" style="display:flex;flex-direction:column;align-items:flex-start;gap:3px">${changeArrow} ${ch}${sparkHTML ? `<div style="margin-top:2px">${sparkHTML}</div>` : ''}</div>
       <button class="ceny-row-action" onclick="event.stopPropagation();showPriceChart('${w.id}')">📈 Graf</button>
     </div>`;
   }).join('');
@@ -8369,16 +8829,18 @@ window.selectAvatar = function(id) {
   if (av) {
     const avatarEl = document.getElementById('userAvatar');
     if (avatarEl) {
-      avatarEl.innerHTML = av.svg;
+      // Scale SVG to fit the 28px nav bubble
+      const navSvg = av.svg.replace(/width="64"/, 'width="28"').replace(/height="64"/, 'height="28"');
+      avatarEl.innerHTML = navSvg;
       avatarEl.style.padding = '0';
       avatarEl.style.overflow = 'hidden';
     }
-    // Update MY leaderboard row avatar(s)
-    const myNick = (window.state && state.username) || '';
+    // Update MY leaderboard row avatar(s) — scale to 36x36
+    const scaledSvg = av.svg.replace(/width="64"/, 'width="36"').replace(/height="64"/, 'height="36"');
     document.querySelectorAll('.lb-avatar').forEach(el => {
       const row = el.closest('.lb-row');
       if (row && row.classList.contains('me')) {
-        el.innerHTML = av.svg;
+        el.innerHTML = `<div style="width:36px;height:36px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center">${scaledSvg}</div>`;
         el.style.background = 'none';
         el.style.padding = '0';
         el.style.overflow = 'hidden';
@@ -8401,7 +8863,8 @@ window.selectAvatar = function(id) {
       if (savedAv) {
         const av = AVATAR_DEFS.find(a => a.id === savedAv);
         if (av) {
-          el.innerHTML = av.svg;
+          const navSvg = av.svg.replace(/width="64"/, 'width="28"').replace(/height="64"/, 'height="28"');
+          el.innerHTML = navSvg;
           el.style.padding = '0';
           el.style.overflow = 'hidden';
         }

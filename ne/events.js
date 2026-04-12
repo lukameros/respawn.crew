@@ -241,32 +241,97 @@ function gcClickChest(e) {
   gcLocalHp = Math.max(0, gcLocalHp);
   gcUpdateChestHpBar();
 
-  // Floating damage number
-  if (e && e.currentTarget) {
-    const el = e.currentTarget;
+  const area = document.getElementById('gcChestClickArea');
+  const circle = area ? area.querySelector('div') : null;
+  const img = area ? area.querySelector('img') : null;
+
+  // ── Floating damage number ──────────────────────────────────────
+  if (area) {
     const float = document.createElement('div');
-    float.style.cssText = `position:absolute;left:${30+Math.random()*40}%;top:40%;font-family:'Oswald',sans-serif;font-weight:900;font-size:${isCrit?'1.6rem':'1rem'};color:${isCrit?'#ffd700':'#ff6b6b'};pointer-events:none;animation:dmgFloat 0.7s ease-out forwards;z-index:100`;
-    float.textContent = isCrit ? `⭐ ${dmg.toLocaleString('cs-CZ')}!` : `-${dmg.toLocaleString('cs-CZ')}`;
-    el.appendChild(float);
-    setTimeout(() => float.remove(), 700);
+    const leftPct = 25 + Math.random() * 50;
+    const topPct  = 20 + Math.random() * 40;
+    float.style.cssText = `
+      position:absolute;
+      left:${leftPct}%;top:${topPct}%;
+      font-family:'Oswald',sans-serif;font-weight:900;
+      font-size:${isCrit ? '2rem' : '1.1rem'};
+      color:${isCrit ? '#ffd700' : '#ff6b6b'};
+      pointer-events:none;
+      animation:dmgFloat 0.75s ease-out forwards;
+      z-index:100;
+      text-shadow:${isCrit ? '0 0 20px #ffd70088' : '0 0 10px #ff6b6b66'};
+      white-space:nowrap;
+    `;
+    float.textContent = isCrit
+      ? `⭐ ${dmg.toLocaleString('cs-CZ')}!`
+      : `-${dmg.toLocaleString('cs-CZ')}`;
+    area.style.position = 'relative';
+    area.appendChild(float);
+    setTimeout(() => float.remove(), 750);
   }
 
-  // Squish animation on chest image — instant feedback
-  (function doGcSquish() {
-    const area = document.getElementById('gcChestClickArea');
-    const img = area ? area.querySelector('img') : null;
-    if (!img) return;
-    const rot = (Math.random() - 0.5) * 14;
+  // ── Squish: image + circle container ──────────────────────────
+  if (img) {
+    const rot = (Math.random() - 0.5) * (isCrit ? 22 : 14);
+    const scaleDown = isCrit ? 0.78 : 0.84;
+    const scaleUp   = isCrit ? 1.14 : 1.05;
     img.style.transition = 'none';
-    img.style.transform = `scale(0.86) rotate(${rot}deg)`;
+    img.style.transform = `scale(${scaleDown}) rotate(${rot}deg)`;
     requestAnimationFrame(() => requestAnimationFrame(() => {
-      img.style.transition = 'transform 0.18s cubic-bezier(.15,1.4,.5,1)';
-      img.style.transform = isCrit ? 'scale(1.08) rotate(0deg)' : 'scale(1.03) rotate(0deg)';
-      setTimeout(() => { img.style.transition = 'transform 0.12s ease'; img.style.transform = ''; }, 180);
+      img.style.transition = 'transform 0.22s cubic-bezier(.12,1.6,.5,1)';
+      img.style.transform = `scale(${scaleUp}) rotate(0deg)`;
+      setTimeout(() => {
+        img.style.transition = 'transform 0.14s ease';
+        img.style.transform = '';
+      }, 220);
     }));
-  })();
+  }
 
-  // Flush to server debounced (every 300ms)
+  // Also shake the circle container itself
+  if (circle) {
+    const shiftX = (Math.random() - 0.5) * (isCrit ? 14 : 7);
+    const shiftY = (Math.random() - 0.5) * (isCrit ? 10 : 5);
+    circle.style.transition = 'none';
+    circle.style.transform = `translate(${shiftX}px,${shiftY}px) scale(${isCrit ? 0.93 : 0.96})`;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      circle.style.transition = 'transform 0.25s cubic-bezier(.12,1.5,.5,1)';
+      circle.style.transform = '';
+    }));
+  }
+
+  // ── Ripple ring ─────────────────────────────────────────────────
+  if (area) {
+    const ripple = document.createElement('div');
+    const size = isCrit ? 380 : 280;
+    ripple.style.cssText = `
+      position:absolute;
+      top:50%;left:50%;
+      width:${size}px;height:${size}px;
+      margin-left:${-size/2}px;margin-top:${-size/2}px;
+      border-radius:50%;
+      border:${isCrit ? 3 : 2}px solid ${isCrit ? '#ffd700' : 'rgba(0,207,255,0.7)'};
+      box-shadow:0 0 ${isCrit ? 20 : 10}px ${isCrit ? '#ffd70066' : 'rgba(0,207,255,0.3)'};
+      pointer-events:none;
+      animation:gcRipple 0.55s ease-out forwards;
+      z-index:50;
+    `;
+    area.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 560);
+  }
+
+  // ── Crit screen flash ────────────────────────────────────────────
+  if (isCrit) {
+    const flash = document.createElement('div');
+    flash.style.cssText = `
+      position:fixed;inset:0;pointer-events:none;z-index:2999;
+      background:radial-gradient(ellipse at center,rgba(255,215,0,0.12) 0%,transparent 70%);
+      animation:gcCritFlash 0.35s ease-out forwards;
+    `;
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 360);
+  }
+
+  // Flush to server debounced
   clearTimeout(gcFlushTimeout);
   gcFlushTimeout = setTimeout(gcFlushToServer, 300);
 }
