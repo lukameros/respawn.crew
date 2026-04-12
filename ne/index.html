@@ -2163,8 +2163,8 @@ button:active:not(:disabled) { transform: scale(0.96) !important; }
   box-shadow: 0 4px 16px rgba(0,0,0,0.4);
 }
 .ceny-row-img { width: 72px; height: 48px; object-fit: contain; }
-.ceny-row-name { font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-.ceny-row-rarity { font-size: 0.6rem; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+.ceny-row-name { font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--white); }
+.ceny-row-rarity { font-size: 0.6rem; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; color: var(--muted); }
 .ceny-row-price {
   font-family: 'Share Tech Mono', monospace; font-size: 0.9rem;
   color: var(--white); font-weight: bold;
@@ -2176,7 +2176,7 @@ button:active:not(:disabled) { transform: scale(0.96) !important; }
 .ceny-row-change.up   { color: #4ade80; }
 .ceny-row-change.down { color: #ef4444; }
 .ceny-row-change.flat { color: var(--muted); }
-.ceny-row-base { font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: var(--muted); }
+.ceny-row-base { font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: #8a9ab8; }
 .ceny-row-action {
   background: rgba(0,207,255,0.1); border: 1px solid rgba(0,207,255,0.25);
   color: var(--gold2); font-family: 'Oswald', sans-serif; font-size: 0.68rem;
@@ -2397,9 +2397,126 @@ button:active:not(:disabled) { transform: scale(0.96) !important; }
 .adm-toggle-btn.enabled { background:#16a34a; color:#fff; }
 .adm-toggle-btn.disabled { background:#dc2626; color:#fff; }
 .adm-log { background:rgba(0,0,0,0.3); border-radius:6px; padding:10px; font-family:"Share Tech Mono",monospace; font-size:0.7rem; color:#4ade80; max-height:120px; overflow-y:auto; margin-top:8px; }
+
+/* ══ PROGRESS INNER TABS ═══════════════════════════════════════════ */
+.prog-inner-tab {
+  background:transparent; border:none; border-bottom:2px solid transparent;
+  color:var(--muted); font-family:Oswald,sans-serif; letter-spacing:2px;
+  font-size:0.75rem; padding:10px 20px; cursor:pointer; transition:all .2s;
+}
+.prog-inner-tab.active, .prog-inner-tab:hover { color:var(--gold2); border-bottom-color:var(--gold2); }
+.prog-panel { display:none; overflow-y:auto; flex:1; }
+.prog-panel.active { display:block; }
+
+/* ══ PERK TREE ══════════════════════════════════════════════════════ */
+.perk-tier { display:flex; justify-content:center; gap:12px; position:relative; }
+.perk-node { position:relative; width:128px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; }
+.perk-card {
+  width:100%; background:var(--panel); border:1.5px solid var(--border2); border-radius:8px;
+  padding:10px 8px 8px; text-align:center; cursor:pointer; transition:all .2s;
+  position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:3px;
+}
+.perk-card:hover:not(.locked):not(.owned) { border-color:var(--gold); transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,207,255,0.2); }
+.perk-card.owned  { border-color:#4ade80; background:radial-gradient(ellipse at 50% 0%,rgba(74,222,128,0.12) 0%,var(--panel) 70%); cursor:default; }
+.perk-card.locked { opacity:.32; cursor:not-allowed; filter:grayscale(.7); }
+.perk-card.available { border-color:var(--gold); animation:perkPulse 2s ease-in-out infinite; }
+@keyframes perkPulse { 0%,100%{box-shadow:0 0 5px rgba(0,207,255,0.3)} 50%{box-shadow:0 0 18px rgba(0,207,255,0.8)} }
+.perk-icon  { font-size:1.5rem; line-height:1; }
+.perk-name  { font-family:Oswald,sans-serif; font-size:0.68rem; letter-spacing:1px; color:var(--white); line-height:1.2; }
+.perk-bonus { font-size:0.58rem; color:#4ade80; font-family:'Share Tech Mono',monospace; }
+.perk-cost  { font-size:0.6rem;  color:var(--gold); font-family:'Share Tech Mono',monospace; }
+.perk-badge { font-size:0.52rem; color:#4ade80; letter-spacing:1px; font-family:Oswald,sans-serif; }
+.perk-connector { width:2px; background:var(--border2); margin:0 auto; transition:background .4s; }
+.perk-connector.lit { background:#4ade80; box-shadow:0 0 6px #4ade80; }
+.perk-tree-stats {
+  background:var(--panel); border:1px solid var(--border2); border-radius:8px;
+  padding:12px 16px; margin-bottom:16px; display:flex; gap:20px; flex-wrap:wrap; align-items:center;
+}
+.perk-stat { font-size:0.72rem; color:var(--muted); }
+.perk-stat strong { color:#4ade80; font-family:'Share Tech Mono',monospace; }
+.perk-tier-label { font-family:Oswald,sans-serif; font-size:0.6rem; letter-spacing:3px; color:var(--muted2); text-align:center; margin:4px 0 6px; }
+
+/* ══ HUD THEME STYLES ═══════════════════════════════════════════════ */
+.hud-theme-btn {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:8px; padding:14px 10px; border-radius:10px; border:2px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.03); cursor:pointer; transition:all .2s; color:#c8d0e0;
+  font-family:Oswald,sans-serif; font-size:0.72rem; letter-spacing:2px;
+}
+.hud-theme-btn:hover { border-color:rgba(255,255,255,0.2); background:rgba(255,255,255,0.07); }
+.hud-theme-btn.active { border-color:#a78bfa; background:rgba(124,58,237,0.15); color:#a78bfa; }
+.hud-theme-btn img { width:64px; height:64px; object-fit:contain; }
+
+/* ── Seasonal particle canvas ── */
+#holidayCanvas {
+  position:fixed; inset:0; pointer-events:none; z-index:9998;
+  opacity:0; transition:opacity 1s;
+}
+#holidayCanvas.visible { opacity:1; }
+
+/* ── Corner decorations ── */
+.hud-corner-decor {
+  position:fixed; pointer-events:none; z-index:9997;
+  width:110px; opacity:0; transition:opacity 1s;
+}
+.hud-corner-decor.visible { opacity:1; }
+#hcd-tl { top:70px;  left:0;   transform:scaleX(-1); }
+#hcd-tr { top:70px;  right:0;  }
+#hcd-bl { bottom:10px; left:0; transform:scaleX(-1) scaleY(-1); }
+#hcd-br { bottom:10px; right:0; transform:scaleY(-1); }
+
+/* ── Christmas theme overrides ── */
+body.theme-christmas {
+  --gold:  #ff4444;
+  --gold2: #ff6666;
+  --coin:  #22c55e;
+  --coin2: #16a34a;
+}
+body.theme-christmas body::before { display:none; }
+body.theme-christmas #topbar {
+  background: linear-gradient(135deg, #1a0505 0%, #0a1a08 100%);
+  border-bottom: 1px solid #3a0808;
+}
+body.theme-christmas .nav-link.active,
+body.theme-christmas .nav-link:hover {
+  color: #ff6666 !important;
+  border-color: #ff4444 !important;
+}
+
+/* ── Easter theme overrides ── */
+body.theme-easter {
+  --gold:  #f472b6;
+  --gold2: #fb7185;
+  --coin:  #a3e635;
+  --coin2: #84cc16;
+}
+body.theme-easter #topbar {
+  background: linear-gradient(135deg, #1a0a18 0%, #0e1a0a 100%);
+  border-bottom: 1px solid #3a1830;
+}
+body.theme-easter .nav-link.active,
+body.theme-easter .nav-link:hover {
+  color: #f472b6 !important;
+  border-color: #f472b6 !important;
+}
+
+/* ── Snowflake/egg floaters ── */
+@keyframes holidayFall {
+  0%   { transform: translateY(-20px) rotate(0deg);   opacity:1; }
+  90%  { opacity:1; }
+  100% { transform: translateY(105vh) rotate(720deg); opacity:0; }
+}
+@keyframes holidaySway { 0%,100% { margin-left:0 } 50% { margin-left:30px } }
 </style>
 </head>
 <body>
+
+<!-- ══ HOLIDAY DECORATIONS ══════════════════════════════════════════ -->
+<canvas id="holidayCanvas"></canvas>
+<img id="hcd-tl" class="hud-corner-decor" src="" alt="">
+<img id="hcd-tr" class="hud-corner-decor" src="" alt="">
+<img id="hcd-bl" class="hud-corner-decor" src="" alt="">
+<img id="hcd-br" class="hud-corner-decor" src="" alt="">
 
 <!-- ═══ CUSTOM CURSOR ═══ -->
 <div id="cursorRing"></div>
@@ -2638,11 +2755,11 @@ button:active:not(:disabled) { transform: scale(0.96) !important; }
     <div class="nav-tab" onclick="switchTab('leaderboard')" id="tab-leaderboard">
       <span class="tab-icon">🏆</span> Žebříček
     </div>
-    <div class="nav-tab" onclick="switchTab('mise')" id="tab-mise">
-      <span class="tab-icon">🎯</span> Mise
+    <div class="nav-tab" onclick="switchTab('progress')" id="tab-progress">
+      <span class="tab-icon">🎯</span> Mise & Ach.
     </div>
-    <div class="nav-tab" onclick="switchTab('achiementy')" id="tab-achiementy">
-      <span class="tab-icon">🏅</span> Achievementy
+    <div class="nav-tab" onclick="switchTab('perky')" id="tab-perky">
+      <span class="tab-icon">🌳</span> Perky
     </div>
     <div class="nav-tab" onclick="switchTab('ceny')" id="tab-ceny">
       <span class="tab-icon">📈</span> <span class="tab-label">BURZA</span>
@@ -2943,7 +3060,7 @@ button:active:not(:disabled) { transform: scale(0.96) !important; }
 
     <!-- STOCKS sub-panel -->
     <div id="burzaPanelStocks" style="display:none">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:#3a4a5a;letter-spacing:2px;margin-bottom:10px;padding:6px 10px;background:#050709;border:1px solid #111520;border-radius:3px">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:#7a8ea8;letter-spacing:2px;margin-bottom:10px;padding:6px 10px;background:#050709;border:1px solid #1a2535;border-radius:3px">
         ⚠ GRAY MARKET EXCHANGE v1.3 · NEREGULOVANÝ TRH · OBCHODUJTE NA VLASTNÍ RIZIKO
       </div>
       <div id="stocksList" style="display:flex;flex-direction:column;gap:8px"></div>
@@ -3169,6 +3286,102 @@ const bottles = [
   { id:'new_sawedoff',    name:'Sawed-Off | Quick Draw',     rarity:'r-purple', rarityName:'Rare',       rarityColor:'#8847ff', weight:7,  value:350,
     svg:`<img src="assets/weapon_new_sawedoff.png" class="weapon-img" alt="Sawed-Off | Quick Draw">`},
 
+  // ── 🔪 NOŽE (items_v3) ───────────────────────────────
+  { id:'knives_01', name:'Flip Knife | Urban Fade',       rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:18, value:160,  svg:`<img src="assets/knives_01.png" class="weapon-img" alt="Flip Knife | Urban Fade">`},
+  { id:'knives_02', name:'Gut Knife | Tiger Tooth',        rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:16, value:180,  svg:`<img src="assets/knives_02.png" class="weapon-img" alt="Gut Knife | Tiger Tooth">`},
+  { id:'knives_03', name:'Bowie Knife | Rust Coat',        rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:15, value:190,  svg:`<img src="assets/knives_03.png" class="weapon-img" alt="Bowie Knife | Rust Coat">`},
+  { id:'knives_04', name:'Falchion | Safari Mesh',         rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:14, value:200,  svg:`<img src="assets/knives_04.png" class="weapon-img" alt="Falchion | Safari Mesh">`},
+  { id:'knives_05', name:'Shadow Daggers | Night',         rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:13, value:220,  svg:`<img src="assets/knives_05.png" class="weapon-img" alt="Shadow Daggers | Night">`},
+  { id:'knives_06', name:'Karambit | Scorched',            rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:10, value:320,  svg:`<img src="assets/knives_06.png" class="weapon-img" alt="Karambit | Scorched">`},
+  { id:'knives_07', name:'M9 Bayonet | Forest DDPAT',      rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:9,  value:360,  svg:`<img src="assets/knives_07.png" class="weapon-img" alt="M9 Bayonet | Forest DDPAT">`},
+  { id:'knives_08', name:'Huntsman | Crimson Web',         rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:8,  value:420,  svg:`<img src="assets/knives_08.png" class="weapon-img" alt="Huntsman | Crimson Web">`},
+  { id:'knives_09', name:'Stiletto | Stained',             rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:7,  value:480,  svg:`<img src="assets/knives_09.png" class="weapon-img" alt="Stiletto | Stained">`},
+  { id:'knives_10', name:'Talon | Blue Steel',             rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:6,  value:540,  svg:`<img src="assets/knives_10.png" class="weapon-img" alt="Talon | Blue Steel">`},
+  { id:'knives_11', name:'Ursus | Slaughter',              rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:4,  value:680,  svg:`<img src="assets/knives_11.png" class="weapon-img" alt="Ursus | Slaughter">`},
+  { id:'knives_12', name:'Navaja | Marble Fade',           rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:3.5,value:750,  svg:`<img src="assets/knives_12.png" class="weapon-img" alt="Navaja | Marble Fade">`},
+  { id:'knives_13', name:'Skeleton | Vanilla',             rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:3,  value:840,  svg:`<img src="assets/knives_13.png" class="weapon-img" alt="Skeleton | Vanilla">`},
+  { id:'knives_14', name:'Paracord | Doppler',             rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:2.5,value:920,  svg:`<img src="assets/knives_14.png" class="weapon-img" alt="Paracord | Doppler">`},
+  { id:'knives_15', name:'Survival | Case Hardened',       rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:2,  value:1000, svg:`<img src="assets/knives_15.png" class="weapon-img" alt="Survival | Case Hardened">`},
+  { id:'knives_16', name:'Classic | Damascus Steel',       rarity:'r-red',    rarityName:'Covert',      rarityColor:'#eb4b4b', weight:1.2,value:1300, svg:`<img src="assets/knives_16.png" class="weapon-img" alt="Classic | Damascus Steel">`},
+  { id:'knives_17', name:'Flip | Gamma Doppler',           rarity:'r-red',    rarityName:'Covert',      rarityColor:'#eb4b4b', weight:0.9,value:1600, svg:`<img src="assets/knives_17.png" class="weapon-img" alt="Flip | Gamma Doppler">`},
+  { id:'knives_18', name:'Gut | Tiger Tooth FN',           rarity:'r-red',    rarityName:'Covert',      rarityColor:'#eb4b4b', weight:0.7,value:1900, svg:`<img src="assets/knives_18.png" class="weapon-img" alt="Gut | Tiger Tooth FN">`},
+  { id:'knives_19', name:'Bowie | Doppler Phase 4',        rarity:'r-red',    rarityName:'Covert',      rarityColor:'#eb4b4b', weight:0.5,value:2300, svg:`<img src="assets/knives_19.png" class="weapon-img" alt="Bowie | Doppler Phase 4">`},
+  { id:'knives_20', name:'Karambit | Crimson Web MW',      rarity:'r-red',    rarityName:'Covert',      rarityColor:'#eb4b4b', weight:0.35,value:2800,svg:`<img src="assets/knives_20.png" class="weapon-img" alt="Karambit | Crimson Web MW">`},
+  { id:'knives_21', name:'M9 | Fade ★',                   rarity:'r-gold',   rarityName:'★ Gold',      rarityColor:'#c9a227', weight:0.15,value:4500,svg:`<img src="assets/knives_21.png" class="weapon-img" alt="M9 | Fade ★">`},
+  { id:'knives_22', name:'Karambit | Marble Fade ★',       rarity:'r-gold',   rarityName:'★ Gold',      rarityColor:'#c9a227', weight:0.12,value:6000,svg:`<img src="assets/knives_22.png" class="weapon-img" alt="Karambit | Marble Fade ★">`},
+  { id:'knives_23', name:'Butterfly | Tiger Tooth ★',      rarity:'r-gold',   rarityName:'★ Gold',      rarityColor:'#c9a227', weight:0.08,value:8000,svg:`<img src="assets/knives_23.png" class="weapon-img" alt="Butterfly | Tiger Tooth ★">`},
+  { id:'knives_24', name:'Karambit | Doppler Black Pearl ★',rarity:'r-gold',  rarityName:'★ Gold',      rarityColor:'#c9a227', weight:0.05,value:12000,svg:`<img src="assets/knives_24.png" class="weapon-img" alt="Karambit | Doppler Black Pearl ★">`},
+  { id:'knives_25', name:'★ FADE KNIFE | FULL FADE',        rarity:'r-gold',   rarityName:'★ Gold',      rarityColor:'#c9a227', weight:0.03,value:18000,svg:`<img src="assets/knives_25.png" class="weapon-img" alt="★ FADE KNIFE | FULL FADE">`},
+
+  // ── 🧤 RUKAVICE (items_v3) ───────────────────────────
+  { id:'gloves_01', name:'Sport Gloves | Amphibious',      rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:12, value:350,  svg:`<img src="assets/gloves_01.png" class="weapon-img" alt="Sport Gloves | Amphibious">`},
+  { id:'gloves_02', name:'Moto Gloves | Eclipse',          rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:11, value:390,  svg:`<img src="assets/gloves_02.png" class="weapon-img" alt="Moto Gloves | Eclipse">`},
+  { id:'gloves_03', name:'Specialist Gloves | Crimson',    rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:10, value:430,  svg:`<img src="assets/gloves_03.png" class="weapon-img" alt="Specialist Gloves | Crimson">`},
+  { id:'gloves_04', name:'Driver Gloves | Lunar Weave',    rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:9,  value:480,  svg:`<img src="assets/gloves_04.png" class="weapon-img" alt="Driver Gloves | Lunar Weave">`},
+  { id:'gloves_05', name:'Hand Wraps | CAUTION!',          rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:5,  value:700,  svg:`<img src="assets/gloves_05.png" class="weapon-img" alt="Hand Wraps | CAUTION!">`},
+  { id:'gloves_06', name:'Bloodhound Gloves | Charred',    rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:4.5,value:780,  svg:`<img src="assets/gloves_06.png" class="weapon-img" alt="Bloodhound Gloves | Charred">`},
+  { id:'gloves_07', name:'Sport Gloves | Pandora Box',     rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:4,  value:900,  svg:`<img src="assets/gloves_07.png" class="weapon-img" alt="Sport Gloves | Pandora Box">`},
+  { id:'gloves_08', name:'Moto Gloves | Blood Pressure',   rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:3,  value:1050, svg:`<img src="assets/gloves_08.png" class="weapon-img" alt="Moto Gloves | Blood Pressure">`},
+  { id:'gloves_09', name:'Specialist | Fade',              rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:2.5,value:1200, svg:`<img src="assets/gloves_09.png" class="weapon-img" alt="Specialist | Fade">`},
+  { id:'gloves_10', name:'Driver Gloves | Crimson Weave',  rarity:'r-red',    rarityName:'Covert',      rarityColor:'#eb4b4b', weight:0.8,value:1800, svg:`<img src="assets/gloves_10.png" class="weapon-img" alt="Driver Gloves | Crimson Weave">`},
+  { id:'gloves_11', name:'Hand Wraps | Leather',           rarity:'r-red',    rarityName:'Covert',      rarityColor:'#eb4b4b', weight:0.5,value:2400, svg:`<img src="assets/gloves_11.png" class="weapon-img" alt="Hand Wraps | Leather">`},
+  { id:'gloves_12', name:'Sport Gloves | Vice ★',          rarity:'r-gold',   rarityName:'★ Gold',      rarityColor:'#c9a227', weight:0.1,value:4000, svg:`<img src="assets/gloves_12.png" class="weapon-img" alt="Sport Gloves | Vice ★">`},
+  { id:'gloves_13', name:'★ BLOODHOUND | EMERALD FADE',    rarity:'r-gold',   rarityName:'★ Gold',      rarityColor:'#c9a227', weight:0.04,value:9000,svg:`<img src="assets/gloves_13.png" class="weapon-img" alt="★ BLOODHOUND | EMERALD FADE">`},
+
+  // ── 🎨 STICKERY (items_v3) ───────────────────────────
+  { id:'stickers_01', name:'Sticker | Chrome Skull',       rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:16, value:110,  svg:`<img src="assets/stickers_01.png" class="weapon-img" alt="Sticker | Chrome Skull">`},
+  { id:'stickers_02', name:'Sticker | Neon Dragon',        rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:15, value:125,  svg:`<img src="assets/stickers_02.png" class="weapon-img" alt="Sticker | Neon Dragon">`},
+  { id:'stickers_03', name:'Sticker | Arctic Fox',         rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:14, value:140,  svg:`<img src="assets/stickers_03.png" class="weapon-img" alt="Sticker | Arctic Fox">`},
+  { id:'stickers_04', name:'Sticker | Cyber Glow',         rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:10, value:200,  svg:`<img src="assets/stickers_04.png" class="weapon-img" alt="Sticker | Cyber Glow">`},
+  { id:'stickers_05', name:'Sticker | Lava Flow',          rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:9,  value:230,  svg:`<img src="assets/stickers_05.png" class="weapon-img" alt="Sticker | Lava Flow">`},
+  { id:'stickers_06', name:'Sticker | Gold Rush',          rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:8,  value:270,  svg:`<img src="assets/stickers_06.png" class="weapon-img" alt="Sticker | Gold Rush">`},
+  { id:'stickers_07', name:'Sticker | Void',               rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:4,  value:450,  svg:`<img src="assets/stickers_07.png" class="weapon-img" alt="Sticker | Void">`},
+  { id:'stickers_08', name:'Sticker | Blood Diamond',      rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:3,  value:600,  svg:`<img src="assets/stickers_08.png" class="weapon-img" alt="Sticker | Blood Diamond">`},
+  { id:'stickers_09', name:'Sticker | Crown Foil ★',       rarity:'r-gold',   rarityName:'★ Gold',      rarityColor:'#c9a227', weight:0.5,value:1500, svg:`<img src="assets/stickers_09.png" class="weapon-img" alt="Sticker | Crown Foil ★">`},
+
+  // ── 🏷️ CREW STICKERY (stickers_clean) ───────────────
+  { id:'stk_lukamer',   name:'Sticker | LukaMer ★',        rarity:'r-gold',   rarityName:'★ Crew',      rarityColor:'#c9a227', weight:1.5,value:1200, svg:`<img src="assets/lukamer.png" class="weapon-img" alt="Sticker | LukaMer">`},
+  { id:'stk_soggy',     name:'Sticker | Soggy Question ★', rarity:'r-gold',   rarityName:'★ Crew',      rarityColor:'#c9a227', weight:1.5,value:1200, svg:`<img src="assets/soggy_question3.png" class="weapon-img" alt="Sticker | Soggy Question">`},
+  { id:'stk_anton',     name:'Sticker | Anton ★',          rarity:'r-gold',   rarityName:'★ Crew',      rarityColor:'#c9a227', weight:1.5,value:1200, svg:`<img src="assets/anton.png" class="weapon-img" alt="Sticker | Anton">`},
+  { id:'stk_foxy',      name:'Sticker | Foxy ★',           rarity:'r-gold',   rarityName:'★ Crew',      rarityColor:'#c9a227', weight:1.5,value:1200, svg:`<img src="assets/foxy.png" class="weapon-img" alt="Sticker | Foxy">`},
+  { id:'stk_bober',     name:'Sticker | Bober Kurwa ★',    rarity:'r-gold',   rarityName:'★ Crew',      rarityColor:'#c9a227', weight:1.5,value:1200, svg:`<img src="assets/bober_kurwa.png" class="weapon-img" alt="Sticker | Bober Kurwa">`},
+
+  // ── 🔫 NOVÉ ZBRANĚ weapon_17-50 (weapons_only) ───────
+  { id:'weapon_17', name:'AK-47 | Desert Patrol',          rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:17, value:130,  svg:`<img src="assets/weapon_17.png" class="weapon-img" alt="AK-47 | Desert Patrol">`},
+  { id:'weapon_18', name:'M4A4 | Neon Noir',               rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:16, value:145,  svg:`<img src="assets/weapon_18.png" class="weapon-img" alt="M4A4 | Neon Noir">`},
+  { id:'weapon_19', name:'AWP | Redline',                  rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:15, value:160,  svg:`<img src="assets/weapon_19.png" class="weapon-img" alt="AWP | Redline">`},
+  { id:'weapon_20', name:'Glock-18 | Fade',                rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:14, value:175,  svg:`<img src="assets/weapon_20.png" class="weapon-img" alt="Glock-18 | Fade">`},
+  { id:'weapon_21', name:'USP-S | Orion',                  rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:13, value:190,  svg:`<img src="assets/weapon_21.png" class="weapon-img" alt="USP-S | Orion">`},
+  { id:'weapon_22', name:'MP9 | Hypnotic',                 rarity:'r-blue',   rarityName:'Mil-Spec',    rarityColor:'#4d79ff', weight:12, value:210,  svg:`<img src="assets/weapon_22.png" class="weapon-img" alt="MP9 | Hypnotic">`},
+  { id:'weapon_23', name:'SG 553 | Pulse',                 rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:10, value:290,  svg:`<img src="assets/weapon_23.png" class="weapon-img" alt="SG 553 | Pulse">`},
+  { id:'weapon_24', name:'P90 | Death Grip',               rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:9,  value:330,  svg:`<img src="assets/weapon_24.png" class="weapon-img" alt="P90 | Death Grip">`},
+  { id:'weapon_25', name:'AUG | Midnight Lily',            rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:8,  value:370,  svg:`<img src="assets/weapon_25.png" class="weapon-img" alt="AUG | Midnight Lily">`},
+  { id:'weapon_26', name:'M4A1-S | Nightmare',             rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:7,  value:420,  svg:`<img src="assets/weapon_26.png" class="weapon-img" alt="M4A1-S | Nightmare">`},
+  { id:'weapon_27', name:'Desert Eagle | Mecha Industries',rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:6,  value:480,  svg:`<img src="assets/weapon_27.png" class="weapon-img" alt="Desert Eagle | Mecha Industries">`},
+  { id:'weapon_28', name:'Galil AR | Sugar Rush',          rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:6,  value:510,  svg:`<img src="assets/weapon_28.png" class="weapon-img" alt="Galil AR | Sugar Rush">`},
+  { id:'weapon_29', name:'AK-47 | Neon Rider',             rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:4,  value:650,  svg:`<img src="assets/weapon_29.png" class="weapon-img" alt="AK-47 | Neon Rider">`},
+  { id:'weapon_30', name:'M4A4 | Desolate Space',          rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:3.5,value:720,  svg:`<img src="assets/weapon_30.png" class="weapon-img" alt="M4A4 | Desolate Space">`},
+  { id:'weapon_31', name:'AWP | Asiimov',                  rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:3,  value:800,  svg:`<img src="assets/weapon_31.png" class="weapon-img" alt="AWP | Asiimov">`},
+  { id:'weapon_32', name:'USP-S | Kill Confirmed',         rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:2.5,value:900,  svg:`<img src="assets/weapon_32.png" class="weapon-img" alt="USP-S | Kill Confirmed">`},
+  { id:'weapon_33', name:'Glock-18 | Synth Leaf',          rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:2,  value:980,  svg:`<img src="assets/weapon_33.png" class="weapon-img" alt="Glock-18 | Synth Leaf">`},
+  { id:'weapon_34', name:'P250 | See Ya Later',            rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:2,  value:1050, svg:`<img src="assets/weapon_34.png" class="weapon-img" alt="P250 | See Ya Later">`},
+  { id:'weapon_35', name:'M4A1-S | Golden Coil',           rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:8,  value:400,  svg:`<img src="assets/weapon_35.png" class="weapon-img" alt="M4A1-S | Golden Coil">`},
+  { id:'weapon_36', name:'AK-47 | Wasteland Rebel',        rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:7,  value:440,  svg:`<img src="assets/weapon_36.png" class="weapon-img" alt="AK-47 | Wasteland Rebel">`},
+  { id:'weapon_37', name:'FAMAS | Neural Net',             rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:7,  value:460,  svg:`<img src="assets/weapon_37.png" class="weapon-img" alt="FAMAS | Neural Net">`},
+  { id:'weapon_38', name:'UMP-45 | Momentum',              rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:6,  value:490,  svg:`<img src="assets/weapon_38.png" class="weapon-img" alt="UMP-45 | Momentum">`},
+  { id:'weapon_39', name:'MP7 | Whiteout',                 rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:6,  value:520,  svg:`<img src="assets/weapon_39.png" class="weapon-img" alt="MP7 | Whiteout">`},
+  { id:'weapon_40', name:'SG 553 | Colony IV',             rarity:'r-purple', rarityName:'Rare',        rarityColor:'#8847ff', weight:5,  value:560,  svg:`<img src="assets/weapon_40.png" class="weapon-img" alt="SG 553 | Colony IV">`},
+  { id:'weapon_41', name:'AUG | Stymphalian',              rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:3.5,value:750,  svg:`<img src="assets/weapon_41.png" class="weapon-img" alt="AUG | Stymphalian">`},
+  { id:'weapon_42', name:'AWP | Chromatic Aberration',     rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:3,  value:850,  svg:`<img src="assets/weapon_42.png" class="weapon-img" alt="AWP | Chromatic Aberration">`},
+  { id:'weapon_43', name:'M4A4 | Spider Lily',             rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:2.5,value:950,  svg:`<img src="assets/weapon_43.png" class="weapon-img" alt="M4A4 | Spider Lily">`},
+  { id:'weapon_44', name:'Glock-18 | Bullet Queen',        rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:2,  value:1050, svg:`<img src="assets/weapon_44.png" class="weapon-img" alt="Glock-18 | Bullet Queen">`},
+  { id:'weapon_45', name:'AK-47 | Slate',                  rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:2,  value:1100, svg:`<img src="assets/weapon_45.png" class="weapon-img" alt="AK-47 | Slate">`},
+  { id:'weapon_46', name:'Desert Eagle | Light Rail',      rarity:'r-pink',   rarityName:'Classified',  rarityColor:'#d32ee6', weight:1.8,value:1180, svg:`<img src="assets/weapon_46.png" class="weapon-img" alt="Desert Eagle | Light Rail">`},
+  { id:'weapon_47', name:'AWP | Electric Hive',            rarity:'r-red',    rarityName:'Covert',      rarityColor:'#eb4b4b', weight:0.8,value:1600, svg:`<img src="assets/weapon_47.png" class="weapon-img" alt="AWP | Electric Hive">`},
+  { id:'weapon_48', name:'M4A1-S | Master Piece',          rarity:'r-red',    rarityName:'Covert',      rarityColor:'#eb4b4b', weight:0.6,value:2000, svg:`<img src="assets/weapon_48.png" class="weapon-img" alt="M4A1-S | Master Piece">`},
+  { id:'weapon_49', name:'AK-47 | Fire Serpent ★',         rarity:'r-gold',   rarityName:'★ Gold',      rarityColor:'#c9a227', weight:0.08,value:5500,svg:`<img src="assets/weapon_49.png" class="weapon-img" alt="AK-47 | Fire Serpent ★">`},
+  { id:'weapon_50', name:'AWP | Dragon Lore ★',            rarity:'r-gold',   rarityName:'★ Gold',      rarityColor:'#c9a227', weight:0.04,value:9500,svg:`<img src="assets/weapon_50.png" class="weapon-img" alt="AWP | Dragon Lore ★">`},
+
   // ── 📦 BEDNY JAKO ODMĚNA ────────────────────────────
   { id:'case_reward_1x', name:'Bonus Bedna ×1 🎁',   rarity:'r-blue',   rarityName:'Mil-Spec',   rarityColor:'#4d79ff', weight:8,  value:120,  isCaseReward:true, caseCount:1,
     svg:`<img src="assets/case_cs2.png" style="width:90px;height:120px;object-fit:contain;display:block;filter:drop-shadow(0 0 8px #4d79ff88)" alt="Bonus Bedna">`},
@@ -3351,15 +3564,15 @@ function switchTab(tab) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const tabEl = document.getElementById(`tab-${tab}`);
   if (tabEl) tabEl.classList.add('active');
-  const pageMap = { clicker:'pageClicker', case:'pageCaseOpener', inventory:'pageInventory', shop:'pageShop', bazos:'pageBazos', leaderboard:'pageLeaderboard', mise:'pageMise', achiementy:'pageAchiementy', gameska:'pageGameska', ceny:'pageCeny', events:'pageEvents' };
+  const pageMap = { clicker:'pageClicker', case:'pageCaseOpener', inventory:'pageInventory', shop:'pageShop', bazos:'pageBazos', leaderboard:'pageLeaderboard', progress:'pageProgress', perky:'pagePerky', gameska:'pageGameska', ceny:'pageCeny', events:'pageEvents' };
   document.getElementById(pageMap[tab]).classList.add('active');
   currentPage = tab;
   if (tab === 'inventory') renderInventory();
   if (tab === 'bazos')     renderBazos();
   if (tab === 'leaderboard') renderLeaderboard();
   if (tab === 'shop')      renderShop();
-  if (tab === 'mise')      renderMissions();
-  if (tab === 'achiementy') renderAchievements();
+  if (tab === 'progress') { renderMissions(); renderAchievements(); }
+  if (tab === 'perky')    renderPerkTree();
   if (tab === 'gameska')   initGameskaPage();
   if (tab === 'events')    { if (typeof renderEventsPage === 'function') renderEventsPage(); }
   if (tab === 'ceny')      { renderCenyPage(); if (typeof window.renderStocks === 'function') window.renderStocks(); }
@@ -3796,11 +4009,12 @@ function sellFromInventory(itemUid) {
   const item = state.inventory.find(i => i.uid === itemUid);
   if (!item) return;
   const b = getBottleById(item.bottle_id);
-  const price = Math.floor(getLivePrice(item.bottle_id) * 0.7);
+  const perkSell = typeof getPerkSellMult === 'function' ? getPerkSellMult() : 1;
+  const price = Math.floor(getLivePrice(item.bottle_id) * 0.7 * perkSell);
   state.inventory = state.inventory.filter(i => i.uid !== itemUid);
   addMoney(price);
   state.stats.totalEarned += price;
-  showToast(`${b.name} prodán za $${price}!`, 'success');
+  showToast(`${b.name} prodán za $${price}!${perkSell > 1 ? ` (perk ×${perkSell.toFixed(2)})` : ''}`, 'success');
   updateLeaderboard(); saveState();
   renderInventory();
 }
@@ -4074,6 +4288,176 @@ const shopCases = [
     bg:'linear-gradient(135deg,#1a0000,#0f0000)',
     caseImg:'demon_box',
   },
+  // ── ITEMS CLEAN — crate2 série ──────────────────────────────────
+  {
+    id:'crate01',    name:'Rust Box',           emoji:'🦀',
+    rarity:'STANDARD', rarityColor:'#b87333',
+    desc:'Opotřebovaná bedna z opuštěného skladu. Uvnitř stále číhá překvapení.',
+    price:80, currency:'money', costLabel:'$80',
+    bg:'linear-gradient(135deg,#1a1008,#0e0a04)',
+    caseImg:'crate2_01',
+  },
+  {
+    id:'crate02',    name:'Storm Box',           emoji:'🌩️',
+    rarity:'STANDARD', rarityColor:'#94a3b8',
+    desc:'Přeživší bouři. Navenek poničená — uvnitř nedotčená.',
+    price:90, currency:'money', costLabel:'$90',
+    bg:'linear-gradient(135deg,#0d1220,#080d18)',
+    caseImg:'crate2_02',
+  },
+  {
+    id:'crate03',    name:'Ember Box',           emoji:'🔶',
+    rarity:'RARE', rarityColor:'#fb923c',
+    desc:'Žhavá jako uhlí. Obsah taje na špičce jazyka.',
+    price:130, currency:'money', costLabel:'$130',
+    bg:'linear-gradient(135deg,#1c0a00,#110600)',
+    caseImg:'crate2_03',
+  },
+  {
+    id:'crate04',    name:'Venom Box',           emoji:'🐍',
+    rarity:'RARE', rarityColor:'#4ade80',
+    desc:'Kontaminovaná jedem hadů z amazonie. Záhadná a nebezpečná.',
+    price:145, currency:'money', costLabel:'$145',
+    bg:'linear-gradient(135deg,#051508,#030d05)',
+    caseImg:'crate2_04',
+  },
+  {
+    id:'crate05',    name:'Eclipse Box',         emoji:'🌘',
+    rarity:'RARE', rarityColor:'#818cf8',
+    desc:'Zatmění slunce zabalené do krabice. Temnota přináší bohatství.',
+    price:155, currency:'money', costLabel:'$155',
+    bg:'linear-gradient(135deg,#0d0d20,#080812)',
+    caseImg:'crate2_05',
+  },
+  {
+    id:'crate06',    name:'Magma Box',           emoji:'🌋',
+    rarity:'CLASSIFIED', rarityColor:'#f97316',
+    desc:'Přímý export z kráteru. Obsah pod tlakem — otevírej opatrně.',
+    price:190, currency:'money', costLabel:'$190',
+    bg:'linear-gradient(135deg,#1f0800,#140500)',
+    caseImg:'crate2_06',
+  },
+  {
+    id:'crate07',    name:'Abyss Box',           emoji:'🌊',
+    rarity:'CLASSIFIED', rarityColor:'#0ea5e9',
+    desc:'Vylovena z oceánského dna. Solí prosáklá, vzácností nabitá.',
+    price:210, currency:'money', costLabel:'$210',
+    bg:'linear-gradient(135deg,#00101e,#000c16)',
+    caseImg:'crate2_07',
+  },
+  {
+    id:'crate08',    name:'Neon Box',            emoji:'💡',
+    rarity:'CLASSIFIED', rarityColor:'#facc15',
+    desc:'Svítí i ve tmě. Neonový obsah z ulice budoucnosti.',
+    price:240, currency:'money', costLabel:'$240',
+    bg:'linear-gradient(135deg,#1a1400,#100d00)',
+    caseImg:'crate2_08',
+  },
+  {
+    id:'crate09',    name:'Specter Box',         emoji:'👁️',
+    rarity:'COVERT', rarityColor:'#a78bfa',
+    desc:'Nikdo neví odkud přišla. Přízrak v poštovním systému.',
+    price:310, currency:'money', costLabel:'$310',
+    bg:'linear-gradient(135deg,#100820,#0a0514)',
+    caseImg:'crate2_09',
+  },
+  {
+    id:'crate10',    name:'Havoc Box',           emoji:'💥',
+    rarity:'COVERT', rarityColor:'#f43f5e',
+    desc:'Zkáza v přepravní krabici. Vysoce nestabilní zásilka.',
+    price:360, currency:'money', costLabel:'$360',
+    bg:'linear-gradient(135deg,#1a0508,#0f0305)',
+    caseImg:'crate2_10',
+  },
+  {
+    id:'crate11',    name:'Glitch Box',          emoji:'📡',
+    rarity:'COVERT', rarityColor:'#22d3ee',
+    desc:'Chyba v systému — bedna která neměla existovat. Cena: skutečná.',
+    price:410, currency:'money', costLabel:'$410',
+    bg:'linear-gradient(135deg,#001820,#000f18)',
+    caseImg:'crate2_11',
+  },
+  {
+    id:'crate12',    name:'Obsidian Box',        emoji:'🖤',
+    rarity:'COVERT', rarityColor:'#475569',
+    desc:'Černá jako obsidián, tvrdá jako diamant. Uvnitř je tma — a zlato.',
+    price:460, currency:'money', costLabel:'$460',
+    bg:'linear-gradient(135deg,#0a0a0a,#050505)',
+    caseImg:'crate2_12',
+  },
+  {
+    id:'crate13',    name:'Holo Box',            emoji:'🌈',
+    rarity:'LEGENDARY', rarityColor:'#f0abfc',
+    desc:'Holografická vzácnost — každý úhel pohledu jiná barva, jiný drop.',
+    price:8, currency:'coins', costLabel:'8 💎',
+    bg:'linear-gradient(135deg,#180820,#0d0414)',
+    caseImg:'crate2_13',
+  },
+  {
+    id:'crate14',    name:'Titan Box',           emoji:'⚙️',
+    rarity:'LEGENDARY', rarityColor:'#94a3b8',
+    desc:'Titanový arzenál. Průmyslová síla uzamčená v 6mm oceli.',
+    price:14, currency:'coins', costLabel:'14 💎',
+    bg:'linear-gradient(135deg,#0f1018,#08090e)',
+    caseImg:'crate2_14',
+  },
+  {
+    id:'crate15',    name:'Apex Box',            emoji:'👑',
+    rarity:'ULTRA', rarityColor:'#ffd700',
+    desc:'Vrchol všeho. Nejlepší z nejlepších — limitovaná série pro elitu.',
+    price:35, currency:'coins', costLabel:'35 💎',
+    bg:'linear-gradient(135deg,#1f1500,#141000)',
+    caseImg:'crate2_15',
+  },
+  // ── 🆕 NOVÉ BEDNY — items_v3 / weapons_only / stickers_clean ──
+  {
+    id:'knifecase',  name:'Blade Case',           emoji:'🔪',
+    rarity:'COVERT', rarityColor:'#eb4b4b',
+    desc:'Přepravka plná ostrých překvapení. Uvnitř číhají nože od levných až po legendární ★ Fade.',
+    price:850, currency:'money', costLabel:'$850',
+    bg:'linear-gradient(135deg,#1a0008,#0f0005)',
+    caseImg:'infernd_dark',
+  },
+  {
+    id:'glovebox',   name:'Glove Case',            emoji:'🧤',
+    rarity:'COVERT', rarityColor:'#7dd3fc',
+    desc:'Odemkni prémiové rukavice. Od Moto až po legendární ★ Bloodhound Emerald Fade.',
+    price:750, currency:'money', costLabel:'$750',
+    bg:'linear-gradient(135deg,#010f1e,#030d1a)',
+    caseImg:'arctic_wolf',
+  },
+  {
+    id:'stickerbox', name:'Sticker Box',           emoji:'🎨',
+    rarity:'RARE', rarityColor:'#8847ff',
+    desc:'Kreativní bedna s nálepkami od Chrome Skull po zlatou Crown Foil ★.',
+    price:250, currency:'money', costLabel:'$250',
+    bg:'linear-gradient(135deg,#0f0a20,#080614)',
+    caseImg:'banger',
+  },
+  {
+    id:'crewcapsule',name:'Crew Capsule',          emoji:'🏷️',
+    rarity:'LEGENDARY', rarityColor:'#c9a227',
+    desc:'Exkluzivní Respawn Crew nálepky. LukaMer, Soggy, Anton, Foxy nebo Bober Kurwa — legend only.',
+    price:10, currency:'coins', costLabel:'10 💎',
+    bg:'linear-gradient(135deg,#1a1500,#100e00)',
+    caseImg:'cs2',
+  },
+  {
+    id:'arsenalbox', name:'Arsenal Box',           emoji:'🔫',
+    rarity:'CLASSIFIED', rarityColor:'#ff8c00',
+    desc:'Nová generace zbraní. weapon_17 až weapon_34 — od Mil-Spec po Classified tiery.',
+    price:300, currency:'money', costLabel:'$300',
+    bg:'linear-gradient(135deg,#0d1205,#080c03)',
+    caseImg:'tactical',
+  },
+  {
+    id:'elitearsenal',name:'Elite Arsenal',        emoji:'💥',
+    rarity:'ULTRA', rarityColor:'#ff4500',
+    desc:'Elitní zbraně weapon_35-50 s nejvzácnějšími skiny. AWP Dragon Lore ★ čeká uvnitř.',
+    price:20, currency:'coins', costLabel:'20 💎',
+    bg:'linear-gradient(135deg,#1a0500,#100300)',
+    caseImg:'danger_zone',
+  },
 ];
 
 // CS2-style: každá bedna má vlastní loot pool
@@ -4111,6 +4495,29 @@ const casePools = {
   biohazard: ['new_scar','new_ak_light','new_m4','new_deagle_white','new_m249_white','new_bullpup_white','new_deagle_dark','cash_jackpot','cash_mega'],
   ancientbox:['new_scar','new_ak_wood','new_ak_dark','new_deagle_dark','new_sniper','new_m249_white','new_bullpup_white','new_m4','cash_jackpot','cash_mega'],
   demonbox:  ['new_ak_wood','new_ak_dark','new_deagle_dark','new_sniper','new_m249_white','new_bullpup_white','new_scar','new_m4','cash_jackpot','cash_mega'],
+  // 25002500 ITEMS CLEAN pools 25002500
+  crate01:   ['mac10','p90','mp5','new_glock','new_uzi','new_famas','new_sawedoff','cash_small','case_reward_1x'],
+  crate02:   ['mac10','p90','m4a1','mp5','tec9','sg553','nova','new_mp5alt','cash_small','cash_medium','case_reward_1x'],
+  crate03:   ['p90','m4a1','tec9','sg553','nova','new_famas','new_deagle_white','new_mp7','cash_small','cash_medium','case_reward_1x'],
+  crate04:   ['m4a1','mp5','tec9','sg553','nova','new_sawedoff','new_deagle_white','new_mp5alt','cash_small','cash_medium','case_reward_1x'],
+  crate05:   ['m4a1','tec9','sg553','ak47','nova','new_sniper','new_deagle2','new_uzi','cash_medium','case_reward_1x','case_reward_2x'],
+  crate06:   ['tec9','sg553','ak47','nova','awp','new_revolver','new_scar','new_deagle_silver','cash_medium','cash_big','case_reward_2x'],
+  crate07:   ['sg553','ak47','nova','awp','new_ak_light','new_deagle2','new_mp7','new_famas','cash_medium','cash_big','case_reward_2x'],
+  crate08:   ['ak47','nova','awp','new_sniper','new_deagle2','new_ak_light','new_m4','new_uzi','cash_medium','cash_big','case_reward_2x'],
+  crate09:   ['ak47','awp','new_scar','new_ak_dark','new_deagle_silver','new_revolver','new_m4','new_m249','cash_big','cash_jackpot','case_reward_2x'],
+  crate10:   ['ak47','awp','new_scar','new_ak_wood','new_deagle_dark','new_sniper','new_bullpup_white','new_m249','cash_big','cash_jackpot','case_reward_2x'],
+  crate11:   ['awp','new_scar','new_ak_dark','new_ak_light','new_deagle_dark','new_sniper','new_m249_white','new_m4','cash_big','cash_jackpot','case_reward_2x','case_reward_3x'],
+  crate12:   ['awp','new_scar','new_ak_wood','new_ak_dark','new_deagle_dark','new_sniper','new_m249_white','new_bullpup_white','cash_jackpot','cash_mega','case_reward_3x'],
+  crate13:   ['new_scar','new_ak_light','new_ak_wood','new_m4','new_mp7','new_famas','new_deagle_white','new_m249_white','new_bullpup_white','cash_jackpot','cash_mega','case_reward_3x'],
+  crate14:   ['new_scar','new_ak_dark','new_ak_light','new_ak_wood','new_m4','new_deagle_dark','new_sniper','new_m249','new_m249_white','new_bullpup_white','cash_jackpot','cash_mega','case_reward_3x'],
+  crate15:   ['new_ak_wood','new_ak_dark','new_ak_light','new_m4','new_mp7','new_famas','new_m249_white','new_deagle_dark','new_deagle_white','new_sniper','new_bullpup_white','new_scar','cash_jackpot','cash_mega','case_reward_3x'],
+  // ── 🆕 NOVÉ BEDNY ──────────────────────────────────────────────────
+  knifecase:   ['knives_01','knives_02','knives_03','knives_04','knives_05','knives_06','knives_07','knives_08','knives_09','knives_10','knives_11','knives_12','knives_13','knives_14','knives_15','knives_16','knives_17','knives_18','knives_19','knives_20','knives_21','knives_22','knives_23','knives_24','knives_25','cash_medium','cash_big'],
+  glovebox:    ['gloves_01','gloves_02','gloves_03','gloves_04','gloves_05','gloves_06','gloves_07','gloves_08','gloves_09','gloves_10','gloves_11','gloves_12','gloves_13','cash_medium','cash_big'],
+  stickerbox:  ['stickers_01','stickers_02','stickers_03','stickers_04','stickers_05','stickers_06','stickers_07','stickers_08','stickers_09','cash_small','cash_medium','case_reward_1x'],
+  crewcapsule: ['stk_lukamer','stk_soggy','stk_anton','stk_foxy','stk_bober'],
+  arsenalbox:  ['weapon_17','weapon_18','weapon_19','weapon_20','weapon_21','weapon_22','weapon_23','weapon_24','weapon_25','weapon_26','weapon_27','weapon_28','weapon_29','weapon_30','weapon_31','weapon_32','weapon_33','weapon_34','cash_small','cash_medium','case_reward_1x'],
+  elitearsenal:['weapon_35','weapon_36','weapon_37','weapon_38','weapon_39','weapon_40','weapon_41','weapon_42','weapon_43','weapon_44','weapon_45','weapon_46','weapon_47','weapon_48','weapon_49','weapon_50','cash_big','cash_jackpot','cash_mega','case_reward_2x','case_reward_3x'],
 };
 
 function getCasePool(caseId = activeCaseId) {
@@ -4181,8 +4588,20 @@ function getCasePoolBottle(caseId = activeCaseId, premium = false) {
 
   let rarityRoll = Math.random() * 100;
   let pickedRarity = 'r-blue';
+  // Apply perk rare luck bonus — shift odds toward higher rarities
+  const perkLuck = typeof getPerkRareLuck === 'function' ? getPerkRareLuck() : 0;
+  const boostedOdds = {};
+  if (perkLuck > 0) {
+    const highRars = ['r-gold','r-red','r-pink'];
+    let totalShift = 0;
+    highRars.forEach(r => { const boost = (odds[r]||0) * perkLuck; boostedOdds[r] = (odds[r]||0) + boost; totalShift += boost; });
+    boostedOdds['r-purple'] = (odds['r-purple']||0);
+    boostedOdds['r-blue']   = Math.max(1, (odds['r-blue']||0) - totalShift);
+  } else {
+    Object.assign(boostedOdds, odds);
+  }
   for (const rar of ['r-gold','r-red','r-pink','r-purple','r-blue']) {
-    rarityRoll -= (odds[rar] || 0);
+    rarityRoll -= (boostedOdds[rar] || 0);
     if (rarityRoll <= 0) { pickedRarity = rar; break; }
   }
 
@@ -4545,7 +4964,8 @@ function buyListing(listingUid) {
         level: 1, obtainedAt: new Date().toLocaleDateString('cs-CZ')
       });
     }
-    const sellerPayout = Math.floor(listing.price * 0.90);
+    const _pSell = typeof getPerkSellMult === "function" ? getPerkSellMult() : 1;
+  const sellerPayout = Math.floor(listing.price * 0.90 * _pSell);
     if (listing.seller === state.username) { addMoney(sellerPayout); }
     state.bazosListings = state.bazosListings.filter(l => l.uid !== listingUid);
     updateCurrencyDisplay(); saveState();
@@ -4562,7 +4982,8 @@ function buyListing(listingUid) {
     state.inventory.push({ uid: uid(), bottle_id: listing.bottle_id, wonAt: new Date().toLocaleDateString('cs-CZ'), value: b ? b.value : 0, listed: false });
   }
 
-  const sellerPayout = Math.floor(listing.price * 0.90);
+  const _pSell = typeof getPerkSellMult === "function" ? getPerkSellMult() : 1;
+  const sellerPayout = Math.floor(listing.price * 0.90 * _pSell);
   if (listing.seller === state.username) {
     addMoney(sellerPayout);
     state.stats.totalEarned += sellerPayout;
@@ -4797,8 +5218,53 @@ function doPrestige() {
     showToast(`Potřebuješ ${needed} zabití pro Prestige ${p+1}!`, 'error');
     return;
   }
+
+  // Show optional dialog
   const newP = p + 1;
-  // Reset clicker progress
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9990;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.2s ease';
+  overlay.innerHTML = `
+    <div style="background:#07101f;border:2px solid rgba(${newP===1?'245,158,11':newP===2?'58,221,255':'201,162,39'},0.5);border-radius:12px;padding:28px 28px 22px;max-width:380px;width:90%;text-align:center;box-shadow:0 0 40px rgba(${newP===1?'245,158,11':newP===2?'58,221,255':'201,162,39'},0.3)">
+      <div style="font-size:2.8rem;margin-bottom:8px">${PRESTIGE_ICONS[newP]}</div>
+      <div style="font-family:Oswald,sans-serif;font-size:1.1rem;letter-spacing:3px;color:${PRESTIGE_COLORS[newP]};margin-bottom:6px">${PRESTIGE_NAMES[newP]}</div>
+      <div style="font-size:0.72rem;color:#6a7a9a;line-height:1.7;margin-bottom:16px">
+        Dosáhl(a) jsi požadovaných <strong style="color:#c8d0e0">${clkPrestigeRequired(p)} zabití</strong>!<br>
+        Můžeš si vybrat:
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">
+        <div style="background:rgba(${newP===1?'245,158,11':newP===2?'58,221,255':'201,162,39'},0.1);border:1px solid rgba(${newP===1?'245,158,11':newP===2?'58,221,255':'201,162,39'},0.4);border-radius:8px;padding:14px;text-align:left">
+          <div style="font-family:Oswald,sans-serif;font-size:0.8rem;color:${PRESTIGE_COLORS[newP]};letter-spacing:2px;margin-bottom:6px">${PRESTIGE_ICONS[newP]} PRESTIGOVAT</div>
+          <div style="font-size:0.65rem;color:#4a6a4a;line-height:1.6">✅ +50% Click DMG · +50% Upgrade bonus · +80% HP beden<br>⚠ Resetuje postup, úrovně a dolary<br>💪 Jsi silnější po každém prestige!</div>
+        </div>
+        <div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-radius:8px;padding:14px;text-align:left">
+          <div style="font-family:Oswald,sans-serif;font-size:0.8rem;color:#4ade80;letter-spacing:2px;margin-bottom:6px">▶ HRÁT DÁL</div>
+          <div style="font-size:0.65rem;color:#4a6a4a;line-height:1.6">Zůstaneš na aktuálním prestige úrovni.<br>Žádný reset — pokračuješ dál s tím co máš.<br>Prestige můžeš udělat kdykoliv později.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button id="btnDoPrestige" style="flex:1;background:linear-gradient(135deg,rgba(${newP===1?'245,158,11':newP===2?'58,221,255':'201,162,39'},0.2),transparent);border:1px solid rgba(${newP===1?'245,158,11':newP===2?'58,221,255':'201,162,39'},0.6);color:${PRESTIGE_COLORS[newP]};padding:12px;border-radius:6px;font-family:Oswald,sans-serif;font-size:0.8rem;letter-spacing:2px;cursor:pointer">
+          ${PRESTIGE_ICONS[newP]} PRESTIGOVAT
+        </button>
+        <button id="btnContinue" style="flex:1;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.4);color:#4ade80;padding:12px;border-radius:6px;font-family:Oswald,sans-serif;font-size:0.8rem;letter-spacing:2px;cursor:pointer">
+          ▶ HRÁT DÁL
+        </button>
+      </div>
+    </div>`;
+
+  document.body.appendChild(overlay);
+
+  overlay.querySelector('#btnDoPrestige').onclick = () => {
+    overlay.remove();
+    _executePrestige(p, newP);
+  };
+  overlay.querySelector('#btnContinue').onclick = () => {
+    overlay.remove();
+    showToast('Pokračuješ dál! Prestige kdykoliv v panelu kliker.', 'info');
+  };
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+}
+
+function _executePrestige(p, newP) {
   clkState.level      = 1;
   clkState.kills      = 0;
   clkState.totalClicks= 0;
@@ -4806,11 +5272,9 @@ function doPrestige() {
   clkState.upgAuto    = 0;
   clkState.upgCrit    = 0;
   clkState.prestige   = newP;
-  // Recalculate stats with new prestige multiplier
   clkState.clickDmg   = Math.floor(1 * clkDmgMult());
   clkState.autoDps    = 0;
   clkState.critChance = 0;
-  // Reset dollars
   state.money = 0;
   updateCurrencyDisplay();
   clkSpawnEnemy();
@@ -5318,10 +5782,15 @@ function clickEnemy(e) {
   let isCrit = false;
   // Apply combo multiplier
   const comboMult = comboCount >= 20 ? 3 : comboCount >= 10 ? 2 : comboCount >= 5 ? 1.5 : 1;
-  if (clkState.critChance > 0 && Math.random() < clkState.critChance) {
-    dmg = Math.floor(dmg * 3 * comboMult); isCrit = true;
+  // Perk bonuses
+  const perkClickMult = typeof getPerkClickMult === 'function' ? getPerkClickMult() : 1;
+  const perkCritAdd   = typeof getPerkCritAdd   === 'function' ? getPerkCritAdd()   : 0;
+  const perkCritDmg   = typeof getPerkCritDmgMult === 'function' ? getPerkCritDmgMult() : 1;
+  const critChance = Math.min(0.95, (clkState.critChance || 0) + perkCritAdd);
+  if (critChance > 0 && Math.random() < critChance) {
+    dmg = Math.floor(dmg * perkClickMult * 3 * comboMult * perkCritDmg); isCrit = true;
   } else {
-    dmg = Math.floor(dmg * comboMult);
+    dmg = Math.floor(dmg * perkClickMult * comboMult);
   }
   clkState.totalClicks++;
   clkApplyDamage(dmg);
@@ -5904,6 +6373,16 @@ function claimMission(id) {
 }
 window.claimMission = claimMission;
 
+function switchProgressTab(tab) {
+  document.querySelectorAll('.prog-inner-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.prog-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('progTab-' + tab).classList.add('active');
+  document.getElementById('progPanel-' + tab).classList.add('active');
+  if (tab === 'mis') renderMissions();
+  if (tab === 'ach') renderAchievements();
+}
+window.switchProgressTab = switchProgressTab;
+
 function renderMissions() {
   const el = document.getElementById('missionList');
   if (!el) return;
@@ -5966,12 +6445,12 @@ ACHIEVEMENTS.push(
 
 function renderAchievements() {
   const el = document.getElementById('achievementList');
-  const lbl = document.getElementById('achProgressLabel');
   if (!el) return;
   el.innerHTML = '';
   const unlocked = achievementsUnlocked.size;
   const total = ACHIEVEMENTS.length;
-  if (lbl) lbl.textContent = `${unlocked} / ${total} odemčeno`;
+  const lbl = document.getElementById('progressSubLabel');
+  if (lbl) lbl.textContent = `${unlocked} / ${total} achievementů odemčeno`;
   ACHIEVEMENTS.forEach(a => {
     const isUnlocked = achievementsUnlocked.has(a.id);
     const card = document.createElement('div');
@@ -6002,6 +6481,186 @@ setInterval(() => {
   if (clkState && clkState.kills >= 25)  checkAchievement('clk_kill25');
   if (clkState && clkState.level >= 20)  checkAchievement('clk_level20');
 }, 5000);
+
+// ═══════════════════════════════════════════════════════════════════════
+//  💥 PERK TREE SYSTEM
+// ═══════════════════════════════════════════════════════════════════════
+
+const PERKS = [
+  // ── TIER 1 ──────────────────────────────────────────────────────────
+  { id:'p01', tier:1, icon:'🖱️', name:'Silný Klik',    bonus:'+10% Click DMG',  cost:200,  req:[],          effect:'clickDmg',   val:0.10 },
+  { id:'p02', tier:1, icon:'💵', name:'Šetrnost',      bonus:'+5% Sell cena',   cost:200,  req:[],          effect:'sellBonus',  val:0.05 },
+
+  // ── TIER 2 ──────────────────────────────────────────────────────────
+  { id:'p03', tier:2, icon:'🔥', name:'Combo Boost',   bonus:'+20% Combo DMG',  cost:400,  req:['p01'],     effect:'comboDmg',   val:0.20 },
+  { id:'p04', tier:2, icon:'🎲', name:'Bedna Luck',    bonus:'+5% Rare šance',  cost:400,  req:['p01','p02'],effect:'rareLuck',  val:0.05 },
+  { id:'p05', tier:2, icon:'💰', name:'Obchodník',     bonus:'+10% Sell cena',  cost:400,  req:['p02'],     effect:'sellBonus',  val:0.10 },
+
+  // ── TIER 3 ──────────────────────────────────────────────────────────
+  { id:'p06', tier:3, icon:'⚡', name:'Rychlé Prsty',  bonus:'+25% Click DMG',  cost:700,  req:['p03'],     effect:'clickDmg',   val:0.25 },
+  { id:'p07', tier:3, icon:'💥', name:'Crit Strike',   bonus:'+8% Crit šance',  cost:700,  req:['p03','p04'],effect:'critChance', val:0.08 },
+  { id:'p08', tier:3, icon:'🌟', name:'Gold Rush',     bonus:'+10% Gold drop',  cost:700,  req:['p04'],     effect:'goldDrop',   val:0.10 },
+  { id:'p09', tier:3, icon:'📦', name:'Sběratel',      bonus:'+15% Sell cena',  cost:700,  req:['p05'],     effect:'sellBonus',  val:0.15 },
+
+  // ── TIER 4 ──────────────────────────────────────────────────────────
+  { id:'p10', tier:4, icon:'🗡️', name:'Berserker',     bonus:'+30% Click DMG',  cost:1100, req:['p06','p07'],effect:'clickDmg',  val:0.30 },
+  { id:'p11', tier:4, icon:'💎', name:'Diamond Luck',  bonus:'+10% Rare šance', cost:1100, req:['p07','p08'],effect:'rareLuck',  val:0.10 },
+  { id:'p12', tier:4, icon:'🎯', name:'Headshot',      bonus:'+20% Crit DMG',   cost:1100, req:['p07'],     effect:'critDmg',    val:0.20 },
+  { id:'p13', tier:4, icon:'🏪', name:'Dealer Pro',    bonus:'+20% Sell cena',  cost:1100, req:['p09'],     effect:'sellBonus',  val:0.20 },
+
+  // ── TIER 5 ──────────────────────────────────────────────────────────
+  { id:'p14', tier:5, icon:'⚔️', name:'Duel Master',   bonus:'+25% Duel DMG',   cost:1600, req:['p10'],     effect:'duelDmg',    val:0.25 },
+  { id:'p15', tier:5, icon:'🛡️', name:'Gladiátor',     bonus:'+15% Duel Crit',  cost:1600, req:['p10','p12'],effect:'duelCrit',  val:0.15 },
+  { id:'p16', tier:5, icon:'🎰', name:'Jackpot Hráč',  bonus:'+15% Rare šance', cost:1600, req:['p11'],     effect:'rareLuck',   val:0.15 },
+  { id:'p17', tier:5, icon:'💸', name:'Money Printer', bonus:'$8 / min pasivně',cost:1600, req:['p13'],     effect:'passive',    val:8    },
+
+  // ── TIER 6 — ELITE ──────────────────────────────────────────────────
+  { id:'p18', tier:6, icon:'👑', name:'Král Klikání',  bonus:'+50% Click DMG',  cost:2800, req:['p14','p15'],effect:'clickDmg',  val:0.50 },
+  { id:'p19', tier:6, icon:'🌊', name:'Vlna Štěstí',   bonus:'+20% Rare šance', cost:2800, req:['p15','p16'],effect:'rareLuck',  val:0.20 },
+  { id:'p20', tier:6, icon:'🏆', name:'Legenda',        bonus:'+30% Vše',        cost:2800, req:['p17','p19'],effect:'allBonus',  val:0.30 },
+];
+
+// Owned perks — persisted
+let ownedPerks = new Set(JSON.parse(localStorage.getItem('alkocase_perks') || '[]'));
+
+function savePerkState() {
+  localStorage.setItem('alkocase_perks', JSON.stringify([...ownedPerks]));
+}
+
+// ── Compute combined perk bonuses ───────────────────────────────────
+function getPerkBonus(effect) {
+  let total = 0;
+  // allBonus multiplies everything
+  const allMult = ownedPerks.has('p20') ? PERKS.find(p=>p.id==='p20').val : 0;
+  PERKS.forEach(p => {
+    if (!ownedPerks.has(p.id)) return;
+    if (p.effect === effect) total += p.val;
+    if (effect !== 'passive' && effect !== 'allBonus' && p.effect === 'allBonus') {
+      // allBonus applies to clickDmg, duelDmg, sellBonus, rareLuck
+      const targets = ['clickDmg','duelDmg','sellBonus','rareLuck'];
+      if (targets.includes(effect)) total += p.val;
+    }
+  });
+  return total;
+}
+
+// ── Apply click damage perk ─────────────────────────────────────────
+// Patches into clickEnemy and duelClick dynamically via multiplier
+window.getPerkClickMult = function() { return 1 + getPerkBonus('clickDmg'); };
+window.getPerkDuelMult  = function() { return 1 + getPerkBonus('duelDmg'); };
+window.getPerkCritAdd   = function() { return getPerkBonus('critChance'); };
+window.getPerkCritDmgMult = function() { return 1 + getPerkBonus('critDmg'); };
+window.getPerkRareLuck  = function() { return getPerkBonus('rareLuck'); };  // additive on odds
+window.getPerkSellMult  = function() { return 1 + getPerkBonus('sellBonus'); };
+
+// ── Passive income timer ─────────────────────────────────────────────
+setInterval(() => {
+  const passive = getPerkBonus('passive');
+  if (passive > 0 && typeof addMoney === 'function') {
+    addMoney(passive / 60); // called every second → per-minute rate
+  }
+}, 1000);
+
+// ── Buy perk ────────────────────────────────────────────────────────
+window.buyPerk = function(id) {
+  const p = PERKS.find(x => x.id === id);
+  if (!p) return;
+  if (ownedPerks.has(id)) return;
+  // check requirements
+  const missing = p.req.filter(r => !ownedPerks.has(r));
+  if (missing.length) { showToast('Nejdřív odemkni požadované perky!', 'error'); return; }
+  if ((state.money || 0) < p.cost) { showToast(`Nedostatek peněz! Potřebuješ $${p.cost}`, 'error'); return; }
+  addMoney(-p.cost);
+  ownedPerks.add(id);
+  savePerkState();
+  showToast(`✅ Perk odemčen: ${p.icon} ${p.name}`, 'success');
+  renderPerkTree();
+};
+
+// ── Render perk tree ────────────────────────────────────────────────
+function renderPerkTree() {
+  const wrap = document.getElementById('perkTreeWrap');
+  if (!wrap) return;
+
+  // Stats bar
+  const totalOwned = ownedPerks.size;
+  const totalCost  = PERKS.filter(p => ownedPerks.has(p.id)).reduce((s,p) => s+p.cost, 0);
+  const clickMult  = ((getPerkBonus('clickDmg') + (ownedPerks.has('p20') ? PERKS.find(p=>p.id==='p20').val : 0)) * 100).toFixed(0);
+  const rareMult   = (getPerkBonus('rareLuck') * 100).toFixed(0);
+  const sellMult   = (getPerkBonus('sellBonus') * 100).toFixed(0);
+  const duelMult   = (getPerkBonus('duelDmg') * 100).toFixed(0);
+  const passive    = getPerkBonus('passive').toFixed(0);
+
+  // Lbl
+  const lbl = document.getElementById('perkSubLabel');
+  if (lbl) lbl.textContent = `${totalOwned} / ${PERKS.length} odemčeno · Investováno $${totalCost.toLocaleString()}`;
+
+  let html = `
+  <div class="perk-tree-stats">
+    <div class="perk-stat">💰 Balance <strong>$${Math.floor(state.money||0).toLocaleString()}</strong></div>
+    <div class="perk-stat">🖱️ Click DMG <strong>+${clickMult}%</strong></div>
+    <div class="perk-stat">⚔️ Duel DMG <strong>+${duelMult}%</strong></div>
+    <div class="perk-stat">🎲 Rare luck <strong>+${rareMult}%</strong></div>
+    <div class="perk-stat">💵 Sell bonus <strong>+${sellMult}%</strong></div>
+    <div class="perk-stat">💸 Pasivní příjem <strong>$${passive}/min</strong></div>
+  </div>`;
+
+  // Group by tier
+  const tiers = [1,2,3,4,5,6];
+  const tierLabels = ['TIER I — ZÁKLADY','TIER II','TIER III','TIER IV','TIER V','TIER VI — ELITE'];
+
+  tiers.forEach((t, ti) => {
+    const tierPerks = PERKS.filter(p => p.tier === t);
+    html += `<div class="perk-tier-label">${tierLabels[ti]}</div>`;
+    html += `<div class="perk-tier">`;
+
+    tierPerks.forEach(p => {
+      const owned = ownedPerks.has(p.id);
+      const reqsMet = p.req.every(r => ownedPerks.has(r));
+      const available = !owned && reqsMet;
+      const locked = !owned && !reqsMet;
+      let cls = owned ? 'owned' : available ? 'available' : 'locked';
+
+      // Connector line down to next tier
+      const connLit = owned ? 'lit' : '';
+
+      html += `<div class="perk-node">`;
+
+      // Connector line from above (if has reqs in previous tier)
+      if (p.req.length > 0) {
+        const anyReqOwned = p.req.some(r => ownedPerks.has(r));
+        html += `<div class="perk-connector ${anyReqOwned ? 'lit' : ''}" style="height:18px"></div>`;
+      } else {
+        html += `<div style="height:18px"></div>`;
+      }
+
+      html += `<div class="perk-card ${cls}" onclick="${available ? `buyPerk('${p.id}')` : owned ? '' : 'showToast(\'Odemkni předchozí perky!\',\'error\')'}">
+        <div class="perk-icon">${p.icon}</div>
+        <div class="perk-name">${p.name}</div>
+        <div class="perk-bonus">${p.bonus}</div>
+        ${owned
+          ? `<div class="perk-badge">✓ OWNED</div>`
+          : `<div class="perk-cost">$${p.cost.toLocaleString()}</div>`}
+      </div>`;
+
+      // Connector line below (if this perk leads to next tier)
+      const leadsTo = PERKS.filter(nx => nx.req.includes(p.id));
+      if (leadsTo.length > 0) {
+        html += `<div class="perk-connector ${owned ? 'lit' : ''}" style="height:18px"></div>`;
+      } else {
+        html += `<div style="height:18px"></div>`;
+      }
+
+      html += `</div>`; // .perk-node
+    });
+
+    html += `</div>`; // .perk-tier
+  });
+
+  wrap.innerHTML = html;
+}
+
+window.renderPerkTree = renderPerkTree;
 
 // ═══════════════════════════════════════════════════════
 //  GAMESKA — MINI HRY
@@ -6390,28 +7049,38 @@ document.addEventListener('keydown', function onKey(e) {
 </script>
 
 
-<!-- ═══ MISE PAGE ═══ -->
-<div class="page" id="pageMise">
+<!-- ═══ MISE & ACHIEVEMENTY PAGE ═══ -->
+<div class="page" id="pageProgress">
   <div class="page-header">
     <span class="ph-icon">🎯</span>
     <div>
-      <h2>Mise</h2>
-      <div class="ph-sub">Splň mise a získej odměny</div>
+      <h2>Mise & Achievementy</h2>
+      <div class="ph-sub" id="progressSubLabel">Splňuj mise, sbírej achievementy</div>
     </div>
   </div>
-  <div id="missionList" style="padding:16px 20px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;flex:1;"></div>
+  <!-- inner tabs -->
+  <div style="display:flex;gap:0;border-bottom:1px solid var(--border2);padding:0 20px;flex-shrink:0;">
+    <button class="prog-inner-tab active" id="progTab-mis" onclick="switchProgressTab('mis')">🎯 MISE</button>
+    <button class="prog-inner-tab" id="progTab-ach" onclick="switchProgressTab('ach')">🏅 ACHIEVEMENTY</button>
+  </div>
+  <div id="progPanel-mis" class="prog-panel active">
+    <div id="missionList" style="padding:16px 20px;display:flex;flex-direction:column;gap:10px;"></div>
+  </div>
+  <div id="progPanel-ach" class="prog-panel">
+    <div id="achievementList" style="padding:16px 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;align-content:start;"></div>
+  </div>
 </div>
 
-<!-- ═══ ACHIEVEMENTY PAGE ═══ -->
-<div class="page" id="pageAchiementy">
+<!-- ═══ PERKY PAGE ═══ -->
+<div class="page" id="pagePerky">
   <div class="page-header">
-    <span class="ph-icon">🏅</span>
+    <span class="ph-icon">🌳</span>
     <div>
-      <h2>Achievementy</h2>
-      <div class="ph-sub" id="achProgressLabel">0 / 20 odemčeno</div>
+      <h2>Perk Tree</h2>
+      <div class="ph-sub" id="perkSubLabel">Investuj do perků a získej globální bonusy</div>
     </div>
   </div>
-  <div id="achievementList" style="padding:16px 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;overflow-y:auto;flex:1;align-content:start;"></div>
+  <div id="perkTreeWrap" style="flex:1;overflow-y:auto;padding:16px 20px;"></div>
 </div>
 
 <!-- ═══ GAMESKA PAGE ═══ -->
@@ -7121,7 +7790,7 @@ setTimeout(startPriceSystem, 500);
     <!-- Avatar picker -->
     <div style="padding:0 20px 8px">
       <div style="font-size:0.58rem;color:#3a4a6a;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">✦ VYBER SVŮJ AVATAR ✦</div>
-      <div style="display:flex;gap:12px;justify-content:center" id="avatarChoices"></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;justify-items:center" id="avatarChoices"></div>
       <div style="font-size:0.55rem;color:#2a3a5a;text-align:center;margin-top:8px">Klikni na avatar pro výběr</div>
     </div>
     <div style="padding:14px 20px;border-top:1px solid rgba(255,255,255,0.05);text-align:center">
@@ -7264,14 +7933,14 @@ function renderStocks() {
           <div style="font-family:Oswald,sans-serif;font-size:0.9rem;letter-spacing:2px;color:#c8d8e8;display:flex;align-items:center;gap:6px">
             ${s.name}
             <span style="font-size:0.58rem;background:${s.color}22;color:${s.color};border:1px solid ${s.color}44;border-radius:3px;padding:1px 6px">${s.ticker}</span>
-            <span style="font-size:0.55rem;color:#3a4a5a;font-style:italic">${s.mood === 'bullish' ? '📈 bullish' : s.mood === 'bearish' ? '📉 bearish' : '⚡ volatile'}</span>
+            <span style="font-size:0.55rem;color:#8a9ab8;font-style:italic">${s.mood === 'bullish' ? '📈 bullish' : s.mood === 'bearish' ? '📉 bearish' : '⚡ volatile'}</span>
           </div>
-          <div style="font-size:0.6rem;color:#3a4a6a;margin-top:1px">${s.desc}</div>
+          <div style="font-size:0.6rem;color:#7a8eaa;margin-top:1px">${s.desc}</div>
         </div>
         <div style="text-align:right">
           <div style="font-family:'Share Tech Mono',monospace;font-size:1.1rem;color:${isUp ? '#4ade80' : '#ef4444'};font-weight:700">$${price.toFixed(2)}</div>
           <div style="font-size:0.65rem;color:${isUp ? '#4ade80' : '#ef4444'}">${isUp ? '▲' : '▼'} ${Math.abs(chg)}%</div>
-          <div style="font-size:0.55rem;color:#3a4a5a">24h: ${parseFloat(chg24) >= 0 ? '+' : ''}${chg24}%</div>
+          <div style="font-size:0.55rem;color:#8a9ab8">24h ${parseFloat(chg24) >= 0 ? '+' : ''}${chg24}%</div>
         </div>
       </div>
 
@@ -7282,28 +7951,28 @@ function renderStocks() {
       ${h.shares > 0 ? `
       <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:4px;padding:8px 10px;margin-bottom:8px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px">
         <div style="text-align:center">
-          <div style="font-size:0.58rem;color:#3a4a6a;letter-spacing:1px;text-transform:uppercase">Investováno</div>
+          <div style="font-size:0.58rem;color:#7a8eaa;letter-spacing:1px;text-transform:uppercase">Investováno</div>
           <div style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:#8a9ab0">$${invested.toFixed(2)}</div>
         </div>
         <div style="text-align:center;border-left:1px solid #1a2030;border-right:1px solid #1a2030">
-          <div style="font-size:0.58rem;color:#3a4a6a;letter-spacing:1px;text-transform:uppercase">Hodnota</div>
+          <div style="font-size:0.58rem;color:#7a8eaa;letter-spacing:1px;text-transform:uppercase">Hodnota</div>
           <div style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:#8a9ab0">$${currentVal.toFixed(2)}</div>
         </div>
         <div style="text-align:center">
-          <div style="font-size:0.58rem;color:#3a4a6a;letter-spacing:1px;text-transform:uppercase">Výnos</div>
+          <div style="font-size:0.58rem;color:#7a8eaa;letter-spacing:1px;text-transform:uppercase">Výnos</div>
           <div style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:${pnlColor};font-weight:700">${pnlAbs >= 0 ? '+' : ''}${pnlAbs.toFixed(2)} <span style="font-size:0.6rem">(${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(1)}%)</span></div>
         </div>
       </div>
-      <div style="font-size:0.6rem;color:#3a4a5a;margin-bottom:8px">Ks: ${h.shares.toFixed(4)} · prům. cena: $${h.avgCost.toFixed(2)}</div>` : ''}
+      <div style="font-size:0.6rem;color:#8a9ab8;margin-bottom:8px">Ks: ${h.shares.toFixed(4)} · prům. cena: $${h.avgCost.toFixed(2)}</div>` : ''}
 
       <!-- Actions -->
       <div style="display:flex;gap:6px;align-items:center">
-        <input id="sinv_${s.id}" type="number" min="1" placeholder="$ investovat" style="flex:1;min-width:0;background:#050709;border:1px solid #1a2030;color:#8a9ab0;border-radius:3px;padding:6px 8px;font-size:0.72rem;font-family:'Share Tech Mono',monospace">
+        <input id="sinv_${s.id}" type="number" min="1" placeholder="$ investovat" style="flex:1;min-width:0;background:#060c1a;border:1px solid #1e3050;color:#c8d8e8;border-radius:3px;padding:6px 8px;font-size:0.72rem;font-family:'Share Tech Mono',monospace">
         <button onclick="buyStock('${s.id}')" style="background:rgba(74,222,128,0.12);border:1px solid rgba(74,222,128,0.4);color:#4ade80;border-radius:3px;padding:6px 12px;font-family:Oswald,sans-serif;font-size:0.7rem;letter-spacing:1px;cursor:pointer;white-space:nowrap">KOUPIT</button>
         ${h.shares > 0 ? `
-        <input id="ssell_${s.id}" type="number" min="1" placeholder="$ prodat" style="flex:1;min-width:0;background:#050709;border:1px solid #2a1515;color:#8a9ab0;border-radius:3px;padding:6px 8px;font-size:0.72rem;font-family:'Share Tech Mono',monospace">
+        <input id="ssell_${s.id}" type="number" min="1" placeholder="$ prodat" style="flex:1;min-width:0;background:#050709;border:1px solid #3a2525;color:#8a9ab0;border-radius:3px;padding:6px 8px;font-size:0.72rem;font-family:'Share Tech Mono',monospace">
         <button onclick="sellStock('${s.id}')" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.4);color:#ef4444;border-radius:3px;padding:6px 12px;font-family:Oswald,sans-serif;font-size:0.7rem;letter-spacing:1px;cursor:pointer;white-space:nowrap">PRODAT</button>` : ''}
-        <button onclick="showStockChart('${s.id}')" style="background:transparent;border:1px solid #1a2030;color:#3a4a5a;border-radius:3px;padding:6px 10px;font-size:0.75rem;cursor:pointer" title="Detailní graf">📈</button>
+        <button onclick="showStockChart('${s.id}')" style="background:transparent;border:1px solid #1a2030;color:#8a9ab8;border-radius:3px;padding:6px 10px;font-size:0.75rem;cursor:pointer" title="Detailní graf">📈</button>
         <button onclick="showStockNews('${s.id}')" style="background:rgba(0,207,255,0.07);border:1px solid rgba(0,207,255,0.28);color:#00cfff;border-radius:3px;padding:6px 10px;font-family:Oswald,sans-serif;font-size:0.68rem;letter-spacing:1px;cursor:pointer;white-space:nowrap">📰 NOVINKY</button>
       </div>
     </div>`;
@@ -7422,39 +8091,108 @@ window.sellStock = function(id) {
 
 window.showStockChart = function(id) {
   const s = STOCKS.find(x => x.id === id);
+  if (!s) return;
   const hist = stockHistory[id];
-  // Show chart in existing price chart modal if available, else simple alert
-  const modal = document.getElementById('priceChartModal');
-  if (modal) {
-    document.getElementById('chartTitle').textContent = s.name + ' [' + s.ticker + ']';
-    document.getElementById('chartSubtitle').textContent = s.desc;
-    // Draw on the chart canvas
+  const overlay = document.getElementById('priceChartOverlay');
+  if (!overlay) return;
+
+  // Fill in the weapon chart overlay fields
+  const nameEl   = document.getElementById('pcWeaponName');
+  const rarEl    = document.getElementById('pcWeaponRarity');
+  const priceEl  = document.getElementById('pcCurrentPrice');
+  const changeEl = document.getElementById('pcPriceChange');
+  const imgEl    = document.getElementById('pcWeaponImg');
+  const price    = hist[hist.length - 1];
+  const prev     = hist[hist.length - 2] || price;
+  const chgPct   = ((price - prev) / prev * 100).toFixed(2);
+  const isUp     = price >= prev;
+
+  if (nameEl)   nameEl.textContent  = s.name + ' [' + s.ticker + ']';
+  if (rarEl)    { rarEl.textContent = s.mood.toUpperCase(); rarEl.style.color = s.color; }
+  if (priceEl)  { priceEl.textContent = '$' + price.toFixed(2); priceEl.style.color = isUp ? '#4ade80' : '#ef4444'; }
+  if (changeEl) { changeEl.textContent = (isUp ? '▲ +' : '▼ ') + chgPct + '%'; changeEl.className = 'pc-price-change ' + (isUp ? 'up' : 'down'); }
+  if (imgEl)    imgEl.style.display = 'none'; // no image for stocks
+
+  activePriceChart = '__stock__' + id;
+  overlay.classList.add('show');
+
+  requestAnimationFrame(() => {
     const canvas = document.getElementById('priceChartCanvas');
-    if (canvas) {
-      const ctx = canvas.getContext('2d');
-      const W = canvas.width, H = canvas.height;
-      ctx.clearRect(0,0,W,H);
-      const prices = hist;
-      const mn = Math.min(...prices)*0.98, mx = Math.max(...prices)*1.02, rng = mx-mn||1;
-      const isUp = prices[prices.length-1] >= prices[0];
-      ctx.beginPath();
-      prices.forEach((p,i)=>{
-        const x=(i/(prices.length-1))*W, y=H-((p-mn)/rng)*(H-16)-8;
-        i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-      });
-      ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();
-      ctx.fillStyle = isUp ? 'rgba(74,222,128,0.08)' : 'rgba(239,68,68,0.08)';
-      ctx.fill();
-      ctx.beginPath();
-      prices.forEach((p,i)=>{
-        const x=(i/(prices.length-1))*W, y=H-((p-mn)/rng)*(H-16)-8;
-        i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-      });
-      ctx.strokeStyle = isUp ? '#4ade80' : '#ef4444';
-      ctx.lineWidth = 2; ctx.stroke();
+    if (!canvas) return;
+    const W = canvas.offsetWidth || 600;
+    const H = canvas.offsetHeight || 200;
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    const prices = hist;
+    if (prices.length < 2) return;
+    const mn  = Math.min(...prices) * 0.97;
+    const mx  = Math.max(...prices) * 1.03;
+    const rng = mx - mn || 1;
+    const lineColor = isUp ? '#4ade80' : '#ef4444';
+    const px = (i) => (i / (prices.length - 1)) * W;
+    const py = (p) => H - 8 - ((p - mn) / rng) * (H - 22);
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)'; ctx.lineWidth = 1;
+    for (let i = 1; i < 5; i++) {
+      const y = Math.round(H * i / 5) + 0.5;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
     }
-    modal.classList.add('show');
-  }
+
+    // Area fill
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, isUp ? 'rgba(74,222,128,0.2)' : 'rgba(239,68,68,0.2)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.beginPath();
+    prices.forEach((p, i) => i === 0 ? ctx.moveTo(px(i), py(p)) : ctx.lineTo(px(i), py(p)));
+    ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
+    ctx.fillStyle = grad; ctx.fill();
+
+    // Line
+    ctx.shadowColor = lineColor; ctx.shadowBlur = 6;
+    ctx.beginPath();
+    prices.forEach((p, i) => i === 0 ? ctx.moveTo(px(i), py(p)) : ctx.lineTo(px(i), py(p)));
+    ctx.strokeStyle = lineColor; ctx.lineWidth = 2.5; ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Y-axis labels
+    ctx.font = '10px Share Tech Mono, monospace';
+    ctx.fillStyle = 'rgba(200,220,240,0.45)';
+    ctx.textAlign = 'left';
+    for (let i = 0; i <= 4; i++) {
+      const val = mn + (rng * i / 4);
+      const y   = py(val);
+      ctx.fillText('$' + val.toFixed(2), 5, y - 3);
+    }
+
+    // Last price dot + label
+    const lx = px(prices.length - 1);
+    const ly = py(prices[prices.length - 1]);
+    ctx.beginPath(); ctx.arc(lx, ly, 4, 0, Math.PI * 2);
+    ctx.fillStyle = lineColor; ctx.fill();
+    ctx.fillStyle = lineColor;
+    ctx.font = 'bold 11px Share Tech Mono, monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText('$' + prices[prices.length - 1].toFixed(2), W - 6, ly - 8);
+
+    // Stats row
+    const statsEl = document.getElementById('pcStatsRow');
+    if (statsEl) {
+      const h = stockHoldings[id];
+      const chg24 = hist.length >= 20
+        ? ((price - hist[Math.max(0, hist.length-20)]) / hist[Math.max(0, hist.length-20)] * 100).toFixed(2)
+        : '0.00';
+      statsEl.innerHTML = `
+        <span>MIN <strong>$${Math.min(...prices).toFixed(2)}</strong></span>
+        <span>MAX <strong>$${Math.max(...prices).toFixed(2)}</strong></span>
+        <span>24h <strong style="color:${parseFloat(chg24)>=0?'#4ade80':'#ef4444'}">${parseFloat(chg24)>=0?'+':''}${chg24}%</strong></span>
+        <span>NÁLADA <strong style="color:${s.color}">${s.mood.toUpperCase()}</strong></span>
+        ${h && h.shares > 0 ? `<span>PORTFOLIO <strong style="color:#a78bfa">${h.shares.toFixed(4)} ks</strong></span>` : ''}
+      `;
+    }
+  });
 };
 
 window.renderStocks = renderStocks; // immediate export
@@ -7605,19 +8343,14 @@ function openAvatarModal() {
       <div style="font-size:0.6rem;color:#64748b;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px">${s.label}</div>
     </div>`).join('');
 
-  // Pick 3 random avatars
-  const pool = [...AVATAR_DEFS];
-  for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
-  }
-  const chosen = pool.slice(0, 3);
+  // Show ALL avatars (not random 3)
   const savedAv = localStorage.getItem('rc_avatar') || '';
 
-  document.getElementById('avatarChoices').innerHTML = chosen.map(av => `
-    <div onclick="selectAvatar('${av.id}')" id="avcard_${av.id}" style="cursor:pointer;text-align:center;padding:10px 12px;border-radius:8px;border:2px solid ${savedAv===av.id ? '#8b5cf6' : 'rgba(255,255,255,0.07)'};background:${savedAv===av.id ? 'rgba(139,92,246,0.1)' : '#050709'};transition:border 0.2s">
+  document.getElementById('avatarChoices').innerHTML = AVATAR_DEFS.map(av => `
+    <div onclick="selectAvatar('${av.id}')" id="avcard_${av.id}" style="cursor:pointer;text-align:center;padding:10px 12px;border-radius:8px;border:2px solid ${savedAv===av.id ? '#8b5cf6' : 'rgba(255,255,255,0.07)'};background:${savedAv===av.id ? 'rgba(139,92,246,0.1)' : '#050709'};transition:border 0.2s,background 0.2s">
       <div style="width:64px;height:64px;border-radius:50%;overflow:hidden;margin:0 auto 6px;box-shadow:0 0 16px ${av.grad.split(',')[0]}55">${av.svg}</div>
       <div style="font-family:Oswald,sans-serif;font-size:0.65rem;letter-spacing:2px;color:#8a9ab0">${av.label}</div>
+      ${savedAv===av.id ? '<div style="font-size:0.5rem;color:#8b5cf6;margin-top:3px;letter-spacing:1px">✓ AKTIVNÍ</div>' : ''}
     </div>`).join('');
 
   document.getElementById('avatarModal').classList.add('show');
@@ -8297,6 +9030,7 @@ setTimeout(supabaseInit, 500);
       <button class="adm-tab" onclick="admSwitchTab('event')">⚡ EVENT</button>
       <button class="adm-tab" onclick="admSwitchTab('burza')">📉 BURZA</button>
       <button class="adm-tab" onclick="admSwitchTab('categories')">🚫 KATEGORIE</button>
+      <button class="adm-tab" onclick="admSwitchTab('hud')" style="background:linear-gradient(135deg,rgba(255,100,100,0.15),rgba(100,200,100,0.15));border-color:rgba(255,150,100,0.3)">🎨 HUD</button>
     </div>
 
     <!-- ONLINE -->
@@ -8410,6 +9144,49 @@ setTimeout(supabaseInit, 500);
       <div class="adm-section-title">ZAKÁZAT / POVOLIT KATEGORIE BEDEN</div>
       <div id="admCategoryList"></div>
       <div class="adm-log" id="admCatLog"></div>
+    </div>
+
+    <!-- HUD THEME -->
+    <div id="adm-panel-hud" class="adm-panel">
+      <div class="adm-section-title">🎨 HUD TÉMA / SEZÓNNÍ DEKORACE</div>
+      <p style="font-size:0.72rem;color:#6a7a9a;margin-bottom:14px;line-height:1.6">
+        Přepnutím motivu se změní barvy HUDu, přidají rohové dekorace a efekty.<br>
+        Ikony načítat z <code style="color:#a78bfa">assets/</code> — zkopíruj tam soubory z zipu.
+      </p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;">
+        <button class="hud-theme-btn" id="hudBtn-none" onclick="applyHudTheme('none')">
+          <span style="font-size:2rem">🚫</span>
+          <span>ŽÁDNÉ</span>
+        </button>
+        <button class="hud-theme-btn" id="hudBtn-christmas" onclick="applyHudTheme('christmas')">
+          <img src="assets/vanoce_02_stromek.png" alt="Vánoce" onerror="this.style.fontSize='2.5rem';this.outerHTML='<span style=\'font-size:2.5rem\'>🎄</span>'">
+          <span>VÁNOCE</span>
+        </button>
+        <button class="hud-theme-btn" id="hudBtn-easter" onclick="applyHudTheme('easter')">
+          <img src="assets/velikonoce_01.png" alt="Velikonoce" onerror="this.style.fontSize='2.5rem';this.outerHTML='<span style=\'font-size:2.5rem\'>🐣</span>'">
+          <span>VELIKONOCE</span>
+        </button>
+      </div>
+
+      <div id="hudThemePreview" style="background:rgba(0,0,0,0.3);border-radius:8px;padding:12px;font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:#6a7a9a;">
+        Aktuální téma: <span id="hudCurrentTheme" style="color:#a78bfa">ŽÁDNÉ</span>
+      </div>
+
+      <div class="adm-section-title" style="margin-top:16px;">🖼️ ROHOVÉ IKONY (zobrazí se v rozích hry)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.7rem;color:#6a7a9a;line-height:1.8;">
+        <div>🎄 <strong style="color:#c8d0e0">Vánoce:</strong> stromek, sněhulák, dárky, perník</div>
+        <div>🐣 <strong style="color:#c8d0e0">Velikonoce:</strong> košík, zajíček, beránek, perníček</div>
+      </div>
+
+      <div class="adm-section-title" style="margin-top:16px;">✨ INTENZITA EFEKTŮ</div>
+      <div class="adm-row" style="align-items:center;gap:12px;">
+        <label style="font-size:0.75rem;color:#6a7a9a;white-space:nowrap">Počet částic:</label>
+        <input type="range" id="hudParticleCount" min="5" max="60" value="25"
+          style="flex:1;accent-color:#a78bfa"
+          oninput="document.getElementById('hudParticleLabel').textContent=this.value; hudUpdateParticles()">
+        <span id="hudParticleLabel" style="color:#a78bfa;font-family:'Share Tech Mono',monospace;font-size:0.8rem;min-width:24px">25</span>
+      </div>
+      <div class="adm-log" id="admHudLog"></div>
     </div>
 
 
@@ -8865,7 +9642,209 @@ if (_origAdmSwitch) {
   window.admSwitchTab = function(tab) {
     _origAdmSwitch(tab);
     if (tab === 'duel') admDuelRefresh();
+    if (tab === 'hud')  hudRefreshUI();
   };
 }
+
+// ═══════════════════════════════════════════════════════════════════════
+//  HOLIDAY HUD THEME SYSTEM
+// ═══════════════════════════════════════════════════════════════════════
+(function() {
+
+const THEMES = {
+  none: {
+    label: 'ŽÁDNÉ',
+    corners: ['','','',''],
+    particleType: null,
+  },
+  christmas: {
+    label: '🎄 VÁNOCE',
+    corners: [
+      'assets/vanoce_02_stromek.png',
+      'assets/vanoce_01_snehulak.png',
+      'assets/vanoce_06_pytel.png',
+      'assets/vanoce_10_pernik.png',
+    ],
+    particleType: 'snow',
+    particles: ['❄','❅','❆','✦','*'],
+    particleColors: ['#ffffff','#aaddff','#cceeff','#ffd700','#ff8888'],
+  },
+  easter: {
+    label: '🐣 VELIKONOCE',
+    corners: [
+      'assets/velikonoce_01.png',
+      'assets/velikonoce_02.png',
+      'assets/velikonoce_10.png',
+      'assets/velikonoce_12.png',
+    ],
+    particleType: 'eggs',
+    particles: ['🥚','🌸','🌼','🌺','🐣'],
+    particleColors: ['#f472b6','#fb923c','#a3e635','#60a5fa','#fbbf24'],
+  },
+};
+
+let _canvas, _ctx, _animId, _floaters = [], _currentTheme = 'none', _particleMax = 25;
+
+function init() {
+  _canvas = document.getElementById('holidayCanvas');
+  if (!_canvas) return;
+  _ctx = _canvas.getContext('2d');
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  // Restore saved theme
+  const saved = localStorage.getItem('hud_theme') || 'none';
+  if (saved !== 'none') applyHudTheme(saved, true);
+}
+
+function resizeCanvas() {
+  if (!_canvas) return;
+  _canvas.width  = window.innerWidth;
+  _canvas.height = window.innerHeight;
+}
+
+/* ── Public: apply theme ── */
+window.applyHudTheme = function(name, silent) {
+  const cfg = THEMES[name] || THEMES.none;
+  _currentTheme = name;
+  localStorage.setItem('hud_theme', name);
+
+  // Remove old body classes
+  document.body.classList.remove('theme-christmas','theme-easter');
+  if (name !== 'none') document.body.classList.add('theme-' + name);
+
+  // Corner images
+  const corners = ['hcd-tl','hcd-tr','hcd-bl','hcd-br'];
+  corners.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const src = cfg.corners[i] || '';
+    el.src = src;
+    if (src) {
+      el.classList.add('visible');
+    } else {
+      el.classList.remove('visible');
+    }
+  });
+
+  // Particles
+  stopParticles();
+  if (cfg.particleType) {
+    _canvas.classList.add('visible');
+    startParticles(cfg);
+  } else {
+    _canvas.classList.remove('visible');
+  }
+
+  hudRefreshUI();
+  if (!silent) admLog('admHudLog', '✅ Téma změněno na: ' + cfg.label);
+};
+
+window.hudRefreshUI = function() {
+  document.querySelectorAll('.hud-theme-btn').forEach(b => b.classList.remove('active'));
+  const active = document.getElementById('hudBtn-' + _currentTheme);
+  if (active) active.classList.add('active');
+  const label = document.getElementById('hudCurrentTheme');
+  if (label) label.textContent = (THEMES[_currentTheme] || THEMES.none).label;
+  const slider = document.getElementById('hudParticleCount');
+  if (slider) slider.value = _particleMax;
+  const sliderLbl = document.getElementById('hudParticleLabel');
+  if (sliderLbl) sliderLbl.textContent = _particleMax;
+};
+
+window.hudUpdateParticles = function() {
+  const v = parseInt(document.getElementById('hudParticleCount').value) || 25;
+  _particleMax = v;
+  localStorage.setItem('hud_particle_count', v);
+  if (_currentTheme !== 'none') {
+    stopParticles();
+    startParticles(THEMES[_currentTheme]);
+    _canvas.classList.add('visible');
+  }
+};
+
+/* ── Particle engine ── */
+function stopParticles() {
+  if (_animId) cancelAnimationFrame(_animId);
+  _animId = null;
+  _floaters = [];
+  if (_ctx) _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
+}
+
+function startParticles(cfg) {
+  _particleMax = parseInt(localStorage.getItem('hud_particle_count') || '25');
+  spawnBatch(cfg);
+  loop(cfg);
+}
+
+function spawnBatch(cfg) {
+  const count = Math.min(_particleMax, 60);
+  for (let i = 0; i < count; i++) {
+    _floaters.push(makeFloater(cfg, true));
+  }
+}
+
+function makeFloater(cfg, randomY) {
+  const W = _canvas.width, H = _canvas.height;
+  return {
+    x: Math.random() * W,
+    y: randomY ? Math.random() * H : -30,
+    speed: 0.6 + Math.random() * 1.4,
+    sway: (Math.random() - 0.5) * 0.4,
+    swayAmp: 20 + Math.random() * 40,
+    swaySpeed: 0.005 + Math.random() * 0.01,
+    swayOffset: Math.random() * Math.PI * 2,
+    size: 14 + Math.random() * 20,
+    opacity: 0.55 + Math.random() * 0.45,
+    char: cfg.particles[Math.floor(Math.random() * cfg.particles.length)],
+    color: cfg.particleColors[Math.floor(Math.random() * cfg.particleColors.length)],
+    rot: Math.random() * Math.PI * 2,
+    rotSpeed: (Math.random() - 0.5) * 0.04,
+    t: Math.random() * 1000,
+  };
+}
+
+function loop(cfg) {
+  _animId = requestAnimationFrame(() => loop(cfg));
+  const W = _canvas.width, H = _canvas.height;
+  _ctx.clearRect(0, 0, W, H);
+
+  // Maintain particle count
+  while (_floaters.length < Math.min(_particleMax, 60)) {
+    _floaters.push(makeFloater(cfg, false));
+  }
+
+  _floaters.forEach((f, i) => {
+    f.t += 1;
+    f.y += f.speed;
+    f.x += Math.sin(f.t * f.swaySpeed + f.swayOffset) * f.sway;
+    f.rot += f.rotSpeed;
+
+    _ctx.save();
+    _ctx.globalAlpha = f.opacity;
+    _ctx.font = f.size + 'px serif';
+    _ctx.fillStyle = f.color;
+    _ctx.translate(f.x, f.y);
+    _ctx.rotate(f.rot);
+    _ctx.textAlign = 'center';
+    _ctx.textBaseline = 'middle';
+    _ctx.fillText(f.char, 0, 0);
+    _ctx.restore();
+
+    // Reset when off screen
+    if (f.y > H + 40) {
+      _floaters[i] = makeFloater(cfg, false);
+    }
+  });
+}
+
+// Boot
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+
+})();
 </script>
 <script src="events.js"></script>

@@ -214,9 +214,11 @@ function gcClickChest(e) {
   if (!gcState.active) return;
 
   const upg = getGcUpgrades();
-  let dmg = Math.max(1, Math.floor((window.clkState ? clkState.clickDmg : 1) * upg.dmgMult));
+  const perkMult = typeof window.getPerkClickMult === 'function' ? window.getPerkClickMult() : 1;
+  const perkCritAdd = typeof window.getPerkCritAdd === 'function' ? window.getPerkCritAdd() : 0;
+  let dmg = Math.max(1, Math.floor((window.clkState ? clkState.clickDmg : 1) * upg.dmgMult * perkMult));
   let isCrit = false;
-  const critChance = (window.clkState ? clkState.critChance : 0) + upg.critChance;
+  const critChance = (window.clkState ? clkState.critChance : 0) + upg.critChance + perkCritAdd;
   if (critChance > 0 && Math.random() < critChance) {
     dmg = Math.floor(dmg * 3);
     isCrit = true;
@@ -887,8 +889,10 @@ window.duelClick = function(e) {
   if (area && e) {
     const rect = area.getBoundingClientRect();
     const floater = document.createElement('div');
-    const isCrit = Math.random() < 0.1;
-    const dmg = isCrit ? duelClickDmg * 3 : duelClickDmg;
+    const perkDuelMult = typeof window.getPerkDuelMult === 'function' ? window.getPerkDuelMult() : 1;
+    const perkCritAdd  = typeof window.getPerkCritAdd  === 'function' ? window.getPerkCritAdd()  : 0;
+    const isCrit = Math.random() < (0.1 + perkCritAdd);
+    const dmg = Math.floor((isCrit ? duelClickDmg * 3 : duelClickDmg) * perkDuelMult);
     floater.textContent = (isCrit ? '💥 ' : '') + '-' + dmg.toLocaleString();
     floater.style.cssText = `position:absolute;left:${(e.clientX||rect.left+rect.width/2)-rect.left}px;top:${(e.clientY||rect.top+rect.height/2)-rect.top-20}px;color:${isCrit?'#fbbf24':'#ff6b6b'};font-family:Oswald,sans-serif;font-size:${isCrit?'1rem':'0.82rem'};font-weight:700;pointer-events:none;animation:clkFloat 0.8s ease-out forwards;z-index:10`;
     area.style.position = 'relative';
@@ -908,7 +912,8 @@ window.duelClick = function(e) {
     }
     duelLocalHp -= dmg;
   } else {
-    duelLocalHp -= duelClickDmg;
+    const _pm = typeof window.getPerkDuelMult === 'function' ? window.getPerkDuelMult() : 1;
+    duelLocalHp -= Math.floor(duelClickDmg * _pm);
   }
 
   if (duelLocalHp <= 0) {
