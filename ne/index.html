@@ -2813,11 +2813,6 @@ body.theme-easter .nav-link:hover {
       <span class="c-val" id="moneyVal">0</span>
       <span class="c-label">USD</span>
     </div>
-    <div class="currency-pill coins" id="coinsPill">
-      <span class="c-icon">💎</span>
-      <span class="c-val" id="coinsVal">0</span>
-      <span class="c-label">coins</span>
-    </div>
     <div class="user-pill" title="Přihlášen přes THE SQUAD">
       <div class="user-avatar" id="userAvatar">?</div>
       <span class="user-name" id="userNameDisplay">Hráč</span>
@@ -3462,7 +3457,20 @@ body.theme-easter .nav-link:hover {
   position:absolute; z-index:3; pointer-events:none;
   transform:translate(-50%,-50%);
 }
-.spo-placed-sticker img { width:52px; height:52px; object-fit:contain; }
+.spo-placed-sticker img {
+  width:54px; height:54px; object-fit:contain; display:block;
+  transform-style:preserve-3d;
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.75)) contrast(0.93) saturate(1.15);
+}
+/* Stickers in weapon inspect preview */
+.wip-placed-sticker {
+  position:absolute; z-index:10; pointer-events:none;
+  transform:translate(-50%,-50%);
+}
+.wip-placed-sticker img {
+  width:60px; height:60px; object-fit:contain; display:block;
+  filter: drop-shadow(0 3px 8px rgba(0,0,0,0.8)) contrast(0.93) saturate(1.15);
+}
 /* floating sticker following cursor */
 #spo-cursor-sticker {
   position:fixed; pointer-events:none; z-index:9999;
@@ -4482,7 +4490,7 @@ function renderInventory() {
     const listed = state.bazosListings.find(l => l.uid === item.uid);
     const imgSrc = b.svg.match(/src="([^"]+)"/)?.[1] || '';
     const isSticker = b.id.startsWith('stickers_') || b.id.startsWith('stk_');
-    const previewCall = (!isSticker && imgSrc) ? `onclick="showWeaponImgPreview('${imgSrc}','${b.name.replace(/'/g,"\\'")}','${b.rarityName}','${b.rarityColor}')"` : '';
+    const previewCall = (!isSticker && imgSrc) ? `onclick="showWeaponImgPreview('${imgSrc}','${b.name.replace(/'/g,"\\'")}','${b.rarityName}','${b.rarityColor}','${item.uid}')"` : '';
 
     // Applied stickers row (for weapons)
     const appliedStickers = item.appliedStickers || [];
@@ -5176,7 +5184,7 @@ function renderShop() {
 
   const disabledCases = window.adminDisabledCases || new Set();
   const kcCases   = shopCases.filter(c => c.currency === 'money'  && !disabledCases.has(c.id));
-  const coinCases = shopCases.filter(c => c.currency === 'coins'  && !disabledCases.has(c.id));
+  const coinCases = []; // Premium coin cases removed
 
   // XP ranges per case (min~max based on rarity pool odds)
   const caseXP = {
@@ -5219,8 +5227,7 @@ function renderShop() {
       <div class="shop-section-title">💵 Bedny za <span class="sst-accent">$</span></div>
       <div class="cases-grid">${kcCases.map(caseCardHTML).join('')}</div>
 
-      <div class="shop-section-title">💎 Premium bedny za <span class="sst-accent">Mince</span></div>
-      <div class="cases-grid">${coinCases.map(caseCardHTML).join('')}</div>
+
 
 
     </div>
@@ -6221,11 +6228,11 @@ setInterval(clkUpdateUpgradeButtons, 2000);
 const DAILY_REWARDS = [
   { day:1, icon:'💵', val:'+$150', bonus:150, type:'money' },
   { day:2, icon:'💵', val:'+$300', bonus:300, type:'money' },
-  { day:3, icon:'💎', val:'+3 mince', bonus:3,   type:'coin'  },
+  { day:3, icon:'💵', val:'+$200', bonus:200, type:'money' },
   { day:4, icon:'💵', val:'+$500', bonus:500, type:'money' },
-  { day:5, icon:'💎', val:'+7 mincí', bonus:7,  type:'coin'  },
+  { day:5, icon:'💵', val:'+$400', bonus:400, type:'money' },
   { day:6, icon:'💵', val:'+$800', bonus:800, type:'money' },
-  { day:7, icon:'🏆', val:'+$1500 + 15 💎', bonus:1500, bonusCoin:15, type:'both' },
+  { day:7, icon:'🏆', val:'+$2000 JACKPOT!', bonus:2000, type:'money' },
 ];
 
 function checkDailyReward() {
@@ -6268,7 +6275,7 @@ function claimDaily() {
 
   if (r.type === 'money' || r.type === 'both') addMoney(r.bonus);
   if (r.type === 'coin')  addCoins(r.bonus);
-  if (r.type === 'both' && r.bonusCoin) addCoins(r.bonusCoin);
+
 
   localStorage.setItem('alkocase_daily_date', today);
   document.getElementById('dailyModal').classList.remove('show');
@@ -6322,7 +6329,6 @@ function checkAchievement(id) {
     'mission_5':    { money:200, coins:2 },
     'mission_all':  { money:500, coins:5 },
     'inventory_10': { money:100, coins:0 },
-    'coins_20':     { money:0,   coins:0 },
     'level_10':     { money:300, coins:3 },
     'game_win5':    { money:100, coins:1 },
     'game_win20':   { money:300, coins:3 },
@@ -6333,7 +6339,7 @@ function checkAchievement(id) {
   const reward = achRewards[id];
   if (reward) {
     if (reward.money > 0) { addMoney(reward.money); }
-    if (reward.coins > 0) { addCoins(reward.coins); }
+    // coins removed
     const rewardStr = [reward.money>0?`+$${reward.money}`:'', reward.coins>0?`+${reward.coins}💎`:''].filter(Boolean).join(' ');
     showAchievement(a.icon, a.title, a.desc + (rewardStr ? ` — Odměna: ${rewardStr}` : ''));
   } else {
@@ -6649,7 +6655,7 @@ window.closeCasePreview = closeCasePreview;
 //  WEAPON IMAGE PREVIEW — static inspect (no rotation)
 // ─────────────────────────────────────────────────────
 
-window.showWeaponImgPreview = function(imgSrc, name, rarityName, rarityColor) {
+window.showWeaponImgPreview = function(imgSrc, name, rarityName, rarityColor, itemUid) {
   const overlay = document.getElementById('weaponImgPreviewOverlay');
   if (!overlay) return;
 
@@ -6673,6 +6679,34 @@ window.showWeaponImgPreview = function(imgSrc, name, rarityName, rarityColor) {
   const img = document.getElementById('wipImg');
   if (img) img.style.filter = `drop-shadow(0 20px 60px rgba(0,0,0,0.8)) drop-shadow(0 0 40px ${rarityColor || '#00cfff'}44)`;
 
+  // ── Render applied stickers onto the inspect stage ──
+  const stage = document.getElementById('wip-stage');
+  // Clear any previously rendered stickers
+  stage.querySelectorAll('.wip-placed-sticker').forEach(el => el.remove());
+
+  if (itemUid && window.state) {
+    const item = state.inventory.find(i => i.uid === itemUid);
+    const stickers = (item && item.appliedStickers) ? item.appliedStickers : [];
+    stickers.forEach(s => {
+      const div = document.createElement('div');
+      div.className = 'wip-placed-sticker';
+      div.style.left = s.x + '%';
+      div.style.top  = s.y + '%';
+
+      const xTilt = ((s.x - 50) / 50) * 14;
+      const yTilt = ((s.y - 50) / 50) * 7;
+
+      const sImg = document.createElement('img');
+      sImg.src = s.stickerSrc || '';
+      sImg.alt = s.name || 'sticker';
+      sImg.onerror = function() { this.style.display = 'none'; };
+      sImg.style.transform = `perspective(110px) rotateY(${xTilt}deg) rotateX(${-yTilt}deg)`;
+
+      div.appendChild(sImg);
+      stage.appendChild(div);
+    });
+  }
+
   // Show overlay
   overlay.classList.add('show');
 };
@@ -6680,6 +6714,9 @@ window.showWeaponImgPreview = function(imgSrc, name, rarityName, rarityColor) {
 window.closeWeaponImgPreview = function() {
   const overlay = document.getElementById('weaponImgPreviewOverlay');
   if (overlay) overlay.classList.remove('show');
+  // Clear rendered stickers
+  const stage = document.getElementById('wip-stage');
+  if (stage) stage.querySelectorAll('.wip-placed-sticker').forEach(el => el.remove());
 };
 
 // ESC closes preview
@@ -6813,18 +6850,40 @@ document.addEventListener('keydown', function(e) {
     }
   }
 
+  // ── Shared sticker element builder (3D surface-adhesion effect) ──
+  function _buildStickerEl(s, className, pendingOutline) {
+    const div = document.createElement('div');
+    div.className = className || 'spo-placed-sticker';
+    div.style.left = s.x + '%';
+    div.style.top  = s.y + '%';
+
+    // Perspective tilt: sticker acts like it's painted ON the weapon surface.
+    // Left side of weapon tilts away to left, right tilts away right (barrel curve).
+    // Vertical: top surface tilts back slightly, bottom tilts forward.
+    const xTilt = ((s.x - 50) / 50) * 14;  // −14° … +14°
+    const yTilt = ((s.y - 50) / 50) * 7;   // −7° … +7°
+
+    const img = document.createElement('img');
+    img.src = s.stickerSrc || '';
+    img.alt = s.name || 'sticker';
+    img.onerror = function() { this.style.display = 'none'; };
+    // perspective() on the img itself so the parent transform:translate stays clean
+    img.style.transform = `perspective(110px) rotateY(${xTilt}deg) rotateX(${-yTilt}deg)`;
+
+    if (pendingOutline) {
+      div.style.outline = '2px dashed rgba(180,127,255,0.7)';
+      div.style.outlineOffset = '3px';
+      div.style.borderRadius  = '5px';
+    }
+
+    div.appendChild(img);
+    return div;
+  }
+
   function _renderPlacedStickersOnStage(stickers) {
     const stage = document.getElementById('stickerPlaceStage');
-    // Remove old placed sticker divs
     stage.querySelectorAll('.spo-placed-sticker').forEach(el => el.remove());
-    stickers.forEach(s => {
-      const div = document.createElement('div');
-      div.className = 'spo-placed-sticker';
-      div.style.left = s.x + '%';
-      div.style.top  = s.y + '%';
-      div.innerHTML = `<img src="${s.stickerSrc}" alt="sticker" onerror="this.style.display='none'">`;
-      stage.appendChild(div);
-    });
+    stickers.forEach(s => stage.appendChild(_buildStickerEl(s, 'spo-placed-sticker', false)));
   }
 
   // ── STEP 3: Click to place ───────────────────────────
@@ -6837,23 +6896,17 @@ document.addEventListener('keydown', function(e) {
 
     _pendingPlacement = { x: xPct, y: yPct };
 
-    // Preview the pending sticker
-    const existing = (() => {
-      const wItem = state.inventory.find(i => i.uid === _weaponUid);
-      return (wItem && wItem.appliedStickers) ? wItem.appliedStickers : [];
-    })();
-    _renderPlacedStickersOnStage(existing);
+    // Redraw existing stickers + pending preview
+    const wItem = state.inventory.find(i => i.uid === _weaponUid);
+    _renderPlacedStickersOnStage((wItem && wItem.appliedStickers) ? wItem.appliedStickers : []);
 
-    // Add the pending preview sticker
-    const div = document.createElement('div');
-    div.className = 'spo-placed-sticker';
-    div.style.left = xPct + '%';
-    div.style.top  = yPct + '%';
-    div.style.outline = '2px dashed rgba(180,127,255,0.7)';
-    div.style.outlineOffset = '3px';
-    div.style.borderRadius  = '4px';
-    div.innerHTML = `<img src="${_stickerData.src}" alt="preview" onerror="this.style.display='none'">`;
-    stage.appendChild(div);
+    // Pending sticker (with outline)
+    const pending = _buildStickerEl(
+      { x: xPct, y: yPct, stickerSrc: _stickerData.src, name: _stickerData.name },
+      'spo-placed-sticker',
+      true
+    );
+    stage.appendChild(pending);
 
     // Enable save
     const btn = document.getElementById('btnSpoSave');
@@ -7248,16 +7301,16 @@ setInterval(() => {
 // ═══════════════════════════════════════════════════════
 
 const MISSIONS = [
-  { id:'m_open5',    icon:'📦', name:'Začínáš!',          desc:'Otevři 5 beden',             type:'casesOpened', target:5,    rewardMoney:50,   rewardCoins:1 },
-  { id:'m_open25',   icon:'🎰', name:'Sběratel Beden',    desc:'Otevři 25 beden',            type:'casesOpened', target:25,   rewardMoney:150,  rewardCoins:2 },
-  { id:'m_open100',  icon:'🏭', name:'Továrna na Bedny',  desc:'Otevři 100 beden',           type:'casesOpened', target:100,  rewardMoney:500,  rewardCoins:5 },
-  { id:'m_spend200', icon:'💸', name:'Utrácíme!',         desc:'Utrať celkem $200',           type:'totalSpent',  target:200,  rewardMoney:80,   rewardCoins:1 },
-  { id:'m_spend1k',  icon:'🤑', name:'Balík Dolárů',      desc:'Utrať celkem $1000',          type:'totalSpent',  target:1000, rewardMoney:300,  rewardCoins:3 },
-  { id:'m_earn500',  icon:'💰', name:'Byznys jde!',       desc:'Vydělej celkem $500',         type:'totalEarned', target:500,  rewardMoney:100,  rewardCoins:2 },
-  { id:'m_earn5k',   icon:'🏦', name:'Investor',          desc:'Vydělej celkem $5000',        type:'totalEarned', target:5000, rewardMoney:400,  rewardCoins:4 },
-  { id:'m_kill10',   icon:'⚔️', name:'Lovec Beden',       desc:'Zničí 10 beden v Klikeru',    type:'clickerKills',target:10,  rewardMoney:75,   rewardCoins:1 },
-  { id:'m_kill50',   icon:'💀', name:'Sériový Ničitel',   desc:'Zničí 50 beden v Klikeru',    type:'clickerKills',target:50,  rewardMoney:200,  rewardCoins:2 },
-  { id:'m_level5',   icon:'⬆️', name:'Na Vzestupu',       desc:'Dosáhni Level 5 v Klikeru',   type:'clickerLevel',target:5,   rewardMoney:120,  rewardCoins:2 },
+  { id:'m_open5',    icon:'📦', name:'Začínáš!',          desc:'Otevři 5 beden',             type:'casesOpened', target:5,    rewardMoney:50 },
+  { id:'m_open25',   icon:'🎰', name:'Sběratel Beden',    desc:'Otevři 25 beden',            type:'casesOpened', target:25,   rewardMoney:150 },
+  { id:'m_open100',  icon:'🏭', name:'Továrna na Bedny',  desc:'Otevři 100 beden',           type:'casesOpened', target:100,  rewardMoney:500 },
+  { id:'m_spend200', icon:'💸', name:'Utrácíme!',         desc:'Utrať celkem $200',           type:'totalSpent',  target:200,  rewardMoney:80 },
+  { id:'m_spend1k',  icon:'🤑', name:'Balík Dolárů',      desc:'Utrať celkem $1000',          type:'totalSpent',  target:1000, rewardMoney:300 },
+  { id:'m_earn500',  icon:'💰', name:'Byznys jde!',       desc:'Vydělej celkem $500',         type:'totalEarned', target:500,  rewardMoney:100 },
+  { id:'m_earn5k',   icon:'🏦', name:'Investor',          desc:'Vydělej celkem $5000',        type:'totalEarned', target:5000, rewardMoney:400 },
+  { id:'m_kill10',   icon:'⚔️', name:'Lovec Beden',       desc:'Zničí 10 beden v Klikeru',    type:'clickerKills',target:10,  rewardMoney:75 },
+  { id:'m_kill50',   icon:'💀', name:'Sériový Ničitel',   desc:'Zničí 50 beden v Klikeru',    type:'clickerKills',target:50,  rewardMoney:200 },
+  { id:'m_level5',   icon:'⬆️', name:'Na Vzestupu',       desc:'Dosáhni Level 5 v Klikeru',   type:'clickerLevel',target:5,   rewardMoney:120 },
 ];
 
 let missionsClaimed = new Set(JSON.parse(localStorage.getItem('alkocase_missions') || '[]'));
@@ -7279,7 +7332,7 @@ function claimMission(id) {
   missionsClaimed.add(id);
   localStorage.setItem('alkocase_missions', JSON.stringify([...missionsClaimed]));
   if (m.rewardMoney) { addMoney(m.rewardMoney); showToast(`✅ Mise splněna! +$${m.rewardMoney}`, 'success'); }
-  if (m.rewardCoins) { addCoins(m.rewardCoins); showToast(`💎 +${m.rewardCoins} coins!`, 'info'); }
+
   checkAchievement('mission_first');
   const done = MISSIONS.filter(x => missionsClaimed.has(x.id)).length;
   if (done >= 5)  checkAchievement('mission_5');
@@ -7319,7 +7372,7 @@ function renderMissions() {
       </div>
       <div class="mission-reward">
         ${m.rewardMoney ? `<span class="mission-reward-badge money-r">+$${m.rewardMoney}</span>` : ''}
-        ${m.rewardCoins ? `<span class="mission-reward-badge coin-r">+${m.rewardCoins}💎</span>` : ''}
+
         ${claimed
           ? `<button class="btn-claim done" disabled>✓ Splněno</button>`
           : claimable
@@ -7388,7 +7441,7 @@ setInterval(() => {
   if (state.money >= 5000) checkAchievement('millionaire');
   if ((state.money || 0) <= 0) checkAchievement('broke');
   if ((state.inventory || []).length >= 10) checkAchievement('inventory_10');
-  if ((state.coins || 0) >= 20) checkAchievement('coins_20');
+
   const lvlInfo = getCurrentLevelInfo();
   if (lvlInfo.level >= 10) checkAchievement('level_10');
   if (state.stats.casesOpened >= 100) checkAchievement('case_100');
@@ -7761,12 +7814,12 @@ window.playDice = playDice;
 const WHEEL_SEGMENTS = [
   { label:'$30',    color:'#1a6dff', reward:() => { addMoney(30); showToast('+$30!','success'); trackGameWin(); } },
   { label:'$100',   color:'#4ade80', reward:() => { addMoney(100); showToast('+$100!','success'); trackGameWin(); } },
-  { label:'💎×1',   color:'#c9a227', reward:() => { addCoins(1); showToast('+1 💎 coin!','success'); trackGameWin(); } },
+  { label:'$150',   color:'#c9a227', reward:() => { addMoney(150); showToast('+$150!','success'); trackGameWin(); } },
   { label:'$50',    color:'#3addff', reward:() => { addMoney(50); showToast('+$50!','success'); trackGameWin(); } },
   { label:'Nic 😢', color:'#2a3a5a', reward:() => showToast('Smůla!','error') },
   { label:'$200',   color:'#d32ee6', reward:() => { addMoney(200); showToast('+$200!','success'); trackGameWin(); } },
   { label:'$20',    color:'#1a6dff', reward:() => { addMoney(20); showToast('+$20!','success'); trackGameWin(); } },
-  { label:'💎×2',   color:'#eb4b4b', reward:() => { addCoins(2); showToast('+2 💎 coins!','success'); trackGameWin(); } },
+  { label:'$300',   color:'#eb4b4b', reward:() => { addMoney(300); showToast('+$300!','success'); trackGameWin(); } },
 ];
 let wheelSpinning = false;
 let wheelAngle = 0;
@@ -7807,8 +7860,8 @@ function initWheelCanvas() {
 
 function spinWheel() {
   if (wheelSpinning) return;
-  if (state.coins < 1) { showToast('Nemáš dost 💎 coinů!', 'error'); return; }
-  addCoins(-1);
+  if (state.money < 50) { showToast('Nemáš dost $!', 'error'); return; }
+  addMoney(-50);
   wheelSpinning = true;
   document.getElementById('btnWheel').disabled = true;
   const res = document.getElementById('wheelResult');
