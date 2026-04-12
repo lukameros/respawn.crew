@@ -434,7 +434,12 @@ body::before {
 .inv-card.r-pink::after   { background: var(--r-pink); }
 .inv-card.r-red::after    { background: var(--r-red); }
 .inv-card.r-gold::after   { background: var(--r-gold); }
-.inv-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+.inv-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+.inv-card.r-blue:hover   { border-color: #4d79ff66; box-shadow: 0 8px 24px rgba(77,121,255,0.2); }
+.inv-card.r-purple:hover { border-color: #8847ff66; box-shadow: 0 8px 24px rgba(136,71,255,0.2); }
+.inv-card.r-pink:hover   { border-color: #d32ee666; box-shadow: 0 8px 24px rgba(211,46,230,0.25); }
+.inv-card.r-red:hover    { border-color: #eb4b4b66; box-shadow: 0 8px 24px rgba(235,75,75,0.25); }
+.inv-card.r-gold:hover   { border-color: #c9a22788; box-shadow: 0 8px 32px rgba(201,162,39,0.35); }
 
 .inv-card .bottle-svg { width:60px; height:130px; }
 .inv-card-name { font-size:0.75rem; font-weight:700; text-align:center; margin:8px 0 4px; text-transform:uppercase; letter-spacing:0.5px; }
@@ -487,7 +492,7 @@ body::before {
   transition: all 0.2s;
   position: relative; overflow: hidden;
 }
-.shop-card:hover { border-color: var(--border2); box-shadow: 0 8px 30px rgba(0,0,0,0.4); transform: translateY(-2px); }
+.shop-card:hover { border-color: rgba(0,207,255,0.3); box-shadow: 0 8px 30px rgba(0,207,255,0.12); transform: translateY(-2px); }
 .shop-card .sc-icon { font-size: 2.4rem; margin-bottom: 12px; }
 .shop-card .sc-name { font-family: 'Oswald', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
 .shop-card .sc-desc { font-size: 0.75rem; color: var(--muted); text-align: center; line-height: 1.5; margin-bottom: 16px; }
@@ -2523,6 +2528,23 @@ body.theme-easter .nav-link:hover {
   100% { transform: translateY(105vh) rotate(720deg); opacity:0; }
 }
 @keyframes holidaySway { 0%,100% { margin-left:0 } 50% { margin-left:30px } }
+
+/* ── BAZOŠ SORT BUTTONS ── */
+.bazos-sort-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  padding: 4px 12px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.bazos-sort-btn:hover { border-color: var(--gold); color: var(--white); }
+.bazos-sort-btn.active { background: rgba(0,207,255,0.1); border-color: rgba(0,207,255,0.4); color: var(--gold2); }
 </style>
 </head>
 <body>
@@ -2886,6 +2908,19 @@ body.theme-easter .nav-link:hover {
         <h2>Bazoš</h2>
         <div class="ph-sub">Prodej a kup flašky od ostatních</div>
       </div>
+    </div>
+    <!-- Sort / filter bar -->
+    <div style="display:flex;align-items:center;gap:8px;padding:10px 20px;border-bottom:1px solid var(--border);background:var(--bg2);flex-wrap:wrap;">
+      <span style="font-size:0.7rem;color:var(--muted);letter-spacing:1px;font-family:'Share Tech Mono',monospace">SEŘADIT:</span>
+      <button class="bazos-sort-btn active" id="bsort-newest" onclick="setBazosSort('newest')">🕐 Nejnovější</button>
+      <button class="bazos-sort-btn" id="bsort-cheap" onclick="setBazosSort('cheap')">💲 Nejlevnější</button>
+      <button class="bazos-sort-btn" id="bsort-pricey" onclick="setBazosSort('pricey')">💎 Nejdražší</button>
+      <div style="width:1px;height:20px;background:var(--border2);margin:0 4px"></div>
+      <span style="font-size:0.7rem;color:var(--muted);letter-spacing:1px;font-family:'Share Tech Mono',monospace">FILTR:</span>
+      <button class="bazos-sort-btn active" id="bfil-all" onclick="setBazosFilter('all')">Vše</button>
+      <button class="bazos-sort-btn" id="bfil-mine" onclick="setBazosFilter('mine')" style="color:#4ade80">👤 Moje</button>
+      <button class="bazos-sort-btn" id="bfil-r-red" onclick="setBazosFilter('r-red')" style="color:#eb4b4b">Covert</button>
+      <button class="bazos-sort-btn" id="bfil-r-pink" onclick="setBazosFilter('r-pink')" style="color:#d32ee6">Classified</button>
     </div>
     <div class="bazos-layout">
       <div class="bazos-listings" id="bazosListings"></div>
@@ -3649,7 +3684,7 @@ const CLICKER_CHEST_MAP = [
 
 // ── State ──────────────────────────────────────────────
 let state = {
-  money: 500,
+  money: 750,
   coins: 5,
   username: '',
   inventory: [],        // { id, uid, bottle_id, wonAt, value, listed }
@@ -3809,6 +3844,8 @@ function addMoney(amt) {
   void pill.offsetWidth;
   pill.classList.add('pulse');
   updateCurrencyDisplay();
+  if (state.money >= 1000) checkAchievement('rich');
+  if (state.money >= 5000) checkAchievement('millionaire');
   saveState();
 }
 
@@ -4178,9 +4215,9 @@ function renderInventory() {
   const totalVal = inv.reduce((s, i) => s + getLivePrice(i.bottle_id), 0);
 
   stats.innerHTML = '<div class="inv-stat"><span class="s-label">Položky</span><span class="s-val">' + inv.length + '</span></div>' +
-    '<div class="inv-stat"><span class="s-label">Celk. hodnota</span><span class="s-val">$' + totalVal + '</span></div>' +
-    '<div class="inv-stat"><span class="s-label">Bedny otevřeny</span><span class="s-val">' + state.stats.casesOpened + '</span></div>' +
-    '<div class="inv-stat"><span class="s-label">Vydělano</span><span class="s-val">$' + state.stats.totalEarned + '</span></div>' +
+    '<div class="inv-stat"><span class="s-label">Celk. hodnota</span><span class="s-val" style="color:#4ade80">$' + totalVal.toLocaleString('cs-CZ') + '</span></div>' +
+    '<div class="inv-stat"><span class="s-label">Bedny otevřeny</span><span class="s-val">' + state.stats.casesOpened.toLocaleString('cs-CZ') + '</span></div>' +
+    '<div class="inv-stat"><span class="s-label">Vydělano celkem</span><span class="s-val" style="color:#4ade80">$' + state.stats.totalEarned.toLocaleString('cs-CZ') + '</span></div>' +
     (chests.length ? '<div class="inv-stat"><span class="s-label">Kliker Bedny</span><span class="s-val" style="color:var(--gold2)">' + chests.length + '</span></div>' : '');
 
   // Build clicker chests section
@@ -4219,7 +4256,7 @@ function renderInventory() {
       '<div class="inv-card-date">' + item.wonAt + '</div>' +
       (listed
         ? '<div class="btn-sell" style="color:var(--muted);border-color:var(--border2);cursor:default" onclick="event.stopPropagation()">Na Bazoši 📋</div>'
-        : '<button class="btn-sell" onclick="event.stopPropagation();sellFromInventory(\'' + item.uid + '\')">Prodat ($' + Math.floor(liveVal*0.7) + ')</button>'
+        : '<button class="btn-sell" onclick="event.stopPropagation();sellFromInventory(\'' + item.uid + '\')">Prodat ($' + Math.floor(liveVal*0.75) + ')</button>'
       ) + '</div>';
   }).join('');
 
@@ -4231,7 +4268,7 @@ function sellFromInventory(itemUid) {
   if (!item) return;
   const b = getBottleById(item.bottle_id);
   const perkSell = typeof getPerkSellMult === 'function' ? getPerkSellMult() : 1;
-  const price = Math.floor(getLivePrice(item.bottle_id) * 0.7 * perkSell);
+  const price = Math.floor(getLivePrice(item.bottle_id) * 0.75 * perkSell);
   state.inventory = state.inventory.filter(i => i.uid !== itemUid);
   addMoney(price);
   state.stats.totalEarned += price;
@@ -5006,6 +5043,26 @@ function buyTopup(type, coinPrice, bonus) {
 // ─────────────────────────────────────────────────────
 //  BAZOŠ
 // ─────────────────────────────────────────────────────
+let bazosSort   = 'newest';   // 'newest' | 'cheap' | 'pricey'
+let bazosFilter = 'all';      // 'all' | 'mine' | 'r-red' | 'r-pink'
+
+function setBazosSort(s) {
+  bazosSort = s;
+  document.querySelectorAll('[id^="bsort-"]').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('bsort-' + s);
+  if (btn) btn.classList.add('active');
+  renderBazosListings();
+}
+function setBazosFilter(f) {
+  bazosFilter = f;
+  document.querySelectorAll('[id^="bfil-"]').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('bfil-' + f);
+  if (btn) btn.classList.add('active');
+  renderBazosListings();
+}
+window.setBazosSort   = setBazosSort;
+window.setBazosFilter = setBazosFilter;
+
 function renderBazos() {
   renderBazosListings();
   renderBazosSidebar();
@@ -5013,14 +5070,30 @@ function renderBazos() {
 
 function renderBazosListings() {
   const el = document.getElementById('bazosListings');
-  const listings = state.bazosListings;
+  let listings = [...state.bazosListings];
+
+  // Filter
+  if (bazosFilter === 'mine') {
+    listings = listings.filter(l => l.seller === state.username);
+  } else if (bazosFilter === 'r-red' || bazosFilter === 'r-pink') {
+    listings = listings.filter(l => {
+      const b = l.bottle_id ? getBottleById(l.bottle_id) : null;
+      return b && b.rarity === bazosFilter;
+    });
+  }
+
+  // Sort
+  if (bazosSort === 'cheap')  listings.sort((a,b) => a.price - b.price);
+  else if (bazosSort === 'pricey') listings.sort((a,b) => b.price - a.price);
+  else listings.sort((a,b) => (b.listedAtTs||0) - (a.listedAtTs||0)); // newest
 
   if (!listings.length) {
-    el.innerHTML = `<div class="bazos-section-title">📢 Inzeráty</div><div class="bazos-empty"><div style="font-size:2rem">📋</div><div style="margin-top:8px;font-size:0.8rem">Žádné inzeráty. Dej první!</div></div>`;
+    el.innerHTML = `<div class="bazos-section-title">📢 Inzeráty</div><div class="bazos-empty"><div style="font-size:2rem">📋</div><div style="margin-top:8px;font-size:0.8rem">${bazosFilter !== 'all' ? 'Žádné inzeráty pro tento filtr.' : 'Žádné inzeráty. Dej první!'}</div></div>`;
     return;
   }
 
-  el.innerHTML = `<div class="bazos-section-title">📢 Aktivní inzeráty (${listings.length})</div>` +
+  const filterLabel = bazosFilter === 'mine' ? ' · Moje' : bazosFilter === 'r-red' ? ' · Covert' : bazosFilter === 'r-pink' ? ' · Classified' : '';
+  el.innerHTML = `<div class="bazos-section-title">📢 Aktivní inzeráty (${listings.length}${filterLabel})</div>` +
     listings.map(l => {
       const isMe = l.seller === state.username;
       const isCase = l.type === 'case';
@@ -5036,7 +5109,7 @@ function renderBazosListings() {
             <div class="blc-rarity-bar" style="background:${color}"></div>
             <div class="blc-bottle"><img src="assets/case_${sc.caseImg}.png" style="height:56px;width:auto;object-fit:contain"></div>
             <div class="blc-info">
-              <div class="blc-name">${sc.emoji || '📦'} ${sc.name}</div>
+              <div class="blc-name">${sc.emoji || '📦'} ${sc.name}${isMe ? ' <span style="background:rgba(74,222,128,0.15);color:#4ade80;font-size:0.55rem;padding:1px 5px;border-radius:2px;letter-spacing:1px;font-family:\'Share Tech Mono\',monospace">MOJE</span>' : ''}</div>
               <div class="blc-rarity" style="color:${color}">BEDNA · ${sc.rarity}</div>
               <div class="blc-seller">👤 ${l.seller} · ${l.listedAt}</div>
               <div style="font-size:0.6rem;font-family:'Share Tech Mono',monospace;color:${daysLeft<=1?'#ef4444':daysLeft<=3?'#f59e0b':'#4a5a6a'}">⏱ Vyprší za: ${daysLeft} dní</div>
@@ -5061,14 +5134,14 @@ function renderBazosListings() {
           <div class="blc-rarity-bar" style="background:${b.rarityColor}"></div>
           <div class="blc-bottle">${b.svg}</div>
           <div class="blc-info">
-            <div class="blc-name">${b.name}</div>
+            <div class="blc-name" style="color:${b.rarityColor}">${b.name}${isMe ? ' <span style="background:rgba(74,222,128,0.15);color:#4ade80;font-size:0.55rem;padding:1px 5px;border-radius:2px;letter-spacing:1px;font-family:\'Share Tech Mono\',monospace">MOJE</span>' : ''}</div>
             <div class="blc-rarity" style="color:${b.rarityColor}">${b.rarityName}</div>
             <div class="blc-seller">👤 ${l.seller} · ${l.listedAt}</div>
             <div style="font-size:0.6rem;font-family:'Share Tech Mono',monospace;color:${daysLeft2<=1?'#ef4444':daysLeft2<=3?'#f59e0b':'#4a5a6a'}">⏱ Vyprší za: ${daysLeft2} dní</div>
           </div>
           <div class="blc-right">
             <div class="blc-price">$${l.price}</div>
-            <div style="font-size:0.65rem;color:#f59e0b;margin-top:-4px">Kupující platí +10% taxu serveru</div>
+            ${(function(){ const mkt = getLivePrice(l.bottle_id); return (mkt && l.price < mkt * 0.85) ? '<div style="background:rgba(74,222,128,0.15);color:#4ade80;font-size:0.55rem;padding:2px 6px;border-radius:2px;font-family:\'Share Tech Mono\',monospace;margin-top:2px;letter-spacing:1px">🔥 VÝHODNÁ CENA</div>' : '<div style="font-size:0.65rem;color:#f59e0b;margin-top:-2px">+10% taxa</div>'; })()}
             ${isMe
               ? `<button class="btn-remove-listing" onclick="removeListing('${l.uid}')">Stáhnout</button>`
               : `<button class="btn-buy-listing" onclick="buyListing('${l.uid}')">Koupit $${Math.ceil(l.price*1.1)}</button>`
@@ -5115,7 +5188,7 @@ function renderBazosSidebar() {
           <div class="bsi-bottle">${b.svg}</div>
           <div class="bsi-info">
             <div class="bsi-name">${b.name}</div>
-            <div class="bsi-val">$${getLivePrice(item.bottle_id)} <span style="font-size:0.55rem;color:var(--muted)">LIVE</span></div>
+            <div class="bsi-val">$${getLivePrice(item.bottle_id).toLocaleString('cs-CZ')} <span style="font-size:0.55rem;color:var(--muted)">LIVE</span></div>
           </div>
         </div>`;
     }).join('');
@@ -5127,7 +5200,7 @@ function selectBazosItem(uid, val, isCase, caseId) {
   selectedBazosItem = uid;
   window._selectedBazosIsCase = isCase || false;
   window._selectedBazosCaseId = caseId || null;
-  document.getElementById('bazosPrice').value = Math.floor(val * 0.85);
+  document.getElementById('bazosPrice').value = Math.floor(val * 0.90);
   renderBazosSidebar();
 }
 
@@ -5257,9 +5330,9 @@ function updateLeaderboard() {
   if (!state.username) return;
   const myRarities = state.inventory.map(i => getBottleById(i.bottle_id)?.rarity || 'r-blue');
   const bestRar = myRarities.sort((a, b) => rarityRank[b] - rarityRank[a])[0] || 'r-blue';
-  const score = state.stats.casesOpened * 10 + state.stats.totalEarned + (rarityRank[bestRar] || 1) * 50;
-
+  const kills = clkState ? (clkState.kills || 0) : 0;
   const prestige = clkState ? (clkState.prestige || 0) : 0;
+  const score = state.stats.casesOpened * 10 + Math.floor(state.stats.totalEarned * 0.5) + (rarityRank[bestRar] || 1) * 100 + kills * 5 + prestige * 500;
   const lb = state.leaderboard;
   const existing = lb.find(e => e.username === state.username);
   if (existing) {
@@ -5268,8 +5341,9 @@ function updateLeaderboard() {
     existing.bestRarity  = bestRar;
     existing.score = score;
     existing.prestige = prestige;
+    existing.kills = kills;
   } else {
-    lb.push({ username: state.username, casesOpened: state.stats.casesOpened, totalEarned: state.stats.totalEarned, bestRarity: bestRar, score, prestige });
+    lb.push({ username: state.username, casesOpened: state.stats.casesOpened, totalEarned: state.stats.totalEarned, bestRarity: bestRar, score, prestige, kills });
   }
 
   // Add some fake bot entries if lb is small
@@ -5344,8 +5418,9 @@ function renderLeaderboard() {
           </div>` : ''}
         </div>
         <div class="lb-stats">
-          <div class="lb-stat-item"><span>${e.score}</span><span>SKÓRE</span></div>
+          <div class="lb-stat-item"><span>${e.score.toLocaleString()}</span><span>SKÓRE</span></div>
           <div class="lb-stat-item"><span>${e.casesOpened}</span><span>BEDNY</span></div>
+          <div class="lb-stat-item"><span>${e.kills || 0}</span><span>ZABITÍ</span></div>
           <div class="lb-stat-item"><span style="color:${rarityColors[e.bestRarity]}">${rarityNames[e.bestRarity] || '-'}</span><span>NEJLEPŠÍ</span></div>
         </div>
       </div>`;
@@ -5417,36 +5492,36 @@ function spinCaseCustom(boosted) {
 //  CLICKER GAME
 // ─────────────────────────────────────────────────────
 const clkEnemyTypes = [
-  { level:1,  name:'Základní Bedna',  img:'case_cs2',           hp:180,    reward:12   },
-  { level:2,  name:'Toxic Box',        img:'case_banger',        hp:420,    reward:30   },
-  { level:3,  name:'Arctic Box',       img:'case_cyber',         hp:900,    reward:60   },
-  { level:4,  name:'Thunder Box',      img:'case_orange',        hp:1800,   reward:110  },
-  { level:5,  name:'Inferno Box',      img:'case_topsecret',     hp:3200,   reward:180  },
-  { level:6,  name:'Shadow Box',       img:'case_cs2',           hp:5500,   reward:300  },
-  { level:7,  name:'Covert Box',       img:'case_cyber',         hp:9000,   reward:480  },
-  { level:8,  name:'Phantom Box',      img:'case_topsecret',     hp:14000,  reward:750  },
-  { level:9,  name:'Dragon Box',       img:'case_orange',        hp:22000,  reward:1200 },
-  { level:10, name:'⭐ Legendary Box', img:'case_topsecret',     hp:35000,  reward:2000, armor:true },
-  { level:11, name:'Gold Box',         img:'case_cs2',           hp:52000,  reward:2800, armor:true },
-  { level:12, name:'Crystal Box',      img:'case_cyber',         hp:75000,  reward:3800, armor:true },
-  { level:13, name:'Tempest Cage',     img:'case_tempest_cage',  hp:105000, reward:5000, armor:true },
-  { level:14, name:'Pyramid Box',      img:'case_pyramid_case',  hp:145000, reward:6500, armor:true },
-  { level:15, name:'Velocity Case',    img:'case_velocity_case', hp:195000, reward:8500, armor:true },
-  { level:16, name:'Diamond Case',     img:'case_diamond_case',  hp:260000, reward:11000,armor:true },
-  { level:17, name:'Frostbite Box',    img:'case_arctic_wolf',   hp:340000, reward:14000,armor:true },
-  { level:18, name:'CSZ Case',         img:'case_csz',           hp:440000, reward:18000,armor:true },
-  { level:19, name:'Infernd Case',     img:'case_infernd_pink',  hp:560000, reward:23000,armor:true },
-  { level:20, name:'Silver Tech Box',  img:'case_silver_tri',    hp:700000, reward:29000,armor:true },
-  { level:21, name:'Fire Box',         img:'case_fire_box',      hp:880000, reward:37000,armor:true },
-  { level:22, name:'Ice Box',          img:'case_ice_box',       hp:1100000,reward:46000,armor:true },
-  { level:23, name:'Cyber Box',        img:'case_cyber_box',     hp:1350000,reward:58000,armor:true },
-  { level:24, name:'Nuclear Box',      img:'case_nuclear_box',   hp:1650000,reward:72000,armor:true },
-  { level:25, name:'Energy Box',       img:'case_energy_box',    hp:2000000,reward:90000,armor:true },
-  { level:26, name:'Lunar Box',        img:'case_lunar_box',     hp:2500000,reward:110000,armor:true},
-  { level:27, name:'Danger Zone',      img:'case_danger_zone',   hp:3100000,reward:140000,armor:true},
-  { level:28, name:'Biohazard Box',    img:'case_biohazard_box', hp:3900000,reward:175000,armor:true},
-  { level:29, name:'Ancient Box',      img:'case_ancient_box',   hp:5000000,reward:220000,armor:true},
-  { level:30, name:'💀 DEMON BOX',     img:'case_demon_box',     hp:7000000,reward:300000,armor:true},
+  { level:1,  name:'Základní Bedna',  img:'case_cs2',           hp:60,     reward:15   },
+  { level:2,  name:'Toxic Box',        img:'case_banger',        hp:150,    reward:35   },
+  { level:3,  name:'Arctic Box',       img:'case_cyber',         hp:320,    reward:65   },
+  { level:4,  name:'Thunder Box',      img:'case_orange',        hp:650,    reward:120  },
+  { level:5,  name:'Inferno Box',      img:'case_topsecret',     hp:1200,   reward:200  },
+  { level:6,  name:'Shadow Box',       img:'case_cs2',           hp:2200,   reward:320  },
+  { level:7,  name:'Covert Box',       img:'case_cyber',         hp:3800,   reward:500  },
+  { level:8,  name:'Phantom Box',      img:'case_topsecret',     hp:6500,   reward:800  },
+  { level:9,  name:'Dragon Box',       img:'case_orange',        hp:11000,  reward:1300 },
+  { level:10, name:'⭐ Legendary Box', img:'case_topsecret',     hp:18000,  reward:2200, armor:true },
+  { level:11, name:'Gold Box',         img:'case_cs2',           hp:28000,  reward:3000, armor:true },
+  { level:12, name:'Crystal Box',      img:'case_cyber',         hp:42000,  reward:4000, armor:true },
+  { level:13, name:'Tempest Cage',     img:'case_tempest_cage',  hp:60000,  reward:5200, armor:true },
+  { level:14, name:'Pyramid Box',      img:'case_pyramid_case',  hp:85000,  reward:6800, armor:true },
+  { level:15, name:'Velocity Case',    img:'case_velocity_case', hp:120000, reward:9000, armor:true },
+  { level:16, name:'Diamond Case',     img:'case_diamond_case',  hp:165000, reward:12000,armor:true },
+  { level:17, name:'Frostbite Box',    img:'case_arctic_wolf',   hp:220000, reward:15000,armor:true },
+  { level:18, name:'CSZ Case',         img:'case_csz',           hp:290000, reward:19000,armor:true },
+  { level:19, name:'Infernd Case',     img:'case_infernd_pink',  hp:380000, reward:24000,armor:true },
+  { level:20, name:'Silver Tech Box',  img:'case_silver_tri',    hp:480000, reward:30000,armor:true },
+  { level:21, name:'Fire Box',         img:'case_fire_box',      hp:620000, reward:38000,armor:true },
+  { level:22, name:'Ice Box',          img:'case_ice_box',       hp:800000, reward:48000,armor:true },
+  { level:23, name:'Cyber Box',        img:'case_cyber_box',     hp:1000000,reward:60000,armor:true },
+  { level:24, name:'Nuclear Box',      img:'case_nuclear_box',   hp:1250000,reward:75000,armor:true },
+  { level:25, name:'Energy Box',       img:'case_energy_box',    hp:1550000,reward:95000,armor:true },
+  { level:26, name:'Lunar Box',        img:'case_lunar_box',     hp:1900000,reward:115000,armor:true},
+  { level:27, name:'Danger Zone',      img:'case_danger_zone',   hp:2350000,reward:145000,armor:true},
+  { level:28, name:'Biohazard Box',    img:'case_biohazard_box', hp:2900000,reward:180000,armor:true},
+  { level:29, name:'Ancient Box',      img:'case_ancient_box',   hp:3600000,reward:225000,armor:true},
+  { level:30, name:'💀 DEMON BOX',     img:'case_demon_box',     hp:5000000,reward:320000,armor:true},
 ];
 
 let clkState = {
@@ -5548,8 +5623,8 @@ function _executePrestige(p, newP) {
   clkState.upgAuto    = 0;
   clkState.upgCrit    = 0;
   clkState.prestige   = newP;
-  clkState.clickDmg   = Math.floor(1 * clkDmgMult());
-  clkState.autoDps    = 0;
+  clkState.clickDmg   = Math.floor((1 + clkState.upgClick) * clkDmgMult());
+  clkState.autoDps    = 0;  // Will be recalculated on first auto upgrade
   clkState.critChance = 0;
   state.money = 0;
   updateCurrencyDisplay();
@@ -5722,7 +5797,7 @@ function clkSpawnEnemy() {
     clkState.currentArmor = 0;
   }
   document.getElementById('clkEnemyName').textContent = e.name;
-  document.getElementById('clkEnemyLabel').textContent = `Level ${e.level} — Bedna`;
+  document.getElementById('clkEnemyLabel').textContent = `Level ${e.level} · Odměna: $${e.reward.toLocaleString('cs-CZ')}`;
   document.getElementById('clkLevelBadge').textContent = `LVL ${e.level}`;
   document.getElementById('clkEnemyImg').src = `assets/${e.img}.png`;
   // Level-based border color
@@ -5753,7 +5828,8 @@ function clkUpdateHpBar() {
     const g = Math.floor(255 * (pct/100) * 2);
     const rc = Math.min(255, r); const gc = Math.min(255, g);
     bar.style.background = `linear-gradient(90deg, rgb(${rc},${gc},50), rgb(${Math.min(255,rc+40)},${Math.min(255,gc+40)},80))`;
-    hpText.textContent = `${Math.max(0,clkState.currentHp)} / ${clkState.maxHp}`;
+    const _hpPct = Math.round(clkState.currentHp / clkState.maxHp * 100);
+    hpText.textContent = `${Math.max(0,clkState.currentHp).toLocaleString('cs-CZ')} / ${clkState.maxHp.toLocaleString('cs-CZ')} (${_hpPct}%)`;
   }
   // Low HP warning
   const hpPct2 = clkState.currentHp / clkState.maxHp;
@@ -5768,7 +5844,10 @@ function clkUpdateHpBar() {
   document.getElementById('clkStatClicks').textContent = clkState.totalClicks.toLocaleString('cs-CZ');
   // Pulse stat rows on update
   document.querySelectorAll('.clk-stat-row').forEach(r => { r.classList.remove('updated'); void r.offsetWidth; r.classList.add('updated'); });
-  document.getElementById('clkStatKills').textContent = clkState.kills;
+  const _p = clkState.prestige || 0;
+  const _killsNeeded = _p < 3 ? clkPrestigeRequired(_p) : null;
+  const _killsLabel = _killsNeeded ? ` / ${_killsNeeded}` : ' ★MAX';
+  document.getElementById('clkStatKills').textContent = clkState.kills + _killsLabel;
   document.getElementById('clkStatDmg').textContent = clkState.clickDmg;
   document.getElementById('clkStatAuto').textContent = clkState.autoDps + '/s';
 }
@@ -5804,17 +5883,19 @@ function clkAutoTick() {
 setInterval(clkAutoTick, 1000);
 
 function clkUpdateUpgradeButtons() {
-  const clickCost = clkGetUpgCost(25, clkState.upgClick);
-  const autoCost  = clkGetUpgCost(75, clkState.upgAuto);
-  const critCost  = clkGetUpgCost(150, clkState.upgCrit);
+  const clickCost = clkGetUpgCost(20, clkState.upgClick);
+  const autoCost  = clkGetUpgCost(50, clkState.upgAuto);
+  const critCost  = clkGetUpgCost(100, clkState.upgCrit);
   document.getElementById('clkClickCost').textContent = '$' + clickCost;
   document.getElementById('clkAutoCost').textContent  = '$' + autoCost;
   document.getElementById('clkCritCost').textContent  = '$' + critCost;
   document.getElementById('btnClkUpgClick').disabled = state.money < clickCost;
   document.getElementById('btnClkUpgAuto').disabled  = state.money < autoCost;
   document.getElementById('btnClkUpgCrit').disabled  = state.money < critCost;
-  document.getElementById('clkUpgClickLvl').textContent = `Lvl ${clkState.upgClick} · +${clkState.clickDmg} DMG${clkState.prestige?(' ×'+clkDmgMult().toFixed(1)):''}`;
-  document.getElementById('clkUpgAutoLvl').textContent  = `Lvl ${clkState.upgAuto} · ${clkState.autoDps} DPS${clkState.prestige?(' ×'+clkUpgMult().toFixed(1)):''}`;
+  const _nextClickDmg = Math.floor((2 + clkState.upgClick) * clkDmgMult());
+  const _nextAutoDps  = Math.max(1, Math.floor((clkState.upgAuto + 1) * clkUpgMult()));
+  document.getElementById('clkUpgClickLvl').textContent = `Lvl ${clkState.upgClick} · ${clkState.clickDmg} DMG → ${_nextClickDmg}`;
+  document.getElementById('clkUpgAutoLvl').textContent  = `Lvl ${clkState.upgAuto} · ${clkState.autoDps}/s → ${_nextAutoDps}/s`;
   document.getElementById('clkUpgCritLvl').textContent  = `Lvl ${clkState.upgCrit} · ${Math.floor(clkState.critChance*100)}% crit`;
   document.getElementById('clkAutoLabel').textContent   = clkState.autoDps > 0 ? `AUTO: ${clkState.autoDps}/s` : 'AUTO: OFF';
   renderPrestigeBadge();
@@ -5825,8 +5906,8 @@ function buyClickUpgrade() {
   if (state.money < cost) { showToast('Nedostatek $!', 'error'); return; }
   state.money -= cost; updateCurrencyDisplay(); saveState();
   clkState.upgClick++;
-  clkState.clickDmg = Math.floor((1 + Math.floor(clkState.upgClick * 0.5)) * clkDmgMult());
-  showToast(`⚔️ Síla kliku: +${clkState.clickDmg} DMG!`, 'info');
+  clkState.clickDmg = Math.floor((1 + clkState.upgClick) * clkDmgMult());
+  showToast(`⚔️ Click DMG: ${clkState.clickDmg}! (Lvl ${clkState.upgClick})`, 'success');
   clkUpdateUpgradeButtons();
 }
 
@@ -5835,8 +5916,8 @@ function buyAutoUpgrade() {
   if (state.money < cost) { showToast('Nedostatek $!', 'error'); return; }
   state.money -= cost; updateCurrencyDisplay(); saveState();
   clkState.upgAuto++;
-  clkState.autoDps = Math.max(0, Math.floor(clkState.upgAuto * 0.5 * clkUpgMult()));
-  showToast(`🤖 Auto-klik: ${clkState.autoDps}/s!`, 'info');
+  clkState.autoDps = Math.max(1, Math.floor(clkState.upgAuto * clkUpgMult()));
+  showToast(`🤖 Auto-DPS: ${clkState.autoDps}/s! (Lvl ${clkState.upgAuto})`, 'success');
   clkUpdateUpgradeButtons();
 }
 
@@ -5846,7 +5927,7 @@ function buyCritUpgrade() {
   state.money -= cost; updateCurrencyDisplay(); saveState();
   clkState.upgCrit++;
   clkState.critChance = Math.min(0.70, clkState.upgCrit * 0.05 * clkUpgMult());
-  showToast(`💥 Crit: ${Math.floor(clkState.critChance*100)}% šance!`, 'info');
+  showToast(`💥 Crit: ${Math.floor(clkState.critChance*100)}% šance! (Lvl ${clkState.upgCrit})`, 'success');
   clkUpdateUpgradeButtons();
 }
 
@@ -5858,13 +5939,13 @@ setInterval(clkUpdateUpgradeButtons, 2000);
 //  DAILY REWARD SYSTEM
 // ═══════════════════════════════════════════════════════
 const DAILY_REWARDS = [
-  { day:1, icon:'💵', val:'+$100', bonus:100, type:'money' },
-  { day:2, icon:'💵', val:'+$200', bonus:200, type:'money' },
-  { day:3, icon:'💎', val:'+2 mince', bonus:2,   type:'coin'  },
-  { day:4, icon:'💵', val:'+$350', bonus:350, type:'money' },
-  { day:5, icon:'💎', val:'+5 mincí', bonus:5,  type:'coin'  },
-  { day:6, icon:'💵', val:'+$600', bonus:600, type:'money' },
-  { day:7, icon:'🏆', val:'+$1000 + 10 💎', bonus:1000, bonusCoin:10, type:'both' },
+  { day:1, icon:'💵', val:'+$150', bonus:150, type:'money' },
+  { day:2, icon:'💵', val:'+$300', bonus:300, type:'money' },
+  { day:3, icon:'💎', val:'+3 mince', bonus:3,   type:'coin'  },
+  { day:4, icon:'💵', val:'+$500', bonus:500, type:'money' },
+  { day:5, icon:'💎', val:'+7 mincí', bonus:7,  type:'coin'  },
+  { day:6, icon:'💵', val:'+$800', bonus:800, type:'money' },
+  { day:7, icon:'🏆', val:'+$1500 + 15 💎', bonus:1500, bonusCoin:15, type:'both' },
 ];
 
 function checkDailyReward() {
@@ -6105,6 +6186,8 @@ function clkEnemyDied() {
   const e = clkEnemyTypes[clkState.level - 1];
   clkState.kills++;
   addMoney(e.reward);
+  // Award XP for kill proportional to level
+  if (typeof giveXP === 'function') giveXP(Math.ceil(e.level * 3));
 
   // Death explosion effect
   const wrap = document.getElementById('clkEnemyImgWrap');
@@ -6116,9 +6199,10 @@ function clkEnemyDied() {
   updateGlobalProgress();
 
   // Achievements
-  if (clkState.kills === 1)  checkAchievement('clk_kill5');
   if (clkState.kills >= 5)   checkAchievement('clk_kill5');
+  if (clkState.kills >= 25)  checkAchievement('clk_kill25');
   if (clkState.level === 10) checkAchievement('clk_level10');
+  if (clkState.level === 20) checkAchievement('clk_level20');
 
   // === SHOW DIALOG: save to inventory OR open now ===
   const chestInfo = CLICKER_CHEST_MAP[(clkState.level - 1) % CLICKER_CHEST_MAP.length];
@@ -6326,7 +6410,9 @@ window.closeCasePreview = closeCasePreview;
       wipVelY *= 0.93;
       wipVelX = 0;
       wipRotY += wipVelY;
-      wipRotY = Math.max(-80, Math.min(80, wipRotY));
+      // Bounce off limits — odraz jako od stromu
+      if (wipRotY < -15) { wipRotY = -15; wipVelY = Math.abs(wipVelY) * 0.35; }
+      if (wipRotY > 25)  { wipRotY = 25;  wipVelY = -Math.abs(wipVelY) * 0.35; }
       applyTransform();
       if (Math.abs(wipVelY) > 0.05) {
         wipRaf = requestAnimationFrame(loop);
@@ -6352,7 +6438,7 @@ window.closeCasePreview = closeCasePreview;
     wipVelY = dx * 0.45;
     wipVelX = 0;
     wipRotY += wipVelY;
-    wipRotY = Math.max(-80, Math.min(80, wipRotY));
+    wipRotY = Math.max(-15, Math.min(25, wipRotY));
     wipRotX = Math.max(-35, Math.min(35, wipRotX));
     wipLastX = e.clientX;
     wipLastY = e.clientY;
@@ -6379,7 +6465,7 @@ window.closeCasePreview = closeCasePreview;
     wipVelY = dx * 0.5;
     wipVelX = 0;
     wipRotY += wipVelY;
-    wipRotY = Math.max(-80, Math.min(80, wipRotY));
+    wipRotY = Math.max(-15, Math.min(25, wipRotY));
     wipRotX = Math.max(-35, Math.min(35, wipRotX));
     wipLastX = e.touches[0].clientX;
     wipLastY = e.touches[0].clientY;
