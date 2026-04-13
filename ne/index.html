@@ -2813,11 +2813,6 @@ body.theme-easter .nav-link:hover {
       <span class="c-val" id="moneyVal">0</span>
       <span class="c-label">USD</span>
     </div>
-    <div class="currency-pill coins" id="coinsPill">
-      <span class="c-icon">💎</span>
-      <span class="c-val" id="coinsVal">0</span>
-      <span class="c-label">COINS</span>
-    </div>
     <div class="user-pill" title="Přihlášen přes THE SQUAD">
       <div class="user-avatar" id="userAvatar">?</div>
       <span class="user-name" id="userNameDisplay">Hráč</span>
@@ -4081,9 +4076,7 @@ window.switchPage = switchPage;
 // ─────────────────────────────────────────────────────
 function updateCurrencyDisplay() {
   const moneyEl = document.getElementById('moneyVal');
-  const coinsEl = document.getElementById('coinsVal');
   if (moneyEl) moneyEl.textContent = state.money.toLocaleString('cs-CZ');
-  if (coinsEl) coinsEl.textContent = state.coins;
 }
 
 function addMoney(amt) {
@@ -4099,14 +4092,7 @@ function addMoney(amt) {
 }
 
 function addCoins(amt) {
-  state.coins += amt;
-  const pill = document.getElementById('coinsPill');
-  if (pill) {
-    pill.classList.remove('pulse');
-    void pill.offsetWidth;
-    pill.classList.add('pulse');
-  }
-  updateCurrencyDisplay();
+  // coins/diamonds removed — silently ignore
   saveState();
 }
 
@@ -4198,15 +4184,12 @@ setTimeout(() => { try { buildTrack(); initPos(); } catch(e) { console.warn('Ini
 // ─────────────────────────────────────────────────────
 function spinCase(premium = false) {
   if (isSpinning) return;
-  const cost = premium ? 0 : SPIN_COST_KC;
-  const coinCost = premium ? SPIN_COST_COIN : 0;
+  const cost = SPIN_COST_KC;
 
-  if (premium && state.coins < coinCost) { showToast('Nemáš dostatek 💎 mincí!', 'error'); return; }
-  if (!premium && state.money < cost)    { showToast('Nemáš dostatek $!', 'error'); return; }
+  if (state.money < cost) { showToast('Nemáš dostatek $!', 'error'); return; }
 
   // Deduct
-  if (premium) { state.coins -= coinCost; }
-  else         { state.money -= cost; state.stats.totalSpent += cost; }
+  state.money -= cost; state.stats.totalSpent += cost;
   state.stats.casesOpened++;
   if (state.stats.casesOpened === 1)  checkAchievement('first_case');
   if (state.stats.casesOpened === 10) checkAchievement('case_10');
@@ -5248,11 +5231,10 @@ function selectAndBuyCase(caseId) {
   if (!c) return;
 
   if (c.currency === 'money' && state.money < c.price) { showToast('Nedostatek $!', 'error'); return; }
-  if (c.currency === 'coins' && state.coins < c.price)  { showToast('Nedostatek 💎 mincí!', 'error'); return; }
+  if (c.currency === 'coins') { showToast('Prémiové bedny nejsou dostupné.', 'error'); return; }
 
   // Deduct
   if (c.currency === 'money') { state.money -= c.price; state.stats.totalSpent += c.price; }
-  if (c.currency === 'coins') { state.coins -= c.price; }
   updateCurrencyDisplay();
   saveState();
 
@@ -5311,10 +5293,8 @@ function buyTopup(type, coinPrice, bonus) {
     addMoney(bonus); showToast(`+$${bonus} připsáno! 🎉`, 'success');
     renderShop(); return;
   }
-  if (state.coins < coinPrice) { showToast('Nedostatek 💎 mincí!', 'error'); return; }
-  state.coins -= coinPrice; updateCurrencyDisplay();
-  addMoney(bonus); showToast(`+$${bonus} připsáno!`, 'success');
-  saveState(); renderShop();
+  // coin topups disabled
+  showToast('Prémiové dobití není dostupné.', 'error');
 }
 
 // ─────────────────────────────────────────────────────
@@ -9305,7 +9285,6 @@ function openAvatarModal() {
   const totalOpened = state.totalOpened || 0;
   const lvl = state.playerLevel || 1;
   const money = Math.round(state.money || 0);
-  const coins = state.coins || 0;
   const invCount = inv.length;
 
   const statItems = [
@@ -9313,7 +9292,6 @@ function openAvatarModal() {
     { icon:'📦', label:'Otevřeno',    val: totalOpened },
     { icon:'🎒', label:'Inventář',    val: invCount + ' ks' },
     { icon:'💰', label:'Balance',     val: '$' + money.toLocaleString() },
-    { icon:'💎', label:'Coins',       val: coins },
     { icon:'⭐', label:'Gold drops',  val: goldCount },
   ];
   statsEl.innerHTML = statItems.map(s => `
