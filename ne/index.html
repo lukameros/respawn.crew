@@ -752,7 +752,7 @@ body::before {
 @keyframes bigToastIn { from{transform:translate(-50%,-50%) scale(.82);opacity:0} to{transform:translate(-50%,-50%) scale(1);opacity:1} }
 
 /* ── CONFETTI ───────────────────────────────────── */
-#confettiWrap { position:fixed; inset:0; pointer-events:none; z-index:150; overflow:hidden; }
+#confettiWrap { display:none; }
 .confetti-p {
   position:absolute; top:-20px;
   animation: cFall linear forwards;
@@ -5746,19 +5746,7 @@ function showToast(msg, type = 'info') {
 // ─────────────────────────────────────────────────────
 //  CONFETTI
 // ─────────────────────────────────────────────────────
-function spawnConfetti(color) {
-  const wrap = document.getElementById('confettiWrap');
-  wrap.innerHTML = '';
-  const colors = [color, '#f0cc60', '#fff', '#4d79ff', '#d32ee6', '#eb4b4b'];
-  for (let i = 0; i < 90; i++) {
-    const p = document.createElement('div');
-    p.className = 'confetti-p';
-    const c = colors[Math.floor(Math.random() * colors.length)];
-    const sz = 5 + Math.random() * 9;
-    p.style.cssText = `left:${Math.random()*100}%;background:${c};width:${sz}px;height:${sz}px;animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*0.8}s;transform:rotate(${Math.random()*360}deg);border-radius:${Math.random()>.5?'50%':'2px'};`;
-    wrap.appendChild(p);
-  }
-}
+function spawnConfetti(color) { /* removed */ }
 
 // spinCaseCustom — called from shop with optional premium boost
 function spinCaseCustom(boosted) {
