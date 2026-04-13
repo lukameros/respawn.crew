@@ -2813,6 +2813,11 @@ body.theme-easter .nav-link:hover {
       <span class="c-val" id="moneyVal">0</span>
       <span class="c-label">USD</span>
     </div>
+    <div class="currency-pill coins" id="coinsPill">
+      <span class="c-icon">💎</span>
+      <span class="c-val" id="coinsVal">0</span>
+      <span class="c-label">COINS</span>
+    </div>
     <div class="user-pill" title="Přihlášen přes THE SQUAD">
       <div class="user-avatar" id="userAvatar">?</div>
       <span class="user-name" id="userNameDisplay">Hráč</span>
@@ -4075,8 +4080,10 @@ window.switchPage = switchPage;
 //  CURRENCY
 // ─────────────────────────────────────────────────────
 function updateCurrencyDisplay() {
-  document.getElementById('moneyVal').textContent = state.money.toLocaleString('cs-CZ');
-  document.getElementById('coinsVal').textContent = state.coins;
+  const moneyEl = document.getElementById('moneyVal');
+  const coinsEl = document.getElementById('coinsVal');
+  if (moneyEl) moneyEl.textContent = state.money.toLocaleString('cs-CZ');
+  if (coinsEl) coinsEl.textContent = state.coins;
 }
 
 function addMoney(amt) {
@@ -4094,9 +4101,11 @@ function addMoney(amt) {
 function addCoins(amt) {
   state.coins += amt;
   const pill = document.getElementById('coinsPill');
-  pill.classList.remove('pulse');
-  void pill.offsetWidth;
-  pill.classList.add('pulse');
+  if (pill) {
+    pill.classList.remove('pulse');
+    void pill.offsetWidth;
+    pill.classList.add('pulse');
+  }
   updateCurrencyDisplay();
   saveState();
 }
