@@ -1518,37 +1518,38 @@ body::after {
 /* ══ KILL CHEST DIALOG ═════════════════════════════════════════ */
 #killChestDialog {
   display: none; position: fixed; inset: 0; z-index: 600;
-  background: rgba(0,0,0,0.9); backdrop-filter: blur(12px);
+  background: rgba(0,0,0,0.85); backdrop-filter: blur(6px);
   align-items: center; justify-content: center;
 }
-#killChestDialog.show { display: flex; animation: fadeIn 0.3s ease; }
+#killChestDialog.show { display: flex; animation: fadeIn 0.35s ease; }
 .kcd-card {
-  background: linear-gradient(180deg, var(--panel2), var(--panel));
-  border: 1px solid rgba(0,207,255,0.4); border-radius: 6px;
-  padding: 36px 48px; text-align: center; max-width: 400px;
-  box-shadow: 0 0 80px rgba(0,207,255,0.2), 0 0 200px rgba(0,207,255,0.08);
+  background: linear-gradient(180deg, var(--panel2) 0%, var(--panel) 100%);
+  border: 1px solid var(--gold);
+  border-radius: 4px; padding: 36px 56px; text-align: center;
+  box-shadow: 0 0 80px rgba(0,207,255,0.25), 0 0 200px rgba(0,207,255,0.08);
   animation: winnerPop 0.5s cubic-bezier(0.34,1.56,0.64,1);
-  position: relative; overflow: hidden;
+  position: relative; overflow: hidden; max-width: 380px;
+  z-index: 601;
 }
-.kcd-card::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 50% 100%, rgba(0,207,255,0.08) 0%, transparent 60%); pointer-events:none; }
-.kcd-badge { font-size:0.62rem; letter-spacing:4px; color: #4ade80; text-transform:uppercase; margin-bottom:12px; font-family:'Share Tech Mono',monospace; }
-.kcd-img { width:100px; height:100px; object-fit:contain; margin: 0 auto 12px; display:block; filter:drop-shadow(0 0 20px rgba(0,207,255,0.5)); animation:winFloat 2.5s ease-in-out infinite; }
-.kcd-title { font-family:'Oswald',sans-serif; font-size:1.6rem; font-weight:700; letter-spacing:2px; color:var(--gold2); text-shadow:0 0 20px rgba(0,207,255,0.4); margin-bottom:4px; }
-.kcd-subtitle { font-size:0.78rem; color:var(--muted); letter-spacing:1px; margin-bottom:8px; }
-.kcd-level { font-family:'Share Tech Mono',monospace; font-size:0.72rem; color:var(--gold2); margin-bottom:24px; }
+.kcd-card::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 50% 110%, rgba(0,207,255,0.1) 0%, transparent 70%); pointer-events:none; }
+.kcd-badge { font-size:0.7rem; letter-spacing:5px; color: var(--muted); text-transform:uppercase; margin-bottom:8px; font-family:'Share Tech Mono',monospace; }
+.kcd-img { width:auto; height:120px; max-width:220px; object-fit:contain; margin: 16px auto; display:block; filter:drop-shadow(0 0 20px rgba(0,207,255,0.5)); animation:winFloat 2.5s ease-in-out infinite; }
+.kcd-title { font-family:'Oswald',sans-serif; font-size:1.8rem; font-weight:700; letter-spacing:2px; color:var(--gold2); text-shadow:0 0 20px rgba(0,207,255,0.4); margin:8px 0 4px; }
+.kcd-subtitle { font-size:0.78rem; color:var(--muted); letter-spacing:1px; margin-bottom:6px; }
+.kcd-level { font-family:'Share Tech Mono',monospace; font-size:0.72rem; color:#4ade80; margin-bottom:24px; }
 .kcd-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
 .btn-kcd-inv {
-  background: none; border: 1px solid rgba(0,207,255,0.4); color: var(--gold2);
-  padding: 13px 24px; font-family:'Oswald',sans-serif; font-size:0.85rem;
-  font-weight:700; letter-spacing:2px; text-transform:uppercase;
+  background: none; border: 1px solid var(--border2); color: var(--muted);
+  padding: 10px 20px; font-family:'Oswald',sans-serif; font-size:0.8rem;
+  font-weight:600; letter-spacing:2px; text-transform:uppercase;
   border-radius:2px; cursor:pointer; transition:all 0.2s;
   display:flex; align-items:center; gap:8px;
 }
-.btn-kcd-inv:hover { background: rgba(0,207,255,0.1); border-color:var(--gold2); box-shadow:0 4px 20px rgba(0,207,255,0.2); }
+.btn-kcd-inv:hover { border-color: var(--border); color: var(--white); }
 .btn-kcd-open {
   background: linear-gradient(135deg, var(--gold), var(--gold2));
-  color: #022040; border: none; padding: 13px 28px;
-  font-family:'Oswald',sans-serif; font-size:0.9rem; font-weight:700;
+  color: #022040; border: none; padding: 10px 24px;
+  font-family:'Oswald',sans-serif; font-size:0.85rem; font-weight:700;
   letter-spacing:3px; text-transform:uppercase;
   border-radius:2px; cursor:pointer; transition:all 0.2s;
   display:flex; align-items:center; gap:8px;
@@ -3599,6 +3600,7 @@ body.theme-easter .nav-link:hover {
 </div>
 
 <div id="killChestDialog">
+  <div class="kcd-card">
     <div class="kcd-badge">🎯 BEDNA ZNIČENA</div>
     <img id="kcdImg" class="kcd-img" alt="Bedna">
     <div class="kcd-title" id="kcdName">Classic Box</div>
