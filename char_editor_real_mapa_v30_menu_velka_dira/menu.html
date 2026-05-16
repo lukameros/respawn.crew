@@ -17,15 +17,22 @@ button:hover{background:linear-gradient(180deg,#520000,#190000);color:#fff}#sett
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:3;align-items:center;justify-content:center;padding:22px}#gameAlertModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.74);z-index:80;align-items:center;justify-content:center;padding:18px}#gameAlertBox{width:min(460px,92vw);background:#0b0b0d;border:2px solid #8a0000;box-shadow:0 0 36px #000;padding:20px;text-align:center;color:#ddd}#gameAlertBox h2{margin:0 0 12px;color:#ffbebe;letter-spacing:2px}#gameAlertText{white-space:pre-wrap;line-height:1.45}
 .box{width:min(560px,92vw);background:#0b0b0d;border:1px solid #800;padding:22px;text-align:left;box-shadow:0 0 30px #000}.box h2{margin-top:0;color:#ffb0b0}.box p{color:#bbb;line-height:1.6}.box button{font-size:14px;margin-top:18px}
 
-.badges{position:fixed;right:14px;bottom:14px;z-index:5;display:flex;flex-direction:column;gap:7px;align-items:flex-end}
+#updateBox{position:fixed;left:14px;bottom:14px;z-index:5;width:270px;background:rgba(5,5,7,.82);border:1px solid #8a0000;color:#ddd;padding:12px 14px;font:12px 'Courier New',monospace;box-shadow:0 0 18px #000;text-shadow:1px 1px #000}#updateBox b{color:#ffbebe;letter-spacing:1px}#updateBox p{margin:6px 0 0;color:#aaa;line-height:1.35}.badges{position:fixed;right:14px;bottom:14px;z-index:5;display:flex;flex-direction:column;gap:7px;align-items:flex-end}
 .badge{background:rgba(5,5,7,.82);border:1px solid #8a0000;color:#ffd6d6;padding:7px 10px;font:bold 12px 'Courier New',monospace;letter-spacing:1px;box-shadow:0 0 16px #000;text-shadow:1px 1px #000}
 .badge.dim{color:#aaa;border-color:#333}
+
+
+.panel h1{background:linear-gradient(90deg,#ffd6d6,#ffffff,#ffb0b0);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none!important}
+.panel{border-radius:12px!important;box-shadow:0 0 48px #000,inset 0 0 0 1px rgba(255,255,255,.06)!important}
+button{border-radius:7px!important;box-shadow:0 0 16px rgba(0,0,0,.6)}
+#updateBox,.badge{border-radius:7px}
 
 </style>
 </head>
 <body>
 <button id="settingsBtn" title="Nastavení" onclick="openBox('settings')">⚙</button>
 <div id="gameAlertModal"><div id="gameAlertBox"><h2>HLÁŠENÍ</h2><div id="gameAlertText"></div><button onclick="closeGameAlert()">ZAVŘÍT</button></div></div>
+<div id="updateBox"><b>UPDATE 0.1</b><p>Blabla: online lobby, squad, globální editor, levely, avatar výběr a první bugfixy.</p></div>
 <div class="badges"><div class="badge">2026</div><div class="badge dim">NO QUALITY</div><div class="badge">CREATED BY LUKAMER</div><div class="badge">PROTECTED BY LUKCHEAT</div></div>
 <div class="wrap"><div class="panel">
   <h1>VELKÁ DÍRA 1</h1>
@@ -42,6 +49,19 @@ button:hover{background:linear-gradient(180deg,#520000,#190000);color:#fff}#sett
 <script>
 const SUPABASE_URL="https://fokguuucpoejkxklwrpw.supabase.co";
 const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZva2d1dXVjcG9lamt4a2x3cnB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NTc2NTgsImV4cCI6MjA5NDUzMzY1OH0.2nNJFm1yzgiaNuIsj4DWgS9zJunIYc1uKkWndw23VrY";
+
+function bootstrapNickFromIndex(){
+  try{
+    const p=new URLSearchParams(location.search);
+    const nick=(p.get('nick')||localStorage.getItem('MADNESS_PLAYER_NAME')||localStorage.getItem('RESPAWN_NICK')||localStorage.getItem('squad_session')||'').trim();
+    if(nick){
+      localStorage.setItem('MADNESS_PLAYER_NAME',nick);
+      localStorage.setItem('RESPAWN_NICK',nick);
+    }
+  }catch(e){}
+}
+bootstrapNickFromIndex();
+
 let SB=null;
 try{if(window.supabase)SB=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){SB=null}
 function gameAlert(t){const m=document.getElementById('gameAlertModal'),x=document.getElementById('gameAlertText');if(x)x.textContent=String(t||'');if(m)m.style.display='flex'}function closeGameAlert(){const m=document.getElementById('gameAlertModal');if(m)m.style.display='none'}window.alert=gameAlert;

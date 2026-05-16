@@ -201,3 +201,46 @@ v30:
 - Do hlavního menu přidané nové pozadí menu_bg.png z dodaného obrázku.
 - Odstraněné INFO tlačítko a popisek o vytvoření postavy/editoru.
 - Vpravo dole přidané badge: 2026, NO QUALITY, CREATED BY LUKAMER, PROTECTED BY LUKCHEAT.
+
+v31:
+- Hra si automaticky vezme nick z hlavního indexu:
+  - URL ?nick=
+  - localStorage squad_session
+  - localStorage RESPAWN_NICK
+  - localStorage MADNESS_PLAYER_NAME
+- Main index při spuštění GOPNIK uloží nick do MADNESS_PLAYER_NAME i RESPAWN_NICK.
+- GOPNIK link vede na dira/menu.html?nick=...
+- Pokud se nenačte postava z editoru, lobby zobrazí hlášku, že běží default postava.
+- Důvod default postavy: editor ještě neuložil globální payload do Supabase, nebo hra běží přes file:///CDN blokuje Supabase.
+
+v32:
+- Editor má nové tlačítko 💾 ULOŽIT GLOBAL ONLINE.
+- Save v editoru teď ukládá správnou strukturu payloadu: player:{src}, enemy:{src}.
+- Globální online save zapisuje do Supabase:
+  - madness_global_payloads / global_character
+  - madness_global_payloads / global_npc
+- Lobby a real mapa umí číst starý payload string i nový payload {src}.
+- Když hráč nemá hotovou vlastní postavu, použije default a potom si stáhne globální postavu z editoru.
+- Zatím je zapojený jeden globální starter/charakter pro všechny hráče, dokud nedoděláš další 2.
+- Open Lobby / Real mapa z editoru taky uloží globálně online, pokud Supabase běží.
+
+v33:
+- Klik na avatar vpravo dole otevře výběr avataru.
+- Zatím jsou 3 avatary; mění se jen profilový obrázek, ne herní postava.
+- Nad postavou je nový label: LVLx(SQUAD)nick.
+- Pod labelem je HP bar.
+- Max HP roste s levelem: 100 + 28 HP za každý level nad 1.
+- Squad přidává +5 % max HP.
+- Real mapa používá levelové HP a squad +5 % HP bonus.
+- Lobby presence posílá i level, takže ostatní vidí level v labelu.
+- Editor se pokusí automaticky načíst nožní GIF z ezgif.com-animated-gif-maker.gif.
+- Do menu vlevo dole přidané Update 0.1 okno.
+- SQL reset v33 přidává level sloupec do madness_lobby_players.
+
+v34:
+- Do zebříčku slávy přidané progres badge vedle nicku.
+- Badge podle postupu: ROOKIE, BRONZE, SILVER, GOLD, EPIC, EPIC+, LEGEND, DEV.
+- Zebříček má nové řádkování, zvýrazněné statistiky a lepší čitelnost.
+- Vylepšený lobby HUD, money/level box, player card, chat, modaly a armory karty.
+- Vylepšený HUD v real mapě: wave bar, HP bar, ammo box a LVL/HP info.
+- Menu lehce vizuálně dopolírované.

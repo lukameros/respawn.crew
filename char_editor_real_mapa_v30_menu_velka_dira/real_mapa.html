@@ -45,6 +45,19 @@
 .sbtn:hover{background:#520000}
 
 body.shake #game{animation:shake .22s linear 1}@keyframes shake{0%{transform:translate(0,0)}20%{transform:translate(-2px,1px)}40%{transform:translate(2px,-1px)}60%{transform:translate(-1px,-1px)}80%{transform:translate(1px,2px)}100%{transform:translate(0,0)}}
+
+#top{background:linear-gradient(180deg,rgba(18,18,22,.93),rgba(4,4,6,.84))!important;border:1px solid #9b0000!important;border-radius:8px!important;box-shadow:0 0 28px #000,inset 0 0 0 1px rgba(255,255,255,.05)!important;padding:12px 15px!important}
+#waveTitle{color:#ffd6d6!important;letter-spacing:1px}
+#waveTrack,#hpTrack{border-radius:8px;overflow:hidden;background:#120000!important;border:1px solid #6c0000!important;box-shadow:inset 0 0 8px #000}
+#waveFill{background:linear-gradient(90deg,#5c0000,#ffbd54)!important;box-shadow:0 0 10px rgba(255,180,60,.4)}
+#hpFill{background:linear-gradient(90deg,#0a6b16,#43ff62)!important;box-shadow:0 0 10px rgba(70,255,90,.4)}
+#ammoLine{background:rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.08);padding:6px 8px;border-radius:6px;color:#f2f2f2!important}
+#statusLine{color:#bdbdbd!important;font-size:11px!important}
+#msg{border-radius:6px;background:rgba(8,8,10,.88)!important;border:1px solid #700!important;box-shadow:0 0 14px #000}
+#playerCard{filter:drop-shadow(0 0 14px rgba(0,0,0,.9))}
+#pcAvatarBox{border-radius:8px;background:radial-gradient(circle at 50% 35%,rgba(90,0,0,.35),rgba(0,0,0,.92))!important}
+#settingsBtn{border-radius:8px!important;background:rgba(10,10,12,.92)!important}
+
 </style>
 </head>
 <body>
@@ -81,6 +94,19 @@ body.shake #game{animation:shake .22s linear 1}@keyframes shake{0%{transform:tra
 <script>
 const SUPABASE_URL="https://fokguuucpoejkxklwrpw.supabase.co";
 const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZva2d1dXVjcG9lamt4a2x3cnB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NTc2NTgsImV4cCI6MjA5NDUzMzY1OH0.2nNJFm1yzgiaNuIsj4DWgS9zJunIYc1uKkWndw23VrY";
+
+function bootstrapNickFromIndex(){
+  try{
+    const p=new URLSearchParams(location.search);
+    const nick=(p.get('nick')||localStorage.getItem('MADNESS_PLAYER_NAME')||localStorage.getItem('RESPAWN_NICK')||localStorage.getItem('squad_session')||'').trim();
+    if(nick){
+      localStorage.setItem('MADNESS_PLAYER_NAME',nick);
+      localStorage.setItem('RESPAWN_NICK',nick);
+    }
+  }catch(e){}
+}
+bootstrapNickFromIndex();
+
 let SB=null;try{if(window.supabase)SB=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){SB=null}
 const cv=document.getElementById('game'), ctx=cv.getContext('2d');
 const animOverlay=document.getElementById('animOverlay');
@@ -92,8 +118,9 @@ const pcNick=document.getElementById('pcNick'), pcAvatar=document.getElementById
 let W=0,H=0,DPR=1,last=performance.now(),msgTimer=0,gameEnded=false;
 const SETTINGS={quality:localStorage.getItem('MADNESS_QUALITY')||'mid',musicVol:localStorage.getItem('MADNESS_MUSIC_VOL')??'50',sfxVol:localStorage.getItem('MADNESS_SFX_VOL')??'80'};
 let payload=null;try{payload=JSON.parse(localStorage.getItem('MADNESS_REAL_PAYLOAD')||'null')}catch(e){payload=null}
+function payloadSrc(v){return typeof v==='string'?v:(v&&v.src)||''}
 let currentNpc=null;try{currentNpc=JSON.parse(localStorage.getItem('MADNESS_CURRENT_NPC')||'null')}catch(e){currentNpc=null}
-if(!payload||!payload.player||!payload.player.src){missing.style.display='flex'}
+if(!payload||!payload.player||!payloadSrc(payload.player)){missing.style.display='flex'}
 function makeImg(src){const i=new Image();if(src)i.src=src;return i}
 const mapImg=makeImg('mapa.png');
 const crateImg=makeImg('ammo_crate.png');
@@ -101,8 +128,8 @@ const bloodSplatImg=makeImg('blood_splat.png');
 const armoredEnemyImg=makeImg('armored_enemy.png');
 const playerFullImg=makeImg(payload?.player?.src);
 const playerNoHandsImg=makeImg(payload?.playerNoHands?.src || payload?.player?.src);
-const enemyFullImg=makeImg(currentNpc?.src || payload?.enemy?.src || payload?.player?.src);
-const enemyNoHandsImg=makeImg(currentNpc?.noHandsSrc || currentNpc?.src || payload?.enemyNoHands?.src || payload?.enemy?.src || payload?.playerNoHands?.src || payload?.player?.src);
+const enemyFullImg=makeImg(currentNpc?.src || payloadSrc(payload?.enemy) || payloadSrc(payload?.player));
+const enemyNoHandsImg=makeImg(currentNpc?.noHandsSrc || currentNpc?.src || payloadSrc(payload?.enemyNoHands) || payloadSrc(payload?.enemy) || payloadSrc(payload?.playerNoHands) || payloadSrc(payload?.player));
 const akHoldImg=makeImg(payload?.assets?.ak_hold);
 const akGroundImg=makeImg(payload?.assets?.ak_ground || payload?.assets?.ak_hold);
 const m4HoldImg=makeImg(payload?.assets?.m4_hold || 'm4_hold.png');
@@ -165,6 +192,8 @@ function playerNick(){return (localStorage.getItem('MADNESS_PLAYER_NAME')||'PLAY
 function getSquadName(){return (localStorage.getItem('MADNESS_SQUAD_NAME')||'???').trim()||'???'}
 function squadBonusActive(){return getSquadName()!=='???'}
 function applySquadBonus(v){return Math.floor(v*(squadBonusActive()?1.25:1))}
+function calcPlayerMaxHp(){const base=100+(getLevel()-1)*28;return Math.floor(base*(squadBonusActive()?1.05:1))}
+function applyPlayerHpScaling(){const p=state.player;const oldMax=p.maxHp||100;const ratio=oldMax>0?p.hp/oldMax:1;p.maxHp=calcPlayerMaxHp();p.hp=Math.max(1,Math.min(p.maxHp,Math.round(p.maxHp*ratio)))}
 function getKills(){return Math.max(0,Math.floor(Number(localStorage.getItem('MADNESS_KILLS')||'0')||0))}
 function setKills(v){localStorage.setItem('MADNESS_KILLS',String(Math.max(0,Math.floor(v))))}
 function addKill(){setKills(getKills()+1);if(getKills()%5===0)syncPlayerStats()}
@@ -519,7 +548,7 @@ function drawRain(){ctx.save();ctx.lineCap='round';for(const r of state.rain){ct
 function drawBullets(arr,enemy=false){for(const b of arr){const x=worldToScreenX(b.x),y=worldToScreenY(b.y);ctx.fillStyle=enemy?'rgba(255,80,80,.95)':'rgba(255,220,60,.95)';ctx.beginPath();ctx.arc(x,y,enemy?2.5:3,0,Math.PI*2);ctx.fill();ctx.strokeStyle=enemy?'rgba(255,50,50,.45)':'rgba(255,160,0,.5)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-b.vx*state.scale*.026,y-b.vy*state.scale*.026);ctx.stroke()}}
 function drawWorldHp(obj,max,dy){const x=worldToScreenX(obj.x),y=worldToScreenY(obj.y-dy);ctx.fillStyle='rgba(30,0,0,.85)';ctx.fillRect(x-30,y,60,6);ctx.fillStyle='rgba(0,210,0,.9)';ctx.fillRect(x-30,y,60*clamp(obj.hp/max,0,1),6);ctx.strokeStyle='rgba(0,0,0,.75)';ctx.strokeRect(x-30,y,60,6)}
 function drawHitEffects(){for(const h of state.hitEffects){const t=h.life/h.max,x=worldToScreenX(h.x),y=worldToScreenY(h.y);ctx.save();ctx.globalAlpha=t;ctx.strokeStyle='rgba(190,0,0,.9)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x-8,y-4);ctx.lineTo(x+8,y+5);ctx.moveTo(x+6,y-7);ctx.lineTo(x-5,y+6);ctx.stroke();ctx.restore()}}
-function updateHud(){const p=state.player;const alive=state.enemies.filter(e=>!e.dead).length;waveTitle.textContent='VLNA '+state.wave;waveCount.textContent='enemy '+alive+' / '+state.waveTotal;waveFill.style.width=(state.waveTotal?clamp(state.waveKilled/state.waveTotal*100,0,100):0)+'%';hpFill.style.width=clamp(p.hp/p.maxHp*100,0,100)+'%';ammoLine.innerHTML='HP '+Math.round(p.hp)+'/'+p.maxHp+'<br>'+(p.weapon?weaponLabel(p.weaponType)+' '+p.ammo+'/'+MAG_SIZE+' • zás. '+p.mags+(isTrollAwpActive()?' • troll '+trollAwpShotsLeft()+'/2':''):'bez zbraně')+(p.reloading?' • reload':'');statusLine.textContent=''}
+function updateHud(){const p=state.player;const alive=state.enemies.filter(e=>!e.dead).length;waveTitle.textContent='VLNA '+state.wave;waveCount.textContent='enemy '+alive+' / '+state.waveTotal;waveFill.style.width=(state.waveTotal?clamp(state.waveKilled/state.waveTotal*100,0,100):0)+'%';hpFill.style.width=clamp(p.hp/p.maxHp*100,0,100)+'%';ammoLine.innerHTML='LVL '+getLevel()+' • HP '+Math.round(p.hp)+'/'+p.maxHp+(squadBonusActive()?' • SQUAD HP +5%':'')+'<br>'+(p.weapon?weaponLabel(p.weaponType)+' '+p.ammo+'/'+MAG_SIZE+' • zás. '+p.mags+(isTrollAwpActive()?' • troll '+trollAwpShotsLeft()+'/2':''):'bez zbraně')+(p.reloading?' • reload':'');statusLine.textContent=''}
 function drawNpcChat(e){
   if(!e.chat||!e.chat.text)return;
   const alpha=clamp(e.chat.life/.45,0,1);
@@ -572,7 +601,7 @@ function setSfxVol(v){SETTINGS.sfxVol=String(v);localStorage.setItem('MADNESS_SF
 function initPlayerCard(){
   const name=(localStorage.getItem('MADNESS_PLAYER_NAME')||'PLAYER').trim()||'PLAYER';
   if(pcNick)pcNick.textContent=name;
-  if(pcAvatar&&payload?.player?.src)pcAvatar.src=payload.player.src;
+  if(pcAvatar&&payloadSrc(payload?.player))pcAvatar.src=payloadSrc(payload.player);
 }
 addEventListener('resize',resize);
 addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(k in state.keys){state.keys[k]=1;e.preventDefault()}if(k==='r'){reload();e.preventDefault()}if(k==='e'){actionE();e.preventDefault()}startMusic()});
@@ -581,7 +610,7 @@ cv.addEventListener('mousemove',e=>{state.mouseX=e.clientX;state.mouseY=e.client
 cv.addEventListener('mousedown',e=>{if(e.button===0){state.shooting=true;state.shootTimer=0;startMusic();e.preventDefault()}});
 addEventListener('mouseup',e=>{if(e.button===0)state.shooting=false});
 addEventListener('pointerdown',startMusic,{once:true});addEventListener('touchstart',startMusic,{once:true,passive:true});
-mapImg.onload=()=>{recalcMap();if(selectedWeaponFromLobby)showMsg('Zbraň z lobby: '+weaponLabel(selectedWeaponFromLobby));else showMsg('Bez zbraně - vyber ji v lobby bedně');if(!state.waveTotal)spawnWave()};initPlayerCard();resize();applySettingsUI();startMusic();setTimeout(()=>{if(!state.waveTotal)spawnWave()},350);setTimeout(flashLightning,rand(2000,5000));requestAnimationFrame(loop);
+mapImg.onload=()=>{recalcMap();applyPlayerHpScaling();if(selectedWeaponFromLobby)showMsg('Zbraň z lobby: '+weaponLabel(selectedWeaponFromLobby));else showMsg('Bez zbraně - vyber ji v lobby bedně');if(!state.waveTotal)spawnWave()};initPlayerCard();applyPlayerHpScaling();resize();applySettingsUI();startMusic();setTimeout(()=>{if(!state.waveTotal)spawnWave()},350);setTimeout(flashLightning,rand(2000,5000));requestAnimationFrame(loop);
 </script>
 </body>
 </html>

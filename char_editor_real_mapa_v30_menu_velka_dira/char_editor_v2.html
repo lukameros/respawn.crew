@@ -49,6 +49,8 @@ button.icon-btn:hover{background:#2a2a4a;color:#fff;border-color:#7f7fff;}
 #pickup-hint{position:absolute;top:30px;left:50%;transform:translateX(-50%);font-size:13px;color:#ffff88;background:rgba(0,0,0,0.7);padding:4px 14px;border-radius:6px;pointer-events:none;display:none;border:1px solid #aaaa44;}
 #MADNESS_EDITOR_SETTINGS_BTN{position:fixed;right:12px;top:10px;z-index:9999;width:38px;height:38px;border:1px solid #7f7fff;background:#111122;color:#ddd;font-size:21px;cursor:pointer;border-radius:4px}
 #gameAlertModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.74);z-index:99999;align-items:center;justify-content:center;padding:18px}#gameAlertBox{width:min(480px,92vw);background:#08080a;border:2px solid #4b6cff;box-shadow:0 0 36px #000;padding:18px;text-align:center;color:#ddd;font-family:'Courier New',monospace}#gameAlertBox h2{margin:0 0 12px;color:#b8c8ff;letter-spacing:2px}#gameAlertText{white-space:pre-wrap;line-height:1.45}.gameAlertBtn{margin-top:14px;background:#101631;border:1px solid #5d76ff;color:#dce4ff;padding:10px 16px;cursor:pointer;font:bold 13px 'Courier New',monospace}
+
+#globalSaveStatus{position:fixed;right:14px;bottom:14px;z-index:9999;background:rgba(0,0,0,.78);border:1px solid #4b6cff;color:#dce4ff;padding:9px 12px;font:12px 'Courier New',monospace;box-shadow:0 0 18px #000;display:none;max-width:360px}
 </style>
 </head>
 <body>
@@ -60,7 +62,9 @@ button.icon-btn:hover{background:#2a2a4a;color:#fff;border-color:#7f7fff;}
   <button class="tab-btn" id="tab-game" onclick="switchToGame()">▶ HRA</button>
   <button class="tab-btn" id="tab-real" onclick="openRealMap()" title="Uloží složenou postavu + enemy a otevře reálnou mapu">🌧 REAL MAPA</button>
   <button class="tab-btn" id="tab-lobby" onclick="openLobby()" title="Uloží postavu a otevře lobby">🏠 LOBBY</button>
+  <button class="tab-btn" id="tab-save-global" onclick="saveGlobalOnline()" title="Uloží hráče i NPC globálně online pro všechny">💾 ULOŽIT GLOBAL ONLINE</button>
 </div>
+<div id="globalSaveStatus"></div>
 <div id="main">
   <div id="left-panel">
     <div class="panel-section">
@@ -174,7 +178,33 @@ const SUPABASE_URL="https://fokguuucpoejkxklwrpw.supabase.co";
 const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZva2d1dXVjcG9lamt4a2x3cnB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NTc2NTgsImV4cCI6MjA5NDUzMzY1OH0.2nNJFm1yzgiaNuIsj4DWgS9zJunIYc1uKkWndw23VrY";
 let SB=null;try{if(window.supabase)SB=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){SB=null}
 function getClientId(){let id=localStorage.getItem("MADNESS_CLIENT_ID");if(!id){id="p_"+Math.random().toString(36).slice(2,10)+"_"+Date.now().toString(36);localStorage.setItem("MADNESS_CLIENT_ID",id)}return id}
-async function saveGlobalPayload(payload,npc){if(!SB)return;try{await SB.from("madness_global_payloads").upsert({id:"global_character",payload,updated_by:getClientId(),updated_at:new Date().toISOString()},{onConflict:"id"}); if(npc) await SB.from("madness_global_payloads").upsert({id:"global_npc",payload:npc,updated_by:getClientId(),updated_at:new Date().toISOString()},{onConflict:"id"});}catch(e){console.warn("Global save failed",e)}}
+async function saveGlobalPayload(payload,npc){
+  if(!SB){
+    console.warn("Supabase není načtený; globální save se neprovede.");
+    return false;
+  }
+  try{
+    await SB.from("madness_global_payloads").upsert({
+      id:"global_character",
+      payload:payload,
+      updated_by:getClientId(),
+      updated_at:new Date().toISOString()
+    },{onConflict:"id"});
+    if(npc){
+      await SB.from("madness_global_payloads").upsert({
+        id:"global_npc",
+        payload:npc,
+        updated_by:getClientId(),
+        updated_at:new Date().toISOString()
+      },{onConflict:"id"});
+    }
+    return true;
+  }catch(e){
+    console.warn("Global save failed",e);
+    alert("Globální online save selhal. Zkontroluj Supabase SQL tabulku madness_global_payloads a že nejedeš přes blokovaný file:// režim.\\n\\n"+(e.message||e));
+    return false;
+  }
+}
 function gameAlert(t){const m=document.getElementById('gameAlertModal'),x=document.getElementById('gameAlertText');if(x)x.textContent=String(t||'');if(m)m.style.display='flex'}function closeGameAlert(){const m=document.getElementById('gameAlertModal');if(m)m.style.display='none'}window.alert=gameAlert;
 
 const SRC = {
@@ -227,6 +257,29 @@ function onGifFileChosen(inp){
   fr.readAsDataURL(inp.files[0]);
 }
 function startAssetDragGif(e){ e.preventDefault(); document.getElementById('gif-file-input').click(); }
+const AUTO_LEG_GIF_PATHS=[
+  'ezgif.com-animated-gif-maker.gif',
+  './ezgif.com-animated-gif-maker.gif',
+  'char_editor_real_mapa_v30_menu_velka_dira/ezgif.com-animated-gif-maker.gif',
+  '../char_editor_real_mapa_v30_menu_velka_dira/ezgif.com-animated-gif-maker.gif'
+];
+function tryAutoLoadLegGif(i=0){
+  if(i>=AUTO_LEG_GIF_PATHS.length){const st=document.getElementById('gif-status');if(st)st.textContent='— GIF nenalezen';return}
+  const src=AUTO_LEG_GIF_PATHS[i];
+  const im=new Image();
+  im.onload=()=>{
+    SRC.gif=src;
+    IMGS.gif=im;
+    const th=document.getElementById('th-gif');
+    if(th)th.src=src;
+    const st=document.getElementById('gif-status');
+    if(st)st.textContent='— auto OK';
+    if(!AL().some(l=>l.key==='gif'))addLayer('gif',300,330);
+  };
+  im.onerror=()=>tryAutoLoadLegGif(i+1);
+  im.src=src;
+}
+setTimeout(()=>tryAutoLoadLegGif(),650);
 
 // ── STATE ──
 let layers=[], selectedIdx=-1;
@@ -967,49 +1020,75 @@ function firstGifMeta(stack,boundsStack){
   };
 }
 
-function saveRealPayload(){
-  // Canvas neumí exportovat animovaný GIF do PNG bez zastavení na první frame.
-  // Proto se hráč exportuje bez GIF vrstvy a samotný GIF se pošle zvlášť jako animovaný overlay do real_mapa.html.
+function buildRealPayload(){
   const playerSprite=renderStackToDataURL(stripGif(layers),layers);
   const playerNoHandsSprite=renderStackToDataURL(stripGif(stripHands(layers)),layers);
   const enemyBase=enemyLayers.length?enemyLayers:layers;
   const enemySprite=renderStackToDataURL(enemyBase,enemyBase);
   const enemyNoHandsSprite=renderStackToDataURL(stripHands(enemyBase),enemyBase);
   const payload={
-    version:3,
+    version:32,
     savedAt:Date.now(),
-    player:playerSprite,
-    playerNoHands:playerNoHandsSprite,
-    enemy:enemySprite,
-    enemyNoHands:enemyNoHandsSprite,
+    player:{src:playerSprite},
+    playerNoHands:{src:playerNoHandsSprite},
+    enemy:{src:enemySprite},
+    enemyNoHands:{src:enemyNoHandsSprite},
     gif:{player:firstGifMeta(layers,layers)},
     layers:JSON.parse(JSON.stringify(layers)),
     enemyLayers:JSON.parse(JSON.stringify(enemyLayers)),
     grip:JSON.parse(JSON.stringify(grip)),
     assets:{ ak_hold:SRC.ak_hold || null, ak_ground:SRC.ak_ground || null, m4_hold:SRC.m4_hold || 'm4_hold.png', awp_hold:SRC.awp_hold || 'awp_hold.png', m60_hold:SRC.m60_hold || 'm60_hold.png' }
   };
+  const npc={src:enemySprite,noHandsSrc:enemyNoHandsSprite,layers:JSON.parse(JSON.stringify(enemyLayers.length?enemyLayers:layers)),savedAt:Date.now()};
+  return {payload,npc};
+}
+
+function saveRealPayload(){
   try{
-    localStorage.setItem('MADNESS_REAL_PAYLOAD', JSON.stringify(payload));
-    localStorage.setItem('MADNESS_CURRENT_NPC', JSON.stringify({src:enemySprite,noHandsSrc:enemyNoHandsSprite,savedAt:Date.now()}));
-    return true;
+    const built=buildRealPayload();
+    localStorage.setItem('MADNESS_REAL_PAYLOAD', JSON.stringify(built.payload));
+    localStorage.setItem('MADNESS_CURRENT_NPC', JSON.stringify(built.npc));
+    localStorage.removeItem('MADNESS_DEFAULT_CHARACTER');
+    return built;
   }catch(err){
     alert('Nešlo uložit postavu do localStorage. GIF je možná moc velký – zkus kratší/menší GIF nebo smaž část vrstev.');
     console.error(err);
-    return false;
+    return null;
   }
 }
 
-function openLobby(){
-  if(!layers.length){ alert('Nejdřív slož postavu v editoru.'); return; }
-  if(saveRealPayload()){ const win=window.open('lobby.html','_blank'); if(!win) location.href='lobby.html'; }
+async function saveGlobalOnline(){
+  if(!layers.length){ alert('Nejdřív slož aspoň jednu postavu v editoru.'); return; }
+  const status=document.getElementById('globalSaveStatus');
+  if(status){status.style.display='block';status.textContent='Ukládám globálně online...';}
+  const built=saveRealPayload();
+  if(!built){ if(status)status.textContent='Lokální save selhal.'; return; }
+  const ok=await saveGlobalPayload(built.payload,built.npc);
+  if(ok){
+    if(status)status.textContent='Hotovo: postava + NPC jsou globálně online uložené pro všechny hráče.';
+    alert('Uloženo globálně online. Noví hráči a default hráči dostanou tuhle postavu/NPC.');
+  }else{
+    if(status)status.textContent='Globální save selhal. Lokálně uloženo.';
+  }
 }
 
-function openRealMap(){
+
+
+
+async function openLobby(){
+  if(!layers.length){ alert('Nejdřív slož postavu v editoru.'); return; }
+  const built=saveRealPayload();
+  if(built){ await saveGlobalPayload(built.payload,built.npc); const win=window.open('lobby.html','_blank'); if(!win) location.href='lobby.html'; }
+}
+
+async function openRealMap(){
   if(!layers.length){
     alert('Nejdřív slož postavu v editoru.');
     return;
   }
-  if(saveRealPayload()){
+  const built=saveRealPayload();
+  if(built){
+    await saveGlobalPayload(built.payload,built.npc);
     const win=window.open('real_mapa.html','_blank');
     if(!win) location.href='real_mapa.html';
   }

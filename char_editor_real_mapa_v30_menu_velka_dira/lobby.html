@@ -8,8 +8,8 @@
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:#ddd;font-family:'Courier New',monospace;user-select:none}
 #game{position:fixed;inset:0;width:100vw;height:100vh;background:#000;display:block;cursor:crosshair}
 #lightning{position:fixed;inset:0;background:rgba(210,235,255,.9);opacity:0;pointer-events:none;mix-blend-mode:screen;z-index:5}
-#hud{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:7;width:min(780px,calc(100vw - 24px));display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(6,6,8,.82);border:1px solid #7f0000;border-bottom:2px solid #4f0000;padding:9px 13px;box-shadow:0 0 25px #000;text-shadow:1px 1px #000}
-#hud b{color:#ffcccc}.hudBtn{background:#1d0000;border:1px solid #9b0000;color:#ffd7d7;padding:6px 10px;font:12px 'Courier New',monospace;cursor:pointer}.hudBtn:hover{background:#4b0000}
+#hud{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:7;width:min(860px,calc(100vw - 24px));display:flex;align-items:center;justify-content:space-between;gap:14px;background:linear-gradient(180deg,rgba(18,18,22,.90),rgba(4,4,6,.82));border:1px solid #9b0000;border-bottom:2px solid #5a0000;padding:11px 15px;box-shadow:0 0 28px #000,inset 0 0 0 1px rgba(255,255,255,.05);text-shadow:1px 1px #000;border-radius:8px;backdrop-filter:blur(2px)}
+#hud b{color:#ffcccc;letter-spacing:1px}.hudBtn{background:linear-gradient(180deg,#310000,#120000);border:1px solid #b00000;color:#ffd7d7;padding:7px 12px;font:bold 12px 'Courier New',monospace;cursor:pointer;border-radius:5px;box-shadow:0 0 12px #000}.hudBtn:hover{background:#5a0000;color:#fff}
 #msg{position:fixed;left:50%;top:68px;transform:translateX(-50%);z-index:8;padding:8px 14px;background:rgba(0,0,0,.75);border:1px solid rgba(255,255,255,.13);opacity:0;transition:.16s;pointer-events:none}
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:12;align-items:center;justify-content:center;padding:18px}.box{width:min(640px,94vw);background:#08080a;border:2px solid #8a0000;box-shadow:0 0 36px #000;padding:20px;text-align:center}.box h2{margin:0 0 14px;color:#ffb0b0;letter-spacing:2px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.choice{background:linear-gradient(180deg,#151515,#070707);border:1px solid #333;color:#ddd;padding:10px;cursor:pointer;min-height:86px}.choice:hover{border-color:#b00000;background:#1b0707}.choice img{max-width:100%;height:45px;object-fit:contain;display:block;margin:0 auto 8px}.choice b{color:#fff}.close{margin-top:15px;background:#250000;border:1px solid #9b0000;color:#ffd6d6;padding:9px 15px;cursor:pointer;font:13px 'Courier New',monospace}
 #missing{display:none;position:fixed;inset:0;background:#050507;align-items:center;justify-content:center;z-index:60;text-align:center;font:15px monospace;padding:30px}#missing b{color:#ff7777}.starterGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0}.starterCard{background:#0b0b0d;border:1px solid #6b0000;color:#eee;padding:10px;cursor:pointer}.starterCard:hover{border-color:#e00000;background:#1a0505}.starterCard img{width:78px;height:98px;object-fit:contain;display:block;margin:0 auto 8px}.starterNick{width:100%;max-width:340px;padding:10px 12px;background:#060606;border:1px solid #700;color:#eee;font:14px 'Courier New',monospace;margin-top:10px}#missing button{margin-top:12px;background:#250000;border:1px solid #9b0000;color:#ffd6d6;padding:10px 16px;cursor:pointer}
@@ -23,13 +23,13 @@ body.shake #game{animation:shake .22s linear 1}@keyframes shake{0%{transform:tra
 #settingsBtn{position:fixed;right:14px;top:12px;z-index:40;width:42px;height:42px;border:1px solid #8a0000;background:rgba(10,10,12,.86);color:#ffd2d2;font-size:23px;line-height:39px;text-align:center;cursor:pointer;box-shadow:0 0 18px #000;border-radius:4px}
 #settingsBtn:hover{background:#3a0000;color:#fff}
 
-#playerCard{position:fixed;right:14px;bottom:14px;z-index:34;min-width:176px;text-align:center;font-family:'Courier New',monospace;text-shadow:1px 1px #000;pointer-events:none}
+#playerCard{position:fixed;right:14px;bottom:14px;z-index:34;min-width:176px;text-align:center;font-family:'Courier New',monospace;text-shadow:1px 1px #000;pointer-events:auto}
 #pcSquad{font-size:13px;color:#ffbebe;background:rgba(0,0,0,.70);border:1px solid rgba(130,0,0,.85);padding:5px 8px;margin-bottom:5px;letter-spacing:1px}
 #pcNick{font-size:16px;color:#eee;background:rgba(0,0,0,.72);border:1px solid rgba(90,90,90,.8);padding:6px 8px;margin-bottom:6px;font-weight:bold}
-#pcAvatarBox{width:124px;height:124px;margin-left:auto;background:rgba(5,5,6,.86);border:3px solid #880000;box-shadow:0 0 20px #000,inset 0 0 0 1px rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center}
+#pcAvatarBox{width:124px;height:124px;margin-left:auto;background:rgba(5,5,6,.86);border:3px solid #880000;box-shadow:0 0 20px #000,inset 0 0 0 1px rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer}
 #pcAvatar{max-width:94%;max-height:94%;object-fit:contain;image-rendering:auto}
 
-#cameraTip{position:fixed;z-index:70;display:none;background:rgba(0,0,0,.88);border:1px solid #8a0000;color:#ffd6d6;padding:8px 10px;font:bold 12px 'Courier New',monospace;box-shadow:0 0 16px #000;pointer-events:none;text-shadow:1px 1px #000}.statTable{width:100%;border-collapse:collapse;font:12px 'Courier New',monospace;color:#ddd}.statTable th,.statTable td{border-bottom:1px solid #252525;padding:7px 6px;text-align:left}.statTable th{color:#ffbebe}.achList{display:grid;gap:8px;text-align:left}.achCard{border:1px solid #333;background:#070707;padding:10px;color:#aaa}.achCard.done{border-color:#7a5a00;background:#140f04;color:#ffdca0}.achCard b{color:#fff}.mapLabel{pointer-events:none}#gameAlertModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:90;align-items:center;justify-content:center;padding:18px}#gameAlertBox{width:min(460px,92vw);background:#08080a;border:2px solid #8a0000;box-shadow:0 0 36px #000;padding:18px;text-align:center;color:#ddd;font-family:'Courier New',monospace}#gameAlertBox h2{margin:0 0 12px;color:#ffbebe;letter-spacing:2px}#gameAlertText{white-space:pre-wrap;line-height:1.45}.squadInviteRow{border:1px solid #333;background:#070707;padding:8px;margin:6px 0;display:flex;justify-content:space-between;gap:8px;align-items:center}.squadInput{width:100%;padding:10px;background:#050505;border:1px solid #700;color:#eee;font:14px 'Courier New',monospace;margin:8px 0}.squadSmall{color:#888;font-size:11px;line-height:1.45}
+#cameraTip{position:fixed;z-index:70;display:none;background:rgba(0,0,0,.88);border:1px solid #8a0000;color:#ffd6d6;padding:8px 10px;font:bold 12px 'Courier New',monospace;box-shadow:0 0 16px #000;pointer-events:none;text-shadow:1px 1px #000}.statTable{width:100%;border-collapse:collapse;font:12px 'Courier New',monospace;color:#ddd}.statTable th,.statTable td{border-bottom:1px solid #252525;padding:7px 6px;text-align:left}.statTable th{color:#ffbebe}.achList{display:grid;gap:8px;text-align:left}.achCard{border:1px solid #333;background:#070707;padding:10px;color:#aaa}.achCard.done{border-color:#7a5a00;background:#140f04;color:#ffdca0}.achCard b{color:#fff}.mapLabel{pointer-events:none}#gameAlertModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:90;align-items:center;justify-content:center;padding:18px}#gameAlertBox{width:min(460px,92vw);background:#08080a;border:2px solid #8a0000;box-shadow:0 0 36px #000;padding:18px;text-align:center;color:#ddd;font-family:'Courier New',monospace}#gameAlertBox h2{margin:0 0 12px;color:#ffbebe;letter-spacing:2px}#gameAlertText{white-space:pre-wrap;line-height:1.45}#avatarGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.avatarChoice{border:1px solid #333;background:#070707;padding:10px;cursor:pointer;text-align:center}.avatarChoice:hover{border-color:#b00000;background:#160404}.avatarChoice img{width:96px;height:96px;object-fit:contain;display:block;margin:0 auto 8px}.squadInviteRow{border:1px solid #333;background:#070707;padding:8px;margin:6px 0;display:flex;justify-content:space-between;gap:8px;align-items:center}.squadInput{width:100%;padding:10px;background:#050505;border:1px solid #700;color:#eee;font:14px 'Courier New',monospace;margin:8px 0}.squadSmall{color:#888;font-size:11px;line-height:1.45}
 #introPanel{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:55;width:min(760px,calc(100vw - 28px));display:none;background:rgba(4,4,6,.90);border:2px solid #8a0000;box-shadow:0 0 42px #000;padding:16px 18px;text-align:left;color:#eee;font-family:'Courier New',monospace}#introTitle{color:#ffbebe;font-weight:bold;letter-spacing:2px;margin-bottom:8px}#introText{min-height:62px;line-height:1.45;color:#ddd}.introSkip{float:right;background:#220000;border:1px solid #a00000;color:#ffd6d6;padding:7px 12px;cursor:pointer;font:bold 12px 'Courier New',monospace}.introSkip:hover{background:#520000}
 #settingsModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.74);z-index:45;align-items:center;justify-content:center}
 #settingsModal .sbox{width:min(420px,92vw);background:#08080a;border:2px solid #7c0000;box-shadow:0 0 35px #000;padding:20px;color:#ddd}
@@ -40,6 +40,30 @@ body.shake #game{animation:shake .22s linear 1}@keyframes shake{0%{transform:tra
 .sbtn{background:#260000;color:#ffd0d0;border:1px solid #a00000;padding:9px 14px;font-family:inherit;cursor:pointer;margin-top:12px}
 .sbtn:hover{background:#520000}
 #friendAnswer{width:100%;padding:10px 12px;background:#050505;border:1px solid #6f0000;color:#eee;font:14px 'Courier New',monospace;outline:none;margin-top:8px}#friendAnswer:focus{border-color:#c00000;box-shadow:0 0 12px rgba(160,0,0,.35)}
+
+
+.rankBadge{display:inline-block;margin-left:6px;padding:2px 6px;border-radius:4px;font:bold 10px 'Courier New',monospace;letter-spacing:.7px;text-shadow:1px 1px #000;border:1px solid rgba(255,255,255,.12);vertical-align:middle}
+.rankBadge.rookie{background:#1b1b1b;color:#aaa;border-color:#333}
+.rankBadge.bronze{background:linear-gradient(180deg,#4b2a10,#190c02);color:#f0b27a;border-color:#8a4b15}
+.rankBadge.silver{background:linear-gradient(180deg,#777,#232323);color:#eee;border-color:#aaa}
+.rankBadge.gold{background:linear-gradient(180deg,#8a6200,#2b1b00);color:#ffe28a;border-color:#d39a00}
+.rankBadge.epic{background:linear-gradient(90deg,#32105c,#8200aa,#2d0046);color:#ffd7ff;border-color:#d260ff;box-shadow:0 0 10px rgba(180,0,255,.55)}
+.rankBadge.legend{background:linear-gradient(90deg,#700,#d28a00,#700);color:#fff0b0;border-color:#ffcc33;box-shadow:0 0 12px rgba(255,190,40,.65)}
+.rankBadge.developer{background:linear-gradient(90deg,#001f38,#005b84,#001f38);color:#b8f2ff;border-color:#49cfff;box-shadow:0 0 10px rgba(40,190,255,.55)}
+.statTable{border-collapse:separate!important;border-spacing:0 7px!important;width:100%;font-size:12px!important}
+.statTable thead th{background:rgba(80,0,0,.55);border-top:1px solid #5b0000;border-bottom:1px solid #5b0000;color:#ffd2d2!important;text-transform:uppercase;font-size:11px;letter-spacing:.8px}
+.statTable tbody tr{background:linear-gradient(180deg,rgba(16,16,18,.96),rgba(6,6,8,.96));box-shadow:0 0 12px rgba(0,0,0,.55)}
+.statTable tbody tr:nth-child(1){outline:1px solid rgba(255,210,90,.45);box-shadow:0 0 18px rgba(255,200,60,.12)}
+.statTable td,.statTable th{padding:9px 8px!important;border-bottom:0!important}
+.statNum{color:#ffd27a;font-weight:bold}
+.rankPos{color:#ffbebe;font-weight:bold}
+.nickCell{font-weight:bold;color:#eee}
+#moneyHud{background:linear-gradient(180deg,rgba(18,12,4,.94),rgba(5,5,7,.90))!important;border:1px solid #b07000!important;border-radius:8px!important;box-shadow:0 0 20px #000,inset 0 0 0 1px rgba(255,214,120,.08)!important}
+#playerCard{filter:drop-shadow(0 0 14px rgba(0,0,0,.85))}
+#pcAvatarBox{border-radius:8px;background:radial-gradient(circle at 50% 35%,rgba(90,0,0,.35),rgba(0,0,0,.92))!important}
+#chatPanel{border-radius:8px;box-shadow:0 0 24px #000!important}
+.modal .box,.box{border-radius:10px!important;background:linear-gradient(180deg,rgba(14,14,18,.98),rgba(4,4,6,.98))!important}
+.choice{border-radius:8px!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.03),0 0 12px rgba(0,0,0,.45)}
 
 </style>
 </head>
@@ -63,13 +87,14 @@ body.shake #game{animation:shake .22s linear 1}@keyframes shake{0%{transform:tra
 <div id="gameAlertModal"><div id="gameAlertBox"><h2>HLÁŠENÍ</h2><div id="gameAlertText"></div><button class="close" onclick="closeGameAlert()">ZAVŘÍT</button></div></div>
 <div id="cameraTip">Lukáš tě hlídá, neboj!</div>
 <div id="introPanel"><button class="introSkip" onclick="skipIntroStory()">PŘESKOČIT</button><div id="introTitle">FRIENDLY NPC</div><div id="introText"></div></div>
-<div id="playerCard"><div id="pcSquad">SQUAD: ???</div><div id="pcNick">PLAYER</div><div id="pcAvatarBox"><img id="pcAvatar" alt=""></div></div>
+<div id="playerCard"><div id="pcSquad">SQUAD: ???</div><div id="pcNick">PLAYER</div><div id="pcAvatarBox" onclick="openAvatarModal()"><img id="pcAvatar" alt=""></div></div>
 <div id="missionToast"><div id="missionText">Host vybral misi.</div><button id="missionReadyBtn" class="missionBtn" onclick="readyMission()">READY</button><button class="missionBtn" onclick="hideMissionToast()">ZAVŘÍT</button></div>
 <div id="chatPanel">
   <div id="chatHead">CHAT</div>
   <div id="chatMessages"><div class="sys">Načítám chat...</div></div>
   <form id="chatForm"><input id="chatInput" maxlength="120" placeholder="napiš zprávu..."><button id="chatSend" type="submit">SEND</button></form>
 </div>
+<div class="modal" id="avatarModal"><div class="box"><h2>VYBER AVATAR</h2><p style="color:#888">Mění se jen obrázek v profilu, ne postava ve hře.</p><div id="avatarGrid"></div><button class="close" onclick="closeModal('avatarModal')">ZAVŘÍT</button></div></div>
 <div class="modal" id="squadModal"><div class="box"><h2>SQUAD</h2>
   <div id="squadCurrent" style="color:#ffd6d6;margin-bottom:8px">Aktuální squad: ???</div>
   <input id="squadNameInput" class="squadInput" maxlength="22" placeholder="Název squad">
@@ -107,12 +132,59 @@ body.shake #game{animation:shake .22s linear 1}@keyframes shake{0%{transform:tra
 <script>
 const SUPABASE_URL="https://fokguuucpoejkxklwrpw.supabase.co";
 const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZva2d1dXVjcG9lamt4a2x3cnB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NTc2NTgsImV4cCI6MjA5NDUzMzY1OH0.2nNJFm1yzgiaNuIsj4DWgS9zJunIYc1uKkWndw23VrY";
+
+function bootstrapNickFromIndex(){
+  try{
+    const p=new URLSearchParams(location.search);
+    const nick=(p.get('nick')||localStorage.getItem('MADNESS_PLAYER_NAME')||localStorage.getItem('RESPAWN_NICK')||localStorage.getItem('squad_session')||'').trim();
+    if(nick){
+      localStorage.setItem('MADNESS_PLAYER_NAME',nick);
+      localStorage.setItem('RESPAWN_NICK',nick);
+    }
+  }catch(e){}
+}
+bootstrapNickFromIndex();
+
 let SB=null;
 try{if(window.supabase)SB=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){SB=null}
 const cv=document.getElementById('game'),ctx=cv.getContext('2d'),lightning=document.getElementById('lightning'),msg=document.getElementById('msg'),missing=document.getElementById('missing'),weaponText=document.getElementById('weaponText'),serverText=document.getElementById('serverText'),moneyVal=document.getElementById('moneyVal'),levelVal=document.getElementById('levelVal'),xpFill=document.getElementById('xpFill'),xpText=document.getElementById('xpText'),introPanel=document.getElementById('introPanel'),introText=document.getElementById('introText'),cameraTip=document.getElementById('cameraTip'),leaderboardBody=document.getElementById('leaderboardBody'),achievementsBody=document.getElementById('achievementsBody'),squadCurrent=document.getElementById('squadCurrent'),squadNameInput=document.getElementById('squadNameInput'),squadInviteList=document.getElementById('squadInviteList'),pcNick=document.getElementById('pcNick'),pcSquad=document.getElementById('pcSquad'),pcAvatar=document.getElementById('pcAvatar'),friendQuestionText=document.getElementById('friendQuestionText'),friendAnswer=document.getElementById('friendAnswer'),chatMessages=document.getElementById('chatMessages'),chatForm=document.getElementById('chatForm'),chatInput=document.getElementById('chatInput'),onlineCount=document.getElementById('onlineCount'),starterNick=document.getElementById('starterNick'),missionToast=document.getElementById('missionToast'),missionText=document.getElementById('missionText'),missionReadyBtn=document.getElementById('missionReadyBtn'),music=document.getElementById('music');
 let W=0,H=0,DPR=1,last=performance.now(),camX=0,msgTimer=0;
-const SETTINGS={quality:localStorage.getItem('MADNESS_QUALITY')||'mid',musicVol:localStorage.getItem('MADNESS_MUSIC_VOL')??'50',sfxVol:localStorage.getItem('MADNESS_SFX_VOL')??'80'};let payload=null;try{payload=JSON.parse(localStorage.getItem('MADNESS_REAL_PAYLOAD')||'null')}catch(e){payload=null}const HAD_LOCAL_PAYLOAD=!!(payload&&payload.player&&payload.player.src);
+const SETTINGS={quality:localStorage.getItem('MADNESS_QUALITY')||'mid',musicVol:localStorage.getItem('MADNESS_MUSIC_VOL')??'50',sfxVol:localStorage.getItem('MADNESS_SFX_VOL')??'80'};let payload=null;try{payload=JSON.parse(localStorage.getItem('MADNESS_REAL_PAYLOAD')||'null')}catch(e){payload=null}
+function payloadSrc(v){return typeof v==='string'?v:(v&&v.src)||''}const HAD_LOCAL_PAYLOAD=!!(payload&&payload.player&&payload.player.src);
 function img(src){const i=new Image();if(src)i.src=src;return i}
+function avatarSvg(kind){
+  const map={
+    red:['#8b1010','#f0d0a8','#1d1d1d'],
+    blue:['#163d7a','#e0c39b','#11152a'],
+    green:['#1f6b32','#e2c397','#1b261c']
+  };
+  const c=map[kind]||map.red;
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
+  <rect width="160" height="160" rx="18" fill="#070707"/>
+  <circle cx="80" cy="72" r="44" fill="${c[1]}" stroke="#111" stroke-width="6"/>
+  <path d="M36 60 Q80 18 124 60 Q108 43 80 45 Q52 43 36 60" fill="${c[2]}" stroke="#111" stroke-width="5"/>
+  <circle cx="64" cy="76" r="6" fill="#111"/><circle cx="96" cy="76" r="6" fill="#111"/>
+  <path d="M60 101 Q80 116 100 101" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round"/>
+  <path d="M30 148 Q80 106 130 148" fill="${c[0]}" stroke="#111" stroke-width="6"/>
+  </svg>`;
+  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+function getProfileAvatar(){return localStorage.getItem('MADNESS_PROFILE_AVATAR')||avatarSvg('red')}
+function setProfileAvatar(src){localStorage.setItem('MADNESS_PROFILE_AVATAR',src);initPlayerCard()}
+function openAvatarModal(){
+  const g=document.getElementById('avatarGrid');
+  if(g){
+    g.innerHTML='';
+    [['red','RVAČ'],['blue','PADOUCH'],['green','MOZEK']].forEach(([k,n])=>{
+      const d=document.createElement('div');d.className='avatarChoice';
+      const src=avatarSvg(k);
+      d.innerHTML='<img src="'+src+'"><b>'+n+'</b>';
+      d.onclick=()=>{setProfileAvatar(src);closeModal('avatarModal');showMsg('Avatar změněn');};
+      g.appendChild(d);
+    });
+  }
+  openModal('avatarModal');
+}
 function starterSvg(kind){
   const c=kind==='red'?['#8b1010','#e6c7a0','#2b2b2b']:kind==='blue'?['#0d3f73','#d6bd96','#1b1b2c']:['#246b2d','#d9c08f','#2a251c'];
   const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="180" height="260" viewBox="0 0 180 260">
@@ -128,6 +200,11 @@ function starterSvg(kind){
   </svg>`;
   return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
 }
+function showDefaultCharacterHint(){
+  if(localStorage.getItem('MADNESS_DEFAULT_CHARACTER')==='1'){
+    setTimeout(()=>showMsg('Používám default postavu. Editor/global postava se načte jen po Supabase setupu a uložení v editoru.'),900);
+  }
+}
 function initStarterPreview(){
   const r=document.getElementById('starterRed'),b=document.getElementById('starterBlue'),g=document.getElementById('starterGreen');
   if(r)r.src=starterSvg('red'); if(b)b.src=starterSvg('blue'); if(g)g.src=starterSvg('green');
@@ -136,6 +213,7 @@ function initStarterPreview(){
 function chooseStarter(kind){
   const nick=(starterNick?.value||'PLAYER').trim()||'PLAYER';
   localStorage.setItem('MADNESS_PLAYER_NAME',nick);
+  if(!localStorage.getItem('MADNESS_PROFILE_AVATAR'))localStorage.setItem('MADNESS_PROFILE_AVATAR',avatarSvg(kind));
   const src=starterSvg(kind);
   const npc=starterSvg('green');
   const payload={
@@ -148,13 +226,14 @@ function chooseStarter(kind){
   };
   localStorage.setItem('MADNESS_REAL_PAYLOAD',JSON.stringify(payload));
   localStorage.setItem('MADNESS_CURRENT_NPC',JSON.stringify({src:npc,noHandsSrc:npc,savedAt:Date.now()}));
+  localStorage.setItem('MADNESS_DEFAULT_CHARACTER','1');
   location.reload();
 }
 function makeDefaultPayload(){
   const src=starterSvg('red'), npc=starterSvg('green');
   return {version:11,savedAt:Date.now(),player:{src},playerNoHands:{src},enemy:{src:npc},enemyNoHands:{src:npc},gif:{player:null},layers:[],enemyLayers:[],grip:{x:0,y:8,rot:0,scale:100},assets:{ak_hold:'m4_hold.png',ak_ground:'m4_hold.png',m4_hold:'m4_hold.png',awp_hold:'awp_hold.png',m60_hold:'m60_hold.png'}};
 }
-if(!payload||!payload.player||!payload.player.src){
+if(!payload||!payload.player||!payloadSrc(payload.player)){
   payload=makeDefaultPayload();
   localStorage.setItem('MADNESS_REAL_PAYLOAD',JSON.stringify(payload));
   localStorage.setItem('MADNESS_CURRENT_NPC',JSON.stringify({src:payload.enemy.src,noHandsSrc:payload.enemyNoHands.src,savedAt:Date.now()}));
@@ -168,13 +247,13 @@ async function loadGlobalCharacterIfNeeded(){
     const {data,error}=await SB.from('madness_global_payloads').select('payload,updated_at').eq('id','global_character').maybeSingle();
     if(error||!data?.payload)return;
     localStorage.setItem('MADNESS_REAL_PAYLOAD',JSON.stringify(data.payload));
-    const npc=(data.payload.enemy&&data.payload.enemy.src)?{src:data.payload.enemy.src,noHandsSrc:(data.payload.enemyNoHands&&data.payload.enemyNoHands.src)||data.payload.enemy.src,savedAt:Date.now()}:null;
+    const ep=payloadSrc(data.payload.enemy), enh=payloadSrc(data.payload.enemyNoHands)||ep; const npc=ep?{src:ep,noHandsSrc:enh,savedAt:Date.now()}:null;
     if(npc)localStorage.setItem('MADNESS_CURRENT_NPC',JSON.stringify(npc));
     localStorage.removeItem('MADNESS_DEFAULT_CHARACTER');
     location.reload();
   }catch(e){console.warn('global character load failed',e)}
 }
-const mapImg=img('lobby_map.png'),benchImg=img('bench_lavice.png'),crateImg=img('lobby_crate.png'),playerFullImg=img(payload?.player?.src),playerNoHandsImg=img(payload?.playerNoHands?.src||payload?.player?.src),akHoldImg=img(payload?.assets?.ak_hold),m4HoldImg=img(payload?.assets?.m4_hold||'m4_hold.png'),awpHoldImg=img(payload?.assets?.awp_hold||'awp_hold.png'),m60HoldImg=img(payload?.assets?.m60_hold||'m60_hold.png');
+const mapImg=img('lobby_map.png'),benchImg=img('bench_lavice.png'),crateImg=img('lobby_crate.png'),playerFullImg=img(payloadSrc(payload?.player)),playerNoHandsImg=img(payloadSrc(payload?.playerNoHands)||payloadSrc(payload?.player)),akHoldImg=img(payload?.assets?.ak_hold),m4HoldImg=img(payload?.assets?.m4_hold||'m4_hold.png'),awpHoldImg=img(payload?.assets?.awp_hold||'awp_hold.png'),m60HoldImg=img(payload?.assets?.m60_hold||'m60_hold.png');
 const grip=payload?.grip||{x:0,y:8,rot:0,scale:100};
 const WEAPONS={ak47:{label:'AK-47',img:akHoldImg,drawW:170,worldW:170,cost:750,level:1},m4:{label:'M4',img:m4HoldImg,drawW:170,worldW:170,cost:1400,level:3},awp:{label:'AWP',img:awpHoldImg,drawW:190,worldW:190,cost:3000,level:5},m60:{label:'M60',img:m60HoldImg,drawW:190,worldW:190,cost:3600,level:8}};
 let selected=(localStorage.getItem('MADNESS_SELECTED_WEAPON')||'').toLowerCase(); if(!WEAPONS[selected]) selected='';
@@ -186,6 +265,7 @@ function getLevel(){let v=Number(localStorage.getItem('MADNESS_LEVEL'));if(!Numb
 function getXp(){let v=Number(localStorage.getItem('MADNESS_XP'));if(!Number.isFinite(v)||v<0){v=0;localStorage.setItem('MADNESS_XP','0')}return Math.floor(v)}
 function hasLevelForWeapon(k){const w=WEAPONS[k];if(!w)return false;if(k==='awp'&&localStorage.getItem('MADNESS_TROLL_AWP')==='1')return true;return getLevel()>=(w.level||1)}
 function updateLevelUI(){const lvl=getLevel(),xp=getXp(),need=levelNeed(lvl);if(levelVal)levelVal.textContent=lvl;if(xpFill)xpFill.style.width=(lvl>=MAX_LEVEL?'100':clamp(xp/need*100,0,100))+'%';if(xpText)xpText.textContent=lvl>=MAX_LEVEL?'MAX LEVEL':(xp+' / '+need+' XP')}
+function calcMaxHp(lvl,squad){const base=100+(Math.max(1,Number(lvl)||1)-1)*28;return Math.floor(base*((squad&&squad!=='???')?1.05:1))}
 function getOwned(){try{return JSON.parse(localStorage.getItem('MADNESS_OWNED_WEAPONS')||'[]')}catch(e){return []}}
 function saveOwned(a){localStorage.setItem('MADNESS_OWNED_WEAPONS',JSON.stringify([...new Set(a)]))}
 function isOwned(k){return getOwned().includes(k)}
@@ -193,7 +273,7 @@ function updateMoneyUI(){if(moneyVal)moneyVal.textContent=getMoney();updateLevel
 function getSquadName(){return (localStorage.getItem('MADNESS_SQUAD_NAME')||'???').trim()||'???'}
 function setSquadName(n){n=(n||'???').trim().slice(0,22)||'???';localStorage.setItem('MADNESS_SQUAD_NAME',n);updateSquadUI();syncOwnPresence()}
 function updateSquadUI(){const n=getSquadName();if(pcSquad)pcSquad.textContent='SQUAD: '+n;if(squadCurrent)squadCurrent.textContent='Aktuální squad: '+n;if(squadNameInput&&n!=='???')squadNameInput.value=n}
-function initPlayerCard(){const name=playerNick();if(pcNick)pcNick.textContent=name;if(pcAvatar&&payload?.player?.src)pcAvatar.src=payload.player.src;updateSquadUI()}
+function initPlayerCard(){const name=playerNick();if(pcNick)pcNick.textContent=name;if(pcAvatar)pcAvatar.src=getProfileAvatar();updateSquadUI()}
 if(selected&&(!isOwned(selected)||!hasLevelForWeapon(selected))&&!(selected==='awp'&&localStorage.getItem('MADNESS_TROLL_AWP')==='1')){selected='';localStorage.removeItem('MADNESS_SELECTED_WEAPON')}
 try{const list=JSON.parse(localStorage.getItem('MADNESS_SERVERS')||'[]'),sid=localStorage.getItem('MADNESS_ACTIVE_SERVER');const srv=list.find(s=>s.id===sid);serverText.textContent=srv?('server: '+srv.name):'bez serveru';}catch(e){serverText.textContent='bez serveru'}
 const state={mapW:1600,mapH:900,scale:1,mapDrawW:1600,mapDrawH:900,mapY:0,player:{x:390,y:770,face:-1,weapon:!!selected,weaponType:selected},friend:{x:1180,y:770,face:1,name:null,moving:false,targetX:1180,wait:rand(1.2,4.2),chat:null,chatCooldown:rand(1.8,5.5),speed:rand(70,115)},remotePlayers:[],remoteImgs:{},intro:{active:false,idx:0,timer:0,zoom:1},keys:{a:0,d:0,w:0,s:0},rain:[],splashes:[],mouseX:0,mouseY:0};
@@ -301,7 +381,7 @@ function setIntroLine(){
 }
 function startIntroStory(){
   if(localStorage.getItem('MADNESS_INTRO_SEEN')==='1')return;
-  if(!payload||!payload.player||!payload.player.src)return;
+  if(!payload||!payload.player||!payloadSrc(payload.player))return;
   state.intro.active=true;state.intro.idx=0;state.intro.timer=0;state.intro.zoom=1.22;
   setIntroLine();
 }
@@ -419,10 +499,10 @@ function drawLobbyObjects(){
 function drawScene(){
   if(mapImg.complete&&mapImg.naturalWidth)ctx.drawImage(mapImg,-camX,state.mapY,state.mapDrawW,state.mapDrawH);
   ctx.fillStyle='rgba(0,0,0,.18)';ctx.fillRect(0,0,W,H);
-  drawLobbyObjects();drawRemotePlayers();drawSprite(playerFullImg,state.friend,state.friend.face,165);drawNameTag(state.friend,state.friend.name||'NPC','#b9ffb9');drawFriendChat();
+  drawLobbyObjects();drawRemotePlayers();drawSprite(playerFullImg,state.friend,state.friend.face,165);drawNameTag(state.friend,state.friend.name||'NPC','#b9ffb9',1,null);drawFriendChat();
   drawSprite(state.player.weapon?playerNoHandsImg:playerFullImg,state.player,state.player.face,170);
   if(state.player.weapon)drawGun(state.player);
-  drawNameTag(state.player,formatPlayerLabel(playerNick(),getSquadName()),'#ffd6d6');drawRain();
+  drawNameTag(state.player,formatPlayerLabel(playerNick(),getSquadName(),getLevel()),'#ffd6d6',getLevel(),getSquadName());drawRain();
 }
 function draw(){
   ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
@@ -500,6 +580,20 @@ async function inviteToSquad(pid){
   sendChat('/invite '+(p.nick||'hráč')+' do squad '+squad);
   showMsg('Pozván hráč: '+(p.nick||'hráč'));
 }
+function rankBadgeFor(r,i){
+  const nick=String(r.nick||'');
+  if(/lukamer|lukas|lukáš|lukcheat/i.test(nick))return {text:'DEV',cls:'developer'};
+  const glory=Number(r.glory||0), lvl=Number(r.level||1), kills=Number(r.kills||0), missions=Number(r.missions||0), wave=Number(r.best_wave||0);
+  const score=glory + lvl*130 + kills*18 + missions*80 + wave*35;
+  if(i===0 && score>=1200)return {text:'LEGEND',cls:'legend'};
+  if(score>=2500 || lvl>=9 || kills>=120)return {text:'EPIC+',cls:'epic'};
+  if(score>=1500 || lvl>=7 || kills>=70)return {text:'EPIC',cls:'epic'};
+  if(score>=900 || lvl>=5 || kills>=35)return {text:'GOLD',cls:'gold'};
+  if(score>=450 || lvl>=3 || kills>=15)return {text:'SILVER',cls:'silver'};
+  if(score>=150 || kills>=3 || missions>=1)return {text:'BRONZE',cls:'bronze'};
+  return {text:'ROOKIE',cls:'rookie'};
+}
+function rankBadgeHtml(r,i){const b=rankBadgeFor(r,i);return '<span class="rankBadge '+b.cls+'">'+b.text+'</span>'}
 async function openLeaderboard(){
   openModal('leaderboardModal');
   if(!leaderboardBody)return;
@@ -511,7 +605,7 @@ async function openLeaderboard(){
     if(!error)rows=data||[];
   }
   if(!rows.length)rows=[{nick:playerNick(),kills:getKills(),glory:calcGlory(),level:getLevel(),missions:getMissions(),best_wave:getBestWave()}];
-  leaderboardBody.innerHTML='<table class="statTable"><thead><tr><th>#</th><th>Nick</th><th>Sláva</th><th>Level</th><th>Killy</th><th>Mise</th><th>Vlna</th></tr></thead><tbody>'+rows.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+chatSafe(r.nick||'PLAYER')+'</td><td>'+(r.glory||0)+'</td><td>'+(r.level||1)+'</td><td>'+(r.kills||0)+'</td><td>'+(r.missions||0)+'</td><td>'+(r.best_wave||0)+'</td></tr>').join('')+'</tbody></table>';
+  leaderboardBody.innerHTML='<table class="statTable"><thead><tr><th>#</th><th>Nick</th><th>Sláva</th><th>Level</th><th>Killy</th><th>Mise</th><th>Vlna</th></tr></thead><tbody>'+rows.map((r,i)=>'<tr><td class="rankPos">#'+(i+1)+'</td><td class="nickCell">'+chatSafe(r.nick||'PLAYER')+rankBadgeHtml(r,i)+'</td><td class="statNum">'+(r.glory||0)+'</td><td class="statNum">LVL '+(r.level||1)+'</td><td class="statNum">'+(r.kills||0)+'</td><td class="statNum">'+(r.missions||0)+'</td><td class="statNum">'+(r.best_wave||0)+'</td></tr>').join('')+'</tbody></table>';
 }
 function getRewardedAchievements(){try{return JSON.parse(localStorage.getItem('MADNESS_ACH_REWARDED')||'[]')}catch(e){return []}}
 function saveRewardedAchievements(a){localStorage.setItem('MADNESS_ACH_REWARDED',JSON.stringify([...new Set(a)]))}
@@ -615,6 +709,7 @@ async function syncOwnPresence(){
     weapon_type:state.player.weaponType||null,
     avatar_src:ownAvatarSrc(),
     squad_name:getSquadName()==='???'?null:getSquadName(),
+    level:getLevel(),
     updated_at:new Date().toISOString()
   };
   const {error}=await SB.from('madness_lobby_players').upsert(row,{onConflict:'server_id,player_id'});
@@ -624,7 +719,7 @@ async function loadRemotePlayers(){
   if(!SB)return;
   const sid=activeServerId(), me=getClientId(), cutoff=new Date(Date.now()-7000).toISOString();
   const {data,error}=await SB.from('madness_lobby_players')
-    .select('player_id,nick,x,y,face,weapon_type,avatar_src,squad_name,updated_at')
+    .select('player_id,nick,x,y,face,weapon_type,avatar_src,squad_name,level,updated_at')
     .eq('server_id',sid)
     .gt('updated_at',cutoff);
   if(error){console.warn('presence load error:',error.message);return}
@@ -641,9 +736,10 @@ async function loadRemotePlayers(){
     }
   }
 }
-function formatPlayerLabel(nick,squad){
+function formatPlayerLabel(nick,squad,level){
   squad=(squad&&squad!=='???')?String(squad).trim():'';
-  return squad?'('+squad+') '+(nick||'hráč'):(nick||'hráč');
+  const lvl=Math.max(1,Number(level)||1);
+  return squad?'LVL'+lvl+'x('+squad+') '+(nick||'hráč'):'LVL'+lvl+'x '+(nick||'hráč');
 }
 function drawRemotePlayers(){
   for(const rp of state.remotePlayers){
@@ -652,16 +748,19 @@ function drawRemotePlayers(){
     const imgObj=(rp.avatar_src&&state.remoteImgs[rp.player_id])||playerFullImg;
     const obj={x:rp.drawX,y:rp.drawY,face:Number(rp.face)||1};
     drawSprite(imgObj,obj,obj.face,168);
-    drawNameTag(obj, formatPlayerLabel(rp.nick,rp.squad_name), '#a8d8ff');
+    drawNameTag(obj, formatPlayerLabel(rp.nick,rp.squad_name,rp.level), '#a8d8ff', rp.level, rp.squad_name);
   }
 }
-function drawNameTag(obj,nick,color){
-  const x=worldToScreenX(obj.x), y=worldToScreenY(obj.y-182);
+function drawNameTag(obj,nick,color,level,squad){
+  const x=worldToScreenX(obj.x), y=worldToScreenY(obj.y-186);
+  const lvl=Math.max(1,Number(level)||1);
+  const maxHp=calcMaxHp(lvl,squad);
+  const hp=maxHp;
   ctx.save();
   ctx.font='bold '+Math.max(10,12*state.scale)+'px Courier New';
-  const txt=String(nick||'hráč').slice(0,18);
-  const pad=6*state.scale, tw=ctx.measureText(txt).width, bw=tw+pad*2, bh=20*state.scale;
-  ctx.fillStyle='rgba(0,0,0,.72)';
+  const txt=String(nick||'hráč').slice(0,28);
+  const pad=6*state.scale, tw=ctx.measureText(txt).width, bw=Math.max(tw+pad*2,74*state.scale), bh=21*state.scale;
+  ctx.fillStyle='rgba(0,0,0,.74)';
   ctx.strokeStyle='rgba(120,0,0,.75)';
   ctx.lineWidth=1;
   ctx.fillRect(x-bw/2,y-bh,bw,bh);
@@ -670,6 +769,13 @@ function drawNameTag(obj,nick,color){
   ctx.textAlign='center';
   ctx.textBaseline='middle';
   ctx.fillText(txt,x,y-bh/2);
+  const barY=y+3*state.scale, barH=5*state.scale;
+  ctx.fillStyle='rgba(25,0,0,.85)';
+  ctx.fillRect(x-bw/2,barY,bw,barH);
+  ctx.fillStyle='#28c940';
+  ctx.fillRect(x-bw/2,barY,bw*clamp(hp/maxHp,0,1),barH);
+  ctx.strokeStyle='rgba(0,0,0,.9)';
+  ctx.strokeRect(x-bw/2,barY,bw,barH);
   ctx.restore();
 }
 
@@ -821,6 +927,6 @@ function cleanupPresence(){
 addEventListener('pagehide',cleanupPresence);
 addEventListener('beforeunload',cleanupPresence);
 addEventListener('pointerdown',startMusic,{once:true});
-mapImg.onload=()=>recalc();initStarterPreview();initPlayerCard();loadGlobalCharacterIfNeeded();resize();applySettingsUI();updateMoneyUI();buildWeaponGrid();updateWeaponText();loadCurrentServer();touchActiveServer();cleanupStalePresence();setInterval(cleanupStalePresence,9000);syncOwnPresence();loadRemotePlayers();setInterval(syncOwnPresence,180);setInterval(loadRemotePlayers,260);setInterval(pollMission,700);syncPlayerStats();setInterval(syncPlayerStats,5000);loadChat();subscribeChat();showMsg('Lobby: klikni na dveře nebo panel');setTimeout(startIntroStory,2000);setTimeout(flashLightning,rand(2000,5000));requestAnimationFrame(loop);
+mapImg.onload=()=>recalc();initStarterPreview();initPlayerCard();loadGlobalCharacterIfNeeded();showDefaultCharacterHint();resize();applySettingsUI();updateMoneyUI();buildWeaponGrid();updateWeaponText();loadCurrentServer();touchActiveServer();cleanupStalePresence();setInterval(cleanupStalePresence,9000);syncOwnPresence();loadRemotePlayers();setInterval(syncOwnPresence,180);setInterval(loadRemotePlayers,260);setInterval(pollMission,700);syncPlayerStats();setInterval(syncPlayerStats,5000);loadChat();subscribeChat();showMsg('Lobby: klikni na dveře nebo panel');setTimeout(startIntroStory,2000);setTimeout(flashLightning,rand(2000,5000));requestAnimationFrame(loop);
 </script>
 </body></html>
