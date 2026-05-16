@@ -610,7 +610,7 @@
         <div class="game-name">ALKOCASE</div>
         <div class="game-status unlocked-tag">// odemčeno</div>
       </a>
-      <a href="char_editor_real_mapa_v30_menu_velka_dira/menu.html" class="game-card unlocked" onclick="return gotoApp('char_editor_real_mapa_v30_menu_velka_dira/menu.html')">
+      <a href="dira/menu.html" class="game-card unlocked" onclick="return gotoApp('dira/menu.html')">
         <div class="game-icon">🧥</div>
         <div class="game-name">GOPNIK</div>
         <div class="game-status unlocked-tag">// odemčeno</div>
@@ -787,7 +787,7 @@ function doLogin() {
   if (users[nick.toLowerCase()].pass !== btoa(pass)) { err.textContent = '// špatné heslo'; return; }
   setSession(nick); closeLogin(); updateNavAuth(); if(window._afterLogin){var fn=window._afterLogin;window._afterLogin=null;fn();}
   addSystemMsg('⚡ ' + nick + ' se připojil do crew!');
-  if (window._pendingRedirect) { const r = window._pendingRedirect; window._pendingRedirect = null; window.location.href = r; }
+  if (window._pendingRedirect) { const r = window._pendingRedirect; window._pendingRedirect = null; gotoApp(r); }
 }
 
 function doRegister() {
@@ -804,12 +804,25 @@ function doRegister() {
   users[nick.toLowerCase()] = { nick, pass: btoa(pass), created: Date.now() };
   saveUsers(users); setSession(nick); closeRegister(); updateNavAuth(); if(window._afterLogin){var fn=window._afterLogin;window._afterLogin=null;fn();}
   addSystemMsg('🎉 Vítej v crew, ' + nick + '!');
-  if (window._pendingRedirect) { const r = window._pendingRedirect; window._pendingRedirect = null; window.location.href = r; }
+  if (window._pendingRedirect) { const r = window._pendingRedirect; window._pendingRedirect = null; gotoApp(r); }
 }
 
 function gotoApp(url) {
-  if (!getSession()) { window._pendingRedirect = url; openLogin(); return false; }
-  window.location.href = url; return false;
+  const nick = getSession();
+  if (!nick) { window._pendingRedirect = url; openLogin(); return false; }
+
+  // Přenos nicku z hlavního indexu do hry GOPNIK / Velká díra 1.
+  localStorage.setItem('MADNESS_PLAYER_NAME', nick);
+  localStorage.setItem('RESPAWN_NICK', nick);
+
+  if (url.indexOf('dira/menu.html') !== -1) {
+    const sep = url.indexOf('?') === -1 ? '?' : '&';
+    window.location.href = url + sep + 'nick=' + encodeURIComponent(nick);
+    return false;
+  }
+
+  window.location.href = url;
+  return false;
 }
 
 // CHAT
