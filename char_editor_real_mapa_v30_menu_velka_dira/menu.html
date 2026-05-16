@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Velká díra 1</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050506;color:#ddd;font-family:'Courier New',monospace}
+body:before{content:"";position:fixed;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.50),rgba(0,0,0,.18),rgba(0,0,0,.58)),url('menu_bg.png') center center/cover no-repeat;z-index:0;filter:contrast(1.08) brightness(.82)}
+.wrap{position:relative;z-index:1;min-height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
+.panel{width:min(520px,92vw);background:rgba(5,5,7,.76);border:2px solid #7c0000;box-shadow:0 0 42px #000,inset 0 0 0 1px rgba(255,255,255,.05);padding:34px 34px 28px;backdrop-filter:blur(2px)}
+h1{margin:0 0 8px;font-size:38px;letter-spacing:4px;color:#e6e6e6;text-shadow:3px 3px #000,0 0 18px rgba(160,0,0,.45)}
+.sub{font-size:12px;color:#999;margin-bottom:28px;letter-spacing:2px;text-transform:uppercase}
+button{display:block;width:100%;margin:12px 0;padding:15px 16px;background:linear-gradient(180deg,#270000,#0d0000);border:1px solid #b00000;color:#ffd5d5;font:700 18px 'Courier New',monospace;cursor:pointer;letter-spacing:1px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 6px 16px rgba(0,0,0,.5)}
+button:hover{background:linear-gradient(180deg,#520000,#190000);color:#fff}#settingsBtn{position:fixed!important;right:14px!important;top:12px!important;z-index:50!important;width:46px!important;height:46px!important;min-width:46px!important;margin:0!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;border:1px solid #8a0000!important;background:rgba(10,10,12,.90)!important;color:#ffd2d2!important;font-size:24px!important;line-height:1!important;text-align:center!important;cursor:pointer!important;box-shadow:0 0 18px #000!important;border-radius:8px!important;letter-spacing:0!important}#settingsBtn:hover{background:#3a0000!important;color:#fff!important;transform:scale(1.03)}.setRow{margin:12px 0}.setRow label{display:flex;justify-content:space-between;color:#ccc;margin-bottom:5px}.setRow input,.setRow select{width:100%;accent-color:#b00000}
+.small{font-size:11px;color:#777;margin-top:18px;line-height:1.6}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:3;align-items:center;justify-content:center;padding:22px}#gameAlertModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.74);z-index:80;align-items:center;justify-content:center;padding:18px}#gameAlertBox{width:min(460px,92vw);background:#0b0b0d;border:2px solid #8a0000;box-shadow:0 0 36px #000;padding:20px;text-align:center;color:#ddd}#gameAlertBox h2{margin:0 0 12px;color:#ffbebe;letter-spacing:2px}#gameAlertText{white-space:pre-wrap;line-height:1.45}
+.box{width:min(560px,92vw);background:#0b0b0d;border:1px solid #800;padding:22px;text-align:left;box-shadow:0 0 30px #000}.box h2{margin-top:0;color:#ffb0b0}.box p{color:#bbb;line-height:1.6}.box button{font-size:14px;margin-top:18px}
+
+.badges{position:fixed;right:14px;bottom:14px;z-index:5;display:flex;flex-direction:column;gap:7px;align-items:flex-end}
+.badge{background:rgba(5,5,7,.82);border:1px solid #8a0000;color:#ffd6d6;padding:7px 10px;font:bold 12px 'Courier New',monospace;letter-spacing:1px;box-shadow:0 0 16px #000;text-shadow:1px 1px #000}
+.badge.dim{color:#aaa;border-color:#333}
+
+</style>
+</head>
+<body>
+<button id="settingsBtn" title="Nastavení" onclick="openBox('settings')">⚙</button>
+<div id="gameAlertModal"><div id="gameAlertBox"><h2>HLÁŠENÍ</h2><div id="gameAlertText"></div><button onclick="closeGameAlert()">ZAVŘÍT</button></div></div>
+<div class="badges"><div class="badge">2026</div><div class="badge dim">NO QUALITY</div><div class="badge">CREATED BY LUKAMER</div><div class="badge">PROTECTED BY LUKCHEAT</div></div>
+<div class="wrap"><div class="panel">
+  <h1>VELKÁ DÍRA 1</h1>
+  <div class="sub">hlavní menu</div>
+<button onclick="location.href='lobby.html'">HRÁT HRU</button>
+  <button onclick="openServerList()">SERVER LIST</button>
+  <button onclick="openBox('settings')">NASTAVENÍ</button>
+</div></div>
+
+<div class="modal" id="servers"><div class="box"><h2>AKTUÁLNÍ SERVERY</h2><div id="serverList" style="display:flex;flex-direction:column;gap:8px;margin:10px 0"></div><button onclick="createServer()">VYTVOŘIT SERVER / LOBBY</button><button onclick="closeBoxes()">ZAVŘÍT</button><p style="font-size:11px;color:#777;margin-top:12px">Teď je seznam uložený lokálně v prohlížeči. Pro opravdové online zobrazení ostatním hráčům se musí napojit databáze/server.</p></div></div>
+<div class="modal" id="settings"><div class="box"><h2>NASTAVENÍ</h2><p>Soubory: <b>hudba.mp3</b> a <b>strelba3.mp3</b>.</p><div class="setRow"><label><span>Grafika</span><span id="qualityLbl">střední</span></label><select id="qualitySel" onchange="setQuality(this.value)"><option value="low">nízká</option><option value="mid">střední</option><option value="high">vysoká</option></select></div><div class="setRow"><label><span>Hudba</span><span id="musicVolLbl">50%</span></label><input id="musicVol" type="range" min="0" max="100" value="50" oninput="setMusicVol(this.value)"></div><div class="setRow"><label><span>Střelba / SFX</span><span id="sfxVolLbl">80%</span></label><input id="sfxVol" type="range" min="0" max="100" value="80" oninput="setSfxVol(this.value)"></div><button onclick="closeBoxes()">ZAVŘÍT</button></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://fokguuucpoejkxklwrpw.supabase.co";
+const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZva2d1dXVjcG9lamt4a2x3cnB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NTc2NTgsImV4cCI6MjA5NDUzMzY1OH0.2nNJFm1yzgiaNuIsj4DWgS9zJunIYc1uKkWndw23VrY";
+let SB=null;
+try{if(window.supabase)SB=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){SB=null}
+function gameAlert(t){const m=document.getElementById('gameAlertModal'),x=document.getElementById('gameAlertText');if(x)x.textContent=String(t||'');if(m)m.style.display='flex'}function closeGameAlert(){const m=document.getElementById('gameAlertModal');if(m)m.style.display='none'}window.alert=gameAlert;
+function openBox(id){document.getElementById(id).style.display='flex'}
+function closeBoxes(){document.querySelectorAll('.modal').forEach(m=>m.style.display='none')}
+
+function getServers(){try{return JSON.parse(localStorage.getItem('MADNESS_SERVERS')||'[]')}catch(e){return []}}
+function saveServers(list){localStorage.setItem('MADNESS_SERVERS',JSON.stringify(list))}
+async function fetchLobbyCounts(){
+  if(!SB)return {};
+  const cutoff=new Date(Date.now()-20000).toISOString();
+  const {data,error}=await SB.from('madness_lobby_players').select('server_id,player_id').gt('updated_at',cutoff);
+  if(error)return {};
+  const counts={};
+  (data||[]).forEach(p=>{counts[p.server_id]=(counts[p.server_id]||0)+1});
+  return counts;
+}
+async function fetchOnlineServers(){
+  if(!SB)return null;
+  const {data,error}=await SB.from('madness_servers').select('*').order('updated_at',{ascending:false}).limit(40);
+  if(error){console.warn('Supabase server list error:',error.message);return null}
+  return data||[];
+}
+function openServerList(){renderServers();openBox('servers')}
+async function renderServers(){
+  const box=document.getElementById('serverList'); if(!box)return;
+  box.innerHTML='<p style="color:#888">Načítám servery...</p>';
+  let list=await fetchOnlineServers();
+  const onlineCounts=await fetchLobbyCounts();
+  let online=true;
+  if(!list){
+    online=false;
+    list=getServers().filter(s=>Date.now()-(s.created||0)<1000*60*60*24);
+    saveServers(list);
+  }
+  box.innerHTML='';
+  if(online){const now=Date.now();list=list.filter(s=>(onlineCounts[s.id]||0)>0 || (s.updated_at && now-new Date(s.updated_at).getTime()<25000));}
+  if(!list.length){box.innerHTML='<p style="color:#888">Žádný online server. Vytvoř nový.</p>';return;}
+  list.forEach(s=>{ if(onlineCounts[s.id]!==undefined)s.players=onlineCounts[s.id];
+    const row=document.createElement('div');
+    row.style.cssText='border:1px solid #333;background:#080808;padding:10px;display:flex;justify-content:space-between;gap:10px;align-items:center';
+    const id=String(s.id).replace(/'/g,'');
+    row.innerHTML='<span><b>'+escapeHtml(s.name||'Lobby')+'</b><br><small>'+(online?'ONLINE • ':'LOCAL • ')+'vytvořil: '+escapeHtml(s.host||'Hráč')+' • hráči: '+(s.players||1)+'</small></span><button style="width:auto;margin:0;font-size:13px" onclick="joinServer(\''+id+'\')">PŘIPOJIT</button>';
+    box.appendChild(row);
+  });
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function getClientId(){let id=localStorage.getItem('MADNESS_CLIENT_ID');if(!id){id='p_'+Math.random().toString(36).slice(2,10)+'_'+Date.now().toString(36);localStorage.setItem('MADNESS_CLIENT_ID',id)}return id}
+async function createServer(){
+  const host=(localStorage.getItem('MADNESS_PLAYER_NAME')||prompt('Jméno hráče / hostitele serveru:','Hráč')||'Hráč').trim()||'Hráč';
+  localStorage.setItem('MADNESS_PLAYER_NAME',host);
+  const id='srv_'+Math.random().toString(36).slice(2,9);
+  const name=host+' vytvořil lobby';
+  const row={id,name,host,host_player_id:getClientId(),players:1,updated_at:new Date().toISOString()};
+  if(SB){
+    const {error}=await SB.from('madness_servers').upsert(row,{onConflict:'id'});
+    if(error)console.warn('Supabase create server error:',error.message);
+  }
+  const list=getServers(); list.unshift({...row,created:Date.now()}); saveServers(list);
+  joinServer(id);
+}
+async function joinServer(id){
+  localStorage.setItem('MADNESS_ACTIVE_SERVER',id);
+  if(SB){
+    try{
+      const {data}=await SB.from('madness_servers').select('players').eq('id',id).maybeSingle();
+      await SB.from('madness_servers').update({players:Math.max(1,(data?.players||1)+1),updated_at:new Date().toISOString()}).eq('id',id);
+    }catch(e){}
+  }
+  location.href='lobby.html';
+}
+function getSettings(){return {quality:localStorage.getItem('MADNESS_QUALITY')||'mid',musicVol:localStorage.getItem('MADNESS_MUSIC_VOL')||'50',sfxVol:localStorage.getItem('MADNESS_SFX_VOL')||'80'}}
+function applySettingsUI(){const s=getSettings();const q=document.getElementById('qualitySel'),mv=document.getElementById('musicVol'),sv=document.getElementById('sfxVol');if(q)q.value=s.quality;if(mv)mv.value=s.musicVol;if(sv)sv.value=s.sfxVol;const ql=document.getElementById('qualityLbl'),ml=document.getElementById('musicVolLbl'),sl=document.getElementById('sfxVolLbl');if(ql)ql.textContent=s.quality==='low'?'nízká':s.quality==='high'?'vysoká':'střední';if(ml)ml.textContent=s.musicVol+'%';if(sl)sl.textContent=s.sfxVol+'%'}
+function setQuality(v){localStorage.setItem('MADNESS_QUALITY',v);applySettingsUI()}
+function setMusicVol(v){localStorage.setItem('MADNESS_MUSIC_VOL',String(v));applySettingsUI()}
+function setSfxVol(v){localStorage.setItem('MADNESS_SFX_VOL',String(v));applySettingsUI()}
+applySettingsUI();
+</script>
+</body></html>
