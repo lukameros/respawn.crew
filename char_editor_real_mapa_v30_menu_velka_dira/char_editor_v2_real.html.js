@@ -62,7 +62,7 @@ button.icon-btn:hover{background:#2a2a4a;color:#fff;border-color:#7f7fff;}
   <button class="tab-btn" id="tab-game" onclick="switchToGame()">▶ HRA</button>
   <button class="tab-btn" id="tab-real" onclick="openRealMap()" title="Uloží postavu a otevře misi">🌧 REAL MAPA</button>
   <button class="tab-btn" id="tab-lobby" onclick="openLobby()" title="Uloží postavu a otevře lobby">🏠 LOBBY</button>
-  <button class="tab-btn" onclick="location.href='skeleton_editor.html'" title="Nastavit animaci assetů">🎞️ ASSET KEYFRAMES v56</button>
+  <button class="tab-btn" onclick="location.href='skeleton_editor.html'" title="Nastavit animaci assetů">🎞️ ASSET KEYFRAMES v57</button>
   <button class="tab-btn" id="tab-save-global" onclick="saveOnline()" title="Uloží hráče i NPC online">💾 ULOŽIT ONLINE</button>
 </div>
 <div id="onlineSaveStatus"></div>

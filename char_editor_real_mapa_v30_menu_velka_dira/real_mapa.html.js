@@ -75,7 +75,7 @@ body.shake #game{animation:shake .22s linear 1}@keyframes shake{0%{transform:tra
   </div>
 </div>
 <div id="animOverlay"></div>
-<div id="engineBadge">ENGINE v56 • PLAYER ONLY MOTION v54 v49</div>
+<div id="engineBadge">ENGINE v57 • PLAYER ONLY MOTION v54 v49</div>
 <div id="lightning"></div>
 <div id="topHud">
   <div class="waveText"><div id="waveTitle">VLNA 1</div><div class="small" id="waveCount">0 / 0</div></div>
@@ -1176,7 +1176,7 @@ function drawRain(){ctx.save();ctx.lineCap='round';for(const r of state.rain){ct
 function drawBullets(arr,enemy=false){for(const b of arr){const x=worldToScreenX(b.x),y=worldToScreenY(b.y);ctx.fillStyle=enemy?'rgba(255,80,80,.95)':'rgba(255,220,60,.95)';ctx.beginPath();ctx.arc(x,y,enemy?2.5:3,0,Math.PI*2);ctx.fill();ctx.strokeStyle=enemy?'rgba(255,50,50,.45)':'rgba(255,160,0,.5)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-b.vx*state.scale*.026,y-b.vy*state.scale*.026);ctx.stroke()}}
 function drawWorldHp(obj,max,dy){const x=worldToScreenX(obj.x),y=worldToScreenY(obj.y-dy);ctx.fillStyle='rgba(30,0,0,.85)';ctx.fillRect(x-30,y,60,6);ctx.fillStyle='rgba(0,210,0,.9)';ctx.fillRect(x-30,y,60*clamp(obj.hp/max,0,1),6);ctx.strokeStyle='rgba(0,0,0,.75)';ctx.strokeRect(x-30,y,60,6)}
 function drawHitEffects(){for(const h of state.hitEffects){const t=h.life/h.max,x=worldToScreenX(h.x),y=worldToScreenY(h.y);ctx.save();ctx.globalAlpha=t;ctx.strokeStyle='rgba(190,0,0,.9)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x-8,y-4);ctx.lineTo(x+8,y+5);ctx.moveTo(x+6,y-7);ctx.lineTo(x-5,y+6);ctx.stroke();ctx.restore()}}
-function updateHud(){const p=state.player;const alive=state.enemies.filter(e=>!e.dead).length;waveTitle.textContent='VLNA '+state.wave+' • ENGINE v56';waveCount.textContent='enemy '+alive+' / '+state.waveTotal;waveFill.style.width=(state.waveTotal?clamp(state.waveKilled/state.waveTotal*100,0,100):0)+'%';hpFill.style.width=clamp(p.hp/p.maxHp*100,0,100)+'%';ammoLine.innerHTML='LVL '+getLevel()+' • HP '+Math.round(p.hp)+'/'+p.maxHp+(squadBonusActive()?' • SQUAD HP +5%':'')+'<br>'+(p.weapon?weaponLabel(p.weaponType)+' '+p.ammo+'/'+MAG_SIZE+' • zás. '+p.mags+(isTrollAwpActive()?' • troll '+trollAwpShotsLeft()+'/2':''):'bez zbraně')+(p.reloading?' • reload':'');statusLine.textContent=''}
+function updateHud(){const p=state.player;const alive=state.enemies.filter(e=>!e.dead).length;waveTitle.textContent='VLNA '+state.wave+' • ENGINE v57';waveCount.textContent='enemy '+alive+' / '+state.waveTotal;waveFill.style.width=(state.waveTotal?clamp(state.waveKilled/state.waveTotal*100,0,100):0)+'%';hpFill.style.width=clamp(p.hp/p.maxHp*100,0,100)+'%';ammoLine.innerHTML='LVL '+getLevel()+' • HP '+Math.round(p.hp)+'/'+p.maxHp+(squadBonusActive()?' • SQUAD HP +5%':'')+'<br>'+(p.weapon?weaponLabel(p.weaponType)+' '+p.ammo+'/'+MAG_SIZE+' • zás. '+p.mags+(isTrollAwpActive()?' • troll '+trollAwpShotsLeft()+'/2':''):'bez zbraně')+(p.reloading?' • reload':'');statusLine.textContent=''}
 function drawNpcChat(e){
   if(!e.chat||!e.chat.text)return;
   const alpha=clamp(e.chat.life/.45,0,1);
