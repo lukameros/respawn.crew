@@ -51,6 +51,7 @@ button.icon-btn:hover{background:#2a2a4a;color:#fff;border-color:#7f7fff;}
 #gameAlertModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.74);z-index:99999;align-items:center;justify-content:center;padding:18px}#gameAlertBox{width:min(480px,92vw);background:#08080a;border:2px solid #4b6cff;box-shadow:0 0 36px #000;padding:18px;text-align:center;color:#ddd;font-family:'Courier New',monospace}#gameAlertBox h2{margin:0 0 12px;color:#b8c8ff;letter-spacing:2px}#gameAlertText{white-space:pre-wrap;line-height:1.45}.gameAlertBtn{margin-top:14px;background:#101631;border:1px solid #5d76ff;color:#dce4ff;padding:10px 16px;cursor:pointer;font:bold 13px 'Courier New',monospace}
 
 #onlineSaveStatus{position:fixed;right:14px;bottom:14px;z-index:9999;background:rgba(0,0,0,.78);border:1px solid #4b6cff;color:#dce4ff;padding:9px 12px;font:12px 'Courier New',monospace;box-shadow:0 0 18px #000;display:none;max-width:360px}
+.adminOnlyBtn{display:none!important}.adminOnlyBtn.adminVisible{display:inline-block!important}
 </style>
 </head>
 <body>
@@ -62,7 +63,7 @@ button.icon-btn:hover{background:#2a2a4a;color:#fff;border-color:#7f7fff;}
   <button class="tab-btn" id="tab-game" onclick="switchToGame()">▶ HRA</button>
   <button class="tab-btn" id="tab-real" onclick="openRealMap()" title="Uloží postavu a otevře misi">🌧 REAL MAPA</button>
   <button class="tab-btn" id="tab-lobby" onclick="openLobby()" title="Uloží postavu a otevře lobby">🏠 LOBBY</button>
-  <button class="tab-btn" onclick="location.href='skeleton_editor.html'" title="Nastavit animaci assetů">🎞️ ASSET KEYFRAMES v57</button>
+  <button class="tab-btn adminOnlyBtn" onclick="location.href='skeleton_editor.html'" title="Nastavit animaci assetů">🎞️ ASSET KEYFRAMES v58</button>
   <button class="tab-btn" id="tab-save-global" onclick="saveOnline()" title="Uloží hráče i NPC online">💾 ULOŽIT ONLINE</button>
 </div>
 <div id="onlineSaveStatus"></div>
@@ -173,17 +174,15 @@ button.icon-btn:hover{background:#2a2a4a;color:#fff;border-color:#7f7fff;}
 </div>
 <div id="gif-holder"><img id="gif-dom"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-if(location.protocol!=='file:'){
-  document.write('<scr'+'ipt src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></scr'+'ipt>');
-}else{
-  window.supabase=null;
-}
-</script>
-<script>
+
+function isLukamerUser(){const n=String(localStorage.getItem('MADNESS_PLAYER_NAME')||localStorage.getItem('RESPAWN_NICK')||localStorage.getItem('squad_session')||'').trim().toLowerCase();return n==='lukamer'}
+function revealAdminOnlyButtons(){document.querySelectorAll('.adminOnlyBtn').forEach(b=>{if(isLukamerUser())b.classList.add('adminVisible');else b.classList.remove('adminVisible')})}
+setTimeout(revealAdminOnlyButtons,0);
 const SUPABASE_URL="https://fokguuucpoejkxklwrpw.supabase.co";
 const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZva2d1dXVjcG9lamt4a2x3cnB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NTc2NTgsImV4cCI6MjA5NDUzMzY1OH0.2nNJFm1yzgiaNuIsj4DWgS9zJunIYc1uKkWndw23VrY";
-let SB=null;try{if(window.supabase)SB=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){SB=null}
+let SB=null;try{if(window.supabase)SB=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){}
 function getClientId(){let id=localStorage.getItem("MADNESS_CLIENT_ID");if(!id){id="p_"+Math.random().toString(36).slice(2,10)+"_"+Date.now().toString(36);localStorage.setItem("MADNESS_CLIENT_ID",id)}return id}
 async function saveOnlinePayload(payload,npc){
   if(!SB){

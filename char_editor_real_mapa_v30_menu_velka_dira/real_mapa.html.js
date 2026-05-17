@@ -75,7 +75,7 @@ body.shake #game{animation:shake .22s linear 1}@keyframes shake{0%{transform:tra
   </div>
 </div>
 <div id="animOverlay"></div>
-<div id="engineBadge">ENGINE v57 • PLAYER ONLY MOTION v54 v49</div>
+<div id="engineBadge">ENGINE v58 • PLAYER ONLY MOTION v54 v49</div>
 <div id="lightning"></div>
 <div id="topHud">
   <div class="waveText"><div id="waveTitle">VLNA 1</div><div class="small" id="waveCount">0 / 0</div></div>
@@ -93,13 +93,7 @@ body.shake #game{animation:shake .22s linear 1}@keyframes shake{0%{transform:tra
 <div id="missing"><div><b>Chybí uložená postava.</b><br><br>Vrať se do menu nebo editoru a zkus načíst postavu znovu.</div></div>
 <audio id="music" src="hudba.mp3" loop preload="auto"></audio>
 <audio id="shotAudio" src="strelba3.mp3" preload="auto"></audio>
-<script>
-if(location.protocol!=='file:'){
-  document.write('<scr'+'ipt src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></scr'+'ipt>');
-}else{
-  window.supabase=null;
-}
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL="https://fokguuucpoejkxklwrpw.supabase.co";
 const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZva2d1dXVjcG9lamt4a2x3cnB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NTc2NTgsImV4cCI6MjA5NDUzMzY1OH0.2nNJFm1yzgiaNuIsj4DWgS9zJunIYc1uKkWndw23VrY";
@@ -116,7 +110,7 @@ function bootstrapNickFromIndex(){
 }
 bootstrapNickFromIndex();
 
-let SB=null;try{if(window.supabase)SB=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){SB=null}
+let SB=null;try{if(window.supabase)SB=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){}
 const cv=document.getElementById('game'), ctx=cv.getContext('2d');
 const animOverlay=document.getElementById('animOverlay');
 const lightning=document.getElementById('lightning'), msg=document.getElementById('msg'), missing=document.getElementById('missing');
@@ -611,6 +605,7 @@ function stackBoundsRT(items){
   return {minX,minY,maxX,maxY};
 }
 
+function layerIdRT(i,l){return i+'_'+(l&&l.key||'layer')}
 function frameOffsetRT(anim,action,i,l){
   const act=anim&&anim.actions&&anim.actions[action];
   if(!act||!act.frames||!act.frames.length)return {dx:0,dy:0,rot:0,scale:100,alpha:100};
@@ -1176,7 +1171,7 @@ function drawRain(){ctx.save();ctx.lineCap='round';for(const r of state.rain){ct
 function drawBullets(arr,enemy=false){for(const b of arr){const x=worldToScreenX(b.x),y=worldToScreenY(b.y);ctx.fillStyle=enemy?'rgba(255,80,80,.95)':'rgba(255,220,60,.95)';ctx.beginPath();ctx.arc(x,y,enemy?2.5:3,0,Math.PI*2);ctx.fill();ctx.strokeStyle=enemy?'rgba(255,50,50,.45)':'rgba(255,160,0,.5)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-b.vx*state.scale*.026,y-b.vy*state.scale*.026);ctx.stroke()}}
 function drawWorldHp(obj,max,dy){const x=worldToScreenX(obj.x),y=worldToScreenY(obj.y-dy);ctx.fillStyle='rgba(30,0,0,.85)';ctx.fillRect(x-30,y,60,6);ctx.fillStyle='rgba(0,210,0,.9)';ctx.fillRect(x-30,y,60*clamp(obj.hp/max,0,1),6);ctx.strokeStyle='rgba(0,0,0,.75)';ctx.strokeRect(x-30,y,60,6)}
 function drawHitEffects(){for(const h of state.hitEffects){const t=h.life/h.max,x=worldToScreenX(h.x),y=worldToScreenY(h.y);ctx.save();ctx.globalAlpha=t;ctx.strokeStyle='rgba(190,0,0,.9)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x-8,y-4);ctx.lineTo(x+8,y+5);ctx.moveTo(x+6,y-7);ctx.lineTo(x-5,y+6);ctx.stroke();ctx.restore()}}
-function updateHud(){const p=state.player;const alive=state.enemies.filter(e=>!e.dead).length;waveTitle.textContent='VLNA '+state.wave+' • ENGINE v57';waveCount.textContent='enemy '+alive+' / '+state.waveTotal;waveFill.style.width=(state.waveTotal?clamp(state.waveKilled/state.waveTotal*100,0,100):0)+'%';hpFill.style.width=clamp(p.hp/p.maxHp*100,0,100)+'%';ammoLine.innerHTML='LVL '+getLevel()+' • HP '+Math.round(p.hp)+'/'+p.maxHp+(squadBonusActive()?' • SQUAD HP +5%':'')+'<br>'+(p.weapon?weaponLabel(p.weaponType)+' '+p.ammo+'/'+MAG_SIZE+' • zás. '+p.mags+(isTrollAwpActive()?' • troll '+trollAwpShotsLeft()+'/2':''):'bez zbraně')+(p.reloading?' • reload':'');statusLine.textContent=''}
+function updateHud(){const p=state.player;const alive=state.enemies.filter(e=>!e.dead).length;waveTitle.textContent='VLNA '+state.wave+' • ENGINE v58';waveCount.textContent='enemy '+alive+' / '+state.waveTotal;waveFill.style.width=(state.waveTotal?clamp(state.waveKilled/state.waveTotal*100,0,100):0)+'%';hpFill.style.width=clamp(p.hp/p.maxHp*100,0,100)+'%';ammoLine.innerHTML='LVL '+getLevel()+' • HP '+Math.round(p.hp)+'/'+p.maxHp+(squadBonusActive()?' • SQUAD HP +5%':'')+'<br>'+(p.weapon?weaponLabel(p.weaponType)+' '+p.ammo+'/'+MAG_SIZE+' • zás. '+p.mags+(isTrollAwpActive()?' • troll '+trollAwpShotsLeft()+'/2':''):'bez zbraně')+(p.reloading?' • reload':'');statusLine.textContent=''}
 function drawNpcChat(e){
   if(!e.chat||!e.chat.text)return;
   const alpha=clamp(e.chat.life/.45,0,1);
