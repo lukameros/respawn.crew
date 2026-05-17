@@ -1,2 +1,14 @@
 <!DOCTYPE html>
-<html lang="cs"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Velká díra 1</title><meta http-equiv="refresh" content="0; url=loading.html"><script>location.replace('loading.html');</script></head><body><a href="loading.html">Spustit hru</a></body></html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Velká díra 1</title>
+<script>
+location.replace('./loading.html'+(location.search||''));
+</script>
+</head>
+<body style="margin:0;background:#030304;color:#eee;font-family:monospace;display:grid;place-items:center;height:100vh">
+<a href="./loading.html" style="color:#ffd0d0">Spustit hru</a>
+</body>
+</html>

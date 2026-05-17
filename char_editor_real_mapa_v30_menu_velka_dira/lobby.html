@@ -31,37 +31,20 @@ button:hover{background:#520000}
 <div class="warn">Po načtení klikni na HRÁT.</div>
 </div></div>
 <script>
-const FILES=["ammo_crate.png", "armored_enemy.png", "awp_hold.png", "bench_lavice.png", "blood_splat.png", "char_editor_v2.html", "char_editor_v2_real.html", "char_editor_v2_real.html.js", "hudba.mp3", "index.html", "loading.html", "lobby.html", "lobby_crate.png", "lobby_map.png", "m4_hold.png", "m60_hold.png", "mapa.png", "menu.html", "menu_bg.png", "real_mapa.html", "real_mapa.html.js", "skeleton_editor.html", "strelba3.mp3", "sw.js", "version.json"];
-const CURRENT_CACHE='velka-dira-current';
-const UPDATE_CACHE='velka-dira-v58-update';
-const VERSION='v58';
-const BASE='./';
-const fill=document.getElementById('fill'), pct=document.getElementById('pct'), fileEl=document.getElementById('file'), playBtn=document.getElementById('playBtn'), statusEl=document.getElementById('status');
-let total=0,done=0,shown=false;
-function urlOf(f){return BASE+String(f).replace(/^\.\//,'');}
-function setBar(p,name){fill.style.width=p+'%';pct.textContent=p+'%';if(name)fileEl.textContent=name;}
-function step(name){done++;const p=total?Math.min(100,Math.round(done/total*100)):100;setBar(p,name||'hotovo');}
-function showPlay(text){if(text)statusEl.textContent=text;playBtn.style.display='inline-block';shown=true;}
-function go(){location.href=urlOf('menu.html');}
-setTimeout(()=>{if(!shown){setBar(100,'připraveno');showPlay('Připraveno.')}},3500);
-async function registerSW(){if(location.protocol==='file:')return;if('serviceWorker' in navigator){try{await navigator.serviceWorker.register(urlOf('sw.js'),{scope:'./'});}catch(e){}}}
-async function manifest(){try{const r=await fetch(urlOf('version.json')+'?v='+Date.now(),{cache:'no-store'});if(r.ok)return await r.json();}catch(e){}return {version:VERSION,files:Object.fromEntries(FILES.map(f=>[f,{size:0,sha256:'x'}]))};}
-function localManifest(){try{return JSON.parse(localStorage.getItem('MADNESS_VERSION_MANIFEST')||'null')}catch(e){return null}}
-function changed(remote,local){const rf=remote.files||{},lf=(local&&local.files)||{};return Object.keys(rf).filter(f=>!lf[f]||lf[f].sha256!==rf[f].sha256||lf[f].size!==rf[f].size);}
-async function cacheOne(cache,f){try{const u=urlOf(f);const res=await fetch(u,{cache:'reload'});if(res&&res.ok)await cache.put(u,res.clone());}catch(e){}step(f);}
-async function promote(remote){try{await caches.delete(CURRENT_CACHE);const cur=await caches.open(CURRENT_CACHE);const upd=await caches.open(UPDATE_CACHE);const keys=await upd.keys();for(const req of keys){const res=await upd.match(req);if(res)await cur.put(req,res);}await caches.delete(UPDATE_CACHE);localStorage.setItem('MADNESS_VERSION_MANIFEST',JSON.stringify(remote));localStorage.setItem('MADNESS_GAME_VERSION',remote.version||VERSION);}catch(e){}}
-async function start(){
-  if(location.protocol==='file:'){setBar(100,'připraveno');showPlay('Připraveno.');return;}
-  await registerSW();
-  const remote=await manifest();
-  const todo=changed(remote,localManifest());
-  if(!todo.length){setBar(100,'připraveno');showPlay('Připraveno.');return;}
-  if(!('caches' in window)){setBar(100,'připraveno');showPlay('Připraveno.');return;}
-  total=Math.max(1,todo.length);done=0;statusEl.textContent='Načítám hru...';
-  try{await caches.delete(UPDATE_CACHE);const c=await caches.open(UPDATE_CACHE);for(const f of todo)await cacheOne(c,f);await promote(remote);}catch(e){}
-  setBar(100,'připraveno');showPlay('Připraveno.');
+const fill=document.getElementById('fill'),pct=document.getElementById('pct'),fileEl=document.getElementById('file'),playBtn=document.getElementById('playBtn'),statusEl=document.getElementById('status');
+let p=0,done=false;
+function setP(v,t){p=Math.max(p,Math.min(100,v));fill.style.width=p+'%';pct.textContent=Math.round(p)+'%';if(t)fileEl.textContent=t}
+function go(){location.href='./menu.html'+(location.search||'')}
+function ready(){if(done)return;done=true;setP(100,'připraveno');statusEl.textContent='Připraveno.';playBtn.style.display='inline-block'}
+async function clearOld(){
+  try{if('serviceWorker' in navigator){const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()))}}catch(e){}
+  try{if('caches' in window){const keys=await caches.keys();await Promise.all(keys.filter(k=>String(k).indexOf('velka-dira')===0).map(k=>caches.delete(k)))}}catch(e){}
 }
-start();
+(function start(){
+  const timer=setInterval(()=>{if(done){clearInterval(timer);return}setP(p+14,'načítám...');if(p>=92)ready()},120);
+  clearOld().then(()=>setTimeout(ready,350)).catch(()=>setTimeout(ready,350));
+  setTimeout(ready,1500);
+})();
 </script>
 </body>
 </html>

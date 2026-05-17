@@ -208,3 +208,14 @@ v58:
 - V menu jsou dvě admin tlačítka skrytá pro všechny kromě nicku lukamer.
 - ASSET KEYFRAMES tlačítko v editoru je taky skryté pro nelukamer účty.
 - Version/cache aktualizované na v58.
+
+v59:
+- Loading kompletně zjednodušený pro GitHub Pages: už nedělá update smyčku ani version/cache fetch.
+- Loading jen krátce načte a zobrazí HRÁT.
+- Loading tiše smaže starý service worker a staré cache velka-dira, aby se nepouštěla stará rozbitá verze.
+- sw.js je no-op/unregister worker, aby nahradil starý service worker.
+- index.html bezpečně přesměruje na loading.html.
+- Opraveno layerIdRT is not defined.
+- Admin tlačítka zůstávají jen pro nick lukamer.
+- Avatar fallback zůstává inline, aby GitHub Pages nepadal na chybějící avatars folder.
+- JS syntax zkontrolovaná.

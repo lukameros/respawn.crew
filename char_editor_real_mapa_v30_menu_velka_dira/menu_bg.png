@@ -41,7 +41,7 @@ button{border-radius:7px!important;box-shadow:0 0 16px rgba(0,0,0,.6)}
 <button onclick="location.href='lobby.html'">HRÁT HRU</button>
   <button onclick="openServerList()">SERVER LIST</button>
   <button onclick="openBox('settings')">NASTAVENÍ</button>
-  <button id="adminAnimBtn" class="adminBtn" onclick="location.href='skeleton_editor.html'">ASSET KEYFRAMES v58</button>
+  <button id="adminAnimBtn" class="adminBtn" onclick="location.href='skeleton_editor.html'">ASSET KEYFRAMES v59</button>
   <button id="adminMenuBtn" class="adminBtn" onclick="location.href='char_editor_v2.html'">ADMINMENU</button>
 </div></div>
 
@@ -130,7 +130,7 @@ async function createServer(){
   const row={id,name,host,host_player_id:getClientId(),players:1,updated_at:new Date().toISOString()};
   if(SB){
     const {error}=await SB.from('madness_servers').upsert(row,{onConflict:'id'});
-    if(error)console.warn('Supabase create server error:',error.message);
+    if(error)console.warn('server create server error:',error.message);
   }
   const list=getServers(); list.unshift({...row,created:Date.now()}); saveServers(list);
   joinServer(id);
