@@ -1,6 +1,10 @@
 {
-  "version": "v60",
+  "version": "v64",
   "files": {
+    "admin.html": {
+      "size": 5930,
+      "sha256": "cdeccd32582010c624f46d989f1b1772c4126cf797e34d8616b34f077d433120"
+    },
     "ammo_crate.png": {
       "size": 466494,
       "sha256": "fa6ee7af41aebcc84a323475896758084d93d85a38f8178593d5785d30918c29"
@@ -22,16 +26,16 @@
       "sha256": "2d706aad8c2d5ec529411c2523fdafed189273222f4da76f606b54f3760af3eb"
     },
     "char_editor_v2.html": {
-      "size": 863026,
-      "sha256": "b34c615d0c16316b7f90fd5cf2d85237bfb1e146ee19939cc9b897b87cc9c144"
+      "size": 863078,
+      "sha256": "d599cbef1217f277e560929c39681fa11853870d1f5a791bf73b9550d6523080"
     },
     "char_editor_v2_real.html": {
-      "size": 863026,
-      "sha256": "b34c615d0c16316b7f90fd5cf2d85237bfb1e146ee19939cc9b897b87cc9c144"
+      "size": 863078,
+      "sha256": "d599cbef1217f277e560929c39681fa11853870d1f5a791bf73b9550d6523080"
     },
     "char_editor_v2_real.html.js": {
-      "size": 863026,
-      "sha256": "b34c615d0c16316b7f90fd5cf2d85237bfb1e146ee19939cc9b897b87cc9c144"
+      "size": 863078,
+      "sha256": "d599cbef1217f277e560929c39681fa11853870d1f5a791bf73b9550d6523080"
     },
     "hudba.mp3": {
       "size": 2722,
@@ -46,8 +50,8 @@
       "sha256": "0789d0605d3e81082336a85b94f233755caeb28f8c3cea0ade78fb377610c416"
     },
     "lobby.html": {
-      "size": 909575,
-      "sha256": "4eb7594fad4d355d3e62d17b6fad662285830bc3eb98b2d3e87dfe9a9d883cdd"
+      "size": 1072008,
+      "sha256": "1fd5d0e2f9d45ee50829b46fbbf0a382aef2d13c3d3b806eaeb08d2e0e49e75e"
     },
     "lobby_crate.png": {
       "size": 466494,
@@ -70,24 +74,24 @@
       "sha256": "f2ab59d9eecdfe97ebead67d485ab87a7d0dbe8ab79a1b37fc57202f220bbcdf"
     },
     "menu.html": {
-      "size": 13688,
-      "sha256": "0de06d22d8f55e23984b73f8352085f233ece06d0c0cfd983b50cc6d67de533c"
+      "size": 13679,
+      "sha256": "fb488b25f97a0ec2f837d484bfc42a84fc70f199ca8432b23aaf8226397e5eff"
     },
     "menu_bg.png": {
       "size": 572899,
       "sha256": "42cfb5b1f54698074e91eaa13091c0eeccbf817328ae3946a5a3b25ce44e70db"
     },
     "real_mapa.html": {
-      "size": 884697,
-      "sha256": "f667d377e0b43d50845d90059887bcc9f73c84a16a0b83e4badb331edceeaf3a"
+      "size": 1061414,
+      "sha256": "68768b25a568d8d9192ab39f8a4be577a5891a564c225bf13cded47eaace6932"
     },
     "real_mapa.html.js": {
-      "size": 884697,
-      "sha256": "f667d377e0b43d50845d90059887bcc9f73c84a16a0b83e4badb331edceeaf3a"
+      "size": 1061414,
+      "sha256": "68768b25a568d8d9192ab39f8a4be577a5891a564c225bf13cded47eaace6932"
     },
     "skeleton_editor.html": {
-      "size": 832390,
-      "sha256": "8d02ee339168f8bb7c9b180c34e092bd0854ab48c25393040e9912d11d5c33c7"
+      "size": 835801,
+      "sha256": "83734e64cb75256a1dbc6dd8699aac2a2c1d1a12c3ce7f08b0c5684d520a0fb3"
     },
     "strelba3.mp3": {
       "size": 746,

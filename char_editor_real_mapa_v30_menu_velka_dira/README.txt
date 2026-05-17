@@ -227,3 +227,49 @@ v60:
 - Pokud GitHub pořád reloaduje, je to starý service worker/cache v prohlížeči z předchozích verzí; musí se jednou odstranit v DevTools nebo otevřít URL s ?v=60.
 - Opraveno layerIdRT a zachované admin skrytí pro nelukamer.
 - JS syntax zkontrolovaná.
+
+v61:
+- ASSET KEYFRAME editor má nové útoky: attack_l, attack_r, kick.
+- Přidaná tlačítka pro combo animace: levá pěst, pravá pěst, kop.
+- V misi holý LMB bez zbraně dává melee damage a cyklí combo: levá pěst → pravá pěst → kop.
+- Melee animace se použije jen pokud je uložená; jinak postava zůstává v idle/walk.
+- Zmírněné houpání body/těla a rukou.
+- GIF chůze se znovu kreslí pod hráčem i v misi, pokud není přímo ve vrstvách.
+- Avatar ve misi má inline fallback.
+- Přidané tlačítko návratu z mise do lobby.
+- Odstraněné ENGINE info z mise.
+- JS syntax zkontrolovaná.
+
+v62:
+- Oprava GIF chůze: vestavěný default GIF se kreslí v lobby i v misi i bez externího .gif souboru.
+- Editor info texty skryté.
+- Anim editor umí vložit extra asset ze seznamu SRC a animovat ho samostatně.
+- Runtime kreslí extra assety z animací.
+- Adminmenu přidané jako admin.html pro lukamer.
+- Adminmenu: online hráči, přidat peníze, nastavit level, ban 1h, unban.
+- Adminmenu: přidat vlastní NPC asset, frekvence, HP, rychlost, drop chance, mise.
+- Mise načítá vlastní NPC konfiguraci.
+- Dead enemy zůstává na zemi do konce vlny/mise; pokud má zbraň, zbraň se kreslí u mrtvoly.
+- Přidaná death animace pro enemy/NPC.
+- JS syntax zkontrolovaná.
+
+v63:
+- Přidaná akce crouch / krčení do ASSET KEYFRAME editoru.
+- Přidané tlačítko KRČENÍ / KRYT pro rychlé vytvoření crouch pózy.
+- Mise má cover crates / překážky.
+- Hráč se automaticky krčí a schová za bednu, když je blízko překážky a poblíž je enemy.
+- Při skrytí enemy většinou nestřílí a damage do hráče je výrazně snížená.
+- Pokud není uložená crouch animace, engine použije nižší fallback výšku postavy.
+- Žádné nové canvas efekty, jen změna engine logiky a kreslení existující bedny jako překážky.
+- JS syntax zkontrolovaná.
+
+v64:
+- Vylepšená fyzika hráče: plynulejší akcelerace, brzda, lane pohyb W/S a náklon těla podle rychlosti.
+- Vylepšená kolize s bednami: hráč ani NPC neprochází přes cover bedny, těla se odsunou po hraně.
+- Cover bedny blokují střely hráče i enemy.
+- Enemy line-of-sight bere cover v úvahu; schovaný hráč je výrazně hůř trefitelný.
+- Kamera je plynulejší přes smooth follow.
+- Vykreslování má depth sorting podle Y: bedny, NPC, hráč, dropy se správně překrývají podle polohy.
+- Přidaný měkký kontakt stín pod postavami/bednami jako grafické ukotvení, bez nových částic/efektů.
+- Pohyb NPC je méně gumový a respektuje překážky.
+- JS syntax zkontrolovaná.
