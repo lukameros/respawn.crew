@@ -136,7 +136,7 @@ const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
 function bootstrapNickFromIndex(){
   try{
     const p=new URLSearchParams(location.search);
-    const nick=(p.get('nick')||localStorage.getItem('MADNESS_PLAYER_NAME')||localStorage.getItem('RESPAWN_NICK')||localStorage.getItem('squad_session')||'').trim();
+    let ses=localStorage.getItem('squad_session')||'';try{const o=JSON.parse(ses);ses=o.nick||o.name||o.user||ses}catch(e){}const nick=(p.get('nick')||localStorage.getItem('MADNESS_PLAYER_NAME')||localStorage.getItem('RESPAWN_NICK')||ses||'').trim();
     if(nick){
       localStorage.setItem('MADNESS_PLAYER_NAME',nick);
       localStorage.setItem('RESPAWN_NICK',nick);
@@ -152,34 +152,49 @@ let W=0,H=0,DPR=1,last=performance.now(),camX=0,msgTimer=0;
 const SETTINGS={quality:localStorage.getItem('MADNESS_QUALITY')||'mid',musicVol:localStorage.getItem('MADNESS_MUSIC_VOL')??'50',sfxVol:localStorage.getItem('MADNESS_SFX_VOL')??'80'};let payload=null;try{payload=JSON.parse(localStorage.getItem('MADNESS_REAL_PAYLOAD')||'null')}catch(e){payload=null}
 function payloadSrc(v){return typeof v==='string'?v:(v&&v.src)||''}const HAD_LOCAL_PAYLOAD=!!(payload&&payload.player&&payload.player.src);
 function img(src){const i=new Image();if(src)i.src=src;return i}
-function avatarSvg(kind){
-  const map={
-    red:['#8b1010','#f0d0a8','#1d1d1d'],
-    blue:['#163d7a','#e0c39b','#11152a'],
-    green:['#1f6b32','#e2c397','#1b261c']
-  };
-  const c=map[kind]||map.red;
-  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
-  <rect width="160" height="160" rx="18" fill="#070707"/>
-  <circle cx="80" cy="72" r="44" fill="${c[1]}" stroke="#111" stroke-width="6"/>
-  <path d="M36 60 Q80 18 124 60 Q108 43 80 45 Q52 43 36 60" fill="${c[2]}" stroke="#111" stroke-width="5"/>
-  <circle cx="64" cy="76" r="6" fill="#111"/><circle cx="96" cy="76" r="6" fill="#111"/>
-  <path d="M60 101 Q80 116 100 101" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round"/>
-  <path d="M30 148 Q80 106 130 148" fill="${c[0]}" stroke="#111" stroke-width="6"/>
-  </svg>`;
-  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+const PROFILE_AVATARS=[
+  {id:'avatar_1',name:'MASKA 1',src:'avatars/avatar_1.png'},
+  {id:'avatar_2',name:'MASKA 2',src:'avatars/avatar_2.png'},
+  {id:'avatar_3',name:'MASKA 3',src:'avatars/avatar_3.png'}
+];
+const LUKAMER_AVATAR={id:'jesus_lukamer',name:'JESUS',src:'avatars/jesus_lukamer.png'};
+function isLukamerNick(){
+  return String(localStorage.getItem('MADNESS_PLAYER_NAME')||localStorage.getItem('RESPAWN_NICK')||'').trim().toLowerCase()==='lukamer';
 }
-function getProfileAvatar(){return localStorage.getItem('MADNESS_PROFILE_AVATAR')||avatarSvg('red')}
-function setProfileAvatar(src){localStorage.setItem('MADNESS_PROFILE_AVATAR',src);initPlayerCard()}
+function avatarByKind(kind){
+  if(kind==='blue')return PROFILE_AVATARS[1].src;
+  if(kind==='green')return PROFILE_AVATARS[2].src;
+  return PROFILE_AVATARS[0].src;
+}
+function avatarSvg(kind){return avatarByKind(kind)}
+function getProfileAvatar(){
+  if(isLukamerNick()){
+    localStorage.setItem('MADNESS_PROFILE_AVATAR',LUKAMER_AVATAR.src);
+    return LUKAMER_AVATAR.src;
+  }
+  const cur=localStorage.getItem('MADNESS_PROFILE_AVATAR')||'';
+  const allowed=PROFILE_AVATARS.map(a=>a.src);
+  if(!allowed.includes(cur)){
+    localStorage.setItem('MADNESS_PROFILE_AVATAR',PROFILE_AVATARS[0].src);
+    return PROFILE_AVATARS[0].src;
+  }
+  return cur;
+}
+function setProfileAvatar(src){
+  if(isLukamerNick())src=LUKAMER_AVATAR.src;
+  else if(!PROFILE_AVATARS.some(a=>a.src===src))src=PROFILE_AVATARS[0].src;
+  localStorage.setItem('MADNESS_PROFILE_AVATAR',src);
+  initPlayerCard();
+}
 function openAvatarModal(){
   const g=document.getElementById('avatarGrid');
   if(g){
     g.innerHTML='';
-    [['red','RVAČ'],['blue','PADOUCH'],['green','MOZEK']].forEach(([k,n])=>{
+    const list=isLukamerNick()?[LUKAMER_AVATAR]:PROFILE_AVATARS;
+    list.forEach(a=>{
       const d=document.createElement('div');d.className='avatarChoice';
-      const src=avatarSvg(k);
-      d.innerHTML='<img src="'+src+'"><b>'+n+'</b>';
-      d.onclick=()=>{setProfileAvatar(src);closeModal('avatarModal');showMsg('Avatar změněn');};
+      d.innerHTML='<img src="'+a.src+'"><b>'+a.name+'</b>';
+      d.onclick=()=>{setProfileAvatar(a.src);closeModal('avatarModal');showMsg('Avatar změněn');};
       g.appendChild(d);
     });
   }
@@ -207,13 +222,15 @@ function showDefaultCharacterHint(){
 }
 function initStarterPreview(){
   const r=document.getElementById('starterRed'),b=document.getElementById('starterBlue'),g=document.getElementById('starterGreen');
-  if(r)r.src=starterSvg('red'); if(b)b.src=starterSvg('blue'); if(g)g.src=starterSvg('green');
+  if(r)r.src=(PROFILE_AVATARS[0]&&PROFILE_AVATARS[0].src)||avatarByKind('red');
+  if(b)b.src=(PROFILE_AVATARS[1]&&PROFILE_AVATARS[1].src)||avatarByKind('blue');
+  if(g)g.src=(PROFILE_AVATARS[2]&&PROFILE_AVATARS[2].src)||avatarByKind('green');
   if(starterNick)starterNick.value=localStorage.getItem('MADNESS_PLAYER_NAME')||'';
 }
 function chooseStarter(kind){
   const nick=(starterNick?.value||'PLAYER').trim()||'PLAYER';
   localStorage.setItem('MADNESS_PLAYER_NAME',nick);
-  if(!localStorage.getItem('MADNESS_PROFILE_AVATAR'))localStorage.setItem('MADNESS_PROFILE_AVATAR',avatarSvg(kind));
+  localStorage.setItem('MADNESS_PROFILE_AVATAR',isLukamerNick()?LUKAMER_AVATAR.src:avatarByKind(kind));
   const src=starterSvg(kind);
   const npc=starterSvg('green');
   const payload={
@@ -240,18 +257,39 @@ if(!payload||!payload.player||!payloadSrc(payload.player)){
   localStorage.setItem('MADNESS_DEFAULT_CHARACTER','1');
   if(missing)missing.style.display='none';
 }
-async function loadGlobalCharacterIfNeeded(){
+async function loadGlobalCharacterIfNeeded(force=false){
   if(!SB)return;
-  if(localStorage.getItem('MADNESS_DEFAULT_CHARACTER')!=='1')return;
   try{
-    const {data,error}=await SB.from('madness_global_payloads').select('payload,updated_at').eq('id','global_character').maybeSingle();
-    if(error||!data?.payload)return;
+    const {data,error}=await SB.from('madness_global_payloads')
+      .select('payload,updated_at')
+      .eq('id','global_character')
+      .maybeSingle();
+
+    if(error){
+      console.warn('global character load error', error.message);
+      if(localStorage.getItem('MADNESS_DEFAULT_CHARACTER')==='1')showMsg('Online postava teď není dostupná.');
+      return;
+    }
+    if(!data?.payload)return;
+
+    const last=localStorage.getItem('MADNESS_GLOBAL_CHARACTER_UPDATED_AT')||'';
+    const hasLocal=!!(payload&&payload.player&&payloadSrc(payload.player));
+    const shouldApply = force || !hasLocal || localStorage.getItem('MADNESS_DEFAULT_CHARACTER')==='1' || data.updated_at!==last;
+
+    if(!shouldApply)return;
+
     localStorage.setItem('MADNESS_REAL_PAYLOAD',JSON.stringify(data.payload));
-    const ep=payloadSrc(data.payload.enemy), enh=payloadSrc(data.payload.enemyNoHands)||ep; const npc=ep?{src:ep,noHandsSrc:enh,savedAt:Date.now()}:null;
+    localStorage.setItem('MADNESS_GLOBAL_CHARACTER_UPDATED_AT',data.updated_at||String(Date.now()));
+    const ep=payloadSrc(data.payload.enemy), enh=payloadSrc(data.payload.enemyNoHands)||ep;
+    const npc=ep?{src:ep,noHandsSrc:enh,savedAt:Date.now()}:null;
     if(npc)localStorage.setItem('MADNESS_CURRENT_NPC',JSON.stringify(npc));
     localStorage.removeItem('MADNESS_DEFAULT_CHARACTER');
-    location.reload();
-  }catch(e){console.warn('global character load failed',e)}
+
+    showMsg('Načítám globální postavu z editoru...');
+    setTimeout(()=>location.reload(),260);
+  }catch(e){
+    console.warn('global character load failed',e);
+  }
 }
 const mapImg=img('lobby_map.png'),benchImg=img('bench_lavice.png'),crateImg=img('lobby_crate.png'),playerFullImg=img(payloadSrc(payload?.player)),playerNoHandsImg=img(payloadSrc(payload?.playerNoHands)||payloadSrc(payload?.player)),akHoldImg=img(payload?.assets?.ak_hold),m4HoldImg=img(payload?.assets?.m4_hold||'m4_hold.png'),awpHoldImg=img(payload?.assets?.awp_hold||'awp_hold.png'),m60HoldImg=img(payload?.assets?.m60_hold||'m60_hold.png');
 const grip=payload?.grip||{x:0,y:8,rot:0,scale:100};
@@ -263,6 +301,84 @@ const MAX_LEVEL=10;
 function levelNeed(lvl){return 100 + (Math.max(1,lvl)-1)*85}
 function getLevel(){let v=Number(localStorage.getItem('MADNESS_LEVEL'));if(!Number.isFinite(v)||v<1){v=1;localStorage.setItem('MADNESS_LEVEL','1')}return Math.min(MAX_LEVEL,Math.floor(v))}
 function getXp(){let v=Number(localStorage.getItem('MADNESS_XP'));if(!Number.isFinite(v)||v<0){v=0;localStorage.setItem('MADNESS_XP','0')}return Math.floor(v)}
+
+function isAdminLukamer(){
+  const n=String(playerNick?playerNick():(localStorage.getItem('MADNESS_PLAYER_NAME')||'')).trim().toLowerCase();
+  return n==='lukamer';
+}
+function showBanScreen(reason,until){
+  let el=document.getElementById('antiCheatBlocker');
+  if(!el){
+    el=document.createElement('div');
+    el.id='antiCheatBlocker';
+    el.style.cssText='position:fixed;inset:0;z-index:999999;background:#030304;color:#ffd6d6;display:flex;align-items:center;justify-content:center;text-align:center;font:15px Courier New,monospace;padding:25px';
+    document.body.appendChild(el);
+  }
+  const left=Math.max(0,Math.ceil((until-Date.now())/60000));
+  el.innerHTML='<div style="max-width:520px;border:2px solid #8a0000;background:#09090b;padding:24px;box-shadow:0 0 35px #000"><h1 style="margin:0 0 12px;color:#ff7777">ANTICHEAT</h1><p>'+chatSafe(reason||'Podezřelá změna hodnot.')+'</p><p>Ban ještě cca <b>'+left+' min</b>.</p></div>';
+}
+function setBan(reason){
+  const until=Date.now()+3600000;
+  localStorage.setItem('MADNESS_AC_BAN_UNTIL',String(until));
+  localStorage.setItem('MADNESS_AC_BAN_REASON',reason||'Podezřelá změna hodnot.');
+  showBanScreen(reason,until);
+}
+function antiClampKey(key,min,max){
+  let raw=localStorage.getItem(key);
+  if(raw==null)return false;
+  let v=Number(raw),nv=v;
+  if(!Number.isFinite(v))nv=min;
+  nv=Math.floor(Math.max(min,Math.min(max,nv)));
+  if(String(nv)!==String(raw)){localStorage.setItem(key,String(nv));return true}
+  return false;
+}
+function antiCheatCore(){
+  window.MADNESS_AC_OK=true;
+  if(isAdminLukamer())return true;
+  const banUntil=Number(localStorage.getItem('MADNESS_AC_BAN_UNTIL')||'0')||0;
+  if(banUntil>Date.now()){
+    const last=Number(localStorage.getItem('MADNESS_AC_LAST_MONEY')||'2500')||2500;
+    localStorage.setItem('MADNESS_MONEY',String(Math.max(0,Math.floor(last))));
+    showBanScreen(localStorage.getItem('MADNESS_AC_BAN_REASON')||'Podezřelá změna hodnot.',banUntil);
+    return false;
+  }
+  let fixed=false;
+  fixed=antiClampKey('MADNESS_LEVEL',1,MAX_LEVEL)||fixed;
+  fixed=antiClampKey('MADNESS_XP',0,999999)||fixed;
+  fixed=antiClampKey('MADNESS_MONEY',0,999999)||fixed;
+  fixed=antiClampKey('MADNESS_KILLS',0,99999)||fixed;
+  fixed=antiClampKey('MADNESS_MISSIONS',0,9999)||fixed;
+  fixed=antiClampKey('MADNESS_BEST_WAVE',0,9999)||fixed;
+  const now=Date.now(), money=getMoney();
+  const lastMoney=Number(localStorage.getItem('MADNESS_AC_LAST_MONEY'));
+  const lastTime=Number(localStorage.getItem('MADNESS_AC_LAST_CHECK')||'0')||0;
+  if(Number.isFinite(lastMoney) && now-lastTime<12000 && money-lastMoney>20000){
+    localStorage.setItem('MADNESS_MONEY',String(Math.max(0,Math.floor(lastMoney))));
+    updateMoneyUI();
+    setBan('Rychlý podezřelý nárůst peněz. Hodnota byla vrácena.');
+    return false;
+  }
+  const lvl=getLevel(), need=levelNeed(lvl);
+  if(lvl>=MAX_LEVEL && getXp()!==0){localStorage.setItem('MADNESS_XP','0');fixed=true}
+  else if(lvl<MAX_LEVEL && getXp()>need*3){localStorage.setItem('MADNESS_XP',String(need*3));fixed=true}
+  localStorage.setItem('MADNESS_AC_LAST_MONEY',String(getMoney()));
+  localStorage.setItem('MADNESS_AC_LAST_CHECK',String(now));
+  if(fixed){
+    localStorage.setItem('MADNESS_AC_LAST_FIX',String(now));
+    if(typeof showMsg==='function')showMsg('AntiCheat: opravené neplatné hodnoty.');
+  }
+  return true;
+}
+function requireAntiCheat(){
+  if(isAdminLukamer())return true;
+  if(!window.MADNESS_AC_OK || typeof antiCheatCore!=='function'){
+    setBan('AntiCheat byl poškozen nebo odstraněn.');
+    return false;
+  }
+  return true;
+}
+function runAntiCheat(){return antiCheatCore() && requireAntiCheat()}
+
 function hasLevelForWeapon(k){const w=WEAPONS[k];if(!w)return false;if(k==='awp'&&localStorage.getItem('MADNESS_TROLL_AWP')==='1')return true;return getLevel()>=(w.level||1)}
 function updateLevelUI(){const lvl=getLevel(),xp=getXp(),need=levelNeed(lvl);if(levelVal)levelVal.textContent=lvl;if(xpFill)xpFill.style.width=(lvl>=MAX_LEVEL?'100':clamp(xp/need*100,0,100))+'%';if(xpText)xpText.textContent=lvl>=MAX_LEVEL?'MAX LEVEL':(xp+' / '+need+' XP')}
 function calcMaxHp(lvl,squad){const base=100+(Math.max(1,Number(lvl)||1)-1)*28;return Math.floor(base*((squad&&squad!=='???')?1.05:1))}
@@ -276,7 +392,7 @@ function updateSquadUI(){const n=getSquadName();if(pcSquad)pcSquad.textContent='
 function initPlayerCard(){const name=playerNick();if(pcNick)pcNick.textContent=name;if(pcAvatar)pcAvatar.src=getProfileAvatar();updateSquadUI()}
 if(selected&&(!isOwned(selected)||!hasLevelForWeapon(selected))&&!(selected==='awp'&&localStorage.getItem('MADNESS_TROLL_AWP')==='1')){selected='';localStorage.removeItem('MADNESS_SELECTED_WEAPON')}
 try{const list=JSON.parse(localStorage.getItem('MADNESS_SERVERS')||'[]'),sid=localStorage.getItem('MADNESS_ACTIVE_SERVER');const srv=list.find(s=>s.id===sid);serverText.textContent=srv?('server: '+srv.name):'bez serveru';}catch(e){serverText.textContent='bez serveru'}
-const state={mapW:1600,mapH:900,scale:1,mapDrawW:1600,mapDrawH:900,mapY:0,player:{x:390,y:770,face:-1,weapon:!!selected,weaponType:selected},friend:{x:1180,y:770,face:1,name:null,moving:false,targetX:1180,wait:rand(1.2,4.2),chat:null,chatCooldown:rand(1.8,5.5),speed:rand(70,115)},remotePlayers:[],remoteImgs:{},intro:{active:false,idx:0,timer:0,zoom:1},keys:{a:0,d:0,w:0,s:0},rain:[],splashes:[],mouseX:0,mouseY:0};
+const state={mapW:1600,mapH:900,scale:1,mapDrawW:1600,mapDrawH:900,mapY:0,player:{x:390,y:770,face:-1,weapon:!!selected,weaponType:selected},friend:{x:1180,y:770,face:1,name:null,moving:false,targetX:1180,wait:rand(1.2,4.2),chat:null,chatCooldown:rand(18,34),speed:rand(70,115)},remotePlayers:[],remoteImgs:{},chatBubbles:{},intro:{active:false,idx:0,timer:0,zoom:1},keys:{a:0,d:0,w:0,s:0},rain:[],splashes:[],mouseX:0,mouseY:0};
 const LOBBY_OBJECTS={mapPanel:{x:915,y:610,w:120,h:120},armory:{x:770,y:620,w:190,h:245},leaderboard:{x:585,y:675,w:150,h:145},achievements:{x:545,y:335,w:330,h:125},squad:{x:1335,y:520,w:245,h:245},help:{x:1510,y:650,w:285,h:180},camera:{x:1516,y:315,w:130,h:125}};
 function rand(a,b){return a+Math.random()*(b-a)}function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
 const FRIEND_LINES=[
@@ -291,7 +407,28 @@ const FRIEND_LINES=[
   'Nemáš cigáro?',
   'Nešahej mi na boty.',
   'Slyšel jsem něco ve zdi.',
-  'Squad zatím ???, klasika.'
+  'Squad zatím ???, klasika.',
+  'Foxy prý zase lootí všechno, i šroubky.',
+  'Rin-Din slyšel výstřel a řekl, že to je beat.',
+  'Foxy má plán. Bohužel ho zapomněl.',
+  'Rin-Din šel reloadnout a našel rohlík.',
+  'Viděl jsem botu běžet bez člověka.',
+  'Tahle lobby má divnou karmu.',
+  'Když spadneš do díry, dělej že to byl speedrun.',
+  'Mám v kapse šroubek. Nevím odkud.',
+  'NPC odbory říkaly, že mám mlčet.',
+  'Někdo tady vařil kafe v helmě.',
+  'Tvoje HP barva mi připomíná okurku.',
+  'Foxy říkal, že to laguje schválně.',
+  'Rin-Din testuje zvuk tím, že křičí do zdi.',
+  'Tohle není bug, to je feature v depresi.',
+  'Mapa smrdí po mokrým betonu.',
+  'Jestli najdeš moje boty, nevracej je.',
+  'Mám pocit, že mě kreslil unavený člověk.',
+  'Tenhle server drží izolepa.',
+  'Nesahej na červený tlačítko. Nebo jo, sranda.',
+  'Jsem NPC, ne terapeut.',
+  'Když běžíš doprava, svět běží doleva. Filosofie.'
 ];
 const FRIEND_TROLL_QUESTIONS=[
   'Když AWP kopne jak kůň, střílíš nebo letíš?',
@@ -300,12 +437,17 @@ const FRIEND_TROLL_QUESTIONS=[
   'Když klikneš na NPC, kliklo NPC na tebe?',
   'Co je těžší: M60 nebo moje deprese?',
   'Jestli zombie nemá mozek, platí daně?',
-  'Proč má armory dveře a ne okno?'
+  'Proč má armory dveře a ne okno?',
+  'Foxy našel bug. Mám mu věřit?',
+  'Rin-Din chce remixnout reload. Je to trestné?',
+  'Když máš 0 nábojů, je zbraň dekorace?'
 ];
 const FRIEND_NORMAL_QUESTIONS=[
   'Máš už zbraň?',
   'Jdeš do mapy?',
-  'Chceš krytí?'
+  'Chceš krytí?',
+  'Bereš Foxyho do squadu?',
+  'Slyšel jsi Rin-Dina?'
 ];
 function randomFriendLine(){return FRIEND_LINES[Math.floor(Math.random()*FRIEND_LINES.length)]}
 function randomFriendQuestion(troll){const arr=troll?FRIEND_TROLL_QUESTIONS:FRIEND_NORMAL_QUESTIONS;return arr[Math.floor(Math.random()*arr.length)]}
@@ -332,10 +474,43 @@ function getAchievements(){
   ];
 }
 function unlockedAchievementIds(){return getAchievements().filter(a=>a.done).map(a=>a.id)}
+
+const OFFLINE_STATS_KEY='MADNESS_OFFLINE_STATS_QUEUE';
+function makeStatsRow(){
+  return {player_id:getClientId(),nick:playerNick(),kills:getKills(),glory:calcGlory(),level:getLevel(),missions:getMissions(),best_wave:getBestWave(),achievements:unlockedAchievementIds(),updated_at:new Date().toISOString()};
+}
+function queueOfflineStats(row){
+  try{
+    const q=JSON.parse(localStorage.getItem(OFFLINE_STATS_KEY)||'[]');
+    q.push(row||makeStatsRow());
+    while(q.length>30)q.shift();
+    localStorage.setItem(OFFLINE_STATS_KEY,JSON.stringify(q));
+  }catch(e){}
+}
+async function flushOfflineStats(){
+  if(!SB||!navigator.onLine)return;
+  let q=[];
+  try{q=JSON.parse(localStorage.getItem(OFFLINE_STATS_KEY)||'[]')}catch(e){q=[]}
+  if(!q.length)return;
+  const last=q[q.length-1];
+  try{
+    await SB.from('madness_player_stats').upsert(last,{onConflict:'player_id'});
+    localStorage.removeItem(OFFLINE_STATS_KEY);
+    if(typeof showMsg==='function')showMsg('Offline postup nahrán online.');
+  }catch(e){}
+}
+addEventListener('online',flushOfflineStats);
+setTimeout(flushOfflineStats,1800);
+
 async function syncPlayerStats(){
-  if(!SB)return;
-  const row={player_id:getClientId(),nick:playerNick(),kills:getKills(),glory:calcGlory(),level:getLevel(),missions:getMissions(),best_wave:getBestWave(),achievements:unlockedAchievementIds(),updated_at:new Date().toISOString()};
-  try{await SB.from('madness_player_stats').upsert(row,{onConflict:'player_id'})}catch(e){}
+  const row=makeStatsRow();
+  if(!SB||!navigator.onLine){queueOfflineStats(row);return}
+  try{await SB.from('madness_player_stats').upsert(row,{onConflict:'player_id'});await flushOfflineStats()}catch(e){queueOfflineStats(row)}
+}
+function localFileWarning(){
+  if(location.protocol==='file:'){
+    setTimeout(()=>showMsg('Lokální file:// režim blokuje online/cache. Spusť přes GitHub Pages nebo localhost.'),900);
+  }
 }
 function gameAlert(t){const m=document.getElementById('gameAlertModal'),x=document.getElementById('gameAlertText');if(x)x.textContent=String(t||'');if(m)m.style.display='flex'}function closeGameAlert(){const m=document.getElementById('gameAlertModal');if(m)m.style.display='none'}window.alert=gameAlert;function showMsg(t){msg.textContent=t;msg.style.opacity='1';msgTimer=1.4}function worldToScreenX(x){return x*state.scale-camX}function worldToScreenY(y){return state.mapY+y*state.scale}function screenToWorld(x,y){return {x:(x+camX)/state.scale,y:(y-state.mapY)/state.scale}}
 function walkTop(){return state.mapH*.815}function walkBottom(){return state.mapH*.875}function playerMinX(){return 90}function playerMaxX(){return state.mapW-90}
@@ -350,6 +525,123 @@ function resize(){DPR=Math.max(1,Math.min(devicePixelRatio||1,2));W=innerWidth;H
 function roofLine(){return worldToScreenY(state.mapH*.16)}
 function makeRain(){state.rain=[];const q=SETTINGS.quality;const base=q==='low'?120:q==='high'?380:230;const count=Math.max(q==='low'?70:140,Math.round(base*(W/1920)));const roof=roofLine();for(let i=0;i<count;i++)state.rain.push({x:rand(-W*.2,W*1.2),y:rand(-80,Math.max(10,roof-8)),v:rand(520,980),len:rand(10,24),a:rand(.16,.42),w:rand(.6,1.1)})}function addSplash(x,y){if(state.splashes.length>150)state.splashes.shift();state.splashes.push({x,y,life:0,max:rand(.16,.28),size:rand(5,12),a:rand(.32,.65)})}
 function startMusic(){music.volume=(Number(SETTINGS.musicVol)||0)/100*.5;music.play().catch(()=>{})}function flashLightning(){const s=rand(.25,.72);lightning.style.transition='none';lightning.style.opacity=s.toFixed(2);document.body.classList.add('shake');setTimeout(()=>{lightning.style.transition='opacity 120ms linear';lightning.style.opacity='0'},rand(35,90));setTimeout(()=>document.body.classList.remove('shake'),250);setTimeout(flashLightning,rand(3200,8200))}
+
+
+function getAnimPreset(kind='player'){
+  const key=kind==='enemy'?'MADNESS_ANIM_PRESET_ENEMY':'MADNESS_ANIM_PRESET_PLAYER';
+  const fallbackKey='MADNESS_ANIM_PRESET';
+  try{
+    const p=JSON.parse(localStorage.getItem(key)||localStorage.getItem(fallbackKey)||'null')||{};
+    return {
+      idleBreath:Number.isFinite(+p.idleBreath)?+p.idleBreath:1.25,
+      idleSway:Number.isFinite(+p.idleSway)?+p.idleSway:1.15,
+      walkBounce:Number.isFinite(+p.walkBounce)?+p.walkBounce:1.45,
+      armSwing:Number.isFinite(+p.armSwing)?+p.armSwing:1.85,
+      gunSway:Number.isFinite(+p.gunSway)?+p.gunSway:1.75,
+      speed:Number.isFinite(+p.speed)?+p.speed:1.18
+    };
+  }catch(e){
+    return {idleBreath:1.25,idleSway:1.15,walkBounce:1.45,armSwing:1.85,gunSway:1.75,speed:1.18};
+  }
+}
+async function loadGlobalAnimPresets(){
+  if(!SB||!navigator.onLine)return;
+  try{
+    const {data}=await SB.from('madness_global_payloads').select('id,payload,updated_at').in('id',['global_anim_player','global_anim_enemy']);
+    if(!Array.isArray(data))return;
+    for(const row of data){
+      if(!row||!row.payload)continue;
+      const preset=row.payload.preset||row.payload;
+      if(row.id==='global_anim_player')localStorage.setItem('MADNESS_ANIM_PRESET_PLAYER',JSON.stringify(preset));
+      if(row.id==='global_anim_enemy')localStorage.setItem('MADNESS_ANIM_PRESET_ENEMY',JSON.stringify(preset));
+    }
+  }catch(e){}
+}
+
+
+
+function getAssetAnim(kind='player'){
+  const key=kind==='enemy'?'MADNESS_ASSET_ANIM_ENEMY':'MADNESS_ASSET_ANIM_PLAYER';
+  try{return JSON.parse(localStorage.getItem(key)||'null')||null}catch(e){return null}
+}
+async function loadGlobalAssetAnims(){
+  if(!SB||!navigator.onLine)return;
+  try{
+    const {data}=await SB.from('madness_global_payloads').select('id,payload,updated_at').in('id',['global_asset_anim_player','global_asset_anim_enemy']);
+    if(!Array.isArray(data))return;
+    data.forEach(row=>{
+      if(row.id==='global_asset_anim_player')localStorage.setItem('MADNESS_ASSET_ANIM_PLAYER',JSON.stringify(row.payload));
+      if(row.id==='global_asset_anim_enemy')localStorage.setItem('MADNESS_ASSET_ANIM_ENEMY',JSON.stringify(row.payload));
+    });
+  }catch(e){}
+}
+const HAND_LAYER_KEYS_RT=new Set(['ruce','pest_l','pest_p']);
+const layerImgCacheRT={};
+function getLayerImgRT(src){if(!src)return null;if(!layerImgCacheRT[src]){const im=new Image();im.src=src;layerImgCacheRT[src]=im}return layerImgCacheRT[src]}
+function layerSrcRT(l){return (payload&&payload.layerImages&&payload.layerImages[l.key])||''}
+function layerIdRT(i,l){return i+'_'+(l&&l.key||'layer')}
+function stackBoundsRT(layers){
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  layers.forEach(l=>{
+    const im=getLayerImgRT(layerSrcRT(l));
+    const w=(im&&im.naturalWidth?im.naturalWidth:80)*(l.scale||100)/100;
+    const h=(im&&im.naturalHeight?im.naturalHeight:80)*(l.scale||100)/100;
+    minX=Math.min(minX,l.x-w/2);maxX=Math.max(maxX,l.x+w/2);minY=Math.min(minY,l.y-h/2);maxY=Math.max(maxY,l.y+h/2);
+  });
+  if(!isFinite(minX))return null;
+  return {minX,minY,maxX,maxY};
+}
+function frameOffsetRT(anim,action,i,l){
+  const act=anim&&anim.actions&&anim.actions[action];
+  if(!act||!act.frames||!act.frames.length)return {dx:0,dy:0,rot:0,scale:100,alpha:100};
+  const n=act.frames.length,pos=(performance.now()/1000*8)%n,a=Math.floor(pos),b=(a+1)%n,t=pos-a;
+  const A=(act.frames[a].layers||{})[layerIdRT(i,l)]||(act.frames[a].layers||{})[l.key]||{};
+  const B=(act.frames[b].layers||{})[layerIdRT(i,l)]||(act.frames[b].layers||{})[l.key]||{};
+  const mix=(x,y,d)=>((x==null?d:x)+((y==null?d:y)-(x==null?d:x))*t);
+  return {dx:mix(A.dx,B.dx,0),dy:mix(A.dy,B.dy,0),rot:mix(A.rot,B.rot,0),scale:mix(A.scale,B.scale,100),alpha:mix(A.alpha,B.alpha,100)};
+}
+function drawAnimatedLayerStackRT(kind,obj,face,targetH,action,stripHands=false){
+  const anim=getAssetAnim(kind);
+  const layers=(kind==='enemy'?(payload&&payload.enemyLayers&&payload.enemyLayers.length?payload.enemyLayers:payload&&payload.layers):(payload&&payload.layers))||[];
+  if(!anim||!layers.length||!payload.layerImages)return false;
+  const drawLayers=stripHands?layers.filter(l=>!HAND_LAYER_KEYS_RT.has(l.key)):layers;
+  const b=stackBoundsRT(drawLayers); if(!b)return false;
+  const h=Math.max(1,b.maxY-b.minY), sc=(targetH/h)*state.scale, cx=(b.minX+b.maxX)/2, feet=b.maxY;
+  const sx=worldToScreenX(obj.x), sy=worldToScreenY(obj.y);
+  ctx.save();
+  ctx.translate(sx,sy);
+  ctx.scale(face,1);
+  drawLayers.forEach((l,i)=>{
+    const src=layerSrcRT(l), im=getLayerImgRT(src);
+    if(!im||!im.complete||!im.naturalWidth)return;
+    const off=frameOffsetRT(anim,action,i,l);
+    const lw=im.naturalWidth*(l.scale||100)/100*(off.scale==null?100:off.scale)/100*sc;
+    const lh=im.naturalHeight*(l.scale||100)/100*(off.scale==null?100:off.scale)/100*sc;
+    const x=((l.x+(off.dx||0))-cx)*sc;
+    const y=((l.y+(off.dy||0))-feet)*sc;
+    ctx.save();
+    ctx.globalAlpha=((l.alpha==null?100:l.alpha)*(off.alpha==null?100:off.alpha))/10000;
+    ctx.translate(x,y);
+    ctx.rotate(((l.rot||0)+(off.rot||0))*Math.PI/180);
+    ctx.scale(l.flipH?-1:1,l.flipV?-1:1);
+    ctx.drawImage(im,-lw/2,-lh/2,lw,lh);
+    ctx.restore();
+  });
+  ctx.restore();
+  return true;
+}
+function animActionForObj(kind,obj){
+  if(obj&&obj.hp<=0)return 'fall';
+  if(kind==='player'){
+    const moving=!!(state.keys&&(state.keys.a||state.keys.d||state.keys.w||state.keys.s)) || Math.abs(obj.physVx||0)>8;
+    if(state.shooting||obj.recoil>1)return 'attack';
+    return moving?'walk':'idle';
+  }
+  if(obj&&obj.recoil>1)return 'attack';
+  if(obj&&obj.attackT<.25)return 'attack';
+  return 'walk';
+}
+
 function drawSprite(imgObj,obj,face,targetH=170){if(!imgObj||!imgObj.complete||!imgObj.naturalWidth)return;const sc=(targetH/imgObj.naturalHeight)*state.scale,w=imgObj.naturalWidth*sc,h=imgObj.naturalHeight*sc,sx=worldToScreenX(obj.x),sy=worldToScreenY(obj.y);ctx.save();ctx.translate(sx,sy);ctx.scale(face,1);ctx.drawImage(imgObj,-w/2,-h,w,h);ctx.restore()}
 function drawGun(o){const def=WEAPONS[o.weaponType];if(!def||!def.img||!def.img.complete||!def.img.naturalWidth)return;const dir=o.face<0?1:-1,sx=worldToScreenX(o.x+dir*(grip.x||0)),sy=worldToScreenY(o.y-78+(grip.y||8));const hw=(def.drawW||170)*state.scale*(grip.scale||100)/100,hh=hw*(def.img.naturalHeight/def.img.naturalWidth);ctx.save();ctx.translate(sx,sy);ctx.rotate((grip.rot||0)*Math.PI/180*dir);ctx.scale(dir,1);ctx.drawImage(def.img,-hw/2,-hh/2,hw,hh);ctx.restore()}
 function updateWeaponText(){weaponText.textContent=selected?('zbraň: '+WEAPONS[selected].label):'bez zbraně'}
@@ -410,17 +702,17 @@ function updateFriend(dt){
   f.y=(walkTop()+walkBottom())/2;
   if(f.chat){f.chat.life-=dt;if(f.chat.life<=0)f.chat=null}
   f.chatCooldown-=dt;
-  if(f.chatCooldown<=0 && !f.chat && Math.random()<.72){
-    const asks=Math.random()<.62;
+  if(f.chatCooldown<=0 && !f.chat && Math.random()<.24){
+    const asks=Math.random()<.18;
     if(asks){
       const troll=Math.random()<.85;
       f.chat={text:randomFriendQuestion(troll),life:rand(4.8,7.5),max:6.0,asking:true,troll,reward:troll?'awp':null};
     }else{
       f.chat={text:randomFriendLine(),life:rand(2.2,4.2),max:3.0,asking:false};
     }
-    f.chatCooldown=rand(5.5,11.0);
+    f.chatCooldown=rand(24,48);
   }else if(f.chatCooldown<=0){
-    f.chatCooldown=rand(2.5,6.0);
+    f.chatCooldown=rand(12,26);
   }
   if(!f.moving){
     f.wait-=dt;
@@ -499,10 +791,10 @@ function drawLobbyObjects(){
 function drawScene(){
   if(mapImg.complete&&mapImg.naturalWidth)ctx.drawImage(mapImg,-camX,state.mapY,state.mapDrawW,state.mapDrawH);
   ctx.fillStyle='rgba(0,0,0,.18)';ctx.fillRect(0,0,W,H);
-  drawLobbyObjects();drawRemotePlayers();drawSprite(playerFullImg,state.friend,state.friend.face,165);drawNameTag(state.friend,state.friend.name||'NPC','#b9ffb9',1,null);drawFriendChat();
+  drawLobbyObjects();drawRemotePlayers();if(!drawAnimatedLayerStackRT('player',state.friend,state.friend.face,165,'idle',false))drawSprite(playerFullImg,state.friend,state.friend.face,165);drawNameTag(state.friend,state.friend.name||'NPC','#b9ffb9',1,null);drawFriendChat();
   drawSprite(state.player.weapon?playerNoHandsImg:playerFullImg,state.player,state.player.face,170);
   if(state.player.weapon)drawGun(state.player);
-  drawNameTag(state.player,formatPlayerLabel(playerNick(),getSquadName(),getLevel()),'#ffd6d6',getLevel(),getSquadName());drawRain();
+  drawNameTag(state.player,formatPlayerLabel(playerNick(),getSquadName(),getLevel()),'#ffd6d6',getLevel(),getSquadName());drawChatBubble(state.player,playerNick());drawRain();
 }
 function draw(){
   ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
@@ -517,7 +809,7 @@ function draw(){
     ctx.restore();
   }else drawScene();
 }
-function loop(now){const dt=Math.min(.033,(now-last)/1000);last=now;update(dt);draw();requestAnimationFrame(loop)}
+let lobbyAcc=0;const LOBBY_STEP=1/60;function loop(now){let frame=Math.min(.085,(now-last)/1000);last=now;lobbyAcc+=frame;if(requireAntiCheat()){let safety=0;while(lobbyAcc>=LOBBY_STEP&&safety<5){update(LOBBY_STEP);lobbyAcc-=LOBBY_STEP;safety++}draw()}requestAnimationFrame(loop)}
 function openSquadWindow(){
   updateSquadUI();
   renderSquadInvites();
@@ -739,7 +1031,7 @@ async function loadRemotePlayers(){
 function formatPlayerLabel(nick,squad,level){
   squad=(squad&&squad!=='???')?String(squad).trim():'';
   const lvl=Math.max(1,Number(level)||1);
-  return squad?'LVL'+lvl+'x('+squad+') '+(nick||'hráč'):'LVL'+lvl+'x '+(nick||'hráč');
+  return squad?lvl+'('+squad+')'+(nick||'hráč'):lvl+(nick||'hráč');
 }
 function drawRemotePlayers(){
   for(const rp of state.remotePlayers){
@@ -748,7 +1040,7 @@ function drawRemotePlayers(){
     const imgObj=(rp.avatar_src&&state.remoteImgs[rp.player_id])||playerFullImg;
     const obj={x:rp.drawX,y:rp.drawY,face:Number(rp.face)||1};
     drawSprite(imgObj,obj,obj.face,168);
-    drawNameTag(obj, formatPlayerLabel(rp.nick,rp.squad_name,rp.level), '#a8d8ff', rp.level, rp.squad_name);
+    drawNameTag(obj, formatPlayerLabel(rp.nick,rp.squad_name,rp.level), '#a8d8ff', rp.level, rp.squad_name);drawChatBubble(obj,rp.nick);
   }
 }
 function drawNameTag(obj,nick,color,level,squad){
@@ -779,6 +1071,50 @@ function drawNameTag(obj,nick,color,level,squad){
   ctx.restore();
 }
 
+function chatBubbleKey(n){return String(n||'').trim().toLowerCase()}
+function setPlayerChatBubble(nick,body){
+  body=String(body||'').trim();
+  if(!body || body[0]==='/')return;
+  body=body.slice(0,80);
+  state.chatBubbles[chatBubbleKey(nick)]={text:body,until:performance.now()+6000};
+}
+function drawChatBubble(obj,nick){
+  const b=state.chatBubbles[chatBubbleKey(nick)];
+  if(!b)return;
+  const left=b.until-performance.now();
+  if(left<=0){delete state.chatBubbles[chatBubbleKey(nick)];return}
+  const text=String(b.text||'').slice(0,80);
+  if(!text)return;
+  const x=worldToScreenX(obj.x), y=worldToScreenY(obj.y-236);
+  ctx.save();
+  ctx.globalAlpha=clamp(left/350,0,1);
+  ctx.font='bold '+Math.max(10,12*state.scale)+'px Courier New';
+  const maxChars=34;
+  const line1=text.slice(0,maxChars);
+  const line2=text.length>maxChars?text.slice(maxChars,maxChars*2):'';
+  const lines=line2?[line1,line2]:[line1];
+  const pad=7*state.scale;
+  const bw=Math.max(...lines.map(l=>ctx.measureText(l).width))+pad*2;
+  const bh=(18*lines.length+10)*state.scale;
+  ctx.fillStyle='rgba(5,5,8,.88)';
+  ctx.strokeStyle='rgba(255,210,120,.75)';
+  ctx.lineWidth=1;
+  ctx.fillRect(x-bw/2,y-bh,bw,bh);
+  ctx.strokeRect(x-bw/2,y-bh,bw,bh);
+  ctx.beginPath();
+  ctx.moveTo(x-6*state.scale,y);
+  ctx.lineTo(x+6*state.scale,y);
+  ctx.lineTo(x,y+8*state.scale);
+  ctx.closePath();
+  ctx.fillStyle='rgba(5,5,8,.88)';
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle='#ffe9b0';
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  lines.forEach((l,i)=>ctx.fillText(l,x,y-bh+(12+i*18)*state.scale));
+  ctx.restore();
+}
 function playerNick(){return (localStorage.getItem('MADNESS_PLAYER_NAME')||'PLAYER').trim()||'PLAYER'}
 let CURRENT_SERVER=null, IS_HOST=false, CURRENT_MISSION=null, missionStarted=false;
 async function loadCurrentServer(){
@@ -877,9 +1213,9 @@ async function loadChat(){
   chatMessages.innerHTML='';
   const sid=activeServerId();
   document.getElementById('chatHead').textContent='CHAT • '+sid;
-  if(!SB){addChatLine('Chat offline: chybí Supabase/CDN.',true);return}
+  if(!SB){addChatLine('Chat offline.',true);return}
   const {data,error}=await SB.from('madness_chat_messages').select('nick,body,created_at').eq('server_id',sid).order('created_at',{ascending:true}).limit(50);
-  if(error){addChatLine('Chat tabulka chybí. Spusť supabase_setup.sql.',true);return}
+  if(error){addChatLine('Chat teď není dostupný.',true);return}
   if(!data?.length)addChatLine('Prázdný chat pro tuto lobby.',true);
   (data||[]).forEach(m=>addChatLine(m,false));
 }
@@ -888,15 +1224,16 @@ function subscribeChat(){
   const sid=activeServerId();
   try{
     SB.channel('madness_chat_'+sid)
-      .on('postgres_changes',{event:'INSERT',schema:'public',table:'madness_chat_messages',filter:'server_id=eq.'+sid},payload=>addChatLine(payload.new,false))
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'madness_chat_messages',filter:'server_id=eq.'+sid},payload=>{addChatLine(payload.new,false);setPlayerChatBubble(payload.new.nick,payload.new.body);})
       .subscribe();
   }catch(e){console.warn('chat realtime off',e)}
 }
 async function sendChat(body){
   body=(body||'').trim();
   if(!body)return;
-  if(!SB){addChatLine('Nelze poslat: Supabase není načtený.',true);return}
+  if(!SB){addChatLine('Nelze poslat: online režim není dostupný.',true);return}
   const msg={server_id:activeServerId(),nick:playerNick(),body};
+  setPlayerChatBubble(playerNick(),body);
   const {error}=await SB.from('madness_chat_messages').insert(msg);
   if(error)addChatLine('Nelze poslat chat: '+error.message,true);
 }
@@ -927,6 +1264,6 @@ function cleanupPresence(){
 addEventListener('pagehide',cleanupPresence);
 addEventListener('beforeunload',cleanupPresence);
 addEventListener('pointerdown',startMusic,{once:true});
-mapImg.onload=()=>recalc();initStarterPreview();initPlayerCard();loadGlobalCharacterIfNeeded();showDefaultCharacterHint();resize();applySettingsUI();updateMoneyUI();buildWeaponGrid();updateWeaponText();loadCurrentServer();touchActiveServer();cleanupStalePresence();setInterval(cleanupStalePresence,9000);syncOwnPresence();loadRemotePlayers();setInterval(syncOwnPresence,180);setInterval(loadRemotePlayers,260);setInterval(pollMission,700);syncPlayerStats();setInterval(syncPlayerStats,5000);loadChat();subscribeChat();showMsg('Lobby: klikni na dveře nebo panel');setTimeout(startIntroStory,2000);setTimeout(flashLightning,rand(2000,5000));requestAnimationFrame(loop);
+mapImg.onload=()=>recalc();localFileWarning();runAntiCheat();setInterval(runAntiCheat,4000);initStarterPreview();initPlayerCard();loadGlobalCharacterIfNeeded();loadGlobalAnimPresets();loadGlobalAssetAnims();showDefaultCharacterHint();resize();applySettingsUI();updateMoneyUI();buildWeaponGrid();updateWeaponText();loadCurrentServer();touchActiveServer();cleanupStalePresence();setInterval(cleanupStalePresence,9000);syncOwnPresence();loadRemotePlayers();setInterval(syncOwnPresence,180);setInterval(loadRemotePlayers,260);setInterval(pollMission,700);syncPlayerStats();setInterval(syncPlayerStats,5000);loadChat();subscribeChat();showMsg('Lobby: klikni na dveře nebo panel');setTimeout(startIntroStory,2000);setTimeout(flashLightning,rand(2000,5000));requestAnimationFrame(loop);
 </script>
 </body></html>

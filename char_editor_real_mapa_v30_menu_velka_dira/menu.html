@@ -40,9 +40,11 @@ button{border-radius:7px!important;box-shadow:0 0 16px rgba(0,0,0,.6)}
 <button onclick="location.href='lobby.html'">HRÁT HRU</button>
   <button onclick="openServerList()">SERVER LIST</button>
   <button onclick="openBox('settings')">NASTAVENÍ</button>
+  <button id="adminAnimBtn" class="adminBtn" onclick="location.href='skeleton_editor.html'">ASSET ANIMACE</button>
+  <button id="adminMenuBtn" class="adminBtn" onclick="location.href='char_editor_v2.html'">ADMINMENU</button>
 </div></div>
 
-<div class="modal" id="servers"><div class="box"><h2>AKTUÁLNÍ SERVERY</h2><div id="serverList" style="display:flex;flex-direction:column;gap:8px;margin:10px 0"></div><button onclick="createServer()">VYTVOŘIT SERVER / LOBBY</button><button onclick="closeBoxes()">ZAVŘÍT</button><p style="font-size:11px;color:#777;margin-top:12px">Teď je seznam uložený lokálně v prohlížeči. Pro opravdové online zobrazení ostatním hráčům se musí napojit databáze/server.</p></div></div>
+<div class="modal" id="servers"><div class="box"><h2>AKTUÁLNÍ SERVERY</h2><div id="serverList" style="display:flex;flex-direction:column;gap:8px;margin:10px 0"></div><button onclick="createServer()">VYTVOŘIT SERVER / LOBBY</button><button onclick="closeBoxes()">ZAVŘÍT</button><p style="font-size:11px;color:#777;margin-top:12px">Seznam ukazuje dostupné lobby.</p></div></div>
 <div class="modal" id="settings"><div class="box"><h2>NASTAVENÍ</h2><p>Soubory: <b>hudba.mp3</b> a <b>strelba3.mp3</b>.</p><div class="setRow"><label><span>Grafika</span><span id="qualityLbl">střední</span></label><select id="qualitySel" onchange="setQuality(this.value)"><option value="low">nízká</option><option value="mid">střední</option><option value="high">vysoká</option></select></div><div class="setRow"><label><span>Hudba</span><span id="musicVolLbl">50%</span></label><input id="musicVol" type="range" min="0" max="100" value="50" oninput="setMusicVol(this.value)"></div><div class="setRow"><label><span>Střelba / SFX</span><span id="sfxVolLbl">80%</span></label><input id="sfxVol" type="range" min="0" max="100" value="80" oninput="setSfxVol(this.value)"></div><button onclick="closeBoxes()">ZAVŘÍT</button></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -133,11 +135,32 @@ async function joinServer(id){
   }
   location.href='lobby.html';
 }
+
+function currentNickForAdmin(){
+  try{
+    const s=localStorage.getItem('squad_session')||'';
+    let sessionNick=s;
+    try{const obj=JSON.parse(s);sessionNick=obj.nick||obj.name||obj.user||s}catch(e){}
+    return String(
+      new URLSearchParams(location.search).get('nick') ||
+      localStorage.getItem('MADNESS_PLAYER_NAME') ||
+      localStorage.getItem('RESPAWN_NICK') ||
+      sessionNick ||
+      ''
+    ).trim().toLowerCase();
+  }catch(e){return ''}
+}
+function initAdminMenu(){
+  const btn=document.getElementById('adminMenuBtn');
+  if(currentNickForAdmin()==='lukamer') document.querySelectorAll('.adminBtn').forEach(b=>b.classList.add('show'));
+}
+
 function getSettings(){return {quality:localStorage.getItem('MADNESS_QUALITY')||'mid',musicVol:localStorage.getItem('MADNESS_MUSIC_VOL')||'50',sfxVol:localStorage.getItem('MADNESS_SFX_VOL')||'80'}}
 function applySettingsUI(){const s=getSettings();const q=document.getElementById('qualitySel'),mv=document.getElementById('musicVol'),sv=document.getElementById('sfxVol');if(q)q.value=s.quality;if(mv)mv.value=s.musicVol;if(sv)sv.value=s.sfxVol;const ql=document.getElementById('qualityLbl'),ml=document.getElementById('musicVolLbl'),sl=document.getElementById('sfxVolLbl');if(ql)ql.textContent=s.quality==='low'?'nízká':s.quality==='high'?'vysoká':'střední';if(ml)ml.textContent=s.musicVol+'%';if(sl)sl.textContent=s.sfxVol+'%'}
 function setQuality(v){localStorage.setItem('MADNESS_QUALITY',v);applySettingsUI()}
 function setMusicVol(v){localStorage.setItem('MADNESS_MUSIC_VOL',String(v));applySettingsUI()}
 function setSfxVol(v){localStorage.setItem('MADNESS_SFX_VOL',String(v));applySettingsUI()}
 applySettingsUI();
+initAdminMenu();
 </script>
 </body></html>
