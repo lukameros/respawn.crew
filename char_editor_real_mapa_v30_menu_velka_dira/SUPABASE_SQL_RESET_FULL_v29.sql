@@ -1,10 +1,9 @@
--- MADNESS RAIN / SUPABASE FULL RESET SETUP v29
+-- MADNESS RAIN / SUPABASE FULL RESET SETUP v27
 -- POZOR: Tohle smaže celé staré tabulky hry a vytvoří je znovu.
 -- Spusť celé v Supabase SQL Editoru.
 
 create extension if not exists pgcrypto;
 
-drop table if exists public.madness_global_payloads cascade;
 drop table if exists public.madness_squad_invites cascade;
 drop table if exists public.madness_squads cascade;
 drop table if exists public.madness_player_stats cascade;
@@ -92,13 +91,6 @@ create table public.madness_squad_invites (
   created_at timestamptz not null default now()
 );
 
-create table public.madness_global_payloads (
-  id text primary key,
-  payload jsonb not null,
-  updated_by text,
-  updated_at timestamptz not null default now()
-);
-
 alter table public.madness_servers enable row level security;
 alter table public.madness_chat_messages enable row level security;
 alter table public.madness_lobby_players enable row level security;
@@ -106,7 +98,6 @@ alter table public.madness_lobby_missions enable row level security;
 alter table public.madness_player_stats enable row level security;
 alter table public.madness_squads enable row level security;
 alter table public.madness_squad_invites enable row level security;
-alter table public.madness_global_payloads enable row level security;
 
 create policy "madness servers read" on public.madness_servers for select using (true);
 create policy "madness servers insert" on public.madness_servers for insert with check (true);
@@ -142,11 +133,6 @@ create policy "madness squad invites insert" on public.madness_squad_invites for
 create policy "madness squad invites update" on public.madness_squad_invites for update using (true) with check (true);
 create policy "madness squad invites delete" on public.madness_squad_invites for delete using (true);
 
-create policy "madness global payloads read" on public.madness_global_payloads for select using (true);
-create policy "madness global payloads insert" on public.madness_global_payloads for insert with check (true);
-create policy "madness global payloads update" on public.madness_global_payloads for update using (true) with check (true);
-create policy "madness global payloads delete" on public.madness_global_payloads for delete using (true);
-
 do $$
 begin
   begin alter publication supabase_realtime add table public.madness_servers; exception when duplicate_object then null; end;
@@ -156,7 +142,6 @@ begin
   begin alter publication supabase_realtime add table public.madness_player_stats; exception when duplicate_object then null; end;
   begin alter publication supabase_realtime add table public.madness_squads; exception when duplicate_object then null; end;
   begin alter publication supabase_realtime add table public.madness_squad_invites; exception when duplicate_object then null; end;
-  begin alter publication supabase_realtime add table public.madness_global_payloads; exception when duplicate_object then null; end;
 end $$;
 
 create index if not exists madness_servers_updated_idx on public.madness_servers (updated_at desc);
