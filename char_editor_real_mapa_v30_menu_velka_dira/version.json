@@ -1,117 +1,21 @@
-{
-  "version": "v47",
-  "files": {
-    "ammo_crate.png": {
-      "size": 466494,
-      "sha256": "fa6ee7af41aebcc84a323475896758084d93d85a38f8178593d5785d30918c29"
-    },
-    "armored_enemy.png": {
-      "size": 419846,
-      "sha256": "12947e19d196a9ece0cf0e5abb040443fc4ef9cf331f378fa9539b4a79dbc5c4"
-    },
-    "avatars/avatar_1.png": {
-      "size": 16508,
-      "sha256": "8c304473380fbd54278eb6cb97fb36231c95215c21d4be34d674c3653dafb6e3"
-    },
-    "avatars/avatar_2.png": {
-      "size": 15718,
-      "sha256": "8c4a1110e2acf1a4ac5f6deaa116018dbabe7579e4861a9c7ae19a974a692d3a"
-    },
-    "avatars/avatar_3.png": {
-      "size": 15864,
-      "sha256": "3590aaab486a3bde4fd24aa180a1189bf42ec780cf68af37b0d7c4b8df316705"
-    },
-    "avatars/jesus_lukamer.png": {
-      "size": 14140,
-      "sha256": "735a99533b1942811a45354d78dfd80854c26482e78f1666633660dc5bd46c3d"
-    },
-    "awp_hold.png": {
-      "size": 319601,
-      "sha256": "4e90b82f4f1f50a215d7651b3d2b40e9cf849fbb59013009dd118989175929d7"
-    },
-    "bench_lavice.png": {
-      "size": 342602,
-      "sha256": "b86c326b218cec21bfa84b519e529a3638872d917fcbd173c0f2c116a075f1e9"
-    },
-    "blood_splat.png": {
-      "size": 458269,
-      "sha256": "2d706aad8c2d5ec529411c2523fdafed189273222f4da76f606b54f3760af3eb"
-    },
-    "char_editor_v2.html": {
-      "size": 861669,
-      "sha256": "8b5403128ebd7125b9fcf124f446893aaceed0a6b7d778cd276af5129e5d985d"
-    },
-    "char_editor_v2_real.html": {
-      "size": 861669,
-      "sha256": "8b5403128ebd7125b9fcf124f446893aaceed0a6b7d778cd276af5129e5d985d"
-    },
-    "char_editor_v2_real.html.js": {
-      "size": 861669,
-      "sha256": "8b5403128ebd7125b9fcf124f446893aaceed0a6b7d778cd276af5129e5d985d"
-    },
-    "hudba.mp3": {
-      "size": 2722,
-      "sha256": "720796bba2bed8276bcef7c944f0224f9ad54509fb022cd0870a4ac60117137d"
-    },
-    "index.html": {
-      "size": 331,
-      "sha256": "4acfbd1de1f9c37debe658b493e5ceb5c4b71f4fceef0daffe428f43aaadf7e9"
-    },
-    "loading.html": {
-      "size": 8706,
-      "sha256": "718627292087671ca8430bf78d1dcf931d4dbe384bad00fa4c80322ed72aaaa1"
-    },
-    "lobby.html": {
-      "size": 86579,
-      "sha256": "62c49745f8e303860412d4678d64c1bb7c0990306e2fc0fc2032d63577483438"
-    },
-    "lobby_crate.png": {
-      "size": 466494,
-      "sha256": "fa6ee7af41aebcc84a323475896758084d93d85a38f8178593d5785d30918c29"
-    },
-    "lobby_map.png": {
-      "size": 2307252,
-      "sha256": "0d2a4aaed1b75b242c1d3f7d0596cc23326a525eb71bfd2907293a5c5650b633"
-    },
-    "m4_hold.png": {
-      "size": 413100,
-      "sha256": "1fbd55d81d87a118aebe7f8ed7db151a9ffbfe2f5c222c85f0befd8f64c1f525"
-    },
-    "m60_hold.png": {
-      "size": 387088,
-      "sha256": "e1012a686bf02cdd4772167fd8411fcb6a3a6de08909f76b8e7493b3c5dccfe3"
-    },
-    "mapa.png": {
-      "size": 1887337,
-      "sha256": "f2ab59d9eecdfe97ebead67d485ab87a7d0dbe8ab79a1b37fc57202f220bbcdf"
-    },
-    "menu.html": {
-      "size": 13383,
-      "sha256": "6ef8b29e55e0f43fc4090d0e3ec5192beae39efd045337d826a6df5386d49ef9"
-    },
-    "menu_bg.png": {
-      "size": 572899,
-      "sha256": "42cfb5b1f54698074e91eaa13091c0eeccbf817328ae3946a5a3b25ce44e70db"
-    },
-    "real_mapa.html": {
-      "size": 65413,
-      "sha256": "79af6723022e189400cb0f4845219eae7d6e4bbb3802f4705cce91fc5a9aedc1"
-    },
-    "real_mapa.html.js": {
-      "size": 65413,
-      "sha256": "79af6723022e189400cb0f4845219eae7d6e4bbb3802f4705cce91fc5a9aedc1"
-    },
-    "skeleton_editor.html": {
-      "size": 825081,
-      "sha256": "19399706c5bacd95cca8139e427487e0f62dc8f5abdee74a7d97dfc92d8fe472"
-    },
-    "strelba3.mp3": {
-      "size": 746,
-      "sha256": "05e5ead4e74f89612ec5e581f8243f10ed7ebeef3cd31f6640725e61ec79e08a"
-    },
-    "sw.js": {
-      "size": 1310,
-      "sha256": "85aad222d9a42bd1b8ba91ea1177da270776eeb0dfc247d06f36ed7772089289"
-    }
-  }
-}
+const CURRENT_CACHE='velka-dira-current';
+const ASSETS=["ammo_crate.png", "armored_enemy.png", "avatars/avatar_1.png", "avatars/avatar_2.png", "avatars/avatar_3.png", "avatars/jesus_lukamer.png", "awp_hold.png", "bench_lavice.png", "blood_splat.png", "char_editor_v2.html", "char_editor_v2_real.html", "char_editor_v2_real.html.js", "hudba.mp3", "index.html", "loading.html", "lobby.html", "lobby_crate.png", "lobby_map.png", "m4_hold.png", "m60_hold.png", "mapa.png", "menu.html", "menu_bg.png", "real_mapa.html", "real_mapa.html.js", "skeleton_editor.html", "strelba3.mp3", "sw.js", "version.json"];
+self.addEventListener('install',event=>{
+  event.waitUntil(caches.open(CURRENT_CACHE).then(cache=>cache.addAll(ASSETS.map(a=>new Request(a,{cache:'reload'}))).catch(()=>null)).then(()=>self.skipWaiting()));
+});
+self.addEventListener('activate',event=>{
+  event.waitUntil(self.clients.claim());
+});
+self.addEventListener('fetch',event=>{
+  const req=event.request;
+  if(req.method!=='GET')return;
+  event.respondWith(
+    caches.match(req).then(cached=>{
+      const fetchPromise=fetch(req).then(res=>{
+        try{const copy=res.clone();caches.open(CURRENT_CACHE).then(cache=>cache.put(req,copy));}catch(e){}
+        return res;
+      }).catch(()=>cached);
+      return cached||fetchPromise;
+    })
+  );
+});

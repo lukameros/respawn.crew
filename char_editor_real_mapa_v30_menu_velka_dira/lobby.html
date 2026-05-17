@@ -3,1267 +3,168 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Lobby - Madness Rain</title>
+<title>Velká díra 1 — Loading</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:#ddd;font-family:'Courier New',monospace;user-select:none}
-#game{position:fixed;inset:0;width:100vw;height:100vh;background:#000;display:block;cursor:crosshair}
-#lightning{position:fixed;inset:0;background:rgba(210,235,255,.9);opacity:0;pointer-events:none;mix-blend-mode:screen;z-index:5}
-#hud{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:7;width:min(860px,calc(100vw - 24px));display:flex;align-items:center;justify-content:space-between;gap:14px;background:linear-gradient(180deg,rgba(18,18,22,.90),rgba(4,4,6,.82));border:1px solid #9b0000;border-bottom:2px solid #5a0000;padding:11px 15px;box-shadow:0 0 28px #000,inset 0 0 0 1px rgba(255,255,255,.05);text-shadow:1px 1px #000;border-radius:8px;backdrop-filter:blur(2px)}
-#hud b{color:#ffcccc;letter-spacing:1px}.hudBtn{background:linear-gradient(180deg,#310000,#120000);border:1px solid #b00000;color:#ffd7d7;padding:7px 12px;font:bold 12px 'Courier New',monospace;cursor:pointer;border-radius:5px;box-shadow:0 0 12px #000}.hudBtn:hover{background:#5a0000;color:#fff}
-#msg{position:fixed;left:50%;top:68px;transform:translateX(-50%);z-index:8;padding:8px 14px;background:rgba(0,0,0,.75);border:1px solid rgba(255,255,255,.13);opacity:0;transition:.16s;pointer-events:none}
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:12;align-items:center;justify-content:center;padding:18px}.box{width:min(640px,94vw);background:#08080a;border:2px solid #8a0000;box-shadow:0 0 36px #000;padding:20px;text-align:center}.box h2{margin:0 0 14px;color:#ffb0b0;letter-spacing:2px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.choice{background:linear-gradient(180deg,#151515,#070707);border:1px solid #333;color:#ddd;padding:10px;cursor:pointer;min-height:86px}.choice:hover{border-color:#b00000;background:#1b0707}.choice img{max-width:100%;height:45px;object-fit:contain;display:block;margin:0 auto 8px}.choice b{color:#fff}.close{margin-top:15px;background:#250000;border:1px solid #9b0000;color:#ffd6d6;padding:9px 15px;cursor:pointer;font:13px 'Courier New',monospace}
-#missing{display:none;position:fixed;inset:0;background:#050507;align-items:center;justify-content:center;z-index:60;text-align:center;font:15px monospace;padding:30px}#missing b{color:#ff7777}.starterGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0}.starterCard{background:#0b0b0d;border:1px solid #6b0000;color:#eee;padding:10px;cursor:pointer}.starterCard:hover{border-color:#e00000;background:#1a0505}.starterCard img{width:78px;height:98px;object-fit:contain;display:block;margin:0 auto 8px}.starterNick{width:100%;max-width:340px;padding:10px 12px;background:#060606;border:1px solid #700;color:#eee;font:14px 'Courier New',monospace;margin-top:10px}#missing button{margin-top:12px;background:#250000;border:1px solid #9b0000;color:#ffd6d6;padding:10px 16px;cursor:pointer}
-body.shake #game{animation:shake .22s linear 1}@keyframes shake{0%{transform:translate(0,0)}20%{transform:translate(-2px,1px)}40%{transform:translate(2px,-1px)}60%{transform:translate(-1px,-1px)}80%{transform:translate(1px,2px)}100%{transform:translate(0,0)}}
-
-#onlineBadge{position:fixed;left:14px;top:12px;z-index:38;background:rgba(6,6,8,.84);border:1px solid #7a0000;color:#ffd6d6;padding:7px 10px;font:bold 12px 'Courier New',monospace;box-shadow:0 0 16px #000;text-shadow:1px 1px #000}
-#missionToast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:42;display:none;background:rgba(8,8,10,.94);border:2px solid #8a0000;box-shadow:0 0 26px #000;padding:14px 18px;text-align:center;color:#eee;min-width:300px}.missionBtn{background:#240000;border:1px solid #b00000;color:#ffd6d6;padding:9px 14px;margin:8px 5px 0;cursor:pointer;font:bold 13px 'Courier New',monospace}.missionBtn:hover{background:#520000}
-#chatPanel{position:fixed;left:14px;bottom:14px;z-index:35;width:min(360px,calc(100vw - 28px));height:210px;background:rgba(5,5,7,.86);border:1px solid #7a0000;box-shadow:0 0 20px #000;color:#ddd;font:12px 'Courier New',monospace;display:flex;flex-direction:column}#chatHead{padding:6px 8px;border-bottom:1px solid #400;color:#ffbebe;font-weight:bold;letter-spacing:1px}#chatMessages{flex:1;overflow-y:auto;padding:6px 8px;text-align:left;line-height:1.35}#chatMessages .sys{color:#888}#chatMessages b{color:#ffd2d2}#chatForm{display:flex;border-top:1px solid #400}#chatInput{flex:1;background:#050505;border:0;color:#eee;padding:8px;font:12px 'Courier New',monospace;outline:none}#chatSend{width:54px;background:#230000;border:0;border-left:1px solid #700;color:#ffd4d4;cursor:pointer;font:bold 12px 'Courier New',monospace}#chatSend:hover{background:#530000}
-#moneyHud{position:fixed;right:14px;top:62px;z-index:39;min-width:152px;text-align:left;background:rgba(8,8,10,.88);border:1px solid #8a0000;color:#ffd2a0;padding:8px 10px;font:bold 13px 'Courier New',monospace;box-shadow:0 0 18px #000;text-shadow:1px 1px #000;border-radius:4px}.lvlLine{color:#d8f0ff;margin-top:4px}.xpOuter{height:8px;background:#120000;border:1px solid #6b0000;margin-top:5px;box-shadow:inset 0 0 8px #000}.xpInner{height:100%;width:0%;background:linear-gradient(90deg,#8a0000,#ffd26a);transition:width .25s}.xpText{font-size:10px;color:#bbb;text-align:center;margin-top:2px}
-.choice.locked{border-color:#6b4a00;background:linear-gradient(180deg,#1e1705,#090805)}.choice small{color:#aaa}.choice .price{color:#ffd27a;margin-top:4px;font-size:12px}
-#settingsBtn{position:fixed;right:14px;top:12px;z-index:40;width:42px;height:42px;border:1px solid #8a0000;background:rgba(10,10,12,.86);color:#ffd2d2;font-size:23px;line-height:39px;text-align:center;cursor:pointer;box-shadow:0 0 18px #000;border-radius:4px}
-#settingsBtn:hover{background:#3a0000;color:#fff}
-
-#playerCard{position:fixed;right:14px;bottom:14px;z-index:34;min-width:176px;text-align:center;font-family:'Courier New',monospace;text-shadow:1px 1px #000;pointer-events:auto}
-#pcSquad{font-size:13px;color:#ffbebe;background:rgba(0,0,0,.70);border:1px solid rgba(130,0,0,.85);padding:5px 8px;margin-bottom:5px;letter-spacing:1px}
-#pcNick{font-size:16px;color:#eee;background:rgba(0,0,0,.72);border:1px solid rgba(90,90,90,.8);padding:6px 8px;margin-bottom:6px;font-weight:bold}
-#pcAvatarBox{width:124px;height:124px;margin-left:auto;background:rgba(5,5,6,.86);border:3px solid #880000;box-shadow:0 0 20px #000,inset 0 0 0 1px rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer}
-#pcAvatar{max-width:94%;max-height:94%;object-fit:contain;image-rendering:auto}
-
-#cameraTip{position:fixed;z-index:70;display:none;background:rgba(0,0,0,.88);border:1px solid #8a0000;color:#ffd6d6;padding:8px 10px;font:bold 12px 'Courier New',monospace;box-shadow:0 0 16px #000;pointer-events:none;text-shadow:1px 1px #000}.statTable{width:100%;border-collapse:collapse;font:12px 'Courier New',monospace;color:#ddd}.statTable th,.statTable td{border-bottom:1px solid #252525;padding:7px 6px;text-align:left}.statTable th{color:#ffbebe}.achList{display:grid;gap:8px;text-align:left}.achCard{border:1px solid #333;background:#070707;padding:10px;color:#aaa}.achCard.done{border-color:#7a5a00;background:#140f04;color:#ffdca0}.achCard b{color:#fff}.mapLabel{pointer-events:none}#gameAlertModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:90;align-items:center;justify-content:center;padding:18px}#gameAlertBox{width:min(460px,92vw);background:#08080a;border:2px solid #8a0000;box-shadow:0 0 36px #000;padding:18px;text-align:center;color:#ddd;font-family:'Courier New',monospace}#gameAlertBox h2{margin:0 0 12px;color:#ffbebe;letter-spacing:2px}#gameAlertText{white-space:pre-wrap;line-height:1.45}#avatarGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.avatarChoice{border:1px solid #333;background:#070707;padding:10px;cursor:pointer;text-align:center}.avatarChoice:hover{border-color:#b00000;background:#160404}.avatarChoice img{width:96px;height:96px;object-fit:contain;display:block;margin:0 auto 8px}.squadInviteRow{border:1px solid #333;background:#070707;padding:8px;margin:6px 0;display:flex;justify-content:space-between;gap:8px;align-items:center}.squadInput{width:100%;padding:10px;background:#050505;border:1px solid #700;color:#eee;font:14px 'Courier New',monospace;margin:8px 0}.squadSmall{color:#888;font-size:11px;line-height:1.45}
-#introPanel{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:55;width:min(760px,calc(100vw - 28px));display:none;background:rgba(4,4,6,.90);border:2px solid #8a0000;box-shadow:0 0 42px #000;padding:16px 18px;text-align:left;color:#eee;font-family:'Courier New',monospace}#introTitle{color:#ffbebe;font-weight:bold;letter-spacing:2px;margin-bottom:8px}#introText{min-height:62px;line-height:1.45;color:#ddd}.introSkip{float:right;background:#220000;border:1px solid #a00000;color:#ffd6d6;padding:7px 12px;cursor:pointer;font:bold 12px 'Courier New',monospace}.introSkip:hover{background:#520000}
-#settingsModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.74);z-index:45;align-items:center;justify-content:center}
-#settingsModal .sbox{width:min(420px,92vw);background:#08080a;border:2px solid #7c0000;box-shadow:0 0 35px #000;padding:20px;color:#ddd}
-#settingsModal h2{margin:0 0 14px;color:#ffb5b5;letter-spacing:2px}
-.setRow{margin:12px 0;font-size:13px;color:#ccc}
-.setRow label{display:flex;justify-content:space-between;margin-bottom:5px}
-.setRow input,.setRow select{width:100%;accent-color:#b00000}
-.sbtn{background:#260000;color:#ffd0d0;border:1px solid #a00000;padding:9px 14px;font-family:inherit;cursor:pointer;margin-top:12px}
-.sbtn:hover{background:#520000}
-#friendAnswer{width:100%;padding:10px 12px;background:#050505;border:1px solid #6f0000;color:#eee;font:14px 'Courier New',monospace;outline:none;margin-top:8px}#friendAnswer:focus{border-color:#c00000;box-shadow:0 0 12px rgba(160,0,0,.35)}
-
-
-.rankBadge{display:inline-block;margin-left:6px;padding:2px 6px;border-radius:4px;font:bold 10px 'Courier New',monospace;letter-spacing:.7px;text-shadow:1px 1px #000;border:1px solid rgba(255,255,255,.12);vertical-align:middle}
-.rankBadge.rookie{background:#1b1b1b;color:#aaa;border-color:#333}
-.rankBadge.bronze{background:linear-gradient(180deg,#4b2a10,#190c02);color:#f0b27a;border-color:#8a4b15}
-.rankBadge.silver{background:linear-gradient(180deg,#777,#232323);color:#eee;border-color:#aaa}
-.rankBadge.gold{background:linear-gradient(180deg,#8a6200,#2b1b00);color:#ffe28a;border-color:#d39a00}
-.rankBadge.epic{background:linear-gradient(90deg,#32105c,#8200aa,#2d0046);color:#ffd7ff;border-color:#d260ff;box-shadow:0 0 10px rgba(180,0,255,.55)}
-.rankBadge.legend{background:linear-gradient(90deg,#700,#d28a00,#700);color:#fff0b0;border-color:#ffcc33;box-shadow:0 0 12px rgba(255,190,40,.65)}
-.rankBadge.developer{background:linear-gradient(90deg,#001f38,#005b84,#001f38);color:#b8f2ff;border-color:#49cfff;box-shadow:0 0 10px rgba(40,190,255,.55)}
-.statTable{border-collapse:separate!important;border-spacing:0 7px!important;width:100%;font-size:12px!important}
-.statTable thead th{background:rgba(80,0,0,.55);border-top:1px solid #5b0000;border-bottom:1px solid #5b0000;color:#ffd2d2!important;text-transform:uppercase;font-size:11px;letter-spacing:.8px}
-.statTable tbody tr{background:linear-gradient(180deg,rgba(16,16,18,.96),rgba(6,6,8,.96));box-shadow:0 0 12px rgba(0,0,0,.55)}
-.statTable tbody tr:nth-child(1){outline:1px solid rgba(255,210,90,.45);box-shadow:0 0 18px rgba(255,200,60,.12)}
-.statTable td,.statTable th{padding:9px 8px!important;border-bottom:0!important}
-.statNum{color:#ffd27a;font-weight:bold}
-.rankPos{color:#ffbebe;font-weight:bold}
-.nickCell{font-weight:bold;color:#eee}
-#moneyHud{background:linear-gradient(180deg,rgba(18,12,4,.94),rgba(5,5,7,.90))!important;border:1px solid #b07000!important;border-radius:8px!important;box-shadow:0 0 20px #000,inset 0 0 0 1px rgba(255,214,120,.08)!important}
-#playerCard{filter:drop-shadow(0 0 14px rgba(0,0,0,.85))}
-#pcAvatarBox{border-radius:8px;background:radial-gradient(circle at 50% 35%,rgba(90,0,0,.35),rgba(0,0,0,.92))!important}
-#chatPanel{border-radius:8px;box-shadow:0 0 24px #000!important}
-.modal .box,.box{border-radius:10px!important;background:linear-gradient(180deg,rgba(14,14,18,.98),rgba(4,4,6,.98))!important}
-.choice{border-radius:8px!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.03),0 0 12px rgba(0,0,0,.45)}
-
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:#030304;color:#eee;font-family:'Courier New',monospace;overflow:hidden}
+body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 50% 30%,rgba(120,0,0,.35),transparent 45%),linear-gradient(180deg,#09090b,#020203);z-index:0}
+.wrap{position:relative;z-index:1;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
+.box{width:min(740px,92vw);background:rgba(6,6,8,.88);border:2px solid #8a0000;box-shadow:0 0 42px #000;padding:28px;border-radius:12px}
+h1{margin:0 0 8px;font-size:34px;letter-spacing:3px;color:#ffd6d6;text-shadow:2px 2px #000}
+.sub{color:#999;font-size:13px;margin-bottom:22px}
+.track{height:18px;background:#150000;border:1px solid #740000;box-shadow:inset 0 0 10px #000;border-radius:10px;overflow:hidden}
+.fill{height:100%;width:0%;background:linear-gradient(90deg,#720000,#ffbd54);box-shadow:0 0 16px rgba(255,180,60,.5);transition:width .12s}
+#pct{margin-top:12px;color:#ffd27a;font-weight:bold}
+#file{margin-top:8px;color:#777;font-size:11px;min-height:16px;word-break:break-all}
+.warn{margin-top:18px;color:#666;font-size:11px;line-height:1.4}
+button{margin-top:18px;background:#260000;color:#ffd0d0;border:1px solid #a00000;padding:10px 18px;font:bold 14px 'Courier New',monospace;cursor:pointer;display:none;letter-spacing:1px}
+button:hover{background:#520000}
+#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:20;align-items:center;justify-content:center;padding:20px}
+#modal .m{max-width:520px;background:#08080a;border:2px solid #8a0000;box-shadow:0 0 36px #000;padding:22px;text-align:center;border-radius:10px}
+#modal h2{margin:0 0 10px;color:#ffbebe;letter-spacing:2px}
+#modal p{color:#aaa;line-height:1.45}
+#modal button{display:inline-block}
 </style>
 </head>
 <body>
-<canvas id="game"></canvas>
-<button id="settingsBtn" title="Nastavení" onclick="openSettings()">⚙</button>
-<div id="settingsModal">
-  <div class="sbox">
-    <h2>NASTAVENÍ</h2>
-    <div class="setRow"><label><span>Grafika</span><span id="qualityLbl">střední</span></label><select id="qualitySel" onchange="setQuality(this.value)"><option value="low">nízká</option><option value="mid">střední</option><option value="high">vysoká</option></select></div>
-    <div class="setRow"><label><span>Hudba</span><span id="musicVolLbl">50%</span></label><input id="musicVol" type="range" min="0" max="100" value="50" oninput="setMusicVol(this.value)"></div>
-    <div class="setRow"><label><span>Střelba / SFX</span><span id="sfxVolLbl">80%</span></label><input id="sfxVol" type="range" min="0" max="100" value="80" oninput="setSfxVol(this.value)"></div>
-    <button class="sbtn" onclick="closeSettings()">ZAVŘÍT</button>
-  </div>
-</div>
-<div id="moneyHud"><div>MONEY + <span id="moneyVal">0</span></div><div class="lvlLine">LEVEL <span id="levelVal">1</span>/10</div><div class="xpOuter"><div id="xpFill" class="xpInner"></div></div><div id="xpText" class="xpText">0 / 100 XP</div></div>
-<div id="lightning"></div>
-<div id="onlineBadge">ONLINE: <span id="onlineCount">1</span></div>
-<div id="hud"><div><b>LOBBY</b> <span id="weaponText">bez zbraně</span><br><small id="serverText" style="color:#888"></small></div><div>klikni na dveře nebo panel</div><div><button class="hudBtn" onclick="location.href='menu.html'">MENU</button></div></div>
-<div id="msg"></div>
-<div id="gameAlertModal"><div id="gameAlertBox"><h2>HLÁŠENÍ</h2><div id="gameAlertText"></div><button class="close" onclick="closeGameAlert()">ZAVŘÍT</button></div></div>
-<div id="cameraTip">Lukáš tě hlídá, neboj!</div>
-<div id="introPanel"><button class="introSkip" onclick="skipIntroStory()">PŘESKOČIT</button><div id="introTitle">FRIENDLY NPC</div><div id="introText"></div></div>
-<div id="playerCard"><div id="pcSquad">SQUAD: ???</div><div id="pcNick">PLAYER</div><div id="pcAvatarBox" onclick="openAvatarModal()"><img id="pcAvatar" alt=""></div></div>
-<div id="missionToast"><div id="missionText">Host vybral misi.</div><button id="missionReadyBtn" class="missionBtn" onclick="readyMission()">READY</button><button class="missionBtn" onclick="hideMissionToast()">ZAVŘÍT</button></div>
-<div id="chatPanel">
-  <div id="chatHead">CHAT</div>
-  <div id="chatMessages"><div class="sys">Načítám chat...</div></div>
-  <form id="chatForm"><input id="chatInput" maxlength="120" placeholder="napiš zprávu..."><button id="chatSend" type="submit">SEND</button></form>
-</div>
-<div class="modal" id="avatarModal"><div class="box"><h2>VYBER AVATAR</h2><p style="color:#888">Mění se jen obrázek v profilu, ne postava ve hře.</p><div id="avatarGrid"></div><button class="close" onclick="closeModal('avatarModal')">ZAVŘÍT</button></div></div>
-<div class="modal" id="squadModal"><div class="box"><h2>SQUAD</h2>
-  <div id="squadCurrent" style="color:#ffd6d6;margin-bottom:8px">Aktuální squad: ???</div>
-  <input id="squadNameInput" class="squadInput" maxlength="22" placeholder="Název squad">
-  <button class="close" onclick="createSquad()">VYTVOŘIT / PŘEJMENOVAT SQUAD</button><button class="close" onclick="leaveSquad()">LEAVNOUT SQUAD</button>
-  <h3 style="color:#ffbebe;margin:16px 0 8px">Pozvat hráče v lobby</h3>
-  <div id="squadInviteList" class="squadSmall">Nikdo další v lobby.</div>
-  <button class="close" onclick="closeModal('squadModal')">ZAVŘÍT</button>
+<div class="wrap"><div class="box">
+<h1>VELKÁ DÍRA 1</h1>
+<div class="sub" id="status">Kontroluju verzi hry...</div>
+<div class="track"><div class="fill" id="fill"></div></div>
+<div id="pct">0%</div>
+<div id="file">start</div>
+<button id="playBtn" onclick="go()">HRÁT</button>
+<div class="warn">Když je dostupná nová verze, loading stáhne jen nové nebo změněné soubory. Když update selže, můžeš hrát starou offline verzi.</div>
 </div></div>
-<div class="modal" id="helpModal"><div class="box"><h2>HELP</h2><p style="font-size:18px;color:#ffd6d6;text-align:center">Pracujeme na tom :-)</p><button class="close" onclick="closeModal('helpModal')">ZAVŘÍT</button></div></div>
-<div class="modal" id="leaderboardModal"><div class="box"><h2>ZEBŘÍČEK SLÁVY</h2><div id="leaderboardBody" style="max-height:420px;overflow:auto;text-align:left"></div><button class="close" onclick="closeModal('leaderboardModal')">ZAVŘÍT</button></div></div>
-<div class="modal" id="achievementsModal"><div class="box"><h2>ACHIEVEMENTY</h2><div id="achievementsBody" class="achList"></div><button class="close" onclick="closeModal('achievementsModal')">ZAVŘÍT</button></div></div>
-<div class="modal" id="weaponModal"><div class="box"><h2>ARMORY</h2>
-  <div style="display:flex;gap:8px;justify-content:center;margin-bottom:12px">
-    <button class="close" style="margin:0" onclick="showArmoryTab('weapons')">ZBRANĚ</button>
-    <button class="close" style="margin:0" onclick="showArmoryTab('cloths')">CLOTHS</button>
-  </div>
-  <div id="armoryWeapons"><div class="grid" id="weaponGrid"></div></div>
-  <div id="armoryCloths" style="display:none;color:#888;padding:22px;border:1px dashed #333;background:#050505">CLOTHS zatím prázdné.</div>
-  <button class="close" onclick="closeModal('weaponModal')">ZAVŘÍT</button>
-</div></div>
-<div class="modal" id="friendQuestionModal"><div class="box"><h2>FRIENDLY NPC</h2><p id="friendQuestionText" style="color:#ddd;margin:8px 0 12px"></p><input id="friendAnswer" placeholder="napiš odpověď..."><button class="close" onclick="submitFriendAnswer()">ODPOVĚDĚT</button><button class="close" onclick="closeModal('friendQuestionModal')">ZAVŘÍT</button></div></div>
-<div class="modal" id="mapModal"><div class="box"><h2>VYBER MAPU</h2><div class="choice" onclick="startMap()"><b>REAL MAPA</b><br><small>déšť, bouřka, vlny enemy</small></div><button class="close" onclick="closeModal('mapModal')">ZAVŘÍT</button></div></div>
-<div id="missing"><div>
-  <b>VYBER SI POSTAVU</b><br>
-  <input id="starterNick" class="starterNick" maxlength="18" placeholder="Zadej nick">
-  <div class="starterGrid">
-    <div class="starterCard" onclick="chooseStarter('red')"><img id="starterRed"><b>RVAČ</b></div>
-    <div class="starterCard" onclick="chooseStarter('blue')"><img id="starterBlue"><b>PADOUCH</b></div>
-    <div class="starterCard" onclick="chooseStarter('green')"><img id="starterGreen"><b>MOZEK</b></div>
-  </div>
-  <small style="color:#888">Editor je schovaný pro vývojáře. Tohle je normální výběr pro hráče.</small>
-</div></div>
-<audio id="music" src="hudba.mp3" loop preload="auto"></audio>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<div id="modal"><div class="m"><h2 id="modalTitle">STARÁ VERZE</h2><p id="modalText"></p><button onclick="closeModal()">OK</button></div></div>
 <script>
-const SUPABASE_URL="https://fokguuucpoejkxklwrpw.supabase.co";
-const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZva2d1dXVjcG9lamt4a2x3cnB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NTc2NTgsImV4cCI6MjA5NDUzMzY1OH0.2nNJFm1yzgiaNuIsj4DWgS9zJunIYc1uKkWndw23VrY";
-
-function bootstrapNickFromIndex(){
-  try{
-    const p=new URLSearchParams(location.search);
-    let ses=localStorage.getItem('squad_session')||'';try{const o=JSON.parse(ses);ses=o.nick||o.name||o.user||ses}catch(e){}const nick=(p.get('nick')||localStorage.getItem('MADNESS_PLAYER_NAME')||localStorage.getItem('RESPAWN_NICK')||ses||'').trim();
-    if(nick){
-      localStorage.setItem('MADNESS_PLAYER_NAME',nick);
-      localStorage.setItem('RESPAWN_NICK',nick);
-    }
-  }catch(e){}
+const FALLBACK_FILES=["ammo_crate.png", "armored_enemy.png", "avatars/avatar_1.png", "avatars/avatar_2.png", "avatars/avatar_3.png", "avatars/jesus_lukamer.png", "awp_hold.png", "bench_lavice.png", "blood_splat.png", "char_editor_v2.html", "char_editor_v2_real.html", "char_editor_v2_real.html.js", "hudba.mp3", "index.html", "loading.html", "lobby.html", "lobby_crate.png", "lobby_map.png", "m4_hold.png", "m60_hold.png", "mapa.png", "menu.html", "menu_bg.png", "real_mapa.html", "real_mapa.html.js", "skeleton_editor.html", "strelba3.mp3", "sw.js", "version.json"];
+const CURRENT_CACHE='velka-dira-current';
+const UPDATE_CACHE='velka-dira-v56-update';
+const VERSION='v56';
+const fill=document.getElementById('fill'), pct=document.getElementById('pct'), fileEl=document.getElementById('file'), playBtn=document.getElementById('playBtn'), statusEl=document.getElementById('status');
+let total=0, done=0;
+function setProgress(name){
+  done++;
+  const p=total?Math.round(done/total*100):100;
+  fill.style.width=p+'%'; pct.textContent=p+'%'; fileEl.textContent=name||'hotovo';
 }
-bootstrapNickFromIndex();
-
-let SB=null;
-try{if(window.supabase)SB=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){SB=null}
-const cv=document.getElementById('game'),ctx=cv.getContext('2d'),lightning=document.getElementById('lightning'),msg=document.getElementById('msg'),missing=document.getElementById('missing'),weaponText=document.getElementById('weaponText'),serverText=document.getElementById('serverText'),moneyVal=document.getElementById('moneyVal'),levelVal=document.getElementById('levelVal'),xpFill=document.getElementById('xpFill'),xpText=document.getElementById('xpText'),introPanel=document.getElementById('introPanel'),introText=document.getElementById('introText'),cameraTip=document.getElementById('cameraTip'),leaderboardBody=document.getElementById('leaderboardBody'),achievementsBody=document.getElementById('achievementsBody'),squadCurrent=document.getElementById('squadCurrent'),squadNameInput=document.getElementById('squadNameInput'),squadInviteList=document.getElementById('squadInviteList'),pcNick=document.getElementById('pcNick'),pcSquad=document.getElementById('pcSquad'),pcAvatar=document.getElementById('pcAvatar'),friendQuestionText=document.getElementById('friendQuestionText'),friendAnswer=document.getElementById('friendAnswer'),chatMessages=document.getElementById('chatMessages'),chatForm=document.getElementById('chatForm'),chatInput=document.getElementById('chatInput'),onlineCount=document.getElementById('onlineCount'),starterNick=document.getElementById('starterNick'),missionToast=document.getElementById('missionToast'),missionText=document.getElementById('missionText'),missionReadyBtn=document.getElementById('missionReadyBtn'),music=document.getElementById('music');
-let W=0,H=0,DPR=1,last=performance.now(),camX=0,msgTimer=0;
-const SETTINGS={quality:localStorage.getItem('MADNESS_QUALITY')||'mid',musicVol:localStorage.getItem('MADNESS_MUSIC_VOL')??'50',sfxVol:localStorage.getItem('MADNESS_SFX_VOL')??'80'};let payload=null;try{payload=JSON.parse(localStorage.getItem('MADNESS_REAL_PAYLOAD')||'null')}catch(e){payload=null}
-function payloadSrc(v){return typeof v==='string'?v:(v&&v.src)||''}const HAD_LOCAL_PAYLOAD=!!(payload&&payload.player&&payload.player.src);
-function img(src){const i=new Image();if(src)i.src=src;return i}
-const PROFILE_AVATARS=[
-  {id:'avatar_1',name:'MASKA 1',src:'avatars/avatar_1.png'},
-  {id:'avatar_2',name:'MASKA 2',src:'avatars/avatar_2.png'},
-  {id:'avatar_3',name:'MASKA 3',src:'avatars/avatar_3.png'}
-];
-const LUKAMER_AVATAR={id:'jesus_lukamer',name:'JESUS',src:'avatars/jesus_lukamer.png'};
-function isLukamerNick(){
-  return String(localStorage.getItem('MADNESS_PLAYER_NAME')||localStorage.getItem('RESPAWN_NICK')||'').trim().toLowerCase()==='lukamer';
+function showPlay(text){
+  if(text)statusEl.textContent=text;
+  playBtn.style.display='inline-block';
 }
-function avatarByKind(kind){
-  if(kind==='blue')return PROFILE_AVATARS[1].src;
-  if(kind==='green')return PROFILE_AVATARS[2].src;
-  return PROFILE_AVATARS[0].src;
+function go(){location.href='menu.html'}
+function showModal(title,text){
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalText').textContent=text;
+  document.getElementById('modal').style.display='flex';
 }
-function avatarSvg(kind){return avatarByKind(kind)}
-function getProfileAvatar(){
-  if(isLukamerNick()){
-    localStorage.setItem('MADNESS_PROFILE_AVATAR',LUKAMER_AVATAR.src);
-    return LUKAMER_AVATAR.src;
-  }
-  const cur=localStorage.getItem('MADNESS_PROFILE_AVATAR')||'';
-  const allowed=PROFILE_AVATARS.map(a=>a.src);
-  if(!allowed.includes(cur)){
-    localStorage.setItem('MADNESS_PROFILE_AVATAR',PROFILE_AVATARS[0].src);
-    return PROFILE_AVATARS[0].src;
-  }
-  return cur;
-}
-function setProfileAvatar(src){
-  if(isLukamerNick())src=LUKAMER_AVATAR.src;
-  else if(!PROFILE_AVATARS.some(a=>a.src===src))src=PROFILE_AVATARS[0].src;
-  localStorage.setItem('MADNESS_PROFILE_AVATAR',src);
-  initPlayerCard();
-}
-function openAvatarModal(){
-  const g=document.getElementById('avatarGrid');
-  if(g){
-    g.innerHTML='';
-    const list=isLukamerNick()?[LUKAMER_AVATAR]:PROFILE_AVATARS;
-    list.forEach(a=>{
-      const d=document.createElement('div');d.className='avatarChoice';
-      d.innerHTML='<img src="'+a.src+'"><b>'+a.name+'</b>';
-      d.onclick=()=>{setProfileAvatar(a.src);closeModal('avatarModal');showMsg('Avatar změněn');};
-      g.appendChild(d);
-    });
-  }
-  openModal('avatarModal');
-}
-function starterSvg(kind){
-  const c=kind==='red'?['#8b1010','#e6c7a0','#2b2b2b']:kind==='blue'?['#0d3f73','#d6bd96','#1b1b2c']:['#246b2d','#d9c08f','#2a251c'];
-  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="180" height="260" viewBox="0 0 180 260">
-  <rect width="180" height="260" fill="none"/>
-  <ellipse cx="90" cy="238" rx="42" ry="10" fill="rgba(0,0,0,.35)"/>
-  <path d="M58 108 Q90 82 122 108 L134 184 Q90 212 46 184 Z" fill="${c[0]}" stroke="#111" stroke-width="5"/>
-  <circle cx="90" cy="70" r="38" fill="${c[1]}" stroke="#111" stroke-width="5"/>
-  <path d="M55 55 Q90 20 125 55 Q110 42 90 44 Q70 42 55 55" fill="${c[2]}" stroke="#111" stroke-width="4"/>
-  <circle cx="77" cy="72" r="5" fill="#111"/><circle cx="103" cy="72" r="5" fill="#111"/>
-  <path d="M75 91 Q90 101 105 91" fill="none" stroke="#111" stroke-width="4" stroke-linecap="round"/>
-  <path d="M50 122 L23 170" stroke="${c[1]}" stroke-width="15" stroke-linecap="round"/><path d="M130 122 L157 170" stroke="${c[1]}" stroke-width="15" stroke-linecap="round"/>
-  <path d="M72 188 L64 241" stroke="#1b1b1b" stroke-width="18" stroke-linecap="round"/><path d="M108 188 L116 241" stroke="#1b1b1b" stroke-width="18" stroke-linecap="round"/>
-  </svg>`;
-  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
-}
-function showDefaultCharacterHint(){
-  if(localStorage.getItem('MADNESS_DEFAULT_CHARACTER')==='1'){
-    setTimeout(()=>showMsg('Používám default postavu. Editor/global postava se načte jen po Supabase setupu a uložení v editoru.'),900);
+function closeModal(){document.getElementById('modal').style.display='none'}
+async function registerSW(){
+  if(location.protocol==='file:')return;
+  if('serviceWorker' in navigator){
+    try{await navigator.serviceWorker.register('sw.js');await navigator.serviceWorker.ready;}catch(e){}
   }
 }
-function initStarterPreview(){
-  const r=document.getElementById('starterRed'),b=document.getElementById('starterBlue'),g=document.getElementById('starterGreen');
-  if(r)r.src=(PROFILE_AVATARS[0]&&PROFILE_AVATARS[0].src)||avatarByKind('red');
-  if(b)b.src=(PROFILE_AVATARS[1]&&PROFILE_AVATARS[1].src)||avatarByKind('blue');
-  if(g)g.src=(PROFILE_AVATARS[2]&&PROFILE_AVATARS[2].src)||avatarByKind('green');
-  if(starterNick)starterNick.value=localStorage.getItem('MADNESS_PLAYER_NAME')||'';
+async function cacheHasMenu(cacheName){
+  try{const c=await caches.open(cacheName);return !!(await c.match('menu.html'));}catch(e){return false}
 }
-function chooseStarter(kind){
-  const nick=(starterNick?.value||'PLAYER').trim()||'PLAYER';
-  localStorage.setItem('MADNESS_PLAYER_NAME',nick);
-  localStorage.setItem('MADNESS_PROFILE_AVATAR',isLukamerNick()?LUKAMER_AVATAR.src:avatarByKind(kind));
-  const src=starterSvg(kind);
-  const npc=starterSvg('green');
-  const payload={
-    version:10,savedAt:Date.now(),
-    player:{src},playerNoHands:{src},
-    enemy:{src:npc},enemyNoHands:{src:npc},
-    gif:{player:null},layers:[],enemyLayers:[],
-    grip:{x:0,y:8,rot:0,scale:100},
-    assets:{ak_hold:'m4_hold.png',ak_ground:'m4_hold.png',m4_hold:'m4_hold.png',awp_hold:'awp_hold.png',m60_hold:'m60_hold.png'}
-  };
-  localStorage.setItem('MADNESS_REAL_PAYLOAD',JSON.stringify(payload));
-  localStorage.setItem('MADNESS_CURRENT_NPC',JSON.stringify({src:npc,noHandsSrc:npc,savedAt:Date.now()}));
-  localStorage.setItem('MADNESS_DEFAULT_CHARACTER','1');
-  location.reload();
-}
-function makeDefaultPayload(){
-  const src=starterSvg('red'), npc=starterSvg('green');
-  return {version:11,savedAt:Date.now(),player:{src},playerNoHands:{src},enemy:{src:npc},enemyNoHands:{src:npc},gif:{player:null},layers:[],enemyLayers:[],grip:{x:0,y:8,rot:0,scale:100},assets:{ak_hold:'m4_hold.png',ak_ground:'m4_hold.png',m4_hold:'m4_hold.png',awp_hold:'awp_hold.png',m60_hold:'m60_hold.png'}};
-}
-if(!payload||!payload.player||!payloadSrc(payload.player)){
-  payload=makeDefaultPayload();
-  localStorage.setItem('MADNESS_REAL_PAYLOAD',JSON.stringify(payload));
-  localStorage.setItem('MADNESS_CURRENT_NPC',JSON.stringify({src:payload.enemy.src,noHandsSrc:payload.enemyNoHands.src,savedAt:Date.now()}));
-  localStorage.setItem('MADNESS_DEFAULT_CHARACTER','1');
-  if(missing)missing.style.display='none';
-}
-async function loadGlobalCharacterIfNeeded(force=false){
-  if(!SB)return;
-  try{
-    const {data,error}=await SB.from('madness_global_payloads')
-      .select('payload,updated_at')
-      .eq('id','global_character')
-      .maybeSingle();
-
-    if(error){
-      console.warn('global character load error', error.message);
-      if(localStorage.getItem('MADNESS_DEFAULT_CHARACTER')==='1')showMsg('Online postava teď není dostupná.');
-      return;
-    }
-    if(!data?.payload)return;
-
-    const last=localStorage.getItem('MADNESS_GLOBAL_CHARACTER_UPDATED_AT')||'';
-    const hasLocal=!!(payload&&payload.player&&payloadSrc(payload.player));
-    const shouldApply = force || !hasLocal || localStorage.getItem('MADNESS_DEFAULT_CHARACTER')==='1' || data.updated_at!==last;
-
-    if(!shouldApply)return;
-
-    localStorage.setItem('MADNESS_REAL_PAYLOAD',JSON.stringify(data.payload));
-    localStorage.setItem('MADNESS_GLOBAL_CHARACTER_UPDATED_AT',data.updated_at||String(Date.now()));
-    const ep=payloadSrc(data.payload.enemy), enh=payloadSrc(data.payload.enemyNoHands)||ep;
-    const npc=ep?{src:ep,noHandsSrc:enh,savedAt:Date.now()}:null;
-    if(npc)localStorage.setItem('MADNESS_CURRENT_NPC',JSON.stringify(npc));
-    localStorage.removeItem('MADNESS_DEFAULT_CHARACTER');
-
-    showMsg('Načítám globální postavu z editoru...');
-    setTimeout(()=>location.reload(),260);
-  }catch(e){
-    console.warn('global character load failed',e);
-  }
-}
-const mapImg=img('lobby_map.png'),benchImg=img('bench_lavice.png'),crateImg=img('lobby_crate.png'),playerFullImg=img(payloadSrc(payload?.player)),playerNoHandsImg=img(payloadSrc(payload?.playerNoHands)||payloadSrc(payload?.player)),akHoldImg=img(payload?.assets?.ak_hold),m4HoldImg=img(payload?.assets?.m4_hold||'m4_hold.png'),awpHoldImg=img(payload?.assets?.awp_hold||'awp_hold.png'),m60HoldImg=img(payload?.assets?.m60_hold||'m60_hold.png');
-const grip=payload?.grip||{x:0,y:8,rot:0,scale:100};
-const WEAPONS={ak47:{label:'AK-47',img:akHoldImg,drawW:170,worldW:170,cost:750,level:1},m4:{label:'M4',img:m4HoldImg,drawW:170,worldW:170,cost:1400,level:3},awp:{label:'AWP',img:awpHoldImg,drawW:190,worldW:190,cost:3000,level:5},m60:{label:'M60',img:m60HoldImg,drawW:190,worldW:190,cost:3600,level:8}};
-let selected=(localStorage.getItem('MADNESS_SELECTED_WEAPON')||'').toLowerCase(); if(!WEAPONS[selected]) selected='';
-function getMoney(){let v=Number(localStorage.getItem('MADNESS_MONEY'));if(!Number.isFinite(v)){v=2500;localStorage.setItem('MADNESS_MONEY',String(v))}return Math.max(0,Math.floor(v))}
-function setMoney(v){localStorage.setItem('MADNESS_MONEY',String(Math.max(0,Math.floor(v))));updateMoneyUI()}
-const MAX_LEVEL=10;
-function levelNeed(lvl){return 100 + (Math.max(1,lvl)-1)*85}
-function getLevel(){let v=Number(localStorage.getItem('MADNESS_LEVEL'));if(!Number.isFinite(v)||v<1){v=1;localStorage.setItem('MADNESS_LEVEL','1')}return Math.min(MAX_LEVEL,Math.floor(v))}
-function getXp(){let v=Number(localStorage.getItem('MADNESS_XP'));if(!Number.isFinite(v)||v<0){v=0;localStorage.setItem('MADNESS_XP','0')}return Math.floor(v)}
-
-function isAdminLukamer(){
-  const n=String(playerNick?playerNick():(localStorage.getItem('MADNESS_PLAYER_NAME')||'')).trim().toLowerCase();
-  return n==='lukamer';
-}
-function showBanScreen(reason,until){
-  let el=document.getElementById('antiCheatBlocker');
-  if(!el){
-    el=document.createElement('div');
-    el.id='antiCheatBlocker';
-    el.style.cssText='position:fixed;inset:0;z-index:999999;background:#030304;color:#ffd6d6;display:flex;align-items:center;justify-content:center;text-align:center;font:15px Courier New,monospace;padding:25px';
-    document.body.appendChild(el);
-  }
-  const left=Math.max(0,Math.ceil((until-Date.now())/60000));
-  el.innerHTML='<div style="max-width:520px;border:2px solid #8a0000;background:#09090b;padding:24px;box-shadow:0 0 35px #000"><h1 style="margin:0 0 12px;color:#ff7777">ANTICHEAT</h1><p>'+chatSafe(reason||'Podezřelá změna hodnot.')+'</p><p>Ban ještě cca <b>'+left+' min</b>.</p></div>';
-}
-function setBan(reason){
-  const until=Date.now()+3600000;
-  localStorage.setItem('MADNESS_AC_BAN_UNTIL',String(until));
-  localStorage.setItem('MADNESS_AC_BAN_REASON',reason||'Podezřelá změna hodnot.');
-  showBanScreen(reason,until);
-}
-function antiClampKey(key,min,max){
-  let raw=localStorage.getItem(key);
-  if(raw==null)return false;
-  let v=Number(raw),nv=v;
-  if(!Number.isFinite(v))nv=min;
-  nv=Math.floor(Math.max(min,Math.min(max,nv)));
-  if(String(nv)!==String(raw)){localStorage.setItem(key,String(nv));return true}
+async function hasPlayableCache(){
+  if(!('caches' in window))return false;
+  if(await cacheHasMenu(CURRENT_CACHE))return true;
+  const names=await caches.keys();
+  for(const n of names){if(n.indexOf('velka-dira-')===0 && await cacheHasMenu(n))return true;}
   return false;
 }
-function antiCheatCore(){
-  window.MADNESS_AC_OK=true;
-  if(isAdminLukamer())return true;
-  const banUntil=Number(localStorage.getItem('MADNESS_AC_BAN_UNTIL')||'0')||0;
-  if(banUntil>Date.now()){
-    const last=Number(localStorage.getItem('MADNESS_AC_LAST_MONEY')||'2500')||2500;
-    localStorage.setItem('MADNESS_MONEY',String(Math.max(0,Math.floor(last))));
-    showBanScreen(localStorage.getItem('MADNESS_AC_BAN_REASON')||'Podezřelá změna hodnot.',banUntil);
-    return false;
+async function getRemoteManifest(){
+  const r=await fetch('version.json?v='+Date.now(),{cache:'no-store'});
+  if(!r.ok)throw new Error('version.json');
+  return await r.json();
+}
+function getLocalManifest(){
+  try{return JSON.parse(localStorage.getItem('MADNESS_VERSION_MANIFEST')||'null')}catch(e){return null}
+}
+function changedFiles(remote,local){
+  const rf=remote.files||{}, lf=(local&&local.files)||{};
+  return Object.keys(rf).filter(f=>!lf[f]||lf[f].sha256!==rf[f].sha256||lf[f].size!==rf[f].size);
+}
+async function cacheOne(cache,url){
+  const res=await fetch(url,{cache:'reload'});
+  if(!res.ok)throw new Error(url);
+  await cache.put(url,res.clone());
+  setProgress(url);
+}
+async function promoteUpdateCache(remote){
+  await caches.delete(CURRENT_CACHE);
+  const current=await caches.open(CURRENT_CACHE);
+  const update=await caches.open(UPDATE_CACHE);
+  const keys=await update.keys();
+  for(const req of keys){
+    const res=await update.match(req);
+    if(res)await current.put(req,res);
   }
-  let fixed=false;
-  fixed=antiClampKey('MADNESS_LEVEL',1,MAX_LEVEL)||fixed;
-  fixed=antiClampKey('MADNESS_XP',0,999999)||fixed;
-  fixed=antiClampKey('MADNESS_MONEY',0,999999)||fixed;
-  fixed=antiClampKey('MADNESS_KILLS',0,99999)||fixed;
-  fixed=antiClampKey('MADNESS_MISSIONS',0,9999)||fixed;
-  fixed=antiClampKey('MADNESS_BEST_WAVE',0,9999)||fixed;
-  const now=Date.now(), money=getMoney();
-  const lastMoney=Number(localStorage.getItem('MADNESS_AC_LAST_MONEY'));
-  const lastTime=Number(localStorage.getItem('MADNESS_AC_LAST_CHECK')||'0')||0;
-  if(Number.isFinite(lastMoney) && now-lastTime<12000 && money-lastMoney>20000){
-    localStorage.setItem('MADNESS_MONEY',String(Math.max(0,Math.floor(lastMoney))));
-    updateMoneyUI();
-    setBan('Rychlý podezřelý nárůst peněz. Hodnota byla vrácena.');
-    return false;
-  }
-  const lvl=getLevel(), need=levelNeed(lvl);
-  if(lvl>=MAX_LEVEL && getXp()!==0){localStorage.setItem('MADNESS_XP','0');fixed=true}
-  else if(lvl<MAX_LEVEL && getXp()>need*3){localStorage.setItem('MADNESS_XP',String(need*3));fixed=true}
-  localStorage.setItem('MADNESS_AC_LAST_MONEY',String(getMoney()));
-  localStorage.setItem('MADNESS_AC_LAST_CHECK',String(now));
-  if(fixed){
-    localStorage.setItem('MADNESS_AC_LAST_FIX',String(now));
-    if(typeof showMsg==='function')showMsg('AntiCheat: opravené neplatné hodnoty.');
-  }
-  return true;
+  await caches.delete(UPDATE_CACHE);
+  localStorage.setItem('MADNESS_VERSION_MANIFEST',JSON.stringify(remote));
+  localStorage.setItem('MADNESS_GAME_VERSION',remote.version||VERSION);
 }
-function requireAntiCheat(){
-  if(isAdminLukamer())return true;
-  if(!window.MADNESS_AC_OK || typeof antiCheatCore!=='function'){
-    setBan('AntiCheat byl poškozen nebo odstraněn.');
-    return false;
-  }
-  return true;
+async function playOld(reason){
+  fill.style.width='100%';pct.textContent='100%';
+  fileEl.textContent='starší offline verze';
+  showModal('POUŽÍVÁŠ STAROU VERZI',reason+' Spustím uloženou offline verzi hry.');
+  showPlay('Update nejde stáhnout. Můžeš hrát starší offline verzi.');
 }
-function runAntiCheat(){return antiCheatCore() && requireAntiCheat()}
-
-function hasLevelForWeapon(k){const w=WEAPONS[k];if(!w)return false;if(k==='awp'&&localStorage.getItem('MADNESS_TROLL_AWP')==='1')return true;return getLevel()>=(w.level||1)}
-function updateLevelUI(){const lvl=getLevel(),xp=getXp(),need=levelNeed(lvl);if(levelVal)levelVal.textContent=lvl;if(xpFill)xpFill.style.width=(lvl>=MAX_LEVEL?'100':clamp(xp/need*100,0,100))+'%';if(xpText)xpText.textContent=lvl>=MAX_LEVEL?'MAX LEVEL':(xp+' / '+need+' XP')}
-function calcMaxHp(lvl,squad){const base=100+(Math.max(1,Number(lvl)||1)-1)*28;return Math.floor(base*((squad&&squad!=='???')?1.05:1))}
-function getOwned(){try{return JSON.parse(localStorage.getItem('MADNESS_OWNED_WEAPONS')||'[]')}catch(e){return []}}
-function saveOwned(a){localStorage.setItem('MADNESS_OWNED_WEAPONS',JSON.stringify([...new Set(a)]))}
-function isOwned(k){return getOwned().includes(k)}
-function updateMoneyUI(){if(moneyVal)moneyVal.textContent=getMoney();updateLevelUI()}
-function getSquadName(){return (localStorage.getItem('MADNESS_SQUAD_NAME')||'???').trim()||'???'}
-function setSquadName(n){n=(n||'???').trim().slice(0,22)||'???';localStorage.setItem('MADNESS_SQUAD_NAME',n);updateSquadUI();syncOwnPresence()}
-function updateSquadUI(){const n=getSquadName();if(pcSquad)pcSquad.textContent='SQUAD: '+n;if(squadCurrent)squadCurrent.textContent='Aktuální squad: '+n;if(squadNameInput&&n!=='???')squadNameInput.value=n}
-function initPlayerCard(){const name=playerNick();if(pcNick)pcNick.textContent=name;if(pcAvatar)pcAvatar.src=getProfileAvatar();updateSquadUI()}
-if(selected&&(!isOwned(selected)||!hasLevelForWeapon(selected))&&!(selected==='awp'&&localStorage.getItem('MADNESS_TROLL_AWP')==='1')){selected='';localStorage.removeItem('MADNESS_SELECTED_WEAPON')}
-try{const list=JSON.parse(localStorage.getItem('MADNESS_SERVERS')||'[]'),sid=localStorage.getItem('MADNESS_ACTIVE_SERVER');const srv=list.find(s=>s.id===sid);serverText.textContent=srv?('server: '+srv.name):'bez serveru';}catch(e){serverText.textContent='bez serveru'}
-const state={mapW:1600,mapH:900,scale:1,mapDrawW:1600,mapDrawH:900,mapY:0,player:{x:390,y:770,face:-1,weapon:!!selected,weaponType:selected},friend:{x:1180,y:770,face:1,name:null,moving:false,targetX:1180,wait:rand(1.2,4.2),chat:null,chatCooldown:rand(18,34),speed:rand(70,115)},remotePlayers:[],remoteImgs:{},chatBubbles:{},intro:{active:false,idx:0,timer:0,zoom:1},keys:{a:0,d:0,w:0,s:0},rain:[],splashes:[],mouseX:0,mouseY:0};
-const LOBBY_OBJECTS={mapPanel:{x:915,y:610,w:120,h:120},armory:{x:770,y:620,w:190,h:245},leaderboard:{x:585,y:675,w:150,h:145},achievements:{x:545,y:335,w:330,h:125},squad:{x:1335,y:520,w:245,h:245},help:{x:1510,y:650,w:285,h:180},camera:{x:1516,y:315,w:130,h:125}};
-function rand(a,b){return a+Math.random()*(b-a)}function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
-const FRIEND_LINES=[
-  'Tady je divnej smrad.',
-  'Nechoď tam sám.',
-  'Viděl jsem tam borce bez hlavy.',
-  'Armory má dneska draho.',
-  'Kdy bude guláš?',
-  'Jestli prší, tak nepracuju.',
-  'Já jsem friendly, asi.',
-  'Ten panel start na mě kouká.',
-  'Nemáš cigáro?',
-  'Nešahej mi na boty.',
-  'Slyšel jsem něco ve zdi.',
-  'Squad zatím ???, klasika.',
-  'Foxy prý zase lootí všechno, i šroubky.',
-  'Rin-Din slyšel výstřel a řekl, že to je beat.',
-  'Foxy má plán. Bohužel ho zapomněl.',
-  'Rin-Din šel reloadnout a našel rohlík.',
-  'Viděl jsem botu běžet bez člověka.',
-  'Tahle lobby má divnou karmu.',
-  'Když spadneš do díry, dělej že to byl speedrun.',
-  'Mám v kapse šroubek. Nevím odkud.',
-  'NPC odbory říkaly, že mám mlčet.',
-  'Někdo tady vařil kafe v helmě.',
-  'Tvoje HP barva mi připomíná okurku.',
-  'Foxy říkal, že to laguje schválně.',
-  'Rin-Din testuje zvuk tím, že křičí do zdi.',
-  'Tohle není bug, to je feature v depresi.',
-  'Mapa smrdí po mokrým betonu.',
-  'Jestli najdeš moje boty, nevracej je.',
-  'Mám pocit, že mě kreslil unavený člověk.',
-  'Tenhle server drží izolepa.',
-  'Nesahej na červený tlačítko. Nebo jo, sranda.',
-  'Jsem NPC, ne terapeut.',
-  'Když běžíš doprava, svět běží doleva. Filosofie.'
-];
-const FRIEND_TROLL_QUESTIONS=[
-  'Když AWP kopne jak kůň, střílíš nebo letíš?',
-  'Kolik gopniků se vejde do jednoho zásobníku?',
-  'Je déšť mokrý, nebo jen textura?',
-  'Když klikneš na NPC, kliklo NPC na tebe?',
-  'Co je těžší: M60 nebo moje deprese?',
-  'Jestli zombie nemá mozek, platí daně?',
-  'Proč má armory dveře a ne okno?',
-  'Foxy našel bug. Mám mu věřit?',
-  'Rin-Din chce remixnout reload. Je to trestné?',
-  'Když máš 0 nábojů, je zbraň dekorace?'
-];
-const FRIEND_NORMAL_QUESTIONS=[
-  'Máš už zbraň?',
-  'Jdeš do mapy?',
-  'Chceš krytí?',
-  'Bereš Foxyho do squadu?',
-  'Slyšel jsi Rin-Dina?'
-];
-function randomFriendLine(){return FRIEND_LINES[Math.floor(Math.random()*FRIEND_LINES.length)]}
-function randomFriendQuestion(troll){const arr=troll?FRIEND_TROLL_QUESTIONS:FRIEND_NORMAL_QUESTIONS;return arr[Math.floor(Math.random()*arr.length)]}
-const FRIEND_NAMES=['Boris','Venca','Igor','Milan','Karel','Roman','Slavík','Pepan','Lubomír','Ruda'];
-function friendName(){let n=localStorage.getItem('MADNESS_FRIEND_NAME');if(!n){n=FRIEND_NAMES[Math.floor(Math.random()*FRIEND_NAMES.length)];localStorage.setItem('MADNESS_FRIEND_NAME',n)}return n}
-state.friend.name=friendName();
-function getKills(){return Math.max(0,Math.floor(Number(localStorage.getItem('MADNESS_KILLS')||'0')||0))}
-function getMissions(){return Math.max(0,Math.floor(Number(localStorage.getItem('MADNESS_MISSIONS')||'0')||0))}
-function getBestWave(){return Math.max(0,Math.floor(Number(localStorage.getItem('MADNESS_BEST_WAVE')||'0')||0))}
-function calcGlory(){return getKills()*10 + getMissions()*45 + getLevel()*100 + getBestWave()*15}
-function getAchievements(){
-  const k=getKills(),m=getMissions(),lvl=getLevel(),money=getMoney(),wave=getBestWave(),g=calcGlory();
-  return [
-    {id:'first_blood',name:'První krev',desc:'Zabij prvního enemy.',done:k>=1,reward:200},
-    {id:'killer_10',name:'10 killů',desc:'Dej dohromady 10 killů.',done:k>=10,reward:350},
-    {id:'killer_50',name:'Malý masakr',desc:'Dej dohromady 50 killů.',done:k>=50,reward:900},
-    {id:'mission_1',name:'První mise',desc:'Spusť první misi.',done:m>=1,reward:250},
-    {id:'mission_5',name:'Pracant',desc:'Dokonči / spusť 5 misí.',done:m>=5,reward:600},
-    {id:'wave_5',name:'Pátá vlna',desc:'Dostaň se přes 5. vlnu.',done:wave>=5,reward:500},
-    {id:'lvl_5',name:'Level 5',desc:'Dosáhni levelu 5.',done:lvl>=5,reward:750},
-    {id:'lvl_10',name:'Max level',desc:'Dosáhni levelu 10.',done:lvl>=10,reward:1500},
-    {id:'rich_5k',name:'Kapesné od mafie',desc:'Měj 5000 money.',done:money>=5000,reward:400},
-    {id:'glory_1000',name:'Sláva 1000',desc:'Získej 1000 slávy.',done:g>=1000,reward:1000}
-  ];
+async function waitOnlineFirstInstall(){
+  statusEl.textContent='Jsi offline a hra ještě není stažená. Čekám na internet pro první stažení...';
+  fileEl.textContent='offline';
+  await new Promise(resolve=>addEventListener('online',resolve,{once:true}));
 }
-function unlockedAchievementIds(){return getAchievements().filter(a=>a.done).map(a=>a.id)}
-
-const OFFLINE_STATS_KEY='MADNESS_OFFLINE_STATS_QUEUE';
-function makeStatsRow(){
-  return {player_id:getClientId(),nick:playerNick(),kills:getKills(),glory:calcGlory(),level:getLevel(),missions:getMissions(),best_wave:getBestWave(),achievements:unlockedAchievementIds(),updated_at:new Date().toISOString()};
-}
-function queueOfflineStats(row){
-  try{
-    const q=JSON.parse(localStorage.getItem(OFFLINE_STATS_KEY)||'[]');
-    q.push(row||makeStatsRow());
-    while(q.length>30)q.shift();
-    localStorage.setItem(OFFLINE_STATS_KEY,JSON.stringify(q));
-  }catch(e){}
-}
-async function flushOfflineStats(){
-  if(!SB||!navigator.onLine)return;
-  let q=[];
-  try{q=JSON.parse(localStorage.getItem(OFFLINE_STATS_KEY)||'[]')}catch(e){q=[]}
-  if(!q.length)return;
-  const last=q[q.length-1];
-  try{
-    await SB.from('madness_player_stats').upsert(last,{onConflict:'player_id'});
-    localStorage.removeItem(OFFLINE_STATS_KEY);
-    if(typeof showMsg==='function')showMsg('Offline postup nahrán online.');
-  }catch(e){}
-}
-addEventListener('online',flushOfflineStats);
-setTimeout(flushOfflineStats,1800);
-
-async function syncPlayerStats(){
-  const row=makeStatsRow();
-  if(!SB||!navigator.onLine){queueOfflineStats(row);return}
-  try{await SB.from('madness_player_stats').upsert(row,{onConflict:'player_id'});await flushOfflineStats()}catch(e){queueOfflineStats(row)}
-}
-function localFileWarning(){
+async function start(){
   if(location.protocol==='file:'){
-    setTimeout(()=>showMsg('Lokální file:// režim blokuje online/cache. Spusť přes GitHub Pages nebo localhost.'),900);
-  }
-}
-function gameAlert(t){const m=document.getElementById('gameAlertModal'),x=document.getElementById('gameAlertText');if(x)x.textContent=String(t||'');if(m)m.style.display='flex'}function closeGameAlert(){const m=document.getElementById('gameAlertModal');if(m)m.style.display='none'}window.alert=gameAlert;function showMsg(t){msg.textContent=t;msg.style.opacity='1';msgTimer=1.4}function worldToScreenX(x){return x*state.scale-camX}function worldToScreenY(y){return state.mapY+y*state.scale}function screenToWorld(x,y){return {x:(x+camX)/state.scale,y:(y-state.mapY)/state.scale}}
-function walkTop(){return state.mapH*.815}function walkBottom(){return state.mapH*.875}function playerMinX(){return 90}function playerMaxX(){return state.mapW-90}
-function resize(){DPR=Math.max(1,Math.min(devicePixelRatio||1,2));W=innerWidth;H=innerHeight;cv.width=Math.floor(W*DPR);cv.height=Math.floor(H*DPR);cv.style.width=W+'px';cv.style.height=H+'px';ctx.setTransform(DPR,0,0,DPR,0,0);recalc();makeRain()}function recalc(){const mw=mapImg.naturalWidth||1600,mh=mapImg.naturalHeight||900;state.mapW=mw;state.mapH=mh;
-  // LOBBY: mapa je vždy roztažená na celou šířku obrazovky, bez bočních černých pruhů.
-  state.scale=W/mw;
-  state.mapDrawW=W;
-  state.mapDrawH=mh*state.scale;
-  state.mapY=(H-state.mapDrawH)/2;
-  camX=0;
-  state.player.x=clamp(state.player.x,playerMinX(),playerMaxX());state.player.y=clamp(state.player.y||((walkTop()+walkBottom())/2),walkTop(),walkBottom());state.friend.y=(walkTop()+walkBottom())/2;state.friend.x=clamp(state.friend.x,playerMinX()+120,playerMaxX()-120)}
-function roofLine(){return worldToScreenY(state.mapH*.16)}
-function makeRain(){state.rain=[];const q=SETTINGS.quality;const base=q==='low'?120:q==='high'?380:230;const count=Math.max(q==='low'?70:140,Math.round(base*(W/1920)));const roof=roofLine();for(let i=0;i<count;i++)state.rain.push({x:rand(-W*.2,W*1.2),y:rand(-80,Math.max(10,roof-8)),v:rand(520,980),len:rand(10,24),a:rand(.16,.42),w:rand(.6,1.1)})}function addSplash(x,y){if(state.splashes.length>150)state.splashes.shift();state.splashes.push({x,y,life:0,max:rand(.16,.28),size:rand(5,12),a:rand(.32,.65)})}
-function startMusic(){music.volume=(Number(SETTINGS.musicVol)||0)/100*.5;music.play().catch(()=>{})}function flashLightning(){const s=rand(.25,.72);lightning.style.transition='none';lightning.style.opacity=s.toFixed(2);document.body.classList.add('shake');setTimeout(()=>{lightning.style.transition='opacity 120ms linear';lightning.style.opacity='0'},rand(35,90));setTimeout(()=>document.body.classList.remove('shake'),250);setTimeout(flashLightning,rand(3200,8200))}
-
-
-function getAnimPreset(kind='player'){
-  const key=kind==='enemy'?'MADNESS_ANIM_PRESET_ENEMY':'MADNESS_ANIM_PRESET_PLAYER';
-  const fallbackKey='MADNESS_ANIM_PRESET';
-  try{
-    const p=JSON.parse(localStorage.getItem(key)||localStorage.getItem(fallbackKey)||'null')||{};
-    return {
-      idleBreath:Number.isFinite(+p.idleBreath)?+p.idleBreath:1.25,
-      idleSway:Number.isFinite(+p.idleSway)?+p.idleSway:1.15,
-      walkBounce:Number.isFinite(+p.walkBounce)?+p.walkBounce:1.45,
-      armSwing:Number.isFinite(+p.armSwing)?+p.armSwing:1.85,
-      gunSway:Number.isFinite(+p.gunSway)?+p.gunSway:1.75,
-      speed:Number.isFinite(+p.speed)?+p.speed:1.18
-    };
-  }catch(e){
-    return {idleBreath:1.25,idleSway:1.15,walkBounce:1.45,armSwing:1.85,gunSway:1.75,speed:1.18};
-  }
-}
-async function loadGlobalAnimPresets(){
-  if(!SB||!navigator.onLine)return;
-  try{
-    const {data}=await SB.from('madness_global_payloads').select('id,payload,updated_at').in('id',['global_anim_player','global_anim_enemy']);
-    if(!Array.isArray(data))return;
-    for(const row of data){
-      if(!row||!row.payload)continue;
-      const preset=row.payload.preset||row.payload;
-      if(row.id==='global_anim_player')localStorage.setItem('MADNESS_ANIM_PRESET_PLAYER',JSON.stringify(preset));
-      if(row.id==='global_anim_enemy')localStorage.setItem('MADNESS_ANIM_PRESET_ENEMY',JSON.stringify(preset));
-    }
-  }catch(e){}
-}
-
-
-
-function getAssetAnim(kind='player'){
-  const key=kind==='enemy'?'MADNESS_ASSET_ANIM_ENEMY':'MADNESS_ASSET_ANIM_PLAYER';
-  try{return JSON.parse(localStorage.getItem(key)||'null')||null}catch(e){return null}
-}
-async function loadGlobalAssetAnims(){
-  if(!SB||!navigator.onLine)return;
-  try{
-    const {data}=await SB.from('madness_global_payloads').select('id,payload,updated_at').in('id',['global_asset_anim_player','global_asset_anim_enemy']);
-    if(!Array.isArray(data))return;
-    data.forEach(row=>{
-      if(row.id==='global_asset_anim_player')localStorage.setItem('MADNESS_ASSET_ANIM_PLAYER',JSON.stringify(row.payload));
-      if(row.id==='global_asset_anim_enemy')localStorage.setItem('MADNESS_ASSET_ANIM_ENEMY',JSON.stringify(row.payload));
-    });
-  }catch(e){}
-}
-const HAND_LAYER_KEYS_RT=new Set(['ruce','pest_l','pest_p']);
-const layerImgCacheRT={};
-function getLayerImgRT(src){if(!src)return null;if(!layerImgCacheRT[src]){const im=new Image();im.src=src;layerImgCacheRT[src]=im}return layerImgCacheRT[src]}
-function layerSrcRT(l){return (payload&&payload.layerImages&&payload.layerImages[l.key])||''}
-function layerIdRT(i,l){return i+'_'+(l&&l.key||'layer')}
-function stackBoundsRT(layers){
-  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
-  layers.forEach(l=>{
-    const im=getLayerImgRT(layerSrcRT(l));
-    const w=(im&&im.naturalWidth?im.naturalWidth:80)*(l.scale||100)/100;
-    const h=(im&&im.naturalHeight?im.naturalHeight:80)*(l.scale||100)/100;
-    minX=Math.min(minX,l.x-w/2);maxX=Math.max(maxX,l.x+w/2);minY=Math.min(minY,l.y-h/2);maxY=Math.max(maxY,l.y+h/2);
-  });
-  if(!isFinite(minX))return null;
-  return {minX,minY,maxX,maxY};
-}
-function frameOffsetRT(anim,action,i,l){
-  const act=anim&&anim.actions&&anim.actions[action];
-  if(!act||!act.frames||!act.frames.length)return {dx:0,dy:0,rot:0,scale:100,alpha:100};
-  const n=act.frames.length,pos=(performance.now()/1000*8)%n,a=Math.floor(pos),b=(a+1)%n,t=pos-a;
-  const A=(act.frames[a].layers||{})[layerIdRT(i,l)]||(act.frames[a].layers||{})[l.key]||{};
-  const B=(act.frames[b].layers||{})[layerIdRT(i,l)]||(act.frames[b].layers||{})[l.key]||{};
-  const mix=(x,y,d)=>((x==null?d:x)+((y==null?d:y)-(x==null?d:x))*t);
-  return {dx:mix(A.dx,B.dx,0),dy:mix(A.dy,B.dy,0),rot:mix(A.rot,B.rot,0),scale:mix(A.scale,B.scale,100),alpha:mix(A.alpha,B.alpha,100)};
-}
-function drawAnimatedLayerStackRT(kind,obj,face,targetH,action,stripHands=false){
-  const anim=getAssetAnim(kind);
-  const layers=(kind==='enemy'?(payload&&payload.enemyLayers&&payload.enemyLayers.length?payload.enemyLayers:payload&&payload.layers):(payload&&payload.layers))||[];
-  if(!anim||!layers.length||!payload.layerImages)return false;
-  const drawLayers=stripHands?layers.filter(l=>!HAND_LAYER_KEYS_RT.has(l.key)):layers;
-  const b=stackBoundsRT(drawLayers); if(!b)return false;
-  const h=Math.max(1,b.maxY-b.minY), sc=(targetH/h)*state.scale, cx=(b.minX+b.maxX)/2, feet=b.maxY;
-  const sx=worldToScreenX(obj.x), sy=worldToScreenY(obj.y);
-  ctx.save();
-  ctx.translate(sx,sy);
-  ctx.scale(face,1);
-  drawLayers.forEach((l,i)=>{
-    const src=layerSrcRT(l), im=getLayerImgRT(src);
-    if(!im||!im.complete||!im.naturalWidth)return;
-    const off=frameOffsetRT(anim,action,i,l);
-    const lw=im.naturalWidth*(l.scale||100)/100*(off.scale==null?100:off.scale)/100*sc;
-    const lh=im.naturalHeight*(l.scale||100)/100*(off.scale==null?100:off.scale)/100*sc;
-    const x=((l.x+(off.dx||0))-cx)*sc;
-    const y=((l.y+(off.dy||0))-feet)*sc;
-    ctx.save();
-    ctx.globalAlpha=((l.alpha==null?100:l.alpha)*(off.alpha==null?100:off.alpha))/10000;
-    ctx.translate(x,y);
-    ctx.rotate(((l.rot||0)+(off.rot||0))*Math.PI/180);
-    ctx.scale(l.flipH?-1:1,l.flipV?-1:1);
-    ctx.drawImage(im,-lw/2,-lh/2,lw,lh);
-    ctx.restore();
-  });
-  ctx.restore();
-  return true;
-}
-function animActionForObj(kind,obj){
-  if(obj&&obj.hp<=0)return 'fall';
-  if(kind==='player'){
-    const moving=!!(state.keys&&(state.keys.a||state.keys.d||state.keys.w||state.keys.s)) || Math.abs(obj.physVx||0)>8;
-    if(state.shooting||obj.recoil>1)return 'attack';
-    return moving?'walk':'idle';
-  }
-  if(obj&&obj.recoil>1)return 'attack';
-  if(obj&&obj.attackT<.25)return 'attack';
-  return 'walk';
-}
-
-function drawSprite(imgObj,obj,face,targetH=170){if(!imgObj||!imgObj.complete||!imgObj.naturalWidth)return;const sc=(targetH/imgObj.naturalHeight)*state.scale,w=imgObj.naturalWidth*sc,h=imgObj.naturalHeight*sc,sx=worldToScreenX(obj.x),sy=worldToScreenY(obj.y);ctx.save();ctx.translate(sx,sy);ctx.scale(face,1);ctx.drawImage(imgObj,-w/2,-h,w,h);ctx.restore()}
-function drawGun(o){const def=WEAPONS[o.weaponType];if(!def||!def.img||!def.img.complete||!def.img.naturalWidth)return;const dir=o.face<0?1:-1,sx=worldToScreenX(o.x+dir*(grip.x||0)),sy=worldToScreenY(o.y-78+(grip.y||8));const hw=(def.drawW||170)*state.scale*(grip.scale||100)/100,hh=hw*(def.img.naturalHeight/def.img.naturalWidth);ctx.save();ctx.translate(sx,sy);ctx.rotate((grip.rot||0)*Math.PI/180*dir);ctx.scale(dir,1);ctx.drawImage(def.img,-hw/2,-hh/2,hw,hh);ctx.restore()}
-function updateWeaponText(){weaponText.textContent=selected?('zbraň: '+WEAPONS[selected].label):'bez zbraně'}
-function chooseWeapon(k){const w=WEAPONS[k];if(!w)return;if(!hasLevelForWeapon(k)){showMsg('Zamčeno: potřebuješ level '+(w.level||1));return}if(!isOwned(k)){buyWeapon(k);return}selected=k;localStorage.setItem('MADNESS_SELECTED_WEAPON',k);state.player.weapon=true;state.player.weaponType=k;updateWeaponText();showMsg('Vybráno: '+WEAPONS[k].label);closeModal('weaponModal')}
-function buyWeapon(k){const w=WEAPONS[k];if(!w)return;if(!hasLevelForWeapon(k)){showMsg('Zamčeno: potřebuješ level '+(w.level||1));return}const money=getMoney();if(money<w.cost){showMsg('Málo money: chybí '+(w.cost-money));return}setMoney(money-w.cost);const owned=getOwned();owned.push(k);saveOwned(owned);showMsg('Koupeno: '+w.label+' za '+w.cost);buildWeaponGrid();chooseWeapon(k)}
-function clearWeapon(){selected='';localStorage.removeItem('MADNESS_SELECTED_WEAPON');state.player.weapon=false;state.player.weaponType=null;updateWeaponText();showMsg('Zbraň odložená');closeModal('weaponModal')}
-function showArmoryTab(tab){
-  const w=document.getElementById('armoryWeapons'), c=document.getElementById('armoryCloths');
-  if(w)w.style.display=tab==='cloths'?'none':'block';
-  if(c)c.style.display=tab==='cloths'?'block':'none';
-}
-function buildWeaponGrid(){const g=document.getElementById('weaponGrid');g.innerHTML='';for(const [k,w] of Object.entries(WEAPONS)){const owned=isOwned(k),lvlOk=hasLevelForWeapon(k);const div=document.createElement('div');div.className='choice'+((owned&&lvlOk)?'':' locked');div.onclick=()=>chooseWeapon(k);let text='';if(!lvlOk)text='ZAMČENO • LVL '+(w.level||1);else if(owned)text='VLASTNĚNO • VYBRAT';else text='KOUPIT: '+w.cost+' money';div.innerHTML='<img src="'+(w.img.src||'')+'"><b>'+w.label+'</b><div class="price">'+text+'</div>';g.appendChild(div)}const none=document.createElement('div');none.className='choice';none.onclick=clearWeapon;none.innerHTML='<b>BEZ ZBRANĚ</b><br><small>v lobby bude postava s holýma rukama</small>';g.appendChild(none)}
-function openModal(id){document.getElementById(id).style.display='flex';startMusic()}function closeModal(id){document.getElementById(id).style.display='none'}function startMap(){closeModal('mapModal');createMission('real_mapa')}
-const INTRO_STORY=[
-  'Hele, vítej v Combat Reality. Tady neplatí hrdinství, tady platí kdo má náboje a kdo si omylem nekoupil M60 místo chleba.',
-  'Kdysi to byla normální lobby. Lidi tady stáli frontu na mise, někdo opravoval dveře do armory a jeden borec tvrdil, že AWP nemá recoil.',
-  'Pak přišla první vlna. Nepřátelé běželi tak realisticky, že i fyzika šla radši na nemocenskou. Jeden výstřel, tři pády, pět výmluv.',
-  'Host vybírá mapu, ostatní musí dát READY. To není byrokracie, to je ochrana proti tomu, aby tě kámoš nehodil do mise ve chvíli, kdy hledáš guláš.',
-  'Za každou pátou vlnu dostaneš money a EXP. Zbraně jsou zamčené levelem, protože kdybych dal M60 každému nováčkovi, lobby by se změnila na vysavač lidí.',
-  'A jestli ti někdy dám troll AWP zdarma, pamatuj: nejsi sniper. Jsi projektil. Vystřelíš dvakrát a potom letíš tak daleko, že tě najde až další update.'
-];
-function setIntroLine(){
-  if(!introPanel||!introText)return;
-  const i=state.intro.idx;
-  introText.textContent=INTRO_STORY[i]||'';
-  introPanel.style.display='block';
-  const f=state.friend;
-  f.chat={text:'Poslouchej, tohle je důležitý.',life:3.2,max:3.2,asking:false};
-}
-function startIntroStory(){
-  if(localStorage.getItem('MADNESS_INTRO_SEEN')==='1')return;
-  if(!payload||!payload.player||!payloadSrc(payload.player))return;
-  state.intro.active=true;state.intro.idx=0;state.intro.timer=0;state.intro.zoom=1.22;
-  setIntroLine();
-}
-function finishIntroStory(){
-  state.intro.active=false;state.intro.zoom=1;
-  localStorage.setItem('MADNESS_INTRO_SEEN','1');
-  if(introPanel)introPanel.style.display='none';
-  state.friend.chat={text:'Tak jo. Teď už můžeš dělat špatná rozhodnutí sám.',life:3.8,max:3.8,asking:false};
-}
-function skipIntroStory(){
-  finishIntroStory();
-  showMsg('Intro přeskočeno');
-}
-function updateIntroStory(dt){
-  if(!state.intro.active)return;
-  state.intro.timer+=dt;
-  if(state.intro.timer>4.15){
-    state.intro.timer=0;
-    state.intro.idx++;
-    if(state.intro.idx>=INTRO_STORY.length)finishIntroStory();
-    else setIntroLine();
-  }
-}
-function updateFriend(dt){
-  const f=state.friend;
-  f.y=(walkTop()+walkBottom())/2;
-  if(f.chat){f.chat.life-=dt;if(f.chat.life<=0)f.chat=null}
-  f.chatCooldown-=dt;
-  if(f.chatCooldown<=0 && !f.chat && Math.random()<.24){
-    const asks=Math.random()<.18;
-    if(asks){
-      const troll=Math.random()<.85;
-      f.chat={text:randomFriendQuestion(troll),life:rand(4.8,7.5),max:6.0,asking:true,troll,reward:troll?'awp':null};
-    }else{
-      f.chat={text:randomFriendLine(),life:rand(2.2,4.2),max:3.0,asking:false};
-    }
-    f.chatCooldown=rand(24,48);
-  }else if(f.chatCooldown<=0){
-    f.chatCooldown=rand(12,26);
-  }
-  if(!f.moving){
-    f.wait-=dt;
-    if(f.wait<=0 && Math.random()<.55){
-      f.targetX=clamp(f.x+rand(-260,260),playerMinX()+150,playerMaxX()-150);
-      if(Math.abs(f.targetX-f.x)>35){
-        f.moving=true;
-        f.face=f.targetX>f.x?-1:1;
-        f.speed=rand(60,110);
-      }else{
-        f.wait=rand(1.0,3.8);
-      }
-    }else if(f.wait<=0){
-      f.wait=rand(1.3,4.6);
-    }
-  }else{
-    const dx=f.targetX-f.x;
-    const step=Math.sign(dx)*f.speed*dt;
-    if(Math.abs(dx)<=Math.abs(step)+2){
-      f.x=f.targetX;
-      f.moving=false;
-      f.wait=rand(1.6,5.2);
-    }else{
-      f.x+=step;
-    }
-  }
-}
-function drawFriendChat(){
-  const f=state.friend;
-  if(!f.chat||!f.chat.text)return;
-  const alpha=clamp(f.chat.life/.45,0,1);
-  const x=worldToScreenX(f.x), y=worldToScreenY(f.y-190);
-  const text=f.chat.text;
-  ctx.save();
-  ctx.globalAlpha=alpha;
-  ctx.font='bold '+Math.max(10,12*state.scale)+'px Courier New';
-  const pad=7*state.scale, tw=ctx.measureText(text).width, bw=Math.min(tw+pad*2,300*state.scale), bh=25*state.scale;
-  const bx=x-bw/2, by=y-bh, r=6*state.scale;
-  ctx.fillStyle='rgba(245,245,245,.92)';
-  ctx.strokeStyle='rgba(20,20,20,.9)';
-  ctx.lineWidth=2;
-  ctx.beginPath();
-  ctx.moveTo(bx+r,by);ctx.lineTo(bx+bw-r,by);ctx.quadraticCurveTo(bx+bw,by,bx+bw,by+r);
-  ctx.lineTo(bx+bw,by+bh-r);ctx.quadraticCurveTo(bx+bw,by+bh,bx+bw-r,by+bh);
-  ctx.lineTo(x+7*state.scale,by+bh);ctx.lineTo(x,by+bh+9*state.scale);ctx.lineTo(x-7*state.scale,by+bh);
-  ctx.lineTo(bx+r,by+bh);ctx.quadraticCurveTo(bx,by+bh,bx,by+bh-r);ctx.lineTo(bx,by+r);ctx.quadraticCurveTo(bx,by,bx+r,by);
-  ctx.closePath();ctx.fill();ctx.stroke();
-  ctx.fillStyle='#111';
-  ctx.textAlign='center';
-  ctx.textBaseline='middle';
-  ctx.fillText(text,x,by+bh*.52,bw-pad*2);
-  ctx.restore();
-}
-function update(dt){if(msgTimer>0){msgTimer-=dt;if(msgTimer<=0)msg.style.opacity='0'}updateIntroStory(dt);let vx=0,vy=0,sp=255;if(state.keys.a)vx-=sp;if(state.keys.d)vx+=sp;if(state.keys.w)vy-=sp*.32;if(state.keys.s)vy+=sp*.32;updateFriend(dt);const p=state.player;p.x=clamp(p.x+vx*dt,playerMinX(),playerMaxX());p.y=clamp(p.y+vy*dt,walkTop(),walkBottom());if(vx<0)p.face=1;if(vx>0)p.face=-1;camX=0;const roof=roofLine();for(const r of state.rain){r.x+=-95*dt;r.y+=r.v*dt;if(r.y>roof+rand(-3,5)){if(Math.random()<.8)addSplash(r.x,roof+rand(-1,3));r.x=rand(-W*.15,W*1.15);r.y=rand(-85,-8);r.v=rand(520,980)}if(r.x<-120)r.x=W+rand(0,140)}for(let i=state.splashes.length-1;i>=0;i--){state.splashes[i].life+=dt;if(state.splashes[i].life>=state.splashes[i].max)state.splashes.splice(i,1)}}
-function drawRain(){ctx.save();ctx.lineCap='round';for(const r of state.rain){ctx.strokeStyle=`rgba(165,190,210,${r.a})`;ctx.lineWidth=r.w;ctx.beginPath();ctx.moveTo(r.x,r.y);ctx.lineTo(r.x-4.5,r.y+r.len);ctx.stroke()}ctx.restore();ctx.save();for(const s of state.splashes){const t=s.life/s.max,a=s.a*(1-t),spread=s.size*(.45+t*1.6);ctx.strokeStyle=`rgba(180,205,225,${a})`;ctx.lineWidth=1;ctx.beginPath();ctx.ellipse(s.x,s.y,spread,2+t*3,0,0,Math.PI*2);ctx.stroke()}ctx.restore()}
-function pointInObj(w,o){return w.x>o.x-o.w/2&&w.x<o.x+o.w/2&&w.y>o.y-o.h&&w.y<o.y+12}
-function drawMapLabel(text,x,y){
-  const sx=worldToScreenX(x), sy=worldToScreenY(y);
-  ctx.save();
-  ctx.font='bold '+Math.max(13,18*state.scale)+'px Courier New';
-  ctx.textAlign='center';ctx.textBaseline='middle';
-  const w=ctx.measureText(text).width+18*state.scale,h=28*state.scale;
-  ctx.fillStyle='rgba(0,0,0,.72)';ctx.strokeStyle='rgba(150,0,0,.85)';ctx.lineWidth=2;
-  ctx.fillRect(sx-w/2,sy-h/2,w,h);ctx.strokeRect(sx-w/2,sy-h/2,w,h);
-  ctx.fillStyle='#ffd6d6';ctx.shadowColor='#000';ctx.shadowBlur=4;ctx.fillText(text,sx,sy);
-  ctx.restore();
-}
-function drawLobbyObjects(){
-  drawMapLabel('SHOP',770,406);
-  drawMapLabel('MISE',915,512);
-  drawMapLabel('ZEBŘÍČEK',585,548);
-  drawMapLabel('ACHIEVEMENTY',545,218);
-  drawMapLabel('SQUAD',1335,382);
-  drawMapLabel('HELP',1510,548);
-}
-function drawScene(){
-  if(mapImg.complete&&mapImg.naturalWidth)ctx.drawImage(mapImg,-camX,state.mapY,state.mapDrawW,state.mapDrawH);
-  ctx.fillStyle='rgba(0,0,0,.18)';ctx.fillRect(0,0,W,H);
-  drawLobbyObjects();drawRemotePlayers();if(!drawAnimatedLayerStackRT('player',state.friend,state.friend.face,165,'idle',false))drawSprite(playerFullImg,state.friend,state.friend.face,165);drawNameTag(state.friend,state.friend.name||'NPC','#b9ffb9',1,null);drawFriendChat();
-  drawSprite(state.player.weapon?playerNoHandsImg:playerFullImg,state.player,state.player.face,170);
-  if(state.player.weapon)drawGun(state.player);
-  drawNameTag(state.player,formatPlayerLabel(playerNick(),getSquadName(),getLevel()),'#ffd6d6',getLevel(),getSquadName());drawChatBubble(state.player,playerNick());drawRain();
-}
-function draw(){
-  ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
-  if(state.intro.active){
-    const fx=worldToScreenX(state.friend.x), fy=worldToScreenY(state.friend.y-92), z=state.intro.zoom||1.18;
-    ctx.save();ctx.translate(fx,fy);ctx.scale(z,z);ctx.translate(-fx,-fy);drawScene();ctx.restore();
-    ctx.save();
-    ctx.fillStyle='rgba(0,0,0,.28)';ctx.fillRect(0,0,W,H);
-    const g=ctx.createRadialGradient(fx,fy,40,fx,fy,260);
-    g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(.55,'rgba(0,0,0,.15)');g.addColorStop(1,'rgba(0,0,0,.72)');
-    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-    ctx.restore();
-  }else drawScene();
-}
-let lobbyAcc=0;const LOBBY_STEP=1/60;function loop(now){let frame=Math.min(.085,(now-last)/1000);last=now;lobbyAcc+=frame;if(requireAntiCheat()){let safety=0;while(lobbyAcc>=LOBBY_STEP&&safety<5){update(LOBBY_STEP);lobbyAcc-=LOBBY_STEP;safety++}draw()}requestAnimationFrame(loop)}
-function openSquadWindow(){
-  updateSquadUI();
-  renderSquadInvites();
-  openModal('squadModal');
-}
-async function createSquad(){
-  const name=(squadNameInput?.value||'').trim();
-  if(!name){showMsg('Zadej název squad.');return}
-  setSquadName(name);
-  if(SB){
-    const id=activeServerId()+'_'+getClientId();
-    const row={id,server_id:activeServerId(),name,leader_player_id:getClientId(),leader_nick:playerNick(),members:[getClientId()],updated_at:new Date().toISOString()};
-    try{await SB.from('madness_squads').upsert(row,{onConflict:'id'})}catch(e){console.warn('squad create',e)}
-  }
-  showMsg('Squad vytvořen: '+name);
-  renderSquadInvites();
-}
-async function leaveSquad(){
-  const old=getSquadName();
-  setSquadName('???');
-  if(SB){
-    try{
-      const id=activeServerId()+'_'+getClientId();
-      await SB.from('madness_squads').delete().eq('id',id);
-    }catch(e){}
-  }
-  sendChat('/leave squad '+old);
-  showMsg('Odešel jsi ze squadu.');
-  renderSquadInvites();
-}
-function renderSquadInvites(){
-  if(!squadInviteList)return;
-  const players=(state.remotePlayers||[]);
-  if(!players.length){squadInviteList.textContent='Nikdo další v lobby.';return}
-  squadInviteList.innerHTML='';
-  players.forEach(p=>{
-    const row=document.createElement('div');
-    row.className='squadInviteRow';
-    const label=document.createElement('span');
-    label.innerHTML='<b>'+chatSafe(p.nick||'hráč')+'</b><br><small>'+(p.squad_name?'squad: '+chatSafe(p.squad_name):'bez squad')+'</small>';
-    const btn=document.createElement('button');
-    btn.className='missionBtn';
-    btn.style.margin='0';
-    btn.textContent='POZVAT';
-    btn.onclick=()=>inviteToSquad(p.player_id);
-    row.appendChild(label);
-    row.appendChild(btn);
-    squadInviteList.appendChild(row);
-  });
-}
-async function inviteToSquad(pid){
-  const p=(state.remotePlayers||[]).find(x=>String(x.player_id)===String(pid));
-  if(!p){showMsg('Hráč už není v lobby.');renderSquadInvites();return}
-  const squad=getSquadName();
-  if(squad==='???'){showMsg('Nejdřív vytvoř squad.');return}
-  if(SB){
-    const row={server_id:activeServerId(),squad_id:activeServerId()+'_'+getClientId(),squad_name:squad,from_player_id:getClientId(),from_nick:playerNick(),to_player_id:p.player_id,to_nick:p.nick||'hráč',status:'pending'};
-    try{await SB.from('madness_squad_invites').insert(row)}catch(e){console.warn('invite',e)}
-  }
-  sendChat('/invite '+(p.nick||'hráč')+' do squad '+squad);
-  showMsg('Pozván hráč: '+(p.nick||'hráč'));
-}
-function rankBadgeFor(r,i){
-  const nick=String(r.nick||'');
-  if(/lukamer|lukas|lukáš|lukcheat/i.test(nick))return {text:'DEV',cls:'developer'};
-  const glory=Number(r.glory||0), lvl=Number(r.level||1), kills=Number(r.kills||0), missions=Number(r.missions||0), wave=Number(r.best_wave||0);
-  const score=glory + lvl*130 + kills*18 + missions*80 + wave*35;
-  if(i===0 && score>=1200)return {text:'LEGEND',cls:'legend'};
-  if(score>=2500 || lvl>=9 || kills>=120)return {text:'EPIC+',cls:'epic'};
-  if(score>=1500 || lvl>=7 || kills>=70)return {text:'EPIC',cls:'epic'};
-  if(score>=900 || lvl>=5 || kills>=35)return {text:'GOLD',cls:'gold'};
-  if(score>=450 || lvl>=3 || kills>=15)return {text:'SILVER',cls:'silver'};
-  if(score>=150 || kills>=3 || missions>=1)return {text:'BRONZE',cls:'bronze'};
-  return {text:'ROOKIE',cls:'rookie'};
-}
-function rankBadgeHtml(r,i){const b=rankBadgeFor(r,i);return '<span class="rankBadge '+b.cls+'">'+b.text+'</span>'}
-async function openLeaderboard(){
-  openModal('leaderboardModal');
-  if(!leaderboardBody)return;
-  leaderboardBody.innerHTML='<p style="color:#888">Načítám...</p>';
-  await syncPlayerStats();
-  let rows=[];
-  if(SB){
-    const {data,error}=await SB.from('madness_player_stats').select('nick,kills,glory,level,missions,best_wave,updated_at').order('glory',{ascending:false}).limit(50);
-    if(!error)rows=data||[];
-  }
-  if(!rows.length)rows=[{nick:playerNick(),kills:getKills(),glory:calcGlory(),level:getLevel(),missions:getMissions(),best_wave:getBestWave()}];
-  leaderboardBody.innerHTML='<table class="statTable"><thead><tr><th>#</th><th>Nick</th><th>Sláva</th><th>Level</th><th>Killy</th><th>Mise</th><th>Vlna</th></tr></thead><tbody>'+rows.map((r,i)=>'<tr><td class="rankPos">#'+(i+1)+'</td><td class="nickCell">'+chatSafe(r.nick||'PLAYER')+rankBadgeHtml(r,i)+'</td><td class="statNum">'+(r.glory||0)+'</td><td class="statNum">LVL '+(r.level||1)+'</td><td class="statNum">'+(r.kills||0)+'</td><td class="statNum">'+(r.missions||0)+'</td><td class="statNum">'+(r.best_wave||0)+'</td></tr>').join('')+'</tbody></table>';
-}
-function getRewardedAchievements(){try{return JSON.parse(localStorage.getItem('MADNESS_ACH_REWARDED')||'[]')}catch(e){return []}}
-function saveRewardedAchievements(a){localStorage.setItem('MADNESS_ACH_REWARDED',JSON.stringify([...new Set(a)]))}
-function claimAchievementRewards(){
-  const rewarded=getRewardedAchievements();
-  const newly=getAchievements().filter(a=>a.done&&!rewarded.includes(a.id));
-  if(!newly.length)return 0;
-  const total=newly.reduce((s,a)=>s+(a.reward||250),0);
-  setMoney(getMoney()+total);
-  saveRewardedAchievements(rewarded.concat(newly.map(a=>a.id)));
-  showMsg('Achievement odměna: +'+total+' money');
-  syncPlayerStats();
-  return total;
-}
-function openAchievements(){
-  openModal('achievementsModal');
-  if(!achievementsBody)return;
-  claimAchievementRewards();
-  const rewarded=getRewardedAchievements();
-  const list=getAchievements();
-  achievementsBody.innerHTML=list.map(a=>'<div class="achCard '+(a.done?'done':'')+'"><b>'+(a.done?'✅ ':'🔒 ')+a.name+'</b><br><small>'+a.desc+'</small><br><small>Odměna: '+(a.reward||250)+' money '+(rewarded.includes(a.id)?'• vybráno':'')+'</small></div>').join('');
-  syncPlayerStats();
-}
-function handleHover(e){
-  const w=screenToWorld(e.clientX,e.clientY);
-  if(cameraTip&&pointInObj(w,LOBBY_OBJECTS.camera)){
-    cameraTip.style.display='block';
-    cameraTip.style.left=(e.clientX+14)+'px';
-    cameraTip.style.top=(e.clientY+14)+'px';
-  }else if(cameraTip)cameraTip.style.display='none';
-}
-function pointInFriend(w){
-  const f=state.friend;
-  return Math.abs(w.x-f.x)<70 && w.y>f.y-180 && w.y<f.y+18;
-}
-function grantAwpFromFriend(){
-  const owned=getOwned();
-  if(!owned.includes('awp')){owned.push('awp');saveOwned(owned);}
-  localStorage.setItem('MADNESS_TROLL_AWP','1');
-  localStorage.setItem('MADNESS_TROLL_AWP_SHOTS','2');
-  selected='awp';
-  localStorage.setItem('MADNESS_SELECTED_WEAPON','awp');
-  state.player.weapon=true;
-  state.player.weaponType='awp';
-  updateWeaponText();
-  updateMoneyUI();
-  buildWeaponGrid();
-}
-function openFriendQuestion(){
-  const f=state.friend;
-  if(!f.chat||!f.chat.asking){showMsg('Teď se neptá.');return}
-  if(friendQuestionText)friendQuestionText.textContent=f.chat.text;
-  if(friendAnswer){friendAnswer.value='';setTimeout(()=>friendAnswer.focus(),30)}
-  openModal('friendQuestionModal');
-}
-function submitFriendAnswer(){
-  const f=state.friend;
-  if(!f.chat||!f.chat.asking){closeModal('friendQuestionModal');return}
-  const reward=f.chat.reward;
-  closeModal('friendQuestionModal');
-  if(reward==='awp'){
-    grantAwpFromFriend();
-    showMsg('NPC: blbá odpověď uznána. AWP získáno zdarma.');
-    f.chat={text:'Ber AWP a zkus neodletět.',life:3.5,max:3.5,asking:false};
-  }else{
-    showMsg('NPC: odpověď zapsána do prázdna.');
-    f.chat={text:'Hm. To dává nulový smysl.',life:3.0,max:3.0,asking:false};
-  }
-  f.chatCooldown=rand(7.0,13.0);
-}
-function onClick(e){const w=screenToWorld(e.clientX,e.clientY);if(pointInFriend(w)){openFriendQuestion();return}if(pointInObj(w,LOBBY_OBJECTS.armory)){openModal('weaponModal');return}if(pointInObj(w,LOBBY_OBJECTS.leaderboard)){openLeaderboard();return}if(pointInObj(w,LOBBY_OBJECTS.achievements)){openAchievements();return}if(pointInObj(w,LOBBY_OBJECTS.squad)){openSquadWindow();return}if(pointInObj(w,LOBBY_OBJECTS.help)){openModal('helpModal');return}if(pointInObj(w,LOBBY_OBJECTS.mapPanel)){if(IS_HOST||activeServerId()==='local_lobby')openModal('mapModal');else{if(CURRENT_MISSION)pollMission();else showMsg('Mapu vybírá host.');}return}startMusic()}
-
-function applySettingsUI(){const q=document.getElementById('qualitySel'),mv=document.getElementById('musicVol'),sv=document.getElementById('sfxVol');if(q)q.value=SETTINGS.quality;if(mv)mv.value=SETTINGS.musicVol;if(sv)sv.value=SETTINGS.sfxVol;const ql=document.getElementById('qualityLbl'),ml=document.getElementById('musicVolLbl'),sl=document.getElementById('sfxVolLbl');if(ql)ql.textContent=SETTINGS.quality==='low'?'nízká':SETTINGS.quality==='high'?'vysoká':'střední';if(ml)ml.textContent=SETTINGS.musicVol+'%';if(sl)sl.textContent=SETTINGS.sfxVol+'%';music.volume=(Number(SETTINGS.musicVol)||0)/100*.5}
-function openSettings(){applySettingsUI();document.getElementById('settingsModal').style.display='flex';startMusic()}
-function closeSettings(){document.getElementById('settingsModal').style.display='none'}
-function setQuality(v){SETTINGS.quality=v;localStorage.setItem('MADNESS_QUALITY',v);applySettingsUI();makeRain()}
-function setMusicVol(v){SETTINGS.musicVol=String(v);localStorage.setItem('MADNESS_MUSIC_VOL',SETTINGS.musicVol);applySettingsUI()}
-function setSfxVol(v){SETTINGS.sfxVol=String(v);localStorage.setItem('MADNESS_SFX_VOL',SETTINGS.sfxVol);applySettingsUI()}
-
-
-function getClientId(){
-  let id=localStorage.getItem('MADNESS_CLIENT_ID');
-  if(!id){id='p_'+Math.random().toString(36).slice(2,10)+'_'+Date.now().toString(36);localStorage.setItem('MADNESS_CLIENT_ID',id)}
-  return id;
-}
-function activeServerId(){return localStorage.getItem('MADNESS_ACTIVE_SERVER')||'local_lobby'}
-function ownAvatarSrc(){
-  const src=payload?.player?.src||'';
-  return src && src.length<180000 ? src : '';
-}
-async function syncOwnPresence(){
-  if(!SB)return;
-  const sid=activeServerId();
-  const row={
-    server_id:sid,
-    player_id:getClientId(),
-    nick:playerNick(),
-    x:Math.round(state.player.x),
-    y:Math.round(state.player.y),
-    face:state.player.face||1,
-    weapon_type:state.player.weaponType||null,
-    avatar_src:ownAvatarSrc(),
-    squad_name:getSquadName()==='???'?null:getSquadName(),
-    level:getLevel(),
-    updated_at:new Date().toISOString()
-  };
-  const {error}=await SB.from('madness_lobby_players').upsert(row,{onConflict:'server_id,player_id'});
-  if(error)console.warn('presence upsert error:',error.message);
-}
-async function loadRemotePlayers(){
-  if(!SB)return;
-  const sid=activeServerId(), me=getClientId(), cutoff=new Date(Date.now()-7000).toISOString();
-  const {data,error}=await SB.from('madness_lobby_players')
-    .select('player_id,nick,x,y,face,weapon_type,avatar_src,squad_name,level,updated_at')
-    .eq('server_id',sid)
-    .gt('updated_at',cutoff);
-  if(error){console.warn('presence load error:',error.message);return}
-  const old={};(state.remotePlayers||[]).forEach(p=>old[p.player_id]=p);
-  state.remotePlayers=(data||[]).filter(p=>p.player_id!==me).map(p=>{
-    const prev=old[p.player_id]||{};
-    const tx=Number(p.x)||0, ty=Number(p.y)||walkTop();
-    return {...p,tx,ty,drawX:Number.isFinite(prev.drawX)?prev.drawX:tx,drawY:Number.isFinite(prev.drawY)?prev.drawY:ty};
-  });
-  if(onlineCount)onlineCount.textContent=String(1+state.remotePlayers.length);
-  for(const p of state.remotePlayers){
-    if(p.avatar_src && !state.remoteImgs[p.player_id]){
-      const im=new Image(); im.src=p.avatar_src; state.remoteImgs[p.player_id]=im;
-    }
-  }
-}
-function formatPlayerLabel(nick,squad,level){
-  squad=(squad&&squad!=='???')?String(squad).trim():'';
-  const lvl=Math.max(1,Number(level)||1);
-  return squad?lvl+'('+squad+')'+(nick||'hráč'):lvl+(nick||'hráč');
-}
-function drawRemotePlayers(){
-  for(const rp of state.remotePlayers){
-    rp.drawX += ((rp.tx??rp.x)-rp.drawX)*0.42;
-    rp.drawY += ((rp.ty??rp.y)-rp.drawY)*0.42;
-    const imgObj=(rp.avatar_src&&state.remoteImgs[rp.player_id])||playerFullImg;
-    const obj={x:rp.drawX,y:rp.drawY,face:Number(rp.face)||1};
-    drawSprite(imgObj,obj,obj.face,168);
-    drawNameTag(obj, formatPlayerLabel(rp.nick,rp.squad_name,rp.level), '#a8d8ff', rp.level, rp.squad_name);drawChatBubble(obj,rp.nick);
-  }
-}
-function drawNameTag(obj,nick,color,level,squad){
-  const x=worldToScreenX(obj.x), y=worldToScreenY(obj.y-186);
-  const lvl=Math.max(1,Number(level)||1);
-  const maxHp=calcMaxHp(lvl,squad);
-  const hp=maxHp;
-  ctx.save();
-  ctx.font='bold '+Math.max(10,12*state.scale)+'px Courier New';
-  const txt=String(nick||'hráč').slice(0,28);
-  const pad=6*state.scale, tw=ctx.measureText(txt).width, bw=Math.max(tw+pad*2,74*state.scale), bh=21*state.scale;
-  ctx.fillStyle='rgba(0,0,0,.74)';
-  ctx.strokeStyle='rgba(120,0,0,.75)';
-  ctx.lineWidth=1;
-  ctx.fillRect(x-bw/2,y-bh,bw,bh);
-  ctx.strokeRect(x-bw/2,y-bh,bw,bh);
-  ctx.fillStyle=color||'#eee';
-  ctx.textAlign='center';
-  ctx.textBaseline='middle';
-  ctx.fillText(txt,x,y-bh/2);
-  const barY=y+3*state.scale, barH=5*state.scale;
-  ctx.fillStyle='rgba(25,0,0,.85)';
-  ctx.fillRect(x-bw/2,barY,bw,barH);
-  ctx.fillStyle='#28c940';
-  ctx.fillRect(x-bw/2,barY,bw*clamp(hp/maxHp,0,1),barH);
-  ctx.strokeStyle='rgba(0,0,0,.9)';
-  ctx.strokeRect(x-bw/2,barY,bw,barH);
-  ctx.restore();
-}
-
-function chatBubbleKey(n){return String(n||'').trim().toLowerCase()}
-function setPlayerChatBubble(nick,body){
-  body=String(body||'').trim();
-  if(!body || body[0]==='/')return;
-  body=body.slice(0,80);
-  state.chatBubbles[chatBubbleKey(nick)]={text:body,until:performance.now()+6000};
-}
-function drawChatBubble(obj,nick){
-  const b=state.chatBubbles[chatBubbleKey(nick)];
-  if(!b)return;
-  const left=b.until-performance.now();
-  if(left<=0){delete state.chatBubbles[chatBubbleKey(nick)];return}
-  const text=String(b.text||'').slice(0,80);
-  if(!text)return;
-  const x=worldToScreenX(obj.x), y=worldToScreenY(obj.y-236);
-  ctx.save();
-  ctx.globalAlpha=clamp(left/350,0,1);
-  ctx.font='bold '+Math.max(10,12*state.scale)+'px Courier New';
-  const maxChars=34;
-  const line1=text.slice(0,maxChars);
-  const line2=text.length>maxChars?text.slice(maxChars,maxChars*2):'';
-  const lines=line2?[line1,line2]:[line1];
-  const pad=7*state.scale;
-  const bw=Math.max(...lines.map(l=>ctx.measureText(l).width))+pad*2;
-  const bh=(18*lines.length+10)*state.scale;
-  ctx.fillStyle='rgba(5,5,8,.88)';
-  ctx.strokeStyle='rgba(255,210,120,.75)';
-  ctx.lineWidth=1;
-  ctx.fillRect(x-bw/2,y-bh,bw,bh);
-  ctx.strokeRect(x-bw/2,y-bh,bw,bh);
-  ctx.beginPath();
-  ctx.moveTo(x-6*state.scale,y);
-  ctx.lineTo(x+6*state.scale,y);
-  ctx.lineTo(x,y+8*state.scale);
-  ctx.closePath();
-  ctx.fillStyle='rgba(5,5,8,.88)';
-  ctx.fill();
-  ctx.stroke();
-  ctx.fillStyle='#ffe9b0';
-  ctx.textAlign='center';
-  ctx.textBaseline='middle';
-  lines.forEach((l,i)=>ctx.fillText(l,x,y-bh+(12+i*18)*state.scale));
-  ctx.restore();
-}
-function playerNick(){return (localStorage.getItem('MADNESS_PLAYER_NAME')||'PLAYER').trim()||'PLAYER'}
-let CURRENT_SERVER=null, IS_HOST=false, CURRENT_MISSION=null, missionStarted=false;
-async function loadCurrentServer(){
-  if(!SB)return;
-  const sid=activeServerId();
-  if(sid==='local_lobby'){serverText.textContent='lokální lobby';IS_HOST=true;return}
-  const {data,error}=await SB.from('madness_servers').select('*').eq('id',sid).maybeSingle();
-  if(error||!data){serverText.textContent='server nenalezen';return}
-  CURRENT_SERVER=data;
-  IS_HOST=(data.host_player_id&&data.host_player_id===getClientId()) || (!data.host_player_id && data.host===playerNick());
-  serverText.textContent='server: '+(data.name||sid)+(IS_HOST?' • HOST':'');
-}
-function hideMissionToast(){if(missionToast)missionToast.style.display='none'}
-function showMissionToast(text,readyVisible=true,label='READY'){
-  if(!missionToast)return;
-  missionText.textContent=text;
-  missionReadyBtn.style.display=readyVisible?'inline-block':'none';
-  missionReadyBtn.textContent=label;
-  missionToast.style.display='block';
-}
-async function createMission(map){
-  if(activeServerId()==='local_lobby'){startLocalMission(map);return}
-  if(!IS_HOST){showMsg('Mapu vybírá host. Počkej na ready.');return}
-  const sid=activeServerId();
-  const row={server_id:sid,map,host_player_id:getClientId(),host_nick:playerNick(),status:'waiting',ready_players:[getClientId()],updated_at:new Date().toISOString()};
-  const {error}=await SB.from('madness_lobby_missions').upsert(row,{onConflict:'server_id'});
-  if(error){showMsg('Mission tabulka chybí. Spusť SQL setup.');console.warn(error);return}
-  showMissionToast('Vybral jsi misi. Čekám na READY od hráčů...',false);
-  await pollMission();
-}
-async function pollMission(){
-  if(!SB||activeServerId()==='local_lobby'||missionStarted)return;
-  const sid=activeServerId();
-  const {data,error}=await SB.from('madness_lobby_missions').select('*').eq('server_id',sid).maybeSingle();
-  if(error)return;
-  CURRENT_MISSION=data||null;
-  if(!CURRENT_MISSION){hideMissionToast();return}
-  const ready=Array.isArray(CURRENT_MISSION.ready_players)?CURRENT_MISSION.ready_players:[];
-  const total=Math.max(1,(state.remotePlayers?.length||0)+1);
-  const meReady=ready.includes(getClientId());
-  if(CURRENT_MISSION.status==='started'){
-    missionStarted=true;
-    localStorage.setItem('MADNESS_MISSION_MAP',CURRENT_MISSION.map||'real_mapa');
-    showMissionToast('Mise startuje...',false);
-    setTimeout(()=>startLocalMission(CURRENT_MISSION.map||'real_mapa'),450);
+    fill.style.width='100%';pct.textContent='100%';
+    fileEl.textContent='file:// režim';
+    showModal('OMEZENÝ REŽIM','Spouštíš hru přes file://. Online/cache updater nemusí fungovat. Použij GitHub Pages nebo localhost.');
+    showPlay('Spouštím bez updateru.');
     return;
   }
-  if(CURRENT_MISSION.status==='countdown'){
-    const t0=new Date(CURRENT_MISSION.updated_at||Date.now()).getTime();
-    const left=Math.max(0,5-Math.floor((Date.now()-t0)/1000));
-    state.friend.chat={text:'Mise za '+left+'...',life:1.2,max:1.2,asking:false};
-    showMissionToast('Všichni READY. Start mise za '+left+'...',false);
-    if(left<=0){
-      await SB.from('madness_lobby_missions').update({status:'started',updated_at:new Date().toISOString()}).eq('server_id',sid);
-    }
+  await registerSW();
+  const playable=await hasPlayableCache();
+  if(!navigator.onLine){
+    if(playable){await playOld('Jsi offline, takže nejde zkontrolovat nebo stáhnout nová verze.');return;}
+    await waitOnlineFirstInstall();
+  }
+  let remote;
+  try{
+    statusEl.textContent='Kontroluju verzi hry...';
+    remote=await getRemoteManifest();
+  }catch(e){
+    if(await hasPlayableCache()){await playOld('Nepodařilo se zkontrolovat verzi hry.');return;}
+    remote={version:VERSION,files:Object.fromEntries(FALLBACK_FILES.map(f=>[f,{sha256:'fallback'}]))};
+  }
+  const local=getLocalManifest();
+  const todo=changedFiles(remote,local);
+  total=Math.max(1,todo.length);
+  if(!todo.length){
+    fill.style.width='100%';pct.textContent='100%';fileEl.textContent='Verze aktuální: '+(remote.version||VERSION);
+    showPlay('Verze hry je aktuální.');
     return;
   }
-  if(CURRENT_MISSION.status==='waiting'){
-    if(meReady)showMissionToast('Čeká se na READY: '+ready.length+'/'+total,true,'ZRUŠIT READY');
-    else showMissionToast((CURRENT_MISSION.host_nick||'HOST')+' vybral misi '+(CURRENT_MISSION.map||'real_mapa')+'. Dej READY.',true,'READY');
-    if(ready.length>=total && total>=1){
-      await SB.from('madness_lobby_missions').update({status:'countdown',updated_at:new Date().toISOString()}).eq('server_id',sid);
-    }
-  }
-}
-async function readyMission(){
-  if(!SB||!CURRENT_MISSION)return;
-  let ready=Array.isArray(CURRENT_MISSION.ready_players)?CURRENT_MISSION.ready_players.slice():[];
-  const me=getClientId();
-  if(ready.includes(me)){
-    ready=ready.filter(x=>x!==me);
-    await SB.from('madness_lobby_missions').update({ready_players:ready,status:'waiting',updated_at:new Date().toISOString()}).eq('server_id',activeServerId());
-    showMissionToast('READY zrušeno.',true,'READY');
-  }else{
-    ready.push(me);
-    await SB.from('madness_lobby_missions').update({ready_players:ready,updated_at:new Date().toISOString()}).eq('server_id',activeServerId());
-    showMissionToast('READY odesláno. Čekám na start...',true,'ZRUŠIT READY');
-  }
-  setTimeout(pollMission,200);
-}
-function startLocalMission(map){
-  if(payload)localStorage.setItem('MADNESS_REAL_PAYLOAD',JSON.stringify(payload));
-  location.href=(map==='real_mapa'||!map)?'real_mapa.html':'real_mapa.html';
-}
-function chatSafe(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function addChatLine(m,sys=false){
-  if(!chatMessages)return;
-  const div=document.createElement('div');
-  if(sys){div.className='sys';div.textContent=m}
-  else div.innerHTML='<b>'+chatSafe(m.nick||'???')+':</b> '+chatSafe(m.body||'');
-  chatMessages.appendChild(div);
-  chatMessages.scrollTop=chatMessages.scrollHeight;
-}
-async function loadChat(){
-  if(!chatMessages)return;
-  chatMessages.innerHTML='';
-  const sid=activeServerId();
-  document.getElementById('chatHead').textContent='CHAT • '+sid;
-  if(!SB){addChatLine('Chat offline.',true);return}
-  const {data,error}=await SB.from('madness_chat_messages').select('nick,body,created_at').eq('server_id',sid).order('created_at',{ascending:true}).limit(50);
-  if(error){addChatLine('Chat teď není dostupný.',true);return}
-  if(!data?.length)addChatLine('Prázdný chat pro tuto lobby.',true);
-  (data||[]).forEach(m=>addChatLine(m,false));
-}
-function subscribeChat(){
-  if(!SB||!chatMessages)return;
-  const sid=activeServerId();
+  statusEl.textContent=local?'Nová verze nalezena. Stahuju změněné soubory...':'První stažení celé hry...';
+  await caches.delete(UPDATE_CACHE);
+  const update=await caches.open(UPDATE_CACHE);
   try{
-    SB.channel('madness_chat_'+sid)
-      .on('postgres_changes',{event:'INSERT',schema:'public',table:'madness_chat_messages',filter:'server_id=eq.'+sid},payload=>{addChatLine(payload.new,false);setPlayerChatBubble(payload.new.nick,payload.new.body);})
-      .subscribe();
-  }catch(e){console.warn('chat realtime off',e)}
-}
-async function sendChat(body){
-  body=(body||'').trim();
-  if(!body)return;
-  if(!SB){addChatLine('Nelze poslat: online režim není dostupný.',true);return}
-  const msg={server_id:activeServerId(),nick:playerNick(),body};
-  setPlayerChatBubble(playerNick(),body);
-  const {error}=await SB.from('madness_chat_messages').insert(msg);
-  if(error)addChatLine('Nelze poslat chat: '+error.message,true);
-}
-if(chatForm)chatForm.addEventListener('submit',e=>{e.preventDefault();const txt=chatInput.value;chatInput.value='';sendChat(txt)});
-async function touchActiveServer(){
-  if(!SB)return;
-  const sid=activeServerId();
-  if(sid==='local_lobby')return;
-  try{await SB.from('madness_servers').update({updated_at:new Date().toISOString()}).eq('id',sid)}catch(e){}
-}
-if(friendAnswer)friendAnswer.addEventListener('keydown',e=>{if(e.key==='Enter')submitFriendAnswer()});
-addEventListener('resize',resize);addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(k in state.keys){state.keys[k]=1;e.preventDefault()}startMusic()});addEventListener('keyup',e=>{const k=e.key.toLowerCase();if(k in state.keys)state.keys[k]=0});cv.addEventListener('click',onClick);cv.addEventListener('mousemove',e=>{state.mouseX=e.clientX;state.mouseY=e.clientY;handleHover(e)});async function cleanupStalePresence(){
-  if(!SB)return;
-  try{
-    const cutoff=new Date(Date.now()-25000).toISOString();
-    await SB.from('madness_lobby_players').delete().lt('updated_at',cutoff);
-  }catch(e){}
-}
-function cleanupPresence(){
-  const sid=activeServerId(), pid=getClientId();
-  try{
-    const url=SUPABASE_URL+'/rest/v1/madness_lobby_players?server_id=eq.'+encodeURIComponent(sid)+'&player_id=eq.'+encodeURIComponent(pid);
-    fetch(url,{method:'DELETE',keepalive:true,headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}});
+    for(const f of todo)await cacheOne(update,f);
+    await promoteUpdateCache(remote);
+    fill.style.width='100%';pct.textContent='100%';
+    fileEl.textContent='Verze '+(remote.version||VERSION)+' připravena';
+    showPlay('Hotovo. Nová verze je připravená.');
   }catch(e){
-    if(SB){try{SB.from('madness_lobby_players').delete().eq('server_id',sid).eq('player_id',pid).then(()=>{})}catch(_e){}}
+    await caches.delete(UPDATE_CACHE);
+    if(await hasPlayableCache()){await playOld('Nová verze existuje, ale některé soubory nešly stáhnout.');return;}
+    statusEl.textContent='Stažení selhalo a stará verze není v cache.';
+    fileEl.textContent='zkus obnovit stránku';
+    showModal('STAŽENÍ SELHALO','Hra ještě není uložená offline. Připoj internet a obnov loading.');
   }
 }
-addEventListener('pagehide',cleanupPresence);
-addEventListener('beforeunload',cleanupPresence);
-addEventListener('pointerdown',startMusic,{once:true});
-mapImg.onload=()=>recalc();localFileWarning();runAntiCheat();setInterval(runAntiCheat,4000);initStarterPreview();initPlayerCard();loadGlobalCharacterIfNeeded();loadGlobalAnimPresets();loadGlobalAssetAnims();showDefaultCharacterHint();resize();applySettingsUI();updateMoneyUI();buildWeaponGrid();updateWeaponText();loadCurrentServer();touchActiveServer();cleanupStalePresence();setInterval(cleanupStalePresence,9000);syncOwnPresence();loadRemotePlayers();setInterval(syncOwnPresence,180);setInterval(loadRemotePlayers,260);setInterval(pollMission,700);syncPlayerStats();setInterval(syncPlayerStats,5000);loadChat();subscribeChat();showMsg('Lobby: klikni na dveře nebo panel');setTimeout(startIntroStory,2000);setTimeout(flashLightning,rand(2000,5000));requestAnimationFrame(loop);
+start();
 </script>
-</body></html>
+</body>
+</html>

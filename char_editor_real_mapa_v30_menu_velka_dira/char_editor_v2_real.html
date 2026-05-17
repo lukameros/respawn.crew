@@ -62,7 +62,7 @@ button.icon-btn:hover{background:#2a2a4a;color:#fff;border-color:#7f7fff;}
   <button class="tab-btn" id="tab-game" onclick="switchToGame()">▶ HRA</button>
   <button class="tab-btn" id="tab-real" onclick="openRealMap()" title="Uloží postavu a otevře misi">🌧 REAL MAPA</button>
   <button class="tab-btn" id="tab-lobby" onclick="openLobby()" title="Uloží postavu a otevře lobby">🏠 LOBBY</button>
-  <button class="tab-btn" onclick="location.href='skeleton_editor.html'" title="Nastavit animaci assetů">🎞️ ASSET KEYFRAMES</button>
+  <button class="tab-btn" onclick="location.href='skeleton_editor.html'" title="Nastavit animaci assetů">🎞️ ASSET KEYFRAMES v56</button>
   <button class="tab-btn" id="tab-save-global" onclick="saveOnline()" title="Uloží hráče i NPC online">💾 ULOŽIT ONLINE</button>
 </div>
 <div id="onlineSaveStatus"></div>
@@ -173,7 +173,13 @@ button.icon-btn:hover{background:#2a2a4a;color:#fff;border-color:#7f7fff;}
 </div>
 <div id="gif-holder"><img id="gif-dom"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+if(location.protocol!=='file:'){
+  document.write('<scr'+'ipt src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></scr'+'ipt>');
+}else{
+  window.supabase=null;
+}
+</script>
 <script>
 const SUPABASE_URL="https://fokguuucpoejkxklwrpw.supabase.co";
 const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZva2d1dXVjcG9lamt4a2x3cnB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NTc2NTgsImV4cCI6MjA5NDUzMzY1OH0.2nNJFm1yzgiaNuIsj4DWgS9zJunIYc1uKkWndw23VrY";
@@ -970,7 +976,7 @@ function imageForKey(key){
 
 function layerBounds(stack){
   let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
-  (stack||[]).forEach(l=>{
+  sortStackForDrawEditor(stack).forEach(l=>{
     const img=imageForKey(l.key);
     if(!img||!img.complete||!img.naturalWidth) return;
     const w=img.naturalWidth*l.scale/100;
@@ -992,6 +998,19 @@ const HAND_LAYER_KEYS = new Set(['ruce','pest_l','pest_p']);
 const GIF_LAYER_KEYS = new Set(['gif']);
 function stripHands(stack){ return (stack||[]).filter(l=>!HAND_LAYER_KEYS.has(l.key)); }
 function stripGif(stack){ return (stack||[]).filter(l=>!GIF_LAYER_KEYS.has(l.key)); }
+
+function drawOrderRankEditor(l){
+  const k=String((l&&l.key)||'').toLowerCase();
+  if(k==='gif'||k.includes('bota')||k.includes('boty')||k.includes('boot')||k.includes('noha')||k.includes('nohy')||k.includes('leg'))return 0;
+  if(k.includes('kalhot')||k.includes('pants'))return 5;
+  if(k.includes('telo')||k.includes('body')||k.includes('brnen')||k.includes('armor'))return 20;
+  if(k.includes('hlava')||k.includes('head'))return 30;
+  if(k.includes('ruce')||k.includes('ruka')||k.includes('pest')||k.includes('hand')||k.includes('arm')||k.includes('zbran')||k.includes('weapon'))return 50;
+  return 15;
+}
+function sortStackForDrawEditor(stack){
+  return (stack||[]).map((l,i)=>({l,i})).sort((a,b)=>drawOrderRankEditor(a.l)-drawOrderRankEditor(b.l)||a.i-b.i).map(x=>x.l);
+}
 
 function renderStackToDataURL(stack,boundsStack){
   stack = Array.isArray(stack) ? stack : layers;
@@ -1051,6 +1070,7 @@ function collectLayerImages(stack){
   (stack||[]).forEach(l=>{
     if(l&&l.key&&SRC[l.key])out[l.key]=SRC[l.key];
   });
+  if(SRC.gif)out.gif=SRC.gif;
   ['ak_hold','ak_ground','m4_hold','awp_hold','m60_hold'].forEach(k=>{if(SRC[k])out[k]=SRC[k]});
   return out;
 }
@@ -1063,7 +1083,7 @@ function buildRealPayload(){
   const enemySprite=renderStackToDataURL(enemyBase,enemyBase);
   const enemyNoHandsSprite=renderStackToDataURL(stripHands(enemyBase),enemyBase);
   const payload={
-    version:37,
+    version:48,
     savedAt:Date.now(),
     player:playerSprite,
     playerNoHands:playerNoHandsSprite,
