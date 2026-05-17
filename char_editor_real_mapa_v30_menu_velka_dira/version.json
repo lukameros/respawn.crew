@@ -1,11 +1,129 @@
-self.addEventListener('install',event=>{event.waitUntil(self.skipWaiting())});
-self.addEventListener('activate',event=>{
-  event.waitUntil((async()=>{
-    try{
-      const keys=await caches.keys();
-      await Promise.all(keys.filter(k=>String(k).indexOf('velka-dira')===0).map(k=>caches.delete(k)));
-    }catch(e){}
-    try{await self.registration.unregister()}catch(e){}
-    await self.clients.claim();
-  })());
-});
+{
+  "version": "v69",
+  "files": {
+    "admin.html": {
+      "size": 5930,
+      "sha256": "cdeccd32582010c624f46d989f1b1772c4126cf797e34d8616b34f077d433120"
+    },
+    "ak47_hold_clean.png": {
+      "size": 110952,
+      "sha256": "b8f07972f0d0698e5f8aa1e27a6b0559a7b187abc473af9543ced87d0b56e400"
+    },
+    "ammo_crate.png": {
+      "size": 466494,
+      "sha256": "fa6ee7af41aebcc84a323475896758084d93d85a38f8178593d5785d30918c29"
+    },
+    "armored_enemy.png": {
+      "size": 419846,
+      "sha256": "12947e19d196a9ece0cf0e5abb040443fc4ef9cf331f378fa9539b4a79dbc5c4"
+    },
+    "avatars/avatar_1.png": {
+      "size": 1663,
+      "sha256": "74417b391b1f91002787f86fae0e02aa07f6e3338b8931f21e9c313188f74874"
+    },
+    "avatars/avatar_2.png": {
+      "size": 1786,
+      "sha256": "9e46e60e45ba6c5296a8ec99275207f228adce39b12dd0cf2d9dc34dc668e1c1"
+    },
+    "avatars/avatar_3.png": {
+      "size": 1768,
+      "sha256": "7a036e64a61f759d39034b7c54eaa6ec5d5b391e51e302100a047b836bebc0e6"
+    },
+    "avatars/jesus_lukamer.png": {
+      "size": 1445,
+      "sha256": "1401ea91e34998654e9cc185f6f9af612687fecaff3fd8f5f27f6bade169dba1"
+    },
+    "awp_hold.png": {
+      "size": 319601,
+      "sha256": "4e90b82f4f1f50a215d7651b3d2b40e9cf849fbb59013009dd118989175929d7"
+    },
+    "bench_lavice.png": {
+      "size": 342602,
+      "sha256": "b86c326b218cec21bfa84b519e529a3638872d917fcbd173c0f2c116a075f1e9"
+    },
+    "blood_splat.png": {
+      "size": 458269,
+      "sha256": "2d706aad8c2d5ec529411c2523fdafed189273222f4da76f606b54f3760af3eb"
+    },
+    "char_editor_v2.html": {
+      "size": 860260,
+      "sha256": "e166b50acb2212fc41e81bc6af62c1d25f8d04380606b2cc68112438d8e95f0f"
+    },
+    "char_editor_v2_real.html": {
+      "size": 860260,
+      "sha256": "e166b50acb2212fc41e81bc6af62c1d25f8d04380606b2cc68112438d8e95f0f"
+    },
+    "char_editor_v2_real.html.js": {
+      "size": 860260,
+      "sha256": "e166b50acb2212fc41e81bc6af62c1d25f8d04380606b2cc68112438d8e95f0f"
+    },
+    "favicon.ico": {
+      "size": 1050,
+      "sha256": "dd36170633d342d7f50daf9a96a2d73a59fe69c0d420f4286f2b244faca89471"
+    },
+    "hudba.mp3": {
+      "size": 2722,
+      "sha256": "720796bba2bed8276bcef7c944f0224f9ad54509fb022cd0870a4ac60117137d"
+    },
+    "index.html": {
+      "size": 461,
+      "sha256": "164823e6a0965747737075de31e2c46ed1d4e7d28e24648c9334ef5ac6b51575"
+    },
+    "loading.html": {
+      "size": 2197,
+      "sha256": "d74f92ee89872bdd1c0756670a8c4bd61a18c74848bfdb97c5fd17af1483a05f"
+    },
+    "lobby.html": {
+      "size": 1065813,
+      "sha256": "14f31a7a7c7014e0a26a50e28e5879230e887428670900fd38ceaaa608f0af01"
+    },
+    "lobby_crate.png": {
+      "size": 466494,
+      "sha256": "fa6ee7af41aebcc84a323475896758084d93d85a38f8178593d5785d30918c29"
+    },
+    "lobby_map.png": {
+      "size": 2307252,
+      "sha256": "0d2a4aaed1b75b242c1d3f7d0596cc23326a525eb71bfd2907293a5c5650b633"
+    },
+    "m4_hold.png": {
+      "size": 413100,
+      "sha256": "1fbd55d81d87a118aebe7f8ed7db151a9ffbfe2f5c222c85f0befd8f64c1f525"
+    },
+    "m60_hold.png": {
+      "size": 387088,
+      "sha256": "e1012a686bf02cdd4772167fd8411fcb6a3a6de08909f76b8e7493b3c5dccfe3"
+    },
+    "mapa.png": {
+      "size": 1887337,
+      "sha256": "f2ab59d9eecdfe97ebead67d485ab87a7d0dbe8ab79a1b37fc57202f220bbcdf"
+    },
+    "menu.html": {
+      "size": 13684,
+      "sha256": "4b01c5db54aace6f86cea154a29f7f45ac9907398f9aa4c546566efac7f4af46"
+    },
+    "menu_bg.png": {
+      "size": 572899,
+      "sha256": "42cfb5b1f54698074e91eaa13091c0eeccbf817328ae3946a5a3b25ce44e70db"
+    },
+    "real_mapa.html": {
+      "size": 1055915,
+      "sha256": "291d8499418d2f3acab8916e2e83578691f39df04d1566e83f565b421a4217df"
+    },
+    "real_mapa.html.js": {
+      "size": 1055915,
+      "sha256": "291d8499418d2f3acab8916e2e83578691f39df04d1566e83f565b421a4217df"
+    },
+    "skeleton_editor.html": {
+      "size": 830215,
+      "sha256": "f40f5c321da6b6f7f119e4f9f87d88b33a8a4778f5cbe9e61767c2916146c74d"
+    },
+    "strelba3.mp3": {
+      "size": 746,
+      "sha256": "05e5ead4e74f89612ec5e581f8243f10ed7ebeef3cd31f6640725e61ec79e08a"
+    },
+    "sw.js": {
+      "size": 418,
+      "sha256": "d7b4856f56fce37377097339d363e73569b4bd5da8570ae229332eec4aa4e0dd"
+    }
+  }
+}
