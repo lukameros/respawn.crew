@@ -3,33 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Velká díra 1 — Loading</title>
+<title>Velká díra 1</title>
 <style>
-*{box-sizing:border-box}
-html,body{margin:0;height:100%;background:#030304;color:#eee;font-family:'Courier New',monospace;overflow:hidden}
-body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 50% 30%,rgba(120,0,0,.35),transparent 45%),linear-gradient(180deg,#09090b,#020203);z-index:0}
-.wrap{position:relative;z-index:1;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
-.box{width:min(740px,92vw);background:rgba(6,6,8,.88);border:2px solid #8a0000;box-shadow:0 0 42px #000;padding:28px;border-radius:12px}
-h1{margin:0 0 8px;font-size:34px;letter-spacing:3px;color:#ffd6d6;text-shadow:2px 2px #000}
-.sub{color:#999;font-size:13px;margin-bottom:22px}
-.track{height:18px;background:#150000;border:1px solid #740000;box-shadow:inset 0 0 10px #000;border-radius:10px;overflow:hidden}
-.fill{height:100%;width:100%;background:linear-gradient(90deg,#720000,#ffbd54);box-shadow:0 0 16px rgba(255,180,60,.5)}
-#pct{margin-top:12px;color:#ffd27a;font-weight:bold}
-#file{margin-top:8px;color:#777;font-size:11px;min-height:16px;word-break:break-all}
-button,a.play{display:inline-block;margin-top:18px;background:#260000;color:#ffd0d0;border:1px solid #a00000;padding:10px 18px;font:bold 14px 'Courier New',monospace;cursor:pointer;letter-spacing:1px;text-decoration:none}
-button:hover,a.play:hover{background:#520000;color:#fff}
-.warn{margin-top:18px;color:#666;font-size:11px;line-height:1.4}
+html,body{margin:0;height:100%;background:#030304;color:#eee;font-family:'Courier New',monospace;display:grid;place-items:center}
+.box{text-align:center;background:rgba(6,6,8,.88);border:2px solid #8a0000;box-shadow:0 0 42px #000;padding:30px;border-radius:12px}
+h1{letter-spacing:3px;color:#ffd6d6}
+a{display:inline-block;margin:10px;background:#260000;color:#ffd0d0;border:1px solid #a00000;padding:12px 20px;font:bold 15px 'Courier New',monospace;text-decoration:none}
+a:hover{background:#520000;color:#fff}
 </style>
 </head>
 <body>
-<div class="wrap"><div class="box">
+<div class="box">
 <h1>VELKÁ DÍRA 1</h1>
-<div class="sub">Připraveno.</div>
-<div class="track"><div class="fill"></div></div>
-<div id="pct">100%</div>
-<div id="file">připraveno</div>
-<a class="play" href="./menu.html">HRÁT</a>
-<div class="warn">Statický GitHub režim.</div>
-</div></div>
+<a href="./loading.html">LOADING</a>
+<a href="./menu.html">HRÁT HNED</a>
+</div>
 </body>
 </html>
