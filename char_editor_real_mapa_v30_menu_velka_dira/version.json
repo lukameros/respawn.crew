@@ -1,5 +1,5 @@
 {
-  "version": "v71",
+  "version": "v72",
   "files": {
     "404.html": {
       "size": 240,
@@ -47,15 +47,15 @@
     },
     "char_editor_v2.html": {
       "size": 863280,
-      "sha256": "0f41b0c8d5d04e003195f0829a021dc089bca48beaddd11002b1062e7aaf620e"
+      "sha256": "26d22d5b9d9bbdcc0e6d0388809f92ad4b55786039fbcc6fea5151779a03cf55"
     },
     "char_editor_v2_real.html": {
       "size": 863280,
-      "sha256": "0f41b0c8d5d04e003195f0829a021dc089bca48beaddd11002b1062e7aaf620e"
+      "sha256": "26d22d5b9d9bbdcc0e6d0388809f92ad4b55786039fbcc6fea5151779a03cf55"
     },
     "char_editor_v2_real.html.js": {
       "size": 863280,
-      "sha256": "0f41b0c8d5d04e003195f0829a021dc089bca48beaddd11002b1062e7aaf620e"
+      "sha256": "26d22d5b9d9bbdcc0e6d0388809f92ad4b55786039fbcc6fea5151779a03cf55"
     },
     "favicon.ico": {
       "size": 1050,
@@ -74,8 +74,8 @@
       "sha256": "9e59ca0aaf8723c01442d6091518d8f3d5a5427d2d1cd43236eb7d5c8b50a472"
     },
     "lobby.html": {
-      "size": 1065811,
-      "sha256": "b09c858c772c269672a2a33584d47933ad7409679aff31bb88ac93f3ab900f0b"
+      "size": 1066271,
+      "sha256": "297b91f0916f7dbde3e41c0a67ca26d64d092ec468f3c7929a2bb07a99577281"
     },
     "lobby_crate.png": {
       "size": 466494,
@@ -98,24 +98,24 @@
       "sha256": "f2ab59d9eecdfe97ebead67d485ab87a7d0dbe8ab79a1b37fc57202f220bbcdf"
     },
     "menu.html": {
-      "size": 13684,
-      "sha256": "53ead8ddcf5e83744f61ffa97a7d50160b3ef21ce63fb49203fb43f4a84cd3a7"
+      "size": 14303,
+      "sha256": "09671d92cfb8a3f6333fec087c088f86d28c20f944f00d9dcbb48897b2642e1e"
     },
     "menu_bg.png": {
       "size": 572899,
       "sha256": "42cfb5b1f54698074e91eaa13091c0eeccbf817328ae3946a5a3b25ce44e70db"
     },
     "real_mapa.html": {
-      "size": 1055718,
-      "sha256": "eb429e1e44001a203eb91fc37bbbd793ff46e1efc6b55fd213eee261a3417f9a"
+      "size": 1056907,
+      "sha256": "220da68281a1e51135b346031039243bf2d7f9d8d378547678aa6ec74b63df6a"
     },
     "real_mapa.html.js": {
-      "size": 1055718,
-      "sha256": "eb429e1e44001a203eb91fc37bbbd793ff46e1efc6b55fd213eee261a3417f9a"
+      "size": 1056907,
+      "sha256": "220da68281a1e51135b346031039243bf2d7f9d8d378547678aa6ec74b63df6a"
     },
     "skeleton_editor.html": {
       "size": 836368,
-      "sha256": "cbb8dbd5d04445ae3d4dc24592f1b2d3a31889611ad5f3704672c626f10fa173"
+      "sha256": "7189fe118b24a8413823604b1bcbc57b67f062621b6247be1847d41fa04bea17"
     },
     "strelba3.mp3": {
       "size": 746,

@@ -6,6 +6,7 @@
 <title>Velká díra 1</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050506;color:#ddd;font-family:'Courier New',monospace}
+#menuBgImg{position:fixed;inset:0;width:100vw;height:100vh;object-fit:cover;z-index:-2;filter:contrast(1.08) brightness(.82)}
 body:before{content:"";position:fixed;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.50),rgba(0,0,0,.18),rgba(0,0,0,.58)),url('menu_bg.png') center center/cover no-repeat;z-index:0;filter:contrast(1.08) brightness(.82)}
 .wrap{position:relative;z-index:1;min-height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
 .panel{width:min(520px,92vw);background:rgba(5,5,7,.76);border:2px solid #7c0000;box-shadow:0 0 42px #000,inset 0 0 0 1px rgba(255,255,255,.05);padding:34px 34px 28px;backdrop-filter:blur(2px)}
@@ -31,6 +32,7 @@ button{border-radius:7px!important;box-shadow:0 0 16px rgba(0,0,0,.6)}
 </style>
 </head>
 <body>
+<img id="menuBgImg" src="./menu_bg.png" alt="">
 <button id="settingsBtn" title="Nastavení" onclick="openBox('settings')">⚙</button>
 <div id="gameAlertModal"><div id="gameAlertBox"><h2>HLÁŠENÍ</h2><div id="gameAlertText"></div><button onclick="closeGameAlert()">ZAVŘÍT</button></div></div>
 <div id="updateBox"><b>UPDATE 0.1</b><p>Nová verze menu, lobby a editoru.</p></div>
@@ -41,7 +43,7 @@ button{border-radius:7px!important;box-shadow:0 0 16px rgba(0,0,0,.6)}
 <button onclick="location.href='lobby.html'">HRÁT HRU</button>
   <button onclick="openServerList()">SERVER LIST</button>
   <button onclick="openBox('settings')">NASTAVENÍ</button>
-  <button id="adminAnimBtn" class="adminBtn" onclick="location.href='skeleton_editor.html?v=71'">ASSET KEYFRAMES v71</button>
+  <button id="adminAnimBtn" class="adminBtn" onclick="location.href='skeleton_editor.html?v=72'">ASSET KEYFRAMES v72</button>
   <button id="adminMenuBtn" class="adminBtn" onclick="location.href='admin.html'">ADMINMENU</button>
 </div></div>
 
@@ -172,5 +174,19 @@ function setMusicVol(v){localStorage.setItem('MADNESS_MUSIC_VOL',String(v));appl
 function setSfxVol(v){localStorage.setItem('MADNESS_SFX_VOL',String(v));applySettingsUI()}
 applySettingsUI();
 initAdminMenu();
+
+function unlockMenuAudio(){
+  try{
+    const a=document.getElementById('menuMusic');
+    if(!a)return;
+    a.volume=(Number(localStorage.getItem('MADNESS_MUSIC_VOL')||50)/100)*.45;
+    a.play().catch(()=>{});
+  }catch(e){}
+}
+addEventListener('pointerdown',unlockMenuAudio,{once:true});
+addEventListener('keydown',unlockMenuAudio,{once:true});
+setTimeout(unlockMenuAudio,400);
+
 </script>
+<audio id="menuMusic" src="hudba.mp3" loop preload="auto"></audio>
 </body></html>
