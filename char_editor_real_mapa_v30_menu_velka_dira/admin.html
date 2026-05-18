@@ -1,97 +1,11 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Admin</title>
-<style>
-html,body{margin:0;min-height:100%;background:#050506;color:#ddd;font-family:'Courier New',monospace}
-body{padding:18px}
-h1,h2{color:#ffd6d6}
-.panel{background:rgba(8,8,10,.92);border:1px solid #8a0000;box-shadow:0 0 24px #000;padding:16px;margin:12px 0;border-radius:10px}
-button,input,select,textarea{background:#180000;color:#ffd6d6;border:1px solid #8a0000;padding:8px;margin:4px;font-family:'Courier New',monospace}
-.row{border:1px solid #333;padding:10px;margin:8px 0;background:#09090a}
-img.preview{max-width:96px;max-height:96px;image-rendering:auto}
-.lock{display:none;text-align:center;margin-top:20vh}
-</style>
+<meta charset="UTF-8">
+<meta http-equiv="refresh" content="0;url=./loading.html?v=71">
+<title>Velká díra 1</title>
+<script>location.href='./loading.html?v=71'</script>
+<script>try{console.log=console.warn=console.error=console.info=console.debug=function(){}}catch(e){}</script>
 </head>
-<body>
-<div id="lock" class="lock"><h1>ADMIN ONLY</h1><button onclick="location.href='menu.html'">MENU</button></div>
-<div id="app" style="display:none">
-<button onclick="location.href='menu.html'">← MENU</button>
-<button onclick="location.href='char_editor_v2.html'">EDITOR</button>
-<button onclick="location.href='skeleton_editor.html?v=71'">ANIMACE</button>
-<h1>ADMINMENU</h1>
-
-<div class="panel">
-<h2>Online hráči</h2>
-<button onclick="loadPlayers()">OBNOVIT</button>
-<div id="players"></div>
-</div>
-
-<div class="panel">
-<h2>Nastavení misí / NPC</h2>
-<input id="npcName" placeholder="název NPC">
-<input id="npcMission" placeholder="mise" value="default">
-<input id="npcFreq" type="number" placeholder="četnost %" value="30">
-<input id="npcHp" type="number" placeholder="HP" value="140">
-<input id="npcSpeed" type="number" placeholder="rychlost" value="110">
-<input id="npcDrop" type="number" placeholder="drop šance 0-1" step="0.05" value="0.4">
-<input id="npcFile" type="file" accept="image/*">
-<button onclick="addNpcAsset()">PŘIDAT NPC ASSET</button>
-<button onclick="saveMissionConfig()">ULOŽIT NASTAVENÍ MISÍ</button>
-<div id="npcList"></div>
-</div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL="https://fokguuucpoejkxklwrpw.supabase.co";
-const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInJlZiI6ImZva2d1dXVjcG9lamt4a2x3cnB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NTc2NTgsImV4cCI6MjA5NDUzMzY1OH0.2nNJFm1yzgiaNuIsj4DWgS9zJunIYc1uKkWndw23VrY";
-let SB=null;try{if(window.supabase)SB=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){}
-function isAdmin(){const n=String(localStorage.getItem('MADNESS_PLAYER_NAME')||localStorage.getItem('RESPAWN_NICK')||'').trim().toLowerCase();return n==='lukamer'}
-if(!isAdmin()){lock.style.display='block'}else{app.style.display='block';loadPlayers();loadMissionConfig()}
-async function sendCmd(player_id,cmd){
-  if(!SB)return;
-  await SB.from('madness_global_payloads').upsert({id:'admin_cmd_'+player_id,payload:cmd,updated_at:new Date().toISOString(),updated_by:'admin'},{onConflict:'id'});
-}
-async function loadPlayers(){
-  const box=document.getElementById('players');box.innerHTML='';
-  let rows=[];
-  if(SB){try{const cutoff=new Date(Date.now()-60000).toISOString();const r=await SB.from('madness_lobby_players').select('*').gt('updated_at',cutoff).limit(80);rows=r.data||[]}catch(e){}}
-  if(!rows.length){box.innerHTML='<div class="row">Nikdo online.</div>';return}
-  rows.forEach(p=>{
-    const d=document.createElement('div');d.className='row';
-    d.innerHTML='<b>'+(p.nick||p.player_id)+'</b> • lvl '+(p.level||1)+'<br><input class="money" type="number" value="1000"><button class="addMoney">+ PRACHY</button><input class="level" type="number" value="'+(p.level||1)+'"><button class="setLevel">SET LEVEL</button><button class="ban">BAN 1H</button><button class="unban">UNBAN</button>';
-    d.querySelector('.addMoney').onclick=()=>sendCmd(p.player_id,{action:'add_money',amount:Number(d.querySelector('.money').value)||0});
-    d.querySelector('.setLevel').onclick=()=>sendCmd(p.player_id,{action:'set_level',level:Number(d.querySelector('.level').value)||1});
-    d.querySelector('.ban').onclick=()=>sendCmd(p.player_id,{action:'ban_1h'});
-    d.querySelector('.unban').onclick=()=>sendCmd(p.player_id,{action:'unban'});
-    box.appendChild(d);
-  });
-}
-let missionConfig={customNpcs:[]};
-async function loadMissionConfig(){
-  try{missionConfig=JSON.parse(localStorage.getItem('MADNESS_MISSION_CONFIG')||'null')||{customNpcs:[]}}catch(e){missionConfig={customNpcs:[]}}
-  if(SB){try{const r=await SB.from('madness_global_payloads').select('payload').eq('id','custom_mission_config').maybeSingle();if(r.data&&r.data.payload)missionConfig=r.data.payload}catch(e){}}
-  renderNpcs();
-}
-function renderNpcs(){
-  const box=document.getElementById('npcList');box.innerHTML='';
-  (missionConfig.customNpcs||[]).forEach((n,i)=>{
-    const d=document.createElement('div');d.className='row';
-    d.innerHTML='<img class="preview" src="'+n.src+'"><br><b>'+n.name+'</b> • mise '+n.mission+' • '+n.frequency+'% • HP '+n.hp+' • speed '+n.speed+' • drop '+n.dropChance+' <button>DELETE</button>';
-    d.querySelector('button').onclick=()=>{missionConfig.customNpcs.splice(i,1);renderNpcs()};
-    box.appendChild(d);
-  });
-}
-function addNpcAsset(){
-  const f=npcFile.files&&npcFile.files[0]; if(!f)return;
-  const fr=new FileReader();
-  fr.onload=()=>{missionConfig.customNpcs=missionConfig.customNpcs||[];missionConfig.customNpcs.push({name:npcName.value||'NPC',mission:npcMission.value||'default',frequency:Number(npcFreq.value)||30,hp:Number(npcHp.value)||140,speed:Number(npcSpeed.value)||110,dropChance:Number(npcDrop.value)||0.4,src:fr.result});renderNpcs();};
-  fr.readAsDataURL(f);
-}
-async function saveMissionConfig(){
-  localStorage.setItem('MADNESS_MISSION_CONFIG',JSON.stringify(missionConfig));
-  if(SB)await SB.from('madness_global_payloads').upsert({id:'custom_mission_config',payload:missionConfig,updated_at:new Date().toISOString(),updated_by:'admin'},{onConflict:'id'});
-}
-</script>
-</body></html>
+<body></body>
+</html>
