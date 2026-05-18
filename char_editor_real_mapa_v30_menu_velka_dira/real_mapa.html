@@ -486,3 +486,15 @@ v85:
 - 3 mapy misí z v84 zůstávají.
 - Menu otevírá skeleton_editor.html?v=85.
 - JS syntax zkontrolovaná.
+
+v86:
+- Opravený loading loop / bílá obrazovka.
+- index.html už nejde přes starý loading cyklus, ale rovnou spustí menu.html?v=86.
+- loading.html je jen bezpečný fallback a také rovnou spustí menu.html?v=86.
+- 404.html také přesměruje na menu.html?v=86.
+- Přidaný clear_cache.html pro vyčištění starého service workeru/cache, pokud GitHub nebo prohlížeč drží starou verzi.
+- sw.js je no-op a odregistruje sám sebe.
+- Přidané .nojekyll.
+- 3 mise z v84/v85 zůstávají.
+- drawImageDecal fix z v85 zůstává.
+- JS syntax zkontrolovaná.
