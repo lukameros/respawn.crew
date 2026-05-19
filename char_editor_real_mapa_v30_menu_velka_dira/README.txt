@@ -278,7 +278,7 @@ v65:
 - Natvrdo opravený seznam Akce v skeleton_editor.html.
 - V Akce teď musí být: idle, walk, útok obecný, útok 1 levá pěst, útok 2 pravá pěst, útok 3 kop, jump, fall, death, crouch / krčení.
 - Přidaná viditelná sekce Rychlé útoky s tlačítky pro levá pěst / pravá pěst / kop / krčení / death.
-- Menu otevírá skeleton_editor.html?v=124, aby GitHub nebral starou cache.
+- Menu otevírá skeleton_editor.html?v=133, aby GitHub nebral starou cache.
 - JS syntax zkontrolovaná.
 
 v66:
@@ -317,7 +317,7 @@ v69:
 v70:
 - Vrácené tlačítko ← LOBBY přímo do real_mapa.html.
 - Opravený skeleton_editor: doplněné chybějící loadAnim/saveAnim/getOffset/setOffset/setMode/setAction a další funkce.
-- Menu otevírá skeleton_editor.html?v=124.
+- Menu otevírá skeleton_editor.html?v=133.
 - AK-47 odstraněná z real_mapa, lobby i char editoru; fallback zbraně je M4.
 - Char editor má knihovnu postav/NPC: pojmenovat, vybrat Allies/NPC, uložit.
 - Anim editor má výběr, co animovat: default Postava 1 nebo uložené Postava/NPC sloty.
@@ -354,7 +354,7 @@ v73:
 - Anim editor: přidané zastavení preview / navrhování pózy.
 - Anim editor: globální rychlost preview.
 - Anim editor: rychlost animace pro každou vrstvu zvlášť.
-- Menu otevírá skeleton_editor.html?v=124.
+- Menu otevírá skeleton_editor.html?v=133.
 - JS syntax zkontrolovaná.
 
 v74:
@@ -387,7 +387,7 @@ v76:
 - Varianta mění range, damage, posun ruky/nohy a rotaci animace.
 - Vypnuté console/debug výpisy přes bezpečný console mute.
 - Odstraněné viditelné knock/knockback hlášky.
-- Menu otevírá skeleton_editor.html?v=124.
+- Menu otevírá skeleton_editor.html?v=133.
 - JS syntax zkontrolovaná.
 
 v77:
@@ -398,7 +398,7 @@ v77:
 - NPC i hráč mají unikátní motion profile: každá postava má jiný pohyb rukou/body/head/nohou.
 - Friendly NPC v lobby už není statická socha; vykresluje se přes animated layer stack.
 - V lobby přidané tlačítko UPUSTIT ZBRAŇ a zbraň spadne na zem.
-- Menu otevírá skeleton_editor.html?v=124.
+- Menu otevírá skeleton_editor.html?v=133.
 - JS syntax zkontrolovaná.
 
 v78:
@@ -410,7 +410,7 @@ v78:
 - Přidaný typ chování stopper pro NPC.
 - Po zásahu dostane krev i samotné NPC tělo; víc krevních značek na enemy.
 - Krevní rozstřik je menší a čistší, ne velké čtverce.
-- Menu otevírá skeleton_editor.html?v=124.
+- Menu otevírá skeleton_editor.html?v=133.
 - JS syntax zkontrolovaná.
 
 v79:
@@ -421,7 +421,7 @@ v79:
 - Přidaná kolize NPC mezi sebou.
 - Přidaná kolize NPC s hráčem.
 - NPC se už tolik nevrství přes sebe ani přes hráče.
-- Menu otevírá skeleton_editor.html?v=124.
+- Menu otevírá skeleton_editor.html?v=133.
 - JS syntax zkontrolovaná.
 
 v80:
@@ -434,7 +434,7 @@ v80:
 - NPC se spawnují z obou stran od vlny 2, množství z levé strany roste podle vlny.
 - Počet NPC z obou stran je přiměřený aktuální vlně.
 - Kolize NPC s NPC/hráčem zůstává.
-- Menu otevírá skeleton_editor.html?v=124.
+- Menu otevírá skeleton_editor.html?v=133.
 - JS syntax zkontrolovaná.
 
 v81:
@@ -444,7 +444,7 @@ v81:
 - Nábojnice po dopadu zůstane ležet na zemi až do ukončení hry/reloadu.
 - Různé zbraně mají lehce jiný výhoz nábojnice.
 - Shell fyzika běží i během hit-stopu, aby to nepůsobilo zaseknutě.
-- Menu otevírá skeleton_editor.html?v=124.
+- Menu otevírá skeleton_editor.html?v=133.
 - JS syntax zkontrolovaná.
 
 v82:
@@ -454,7 +454,7 @@ v82:
 - Nábojnice jen mírně vyskočí nahoru a potom padá dolů na zem.
 - Upravená fyzika nábojnic: menší výška, kratší oblouk, menší odskoky, rychlejší uklidnění na zemi.
 - Stejná úprava platí pro hráče i NPC.
-- Menu otevírá skeleton_editor.html?v=124.
+- Menu otevírá skeleton_editor.html?v=133.
 - JS syntax zkontrolovaná.
 
 v83:
@@ -463,7 +463,7 @@ v83:
 - Díry po kulkách a krevní cákance znovu fungují.
 - Opravené chybějící ezgif.com-animated-gif-maker.gif: fallback používá embedded GIF a přidaný je i placeholder soubor.
 - Tracking Prevention hlášky ze Supabase jsou browser warning při file:// / CDN a nejsou runtime chyba hry.
-- Menu otevírá skeleton_editor.html?v=124.
+- Menu otevírá skeleton_editor.html?v=133.
 - JS syntax zkontrolovaná.
 
 v84:
@@ -476,7 +476,7 @@ v84:
 - Lobby má výběr 3 map v okně VYBER MAPU.
 - Online lobby ukládá vybranou mapu do MADNESS_MISSION_MAP a posílá ji přes mission row.
 - real_mapa.html si mapu bere z URL ?mission= nebo z localStorage.
-- Menu otevírá skeleton_editor.html?v=124.
+- Menu otevírá skeleton_editor.html?v=133.
 - JS syntax zkontrolovaná.
 
 v85:
@@ -484,14 +484,14 @@ v85:
 - Vrácen helper drawImageDecal pro vykreslení nábojnic, děr a krevních cákanců.
 - Přidaná pojistka, aby nechyběly addBulletHole, addBloodDecal a drawPersistentDecalsLayer.
 - 3 mapy misí z v84 zůstávají.
-- Menu otevírá skeleton_editor.html?v=124.
+- Menu otevírá skeleton_editor.html?v=133.
 - JS syntax zkontrolovaná.
 
 v86:
 - Opravený loading loop / bílá obrazovka.
-- index.html už nejde přes starý loading cyklus, ale rovnou spustí menu.html?v=124.
-- loading.html je jen bezpečný fallback a také rovnou spustí menu.html?v=124.
-- 404.html také přesměruje na menu.html?v=124.
+- index.html už nejde přes starý loading cyklus, ale rovnou spustí menu.html?v=133.
+- loading.html je jen bezpečný fallback a také rovnou spustí menu.html?v=133.
+- 404.html také přesměruje na menu.html?v=133.
 - Přidaný clear_cache.html pro vyčištění starého service workeru/cache, pokud GitHub nebo prohlížeč drží starou verzi.
 - sw.js je no-op a odregistruje sám sebe.
 - Přidané .nojekyll.
@@ -507,7 +507,7 @@ v87:
 - Friendly NPC v lobby si občas náhodně zkusí emote.
 - Pokud emote_1/2/3 ještě není naanimovaný, NPC nespadne a použije idle/walk fallback.
 - Emote se spouští hlavně když NPC stojí a zrovna neútočí.
-- Menu otevírá skeleton_editor.html?v=124.
+- Menu otevírá skeleton_editor.html?v=133.
 - Loading no-loop fix z v86 zůstává.
 - JS syntax zkontrolovaná.
 
@@ -515,8 +515,8 @@ v88:
 - Vrácený normální loading flow: index.html -> loading.html -> menu.html.
 - Loading zase ukazuje progress bar jako dřív.
 - Opravené směrování: index už nejde rovnou do menu.
-- Loading necyklí zpět na sebe; po doběhnutí jde na menu.html?v=124.
-- clear_cache.html po vyčištění cache jde na loading.html?v=124.
+- Loading necyklí zpět na sebe; po doběhnutí jde na menu.html?v=133.
+- clear_cache.html po vyčištění cache jde na loading.html?v=133.
 - sw.js zůstává no-op a odregistruje starý service worker.
 - NPC emote systém z v87 zůstává.
 - 3 mise a předchozí fixy zůstávají.
@@ -620,7 +620,7 @@ v97:
 - Opravené otevření anim editoru přes file:// relativním odkazem openAnimEditor().
 - Zachovaná v96 fyzika hromádek nábojnic a mrtvol.
 
-v124:
+v133:
 - Přidaný rain.mp3 a button.mp3.
 - První mise real_mapa používá rain.mp3 looping.
 - Lobby používá rain.mp3 looping.
@@ -631,28 +631,28 @@ v124:
 - Všude přidaný stylový červený/crosshair kurzor.
 - JS syntax zkontrolovaná.
 
-v124:
+v133:
 - Přidaná krev na tlačítka v menu.
 - Krvavý horní okraj, kapky a skvrny přes tlačítka.
 - Efekt je jen CSS, nepřidává těžké assety.
 - Button sound, rain/music a cursor z v98 zůstávají.
 - JS syntax zkontrolovaná.
 
-v124:
+v133:
 - Opraveno real_mapa.html: flashLightning is not defined.
 - Přidaná bezpečná funkce flashLightning.
 - Přidaný krátký bleskový overlay a malý shake.
 - Oprava nemění menu krev, audio, cursor ani ostatní změny z v99.
 - JS syntax zkontrolovaná.
 
-v124:
+v133:
 - Opraveno real_mapa.html: worldToScreenX is not defined.
 - Doplněné funkce worldToScreenX, worldToScreenY, screenToWorldX a screenToWorldY.
 - Fix platí pro shadow, entity, střely, krev, nábojnice, déšť a mapové efekty.
 - Vše z v100 zůstává.
 - JS syntax zkontrolovaná.
 
-v124:
+v133:
 - Opraveno real_mapa.html: movePlayer is not defined.
 - Doplněná funkce movePlayer.
 - Doplněná funkce centerLane.
@@ -663,7 +663,7 @@ v124:
 - Provedená širší kontrola chybějících herních funkcí v real_mapa.html.
 - JS syntax zkontrolovaná.
 
-v124:
+v133:
 - Nábojnice se při stání/procházení hromádkou hýbou opakovaně, ne jen jednou.
 - Každé další projití přes hromádku znovu rozhýbe random část nábojnic.
 - Interakce bere v potaz rychlost hráče/NPC, takže běh rozhazuje víc než stání.
@@ -673,7 +673,7 @@ v124:
 - Zásahy na NPC zůstávají i po smrti.
 - JS syntax zkontrolovaná + statická kontrola custom funkcí.
 
-v124:
+v133:
 - Zbraň při chůzi už nevibruje jako Parkinson.
 - Snížený vysokofrekvenční gun sway a zpomalený armT při držení zbraně.
 - Vrácené červené zásahové díry na NPC ve stylu původního screenshotu.
@@ -683,19 +683,19 @@ v124:
 - Zásahy na NPC pořád zůstávají po smrti.
 - JS syntax zkontrolovaná + statická kontrola custom funkcí.
 
-v124:
+v133:
 - Náboje se hýbou jen když přes ně opravdu projdeš / pohybuješ se přes ně.
 - Když stojíš na místě, náboje zůstávají stát.
 - Vrácená asset díra na NPC (bullet_hole.png) + krev kolem zásahu.
 - Vrácená a zesílená krev na zdi za NPC při zásahu.
 - JS syntax zkontrolovaná.
 
-v124:
+v133:
 - blood_splatter_floor.png je na zdech i na podlahách.
 - blood_splat.png zůstává na NPC.
 - Beze změny logiky nábojů z v105.
 
-v124:
+v133:
 - Opravené zásahy na NPC: hit už nepadá dolů po smrti NPC.
 - Při zásahu se uloží freeze pozice, takže díra/krev zůstane tam, kde byla při zásahu.
 - Zásah je víc přichycený na tělo/hlavu NPC a ne mimo sprite.
@@ -704,19 +704,19 @@ v124:
 - Blood_splatter_floor zůstává na zdi/podlaze, blood_splat na NPC.
 - JS syntax zkontrolovaná + statická kontrola custom funkcí.
 
-v124:
+v133:
 - blood_splatter_floor ponechán perfektně na zdi a teď je výrazněji i na podlaze.
 - Na NPC je nově oboje: blood_splat + menší blood_splatter_floor.
 - Po zásahu NPC se přidává i floor krev pod/postřik na podlahu.
 - Bez změny SQL.
 
-v124:
+v133:
 - NPC mají výrazně víc HP a vydrží déle.
 - Krev na zdi a podlaze má širší random měřítko.
 - Zásah už nedává vždy krev na obě plochy; teď je to random: někdy zeď, někdy podlaha, někdy oboje.
 - Na NPC zůstává oboje: blood_splat + menší blood_splatter_floor.
 
-v124:
+v133:
 - Zpomalené houpání těla hráče.
 - Body bob je plynulejší a méně agresivní.
 - Snížená amplituda vertikálního houpání těla.
@@ -724,20 +724,20 @@ v124:
 - Hráč už při chůzi nepůsobí tak rozházeně.
 - JS syntax zkontrolovaná.
 
-v124:
+v133:
 - Zbraň hráče se automaticky naklání podle míření myší.
 - Když míříš nahoru, zbraň se zvedne nahoru místo držení rovně.
 - Když míříš dolů, zbraň se sklopí dolů.
 - Upravená pozice hlavně, muzzle flashe a eject portu, aby to sedělo s úhlem.
 
-v124:
+v133:
 - V misi přidaný velký ammo HUD vlevo nahoře: počet nábojů a počet zásobníků.
 - Odstraněné/staré info vlevo dole je schované.
 - Reload teď hned odebere jeden zásobník, zahodí starý magazín na zem a po doběhnutí přebití dá nový plný zásobník.
 - Zahozené zásobníky mají jednoduchou fyziku pádu a zůstávají na zemi.
 - JS syntax zkontrolovaná.
 
-v124:
+v133:
 - Přidaný lehký first-run tutorial v lobby.
 - Tutorial spouští friendly NPC a ukazuje: shop/armory, mise, žebříček, achievementy, squad a help.
 - Kliknutí na NPC při prvním spuštění tutorial otevře/zopakuje.
@@ -747,7 +747,7 @@ v124:
 - Zachováno v114: ammo HUD vlevo nahoře a reload se zahozením zásobníku.
 - JS syntax zkontrolovaná.
 
-v124:
+v133:
 - Canvas střelecké efekty sjednocené na bílou.
 - Bílý muzzle flash.
 - Bílé střely a bílé trail čáry.
@@ -761,7 +761,7 @@ v124:
 - Vlož do složky hry svoje vlastní audio soubory s těmito názvy.
 - JS syntax zkontrolovaná.
 
-v124:
+v133:
 - Opraven pád editoru: refreshLayerList is not defined.
 - Knihovna postav už ukládá správný payload, ne wrapper {payload,npc}.
 - Allies / postava ukládá jen hráče a nepřepisuje NPC.
@@ -774,18 +774,18 @@ v124:
 - Remote global_character už nepřepíše lokální custom postavu jen kvůli updated_at.
 - JS syntax zkontrolovaná.
 
-v124:
+v133:
 - Opraven start hry z menu.
-- Tlačítko HRÁT HRU používá novou funkci goLobby() a vždy otevírá lobby.html?v=124.
+- Tlačítko HRÁT HRU používá novou funkci goLobby() a vždy otevírá lobby.html?v=133.
 - Přidané tlačítko RYCHLÁ MISE přímo z menu.
-- Server list / join server posílá na lobby.html?v=124.
+- Server list / join server posílá na lobby.html?v=133.
 - Lobby a mise filtrují rozbité staré data:image/png;base… / data:image/gif;base… z localStorage.
 - Pokud je starý uložený payload poškozený, lobby/mise použijí default postavu místo prázdné hry.
 - Přidaný fallback default payload přímo do real_mapa.html.
 - Přidané cache-bust odkazy v menu/lobby/misi.
 - JS syntax zkontrolovaná.
 
-v124:
+v133:
 - Tutorial je jen pro úplně nové hráče.
 - Tutorial se nespustí, když už hráč má progress, mise, kill, vyšší level nebo dříve dokončený tutorial.
 - Friendly NPC znovu funguje jako průvodce jen při prvním spuštění.
@@ -795,7 +795,7 @@ v124:
 - Po dokončení/přeskočení tutorialu se kamera vrátí zpět.
 - JS syntax zkontrolovaná.
 
-v124:
+v133:
 - Opraven pád lobby: lerp is not defined.
 - Tutorial kamera má bezpečný fallback, takže už nezastaví loop lobby.
 - Audio tagy už nenačítají rain.mp3 / strelba3.mp3 / hudba.mp3 hned při načtení stránky.
@@ -804,7 +804,7 @@ v124:
 - Tracking Prevention ze Supabase je jen hláška prohlížeče, ne pád hry.
 - JS syntax zkontrolovaná.
 
-v124:
+v133:
 - Animator: opravená hlava v preview. Pokud uložená postava nemá head vrstvu, editor ji doplní přímo do payloadu.
 - Animator: vložený asset jde přetáhnout myší přímo ve scéně.
 - Animator: přidaný režim akce loop / once.
@@ -817,7 +817,7 @@ v124:
 - Cesty zůstávají v root složce: hudba.mp3, rain.mp3, strelba3.mp3, button.mp3.
 - JS syntax zkontrolovaná.
 
-v124:
+v133:
 - Animator: přidána možnost ukončit / zastavit animaci na konkrétním framu.
 - Pro režim once animace dojede jen do vybraného framu a tam zůstane.
 - Death animace používá vybraný stop frame i ve hře.
@@ -827,7 +827,7 @@ v124:
 - Staré zahozené zásobníky se při reload/update mažou.
 - JS syntax zkontrolovaná.
 
-v124:
+v133:
 - Přidaný skok mezerníkem.
 - Mezerník funguje v lobby.
 - Mezerník funguje ve všech misích / real_mapa.
@@ -836,7 +836,7 @@ v124:
 - Pokud existuje animace jump/fall v Asset Keyframes, hráč ji použije při výskoku/pádu.
 - JS syntax zkontrolovaná.
 
-v124:
+v133:
 - Kopání odstraněné z holého útoku.
 - Bare-hand combat už jede jen přes attack_l / attack_r.
 - MELEE_COMBO už neobsahuje kick.
@@ -845,4 +845,95 @@ v124:
 - Animator: přidané nastavení „Čekání před znovu provedením“ pro každou akci.
 - 0 ms znamená bez pauzy; pro box nech attack_l/attack_r na 0 ms.
 - Runtime umí actionRepeatDelays: loop animace může mít volitelnou pauzu na konci, ale default je 0 ms.
+- JS syntax zkontrolovaná.
+
+v133:
+- Přidaný inventář na 2 zbraně.
+- Funguje v lobby i v misích.
+- Ovládání:
+  - + = slot 1
+  - ě = slot 2
+  - 2 také funguje jako fallback pro slot 2.
+- V armory se zbraň vloží do aktivního slotu, nebo do volného slotu.
+- V misích sebraná zbraň jde do volného slotu; pokud jsou oba plné, nahradí aktivní slot a starou zbraň hodí na zem.
+- E v misi/lobby odhodí aktivní zbraň; pokud je druhý slot plný, automaticky se přepne na druhou zbraň.
+- Ammo a zásobníky se v misi drží zvlášť pro každý slot.
+- Když máš druhou dlouhou zbraň na zádech, je vidět jen vykukující pažba / zadní část zbraně.
+- HUD v misi ukazuje oba sloty.
+- JS syntax zkontrolovaná.
+
+v133:
+- Opravené otáčení při střelbě: když míříš/střílíš doprava a jdeš doleva, postava zůstane otočená tam, kam míří kurzor.
+- Stejné chování je v misích, lobby i testovací hře editoru.
+- Nový velký tutorial s kamerou/šipkami je vypnutý.
+- Zůstává původní první NPC povídání / intro.
+- Kliknutí na friendly NPC už nespouští nový tutorial.
+- Audio: menu hudba zkouší hudba.mp3 i udba.mp3.
+- Audio: střelba zkouší strebla3.mp3 i strelba3.mp3.
+- Audio: při střelbě se rain krátce ztlumí, aby střelba nebyla překrytá deštěm.
+- Audio: střelba je zesílená přes v133PlayShot.
+- JS syntax zkontrolovaná.
+
+v133:
+- Opraven pád lobby pro nové hráče: equipWeaponFromSlots už nesahá na const state před inicializací.
+- normalizeSelectedWeapon se spouští až po vytvoření state, takže noví hráči nezůstanou na prázdné lobby.
+- Animace pro nové hráče: runtime hledá base animace, default-scoped animace i fallback; stažené global_asset_anim_* se ukládá i jako *_default.
+- Skeleton editor při uložení ukládá animaci také jako default pro daný typ, aby se lépe propsala do hry.
+- Výstřelový efekt je větší a bílejší: větší muzzle flash, delší bílý paprsek, silnější bílé střely/traily a víc bílých částic.
+- Střelba znovu zkouší primárně strelba3.mp3 a až potom strebla3.mp3.
+- Button audio se nevytváří hned při startu, aby nechrlilo chybu button.mp3 před kliknutím.
+- JS syntax zkontrolovaná.
+
+v133:
+- Opravený pád lobby pro nové hráče: rand is not defined.
+- rand/clamp jsou definované před vytvořením state.
+- Přibalené fallback audio soubory, aby nebyly 404 chyby:
+  rain.mp3, strelba3.mp3, strebla3.mp3, button.mp3, hudba.mp3, udba.mp3.
+- Střelba má WebAudio fallback, takže by měla být slyšet i když prohlížeč odmítne MP3.
+- Nový tutorial zůstává vypnutý, zůstává jen původní NPC intro/povídání.
+- Skeleton editor ukládá animace i jako default pro nové hráče.
+- JS syntax zkontrolovaná.
+
+v133:
+- Přidané 2 čtvercové weapon sloty.
+- Sloty jsou vidět v lobby i v misích.
+- Slot 1 má klávesu +, slot 2 má klávesu Ě.
+- Aktivní slot je označený jako EQUIP a má zlatý rámeček.
+- Druhá zbraň je označená jako DRUHÁ.
+- Každý slot ukazuje ikonku/název zbraně; v misi navíc munici a zásobníky.
+- Kliknutím na čtvereček lze slot přepnout.
+- Text nahoře zkrácený: EQUIP + druhá zbraň.
+- JS syntax zkontrolovaná.
+
+v133:
+- Mise mají co-op presence přes stejný server/lobby.
+- Kámoš nemusí být ve squadu; stačí být ve stejné lobby/serveru a spustit stejnou misi.
+- Real_mapa posílá svoji pozici do online tabulky a načítá ostatní hráče ve stejné misi.
+- Ostatní hráči se kreslí v misích jako modré online postavy se jménem.
+- Lobby remote hráči mají jemnější interpolaci, takže by se měli méně sekat.
+- Druhá zbraň na zádech je víc schovaná za tělem, vykukuje jen menší pažba/kus zbraně.
+- JS syntax zkontrolovaná.
+
+v133:
+- Weapon slot HUD se schová, když je otevřené konverzační/intro/modal okno.
+- V lobby se sloty schovají při NPC intro, otázce NPC, armory, mapě, helpu, achievementech, squad okně a dalších modalech.
+- V misích se sloty schovají při nastavení, game over a alert oknech.
+- Po zavření okna se sloty automaticky znovu zobrazí.
+- JS syntax zkontrolovaná.
+
+v133:
+- Z hlavního menu odstraněné tlačítko RYCHLÁ MISE.
+- Přímá rychlá mise je vypnutá; hráč musí jít přes lobby.
+- Opravený skeleton editor: doplněné getActionMode / setActionMode.
+- Doplněné bezpečné funkce pro actionRepeatDelay.
+- Přidaný favicon.ico a favicon link do HTML, aby nebyla chyba /favicon.ico 404.
+- JS syntax zkontrolovaná.
+
+v133:
+- Foxy má přístup k editoru a animate editoru stejně jako lukamer.
+- Admin kontroly teď berou nicky: lukamer, foxy.
+- V lobby opravené odhazování přes E: zbraň ze slotu jde odhodit jen jednou.
+- Když máš dvě zbraně, můžeš odhodit maximálně dvě; prázdné sloty už znovu nevygenerují M4.
+- getWeaponSlots už nedává default zbraň pokaždé, když jsou oba sloty prázdné.
+- Z menu/admin textů odstraněné veřejné “canvas/asset keyframes” názvosloví, editor zůstává pro povolené nicky.
 - JS syntax zkontrolovaná.
