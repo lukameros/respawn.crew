@@ -3,116 +3,73 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta http-equiv="refresh" content="0;url=./loading.html?v=133">
+<meta http-equiv="refresh" content="0;url=./loading.html?v=136">
 <title>Velká díra 1</title>
 <style>html,body{margin:0;height:100%;background:#050506;color:#ddd;font-family:monospace;display:grid;place-items:center}</style>
-<script>try{location.replace('./loading.html?v=133')}catch(e){location.href='./loading.html?v=133'}</script>
+<script>
 
-<style id="v133CursorStyle">
+function currentUserNickLower(){
+  try{
+    const params=new URLSearchParams(location.search);
+    const vals=[
+      params.get('nick'),
+      params.get('user'),
+      localStorage.getItem('MADNESS_PLAYER_NAME'),
+      localStorage.getItem('RESPAWN_NICK'),
+      localStorage.getItem('squad_session')
+    ];
+    for(let v of vals){
+      if(!v)continue;
+      v=String(v).trim();
+      try{const o=JSON.parse(v);v=o.nick||o.name||o.user||o.player||v}catch(e){}
+      v=String(v||'').trim().toLowerCase();
+      if(v)return v;
+    }
+  }catch(e){}
+  return '';
+}
+function isAdminNick(){
+  const n=currentUserNickLower();
+  return n==='lukamer'||n==='foxy'||n.includes('foxy')||n.includes('lukamer');
+}
+function rememberAdminNickFromUrl(){
+  try{
+    const n=currentUserNickLower();
+    if(isAdminNick()&&n){
+      localStorage.setItem('MADNESS_PLAYER_NAME',n.includes('foxy')?'foxy':'lukamer');
+      localStorage.setItem('RESPAWN_NICK',n.includes('foxy')?'foxy':'lukamer');
+    }
+  }catch(e){}
+}
+rememberAdminNickFromUrl();
+
+try{location.replace('./loading.html?v=136')}catch(e){location.href='./loading.html?v=136'}</script>
+
+<style id="v136CursorStyle">
 html,body,canvas,button,a,input,select,textarea,[onclick]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M5 3 L25 15 L16 17 L13 27 L5 3 Z' fill='%23d7d7d7' stroke='%23000' stroke-width='2'/%3E%3Cpath d='M7 6 L21 15 L14 15.8 L12 23 Z' fill='%23a00000' opacity='.85'/%3E%3C/svg%3E") 4 3, crosshair!important}
 button,a,[onclick],select,input[type=range],input[type=file]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='15' cy='15' r='9' fill='%23a00000' stroke='%23000' stroke-width='3'/%3E%3Ccircle cx='15' cy='15' r='3' fill='%23ffd27a'/%3E%3Cpath d='M15 1v7M15 22v7M1 15h7M22 15h7' stroke='%23d7d7d7' stroke-width='2'/%3E%3C/svg%3E") 15 15, pointer!important}
 </style>
 
 <link rel="icon" href="favicon.ico">
 </head><body>Spouštím loading...
-<script id="v133GlobalAudio">
+<script id="v136GlobalAudio">
 (function(){
-  if(window.__v133AudioInstalled)return; window.__v133AudioInstalled=true;
+  if(window.__v136AudioInstalled)return; window.__v136AudioInstalled=true;
   const IS_MENU=/\/menu\.html(?:$|\?)/i.test(location.pathname)||/menu\.html/i.test(location.href);
   const IS_LOBBY=/\/lobby\.html(?:$|\?)/i.test(location.pathname)||/lobby\.html/i.test(location.href);
   const IS_MISSION=/\/real_mapa\.html(?:$|\?)/i.test(location.pathname)||/real_mapa\.html/i.test(location.href);
   const VOL=()=>{try{return Math.max(0,Math.min(1,Number(localStorage.getItem('MADNESS_MUSIC_VOL')||50)/100))}catch(e){return .5}};
   const SFX=()=>{try{return Math.max(0,Math.min(1,Number(localStorage.getItem('MADNESS_SFX_VOL')||90)/100))}catch(e){return .9}};
-  const MUSIC_FILES=['hudba.mp3','udba.mp3'];
-  const RAIN_FILES=['rain.mp3'];
-  const SHOT_FILES=['strelba3.mp3','strebla3.mp3'];
-  const BTN_FILES=['button.mp3'];
-  function makeTry(files,loop,vol){
-    let idx=0,a=null;
-    function build(){
-      const src=files[Math.min(idx,files.length-1)];
-      a=new Audio(src);
-      a.loop=!!loop; a.preload='auto'; a.volume=vol;
-      a.setAttribute('playsinline','');
-      a.addEventListener('error',()=>{ if(idx<files.length-1){idx++; build(); if(window.__v133WantMusic&&loop) play();} },{once:true});
-      return a;
-    }
-    function play(){
-      try{
-        if(!a)build();
-        a.volume=vol;
-        const pr=a.play();
-        if(pr&&pr.catch)pr.catch(()=>{ if(idx<files.length-1){idx++; build(); play();} });
-      }catch(e){}
-      return a;
-    }
-    build();
-    return {get audio(){return a}, play, setVolume(v){vol=v;if(a)a.volume=v}, pause(){try{if(a)a.pause()}catch(e){}}};
-  }
-  window.__v133ShotIndex=window.__v133ShotIndex||0;
-  window.v133PlayButton=function(){
-    try{ if(!window.__v133Btn)window.__v133Btn=makeTry(BTN_FILES,false,.42); window.__v133Btn.setVolume(.38*SFX()); window.__v133Btn.play(); }catch(e){}
-  };
-  window.v133DuckRain=function(){
-    try{
-      const m=window.__v133Music&&window.__v133Music.audio;
-      if(!m || IS_MENU)return;
-      const target=.62*VOL();
-      m.volume=Math.max(.08,target*.25);
-      clearTimeout(window.__v133RainDuckTimer);
-      window.__v133RainDuckTimer=setTimeout(()=>{try{m.volume=target}catch(e){}},220);
-    }catch(e){}
-  };
-  function fallbackShot(vol){
-    try{
-      const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
-      const ac=window.__madnessAudioCtx||(window.__madnessAudioCtx=new AC());
-      if(ac.state==='suspended')ac.resume();
-      const o=ac.createOscillator(),g=ac.createGain();
-      o.type='square';o.frequency.value=85+Math.random()*60;
-      g.gain.value=.0001;o.connect(g);g.connect(ac.destination);
-      const t=ac.currentTime;
-      g.gain.exponentialRampToValueAtTime(.11*(vol||1)*SFX(),t+.01);
-      g.gain.exponentialRampToValueAtTime(.0001,t+.11);
-      o.start(t);o.stop(t+.12);
-    }catch(e){}
-  }
-  window.v133PlayShot=function(vol=1){
-    if(IS_MENU)return false;
-    try{
-      v133DuckRain();
-      const src=SHOT_FILES[(window.__v133ShotIndex++)%SHOT_FILES.length];
-      const a=new Audio(src);
-      a.preload='auto';
-      a.volume=Math.max(.35,Math.min(1,vol*1.65*SFX()));
-      a.setAttribute('playsinline','');
-      a.onerror=()=>fallbackShot(vol);
-      const pr=a.play();
-      if(pr&&pr.catch)pr.catch(()=>fallbackShot(vol));
-      return true;
-    }catch(e){fallbackShot(vol);return true}
-  };
-  window.v133StartPageAudio=function(){
-    try{
-      window.__v133WantMusic=true;
-      if(!window.__v133Music){
-        if(IS_MENU) window.__v133Music=makeTry(MUSIC_FILES,true,.55*VOL());
-        else if(IS_LOBBY||IS_MISSION) window.__v133Music=makeTry(RAIN_FILES,true,.62*VOL());
-      }
-      if(window.__v133Music){
-        window.__v133Music.setVolume((IS_MENU?.55:.62)*VOL());
-        window.__v133Music.play();
-      }
-    }catch(e){}
-  };
-  function unlock(){ v133StartPageAudio(); v133PlayButton(); }
+  function make(src,loop,vol){const a=new Audio(src);a.loop=!!loop;a.preload='auto';a.volume=vol;a.setAttribute('playsinline','');return a}
+  window.v136DuckRain=function(){};
+  window.v136PlayButton=function(){try{const a=make('button.mp3',false,.38*SFX());a.play().catch(()=>{})}catch(e){}};
+  window.v136PlayShot=function(vol=1){if(IS_MENU)return false;try{const a=make('strelba3.mp3',false,Math.max(.12,Math.min(1,vol*SFX())));a.play().catch(()=>{});return true}catch(e){return false}};
+  window.v136StartPageAudio=function(){try{if(!window.__v136Music){if(IS_MENU)window.__v136Music=make('hudba.mp3',true,.55*VOL());else if(IS_LOBBY||IS_MISSION)window.__v136Music=make('rain.mp3',true,.62*VOL())}if(window.__v136Music){window.__v136Music.volume=(IS_MENU?.55:.62)*VOL();window.__v136Music.play().catch(()=>{})}}catch(e){}};
+  function unlock(){v136StartPageAudio()}
   document.addEventListener('pointerdown',unlock,{once:true,capture:true});
   document.addEventListener('keydown',unlock,{once:true,capture:true});
-  document.addEventListener('click',function(e){
-    const el=e.target&&e.target.closest?e.target.closest('button,a,[onclick],input,select,label'):null;
-    if(el){ v133PlayButton(); v133StartPageAudio(); }
-  },true);
-  window.addEventListener('load',()=>setTimeout(v133StartPageAudio,260));
+  document.addEventListener('click',function(e){const el=e.target&&e.target.closest?e.target.closest('button,a,[onclick],input,select,label'):null;if(el){v136PlayButton();v136StartPageAudio()}},true);
+  window.addEventListener('load',()=>setTimeout(v136StartPageAudio,260));
 })();
 </script>
 

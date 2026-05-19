@@ -1,13 +1,13 @@
 {
-  "version": "v133",
+  "version": "v136",
   "files": {
     "404.html": {
-      "size": 5598,
-      "sha256": "1bd97319fc00c8151975e6e681c2879c2b2c40ce26c75c525b8106928e657313"
+      "size": 3249,
+      "sha256": "f05491fd3e9ff56d6b9f4d2207d3933b383cdeae366ff6075c10ba7449a2b2e8"
     },
     "admin.html": {
-      "size": 11451,
-      "sha256": "5d378f7299e6a71c1283621eb430bbb656c1102537614ee6a36db9b3fffe144c"
+      "size": 10419,
+      "sha256": "bf1b7e429d2d2c60c83769554a7f2e82d159239fa64762a1746d75c8f3e4f1ca"
     },
     "ak47_hold_new.png": {
       "size": 503105,
@@ -61,25 +61,21 @@
       "size": 706,
       "sha256": "7b2614459a851c1e8969c05c70a2f098cc4e47c6dde82ea42abb180aa8abcfcd"
     },
-    "button.mp3": {
-      "size": 1270,
-      "sha256": "4029614c7ae6632f9b84b8c509199c67b6c18a0088723861b0b1f7bd6396de25"
-    },
     "char_editor_v2.html": {
-      "size": 878747,
-      "sha256": "1e908223160f002f3ec8f1a3b3815ba263679e7970d6c6040ceaf208cc2cf44b"
+      "size": 877045,
+      "sha256": "d9c1fcf2a4e2b437274973445f32c34c15a3a9e5deda12c5fa3ddc8ac5382191"
     },
     "char_editor_v2_real.html": {
-      "size": 873803,
-      "sha256": "1b0687fe96ac1482cc24ec21f9a030e941fb4549a593613b002da03cf55b5ffa"
+      "size": 872101,
+      "sha256": "01a0a53b96d825ae82f8522397fd80ab6647f2dab950ad923a2885382abab10a"
     },
     "char_editor_v2_real.html.js": {
-      "size": 873564,
-      "sha256": "d757a2957e68fa948f7852cbc93412cbc04274a4d8cbe031ce1ca1f525817c25"
+      "size": 872103,
+      "sha256": "e26e4a374206e850f607e6318888f7ee353f25e1529a9bdbcdbc9a15c2d83680"
     },
     "clear_cache.html": {
-      "size": 5785,
-      "sha256": "baa0cb28b70ae1852a965a6da72647be66bdf10708e69e2bd445bab020c2859b"
+      "size": 3436,
+      "sha256": "c6d7de021e32f60e2981c824d1d9d641224a5267ea1b1c598ab6cbf9ff2e0c33"
     },
     "ezgif.com-animated-gif-maker.gif": {
       "size": 43,
@@ -89,13 +85,9 @@
       "size": 795,
       "sha256": "4ede5f127b5be055eeae9ae56c0ba7557fa16cd3d8cd941f229fb3787a612798"
     },
-    "hudba.mp3": {
-      "size": 8585,
-      "sha256": "6685f1251b9568aee50b704c4cc5429cb9e927f28f41ab829eca30eb088e77c3"
-    },
     "index.html": {
-      "size": 5776,
-      "sha256": "c718dcf9bd31d418631beb131ed76b7a288b9f503ed18ac007210bce6c1494ad"
+      "size": 4455,
+      "sha256": "b67265aba06a98e297d12a538eee7d4f8f43ea7816a72af6512418be1427cc6d"
     },
     "lmg_a_hold.png": {
       "size": 517954,
@@ -106,12 +98,12 @@
       "sha256": "ee684377fb06776671f1388e11ab51367c60235aa3d5eac4130603727a2b2317"
     },
     "loading.html": {
-      "size": 7683,
-      "sha256": "231948a3712aee249ca36b663da23187cd27b9a27a6a816a93ceabd67eb86ba1"
+      "size": 6362,
+      "sha256": "06719bca34b940d9c81df0bc3b590e2019fcdff00266a693cea48a6c46a1f39c"
     },
     "lobby.html": {
-      "size": 1098922,
-      "sha256": "a0e12c4176de5d26606d469b4b1d3c06dbda5e97ded159a6aad52415b957b845"
+      "size": 1100577,
+      "sha256": "01aff8249cb046bde9a8a4d17b7686a838b64e44a5591d29f25c52f9ab69e9ce"
     },
     "lobby_crate.png": {
       "size": 466494,
@@ -134,8 +126,8 @@
       "sha256": "f2ab59d9eecdfe97ebead67d485ab87a7d0dbe8ab79a1b37fc57202f220bbcdf"
     },
     "menu.html": {
-      "size": 22631,
-      "sha256": "27e1721482c408c72ce622e177db552f8500b97989f56fbc478122cbefdd14d1"
+      "size": 22832,
+      "sha256": "dedb51b45a31a0c97b1b218f11269230eb11d654b8d7cf0983a3ca34e59c67c6"
     },
     "menu_bg.png": {
       "size": 572899,
@@ -149,37 +141,21 @@
       "size": 2479376,
       "sha256": "216eb14fea00953057ca9b4a8fc14a6af5523086d816ee6675024216b0da33d5"
     },
-    "rain.mp3": {
-      "size": 5242,
-      "sha256": "bb3b2fedddb0cc8a396d940a948222a589cf5d499f088fe394c0493e6fbcd876"
-    },
     "real_mapa.html": {
-      "size": 1117662,
-      "sha256": "37d8d4453987a3f06f810d6397459684a048fcb20a591a6eec79e36a4c868f8d"
+      "size": 1116312,
+      "sha256": "e25eabe2ca29188d3a54ef0d9082f37d985d286d3cae403c4573180f6a7cf686"
     },
     "real_mapa.html.js": {
-      "size": 1117662,
-      "sha256": "37d8d4453987a3f06f810d6397459684a048fcb20a591a6eec79e36a4c868f8d"
+      "size": 1116553,
+      "sha256": "5a608396372bafd8acf49b9dfa21ebbbfd19d71707f153912a794a4376e42fcf"
     },
     "skeleton_editor.html": {
-      "size": 852021,
-      "sha256": "bb3119b7f48cef94d5bb2b5a6092ce1e829463dc43316e40b7d338af8587feea"
-    },
-    "strebla3.mp3": {
-      "size": 1270,
-      "sha256": "66132d121c45d6a5df53007ea790646fed17a50c0bda64936b08774897a48dcc"
-    },
-    "strelba3.mp3": {
-      "size": 1270,
-      "sha256": "66132d121c45d6a5df53007ea790646fed17a50c0bda64936b08774897a48dcc"
+      "size": 853773,
+      "sha256": "003ef973588631866076970fa305a30fe1a47f2aa7fdad7e26efabe0598e2add"
     },
     "sw.js": {
       "size": 367,
       "sha256": "bded1535c2feeaf828af05b806192bf84276ef4dd318a2ab8d1a134e4a7ec0b6"
-    },
-    "udba.mp3": {
-      "size": 8585,
-      "sha256": "6685f1251b9568aee50b704c4cc5429cb9e927f28f41ab829eca30eb088e77c3"
     }
   }
 }
