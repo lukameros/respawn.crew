@@ -1,13 +1,13 @@
 {
-  "version": "v120",
+  "version": "v124",
   "files": {
     "404.html": {
-      "size": 3737,
-      "sha256": "44d3126008d0a4340ff35a089405912bb213a5a0878f238518bb5ec9e39cce63"
+      "size": 3741,
+      "sha256": "cd3884e0e24e031221550edee50eea38167fcc6686e6d133fe1c08a0ab772ad0"
     },
     "admin.html": {
-      "size": 9561,
-      "sha256": "86ed4141cad1b38b84ab6495612f9cc8807aa5cd6f3404a890fc7c2f2d3da01c"
+      "size": 9565,
+      "sha256": "7b542701e7eb712cc0a1294a7bcfa9d31e93bcd7a7666e35b8945c702648c25c"
     },
     "ak47_hold_new.png": {
       "size": 503105,
@@ -62,20 +62,20 @@
       "sha256": "7b2614459a851c1e8969c05c70a2f098cc4e47c6dde82ea42abb180aa8abcfcd"
     },
     "char_editor_v2.html": {
-      "size": 875842,
-      "sha256": "fba5065d61c2ccb437cc79a9ffe4cb32a09a87e8f26f35cee5e61f91589d7a36"
+      "size": 876524,
+      "sha256": "5f823f62555346f824a48ea91d27f3c09ce2fac24cf783c07723c4c2caed322a"
     },
     "char_editor_v2_real.html": {
-      "size": 870898,
-      "sha256": "d4e3fce295790ac93d0d3cc43ad91dcca101f7473098ff171e5d4860add47d9e"
+      "size": 871580,
+      "sha256": "3c01717d22250d54577fc3f7267aef7a06f4bea0009dfe5c4332263f2560914c"
     },
     "char_editor_v2_real.html.js": {
-      "size": 870903,
-      "sha256": "9f33fd67383c4c86b4ed3428b2716d70a3d51e2a11e12fc5cfafd50d5987810b"
+      "size": 871580,
+      "sha256": "3c01717d22250d54577fc3f7267aef7a06f4bea0009dfe5c4332263f2560914c"
     },
     "clear_cache.html": {
-      "size": 3924,
-      "sha256": "42d62e41b861d56c1742164b264cd5ca4ac745c5e6051eb6cf5077c810ceb5d0"
+      "size": 3928,
+      "sha256": "6984511f55135f025bf80d49df0e033df95f50c0ab906f10b9f7a501f63131fb"
     },
     "ezgif.com-animated-gif-maker.gif": {
       "size": 43,
@@ -86,8 +86,8 @@
       "sha256": "dd36170633d342d7f50daf9a96a2d73a59fe69c0d420f4286f2b244faca89471"
     },
     "index.html": {
-      "size": 3915,
-      "sha256": "b9c575909818b2fa6f2b951aaf0b24cdfd25fc36f8ccf4ae2cfb3a19116c818e"
+      "size": 3919,
+      "sha256": "001ce8cc601d3c9e842c4e531012ac9b0e4010dd91cf98a75902a6cd1c5a097a"
     },
     "lmg_a_hold.png": {
       "size": 517954,
@@ -98,12 +98,12 @@
       "sha256": "ee684377fb06776671f1388e11ab51367c60235aa3d5eac4130603727a2b2317"
     },
     "loading.html": {
-      "size": 5822,
-      "sha256": "ea20831f8cedd0625b01f75ac1dd35cfa364c8cd0f2cdc126daaa7ba1e13a890"
+      "size": 5826,
+      "sha256": "59004885f8c37d751cd17c88a29b1076a4ec7b1c54efeabe436216d05f858d54"
     },
     "lobby.html": {
-      "size": 1088506,
-      "sha256": "fbd03b35b158e410088620c5f2e751057724b27916022e0b2a5956a4ad95afba"
+      "size": 1089357,
+      "sha256": "5ae08c4f128da5283f315f13886318a9e585cab3994a0c40e176263721878480"
     },
     "lobby_crate.png": {
       "size": 466494,
@@ -126,8 +126,8 @@
       "sha256": "f2ab59d9eecdfe97ebead67d485ab87a7d0dbe8ab79a1b37fc57202f220bbcdf"
     },
     "menu.html": {
-      "size": 20971,
-      "sha256": "90246973e838974b3713df701e3261f019c45c8ce4b06c1dd5568a0e4109013c"
+      "size": 20967,
+      "sha256": "85dc82e2192fc8e880034b01d55b325bb921df57748423efad04bacb88992b49"
     },
     "menu_bg.png": {
       "size": 572899,
@@ -142,16 +142,16 @@
       "sha256": "216eb14fea00953057ca9b4a8fc14a6af5523086d816ee6675024216b0da33d5"
     },
     "real_mapa.html": {
-      "size": 1097926,
-      "sha256": "1a8f486e00fdf7151a6101cd97f84622185959c3d172316e91f663b69e918e7e"
+      "size": 1099710,
+      "sha256": "0ae38b2b3e5de970a8e16ca41be8c266b33cc6549438397f9021e11d5f9e795f"
     },
     "real_mapa.html.js": {
-      "size": 1097779,
-      "sha256": "c9718b73eabfaf626d1d17f790c4bebd916e32d2abbd8aef16f8df2c45b5c5f8"
+      "size": 1099710,
+      "sha256": "0ae38b2b3e5de970a8e16ca41be8c266b33cc6549438397f9021e11d5f9e795f"
     },
     "skeleton_editor.html": {
-      "size": 844434,
-      "sha256": "f8aa88d6b5fbf94a7046f1ae43e890acdf035c421c42386daa5f1f65803469b1"
+      "size": 849245,
+      "sha256": "f5af4feb0d34e3fe134ae986ad7f75d1c919c6c54d0d308cb6d945353a0c7319"
     },
     "sw.js": {
       "size": 367,

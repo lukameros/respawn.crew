@@ -30,17 +30,17 @@ button{border-radius:7px!important;box-shadow:0 0 16px rgba(0,0,0,.6)}
 
 .adminBtn{display:none!important}.adminBtn.adminVisible{display:block!important}
 </style>
-<script>try{console.log=console.warn=console.error=console.info=console.debug=function(){}}catch(e){}function openAnimEditor(){ try{ location.href='./skeleton_editor.html?v=120'; }catch(e){ location.assign('./skeleton_editor.html?v=120'); } }
+<script>try{console.log=console.warn=console.error=console.info=console.debug=function(){}}catch(e){}function openAnimEditor(){ try{ location.href='./skeleton_editor.html?v=124'; }catch(e){ location.assign('./skeleton_editor.html?v=124'); } }
 </script>
 
-<style id="v120CursorStyle">
+<style id="v124CursorStyle">
 html,body,canvas,button,a,input,select,textarea,[onclick]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M5 3 L25 15 L16 17 L13 27 L5 3 Z' fill='%23d7d7d7' stroke='%23000' stroke-width='2'/%3E%3Cpath d='M7 6 L21 15 L14 15.8 L12 23 Z' fill='%23a00000' opacity='.85'/%3E%3C/svg%3E") 4 3, crosshair!important}
 button,a,[onclick],select,input[type=range],input[type=file]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='15' cy='15' r='9' fill='%23a00000' stroke='%23000' stroke-width='3'/%3E%3Ccircle cx='15' cy='15' r='3' fill='%23ffd27a'/%3E%3Cpath d='M15 1v7M15 22v7M1 15h7M22 15h7' stroke='%23d7d7d7' stroke-width='2'/%3E%3C/svg%3E") 15 15, pointer!important}
 </style>
 
 
-<style id="v120MenuBloodButtons">
-/* v120 krvavé menu buttony */
+<style id="v124MenuBloodButtons">
+/* v124 krvavé menu buttony */
 body .panel > button,
 #servers button,
 #settings button,
@@ -128,14 +128,14 @@ body .panel > button > *,
   <button onclick="goMissionDirect()">RYCHLÁ MISE</button>
   <button onclick="openServerList()">SERVER LIST</button>
   <button onclick="openBox('settings')">NASTAVENÍ</button>
-  <button id="adminAnimBtn" class="adminBtn" onclick="openAnimEditor()">ASSET KEYFRAMES v120</button>
-  <button id="adminMenuBtn" class="adminBtn" onclick="location.href='admin.html?v=120'">ADMINMENU</button>
+  <button id="adminAnimBtn" class="adminBtn" onclick="openAnimEditor()">ASSET KEYFRAMES v124</button>
+  <button id="adminMenuBtn" class="adminBtn" onclick="location.href='admin.html?v=124'">ADMINMENU</button>
 </div></div>
 
 <div class="modal" id="servers"><div class="box"><h2>AKTUÁLNÍ SERVERY</h2><div id="serverList" style="display:flex;flex-direction:column;gap:8px;margin:10px 0"></div><button onclick="createServer()">VYTVOŘIT SERVER / LOBBY</button><button onclick="closeBoxes()">ZAVŘÍT</button></div></div>
 <div class="modal" id="settings"><div class="box"><h2>NASTAVENÍ</h2><p>Soubory: <b>hudba.mp3</b> / tlačítka <b>button.mp3</b>.</p><div class="setRow"><label><span>Grafika</span><span id="qualityLbl">střední</span></label><select id="qualitySel" onchange="setQuality(this.value)"><option value="low">nízká</option><option value="mid">střední</option><option value="high">vysoká</option></select></div><div class="setRow"><label><span>Hudba</span><span id="musicVolLbl">50%</span></label><input id="musicVol" type="range" min="0" max="100" value="50" oninput="setMusicVol(this.value)"></div><div class="setRow"><label><span>Střelba / SFX</span><span id="sfxVolLbl">80%</span></label><input id="sfxVol" type="range" min="0" max="100" value="80" oninput="setSfxVol(this.value)"></div><button onclick="closeBoxes()">ZAVŘÍT</button></div></div>
 
-<audio id="music" loop preload="none" data-src="hudba.mp3"></audio>
+<audio id="music" src="hudba.mp3" loop preload="metadata"></audio>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL="https://fokguuucpoejkxklwrpw.supabase.co";
@@ -173,13 +173,13 @@ function goLobby(){
   try{
     localStorage.setItem('MADNESS_ACTIVE_SERVER', localStorage.getItem('MADNESS_ACTIVE_SERVER') || 'local_lobby');
   }catch(e){}
-  location.href='lobby.html?v=120';
+  location.href='lobby.html?v=124';
 }
 function goMissionDirect(){
   try{
     localStorage.setItem('MADNESS_ACTIVE_SERVER', localStorage.getItem('MADNESS_ACTIVE_SERVER') || 'local_lobby');
   }catch(e){}
-  location.href='real_mapa.html?v=120';
+  location.href='real_mapa.html?v=124';
 }
 
 function getServers(){try{return JSON.parse(localStorage.getItem('MADNESS_SERVERS')||'[]')}catch(e){return []}}
@@ -245,7 +245,7 @@ async function joinServer(id){
       await SB.from('madness_servers').update({players:Math.max(1,(data?.players||1)+1),updated_at:new Date().toISOString()}).eq('id',id);
     }catch(e){}
   }
-  location.href='lobby.html?v=120';
+  location.href='lobby.html?v=124';
 }
 
 function currentNickForAdmin(){
@@ -285,14 +285,14 @@ function unlockMenuAudio(){
 }
 addEventListener('pointerdown',unlockMenuAudio,{once:true});
 addEventListener('keydown',unlockMenuAudio,{once:true});
-/* v120: no auto menu audio on load */
+setTimeout(unlockMenuAudio,550);
 
 </script>
-<audio id="menuMusic" loop preload="none" data-src="hudba.mp3"></audio>
+<audio id="menuMusic" src="hudba.mp3" loop preload="metadata"></audio>
 
-<script id="v120GlobalAudio">
+<script id="v124GlobalAudio">
 (function(){
-  if(window.__v120AudioInstalled)return; window.__v120AudioInstalled=true;
+  if(window.__v124AudioInstalled)return; window.__v124AudioInstalled=true;
   const IS_MENU=/\/menu\.html(?:$|\?)/i.test(location.pathname)||/menu\.html/i.test(location.href);
   const IS_LOBBY=/\/lobby\.html(?:$|\?)/i.test(location.pathname)||/lobby\.html/i.test(location.href);
   const IS_MISSION=/\/real_mapa\.html(?:$|\?)/i.test(location.pathname)||/real_mapa\.html/i.test(location.href);
@@ -304,45 +304,45 @@ addEventListener('keydown',unlockMenuAudio,{once:true});
     a.setAttribute('playsinline','');
     return a;
   }
-  window.__v120BtnAudio=window.__v120BtnAudio||make('button.mp3',false,.42);
-  window.__v120ShotPool=window.__v120ShotPool||[make('strelba3.mp3',false,.65),make('strelba3.mp3',false,.65),make('strelba3.mp3',false,.65)];
-  window.__v120ShotIndex=window.__v120ShotIndex||0;
-  window.v120PlayButton=function(){
+  window.__v124BtnAudio=window.__v124BtnAudio||make('button.mp3',false,.42);
+  window.__v124ShotPool=window.__v124ShotPool||[make('strelba3.mp3',false,1),make('strelba3.mp3',false,1),make('strelba3.mp3',false,1)];
+  window.__v124ShotIndex=window.__v124ShotIndex||0;
+  window.v124PlayButton=function(){
     try{
-      const a=window.__v120BtnAudio;
+      const a=window.__v124BtnAudio;
       a.volume=.35*SFX(); a.currentTime=0; a.play().catch(()=>{});
     }catch(e){}
   };
-  window.v120PlayShot=function(vol=1){
+  window.v124PlayShot=function(vol=1){
     if(IS_MENU)return;
     try{
-      const pool=window.__v120ShotPool;
-      const a=pool[window.__v120ShotIndex++%pool.length];
-      a.volume=Math.max(.05,Math.min(1,vol*SFX()));
+      const pool=window.__v124ShotPool;
+      const a=pool[window.__v124ShotIndex++%pool.length];
+      a.volume=Math.max(.18,Math.min(1,vol*1.25*SFX()));
       a.currentTime=0; a.play().catch(()=>{});
       return true;
     }catch(e){return false}
   };
-  window.v120StartPageAudio=function(){
+  window.v124StartPageAudio=function(){
     try{
-      if(!window.__v120Music){
-        if(IS_MENU) window.__v120Music=make('hudba.mp3',true,.50*VOL());
-        else if(IS_LOBBY||IS_MISSION) window.__v120Music=make('rain.mp3',true,.62*VOL());
+      if(!window.__v124Music){
+        if(IS_MENU) window.__v124Music=make('hudba.mp3',true,.50*VOL());
+        else if(IS_LOBBY||IS_MISSION) window.__v124Music=make('rain.mp3',true,.62*VOL());
       }
-      if(window.__v120Music){
-        window.__v120Music.volume=(IS_MENU?.50:.62)*VOL();
-        window.__v120Music.play().catch(()=>{});
+      if(window.__v124Music){
+        window.__v124Music.volume=(IS_MENU?.50:.62)*VOL();
+        window.__v124Music.play().catch(()=>{});
       }
     }catch(e){}
   };
-  function unlock(){ v120StartPageAudio(); v120PlayButton(); }
+  function unlock(){ v124StartPageAudio(); v124PlayButton(); }
   document.addEventListener('pointerdown',unlock,{once:true,capture:true});
   document.addEventListener('keydown',unlock,{once:true,capture:true});
   document.addEventListener('click',function(e){
     const el=e.target&&e.target.closest?e.target.closest('button,a,[onclick],input,select,label'):null;
-    if(el)v120PlayButton();
+    if(el)v124PlayButton();
   },true);
-  /* v120: no auto audio on load, avoids missing mp3 console spam */
+  window.addEventListener('load',()=>setTimeout(v124StartPageAudio,220));
 })();
 </script>
 
