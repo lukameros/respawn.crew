@@ -3,13 +3,71 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta http-equiv="refresh" content="0;url=./loading.html?v=88">
+<meta http-equiv="refresh" content="0;url=./loading.html?v=111">
 <title>Velká díra 1</title>
-<style>
-html,body{margin:0;width:100%;height:100%;background:#050506;color:#ddd;font-family:'Courier New',monospace;overflow:hidden}
-body{display:grid;place-items:center;text-align:center}.box{border:1px solid #780000;background:rgba(5,5,7,.78);padding:22px 30px;box-shadow:0 0 32px #000}
+<style>html,body{margin:0;height:100%;background:#050506;color:#ddd;font-family:monospace;display:grid;place-items:center}</style>
+<script>try{location.replace('./loading.html?v=111')}catch(e){location.href='./loading.html?v=111'}</script>
+
+<style id="v111CursorStyle">
+html,body,canvas,button,a,input,select,textarea,[onclick]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M5 3 L25 15 L16 17 L13 27 L5 3 Z' fill='%23d7d7d7' stroke='%23000' stroke-width='2'/%3E%3Cpath d='M7 6 L21 15 L14 15.8 L12 23 Z' fill='%23a00000' opacity='.85'/%3E%3C/svg%3E") 4 3, crosshair!important}
+button,a,[onclick],select,input[type=range],input[type=file]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='15' cy='15' r='9' fill='%23a00000' stroke='%23000' stroke-width='3'/%3E%3Ccircle cx='15' cy='15' r='3' fill='%23ffd27a'/%3E%3Cpath d='M15 1v7M15 22v7M1 15h7M22 15h7' stroke='%23d7d7d7' stroke-width='2'/%3E%3C/svg%3E") 15 15, pointer!important}
 </style>
-<script>
-(function(){function go(){try{location.replace('./loading.html?v=88')}catch(e){location.href='./loading.html?v=88'}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();})();
+
+</head><body>Spouštím loading...
+<script id="v111GlobalAudio">
+(function(){
+  if(window.__v111AudioInstalled)return; window.__v111AudioInstalled=true;
+  const IS_MENU=/\/menu\.html(?:$|\?)/i.test(location.pathname)||/menu\.html/i.test(location.href);
+  const IS_LOBBY=/\/lobby\.html(?:$|\?)/i.test(location.pathname)||/lobby\.html/i.test(location.href);
+  const IS_MISSION=/\/real_mapa\.html(?:$|\?)/i.test(location.pathname)||/real_mapa\.html/i.test(location.href);
+  const VOL=()=>{try{return Math.max(0,Math.min(1,Number(localStorage.getItem('MADNESS_MUSIC_VOL')||50)/100))}catch(e){return .5}};
+  const SFX=()=>{try{return Math.max(0,Math.min(1,Number(localStorage.getItem('MADNESS_SFX_VOL')||80)/100))}catch(e){return .8}};
+  function make(src,loop,vol){
+    const a=new Audio(src);
+    a.loop=!!loop; a.preload='auto'; a.volume=vol;
+    a.setAttribute('playsinline','');
+    return a;
+  }
+  window.__v111BtnAudio=window.__v111BtnAudio||make('button.mp3',false,.42);
+  window.__v111ShotPool=window.__v111ShotPool||[make('strelba3.mp3',false,.65),make('strelba3.mp3',false,.65),make('strelba3.mp3',false,.65)];
+  window.__v111ShotIndex=window.__v111ShotIndex||0;
+  window.v111PlayButton=function(){
+    try{
+      const a=window.__v111BtnAudio;
+      a.volume=.35*SFX(); a.currentTime=0; a.play().catch(()=>{});
+    }catch(e){}
+  };
+  window.v111PlayShot=function(vol=1){
+    if(IS_MENU)return;
+    try{
+      const pool=window.__v111ShotPool;
+      const a=pool[window.__v111ShotIndex++%pool.length];
+      a.volume=Math.max(.05,Math.min(1,vol*SFX()));
+      a.currentTime=0; a.play().catch(()=>{});
+      return true;
+    }catch(e){return false}
+  };
+  window.v111StartPageAudio=function(){
+    try{
+      if(!window.__v111Music){
+        if(IS_MENU) window.__v111Music=make('hudba.mp3',true,.50*VOL());
+        else if(IS_LOBBY||IS_MISSION) window.__v111Music=make('rain.mp3',true,.62*VOL());
+      }
+      if(window.__v111Music){
+        window.__v111Music.volume=(IS_MENU?.50:.62)*VOL();
+        window.__v111Music.play().catch(()=>{});
+      }
+    }catch(e){}
+  };
+  function unlock(){ v111StartPageAudio(); v111PlayButton(); }
+  document.addEventListener('pointerdown',unlock,{once:true,capture:true});
+  document.addEventListener('keydown',unlock,{once:true,capture:true});
+  document.addEventListener('click',function(e){
+    const el=e.target&&e.target.closest?e.target.closest('button,a,[onclick],input,select,label'):null;
+    if(el)v111PlayButton();
+  },true);
+  window.addEventListener('load',()=>setTimeout(v111StartPageAudio,180));
+})();
 </script>
-</head><body><div class="box">Spouštím loading...</div></body></html>
+
+</body></html>

@@ -278,7 +278,7 @@ v65:
 - Natvrdo opravený seznam Akce v skeleton_editor.html.
 - V Akce teď musí být: idle, walk, útok obecný, útok 1 levá pěst, útok 2 pravá pěst, útok 3 kop, jump, fall, death, crouch / krčení.
 - Přidaná viditelná sekce Rychlé útoky s tlačítky pro levá pěst / pravá pěst / kop / krčení / death.
-- Menu otevírá skeleton_editor.html?v=65, aby GitHub nebral starou cache.
+- Menu otevírá skeleton_editor.html?v=111, aby GitHub nebral starou cache.
 - JS syntax zkontrolovaná.
 
 v66:
@@ -317,7 +317,7 @@ v69:
 v70:
 - Vrácené tlačítko ← LOBBY přímo do real_mapa.html.
 - Opravený skeleton_editor: doplněné chybějící loadAnim/saveAnim/getOffset/setOffset/setMode/setAction a další funkce.
-- Menu otevírá skeleton_editor.html?v=70.
+- Menu otevírá skeleton_editor.html?v=111.
 - AK-47 odstraněná z real_mapa, lobby i char editoru; fallback zbraně je M4.
 - Char editor má knihovnu postav/NPC: pojmenovat, vybrat Allies/NPC, uložit.
 - Anim editor má výběr, co animovat: default Postava 1 nebo uložené Postava/NPC sloty.
@@ -354,7 +354,7 @@ v73:
 - Anim editor: přidané zastavení preview / navrhování pózy.
 - Anim editor: globální rychlost preview.
 - Anim editor: rychlost animace pro každou vrstvu zvlášť.
-- Menu otevírá skeleton_editor.html?v=73.
+- Menu otevírá skeleton_editor.html?v=111.
 - JS syntax zkontrolovaná.
 
 v74:
@@ -387,7 +387,7 @@ v76:
 - Varianta mění range, damage, posun ruky/nohy a rotaci animace.
 - Vypnuté console/debug výpisy přes bezpečný console mute.
 - Odstraněné viditelné knock/knockback hlášky.
-- Menu otevírá skeleton_editor.html?v=76.
+- Menu otevírá skeleton_editor.html?v=111.
 - JS syntax zkontrolovaná.
 
 v77:
@@ -398,7 +398,7 @@ v77:
 - NPC i hráč mají unikátní motion profile: každá postava má jiný pohyb rukou/body/head/nohou.
 - Friendly NPC v lobby už není statická socha; vykresluje se přes animated layer stack.
 - V lobby přidané tlačítko UPUSTIT ZBRAŇ a zbraň spadne na zem.
-- Menu otevírá skeleton_editor.html?v=77.
+- Menu otevírá skeleton_editor.html?v=111.
 - JS syntax zkontrolovaná.
 
 v78:
@@ -410,7 +410,7 @@ v78:
 - Přidaný typ chování stopper pro NPC.
 - Po zásahu dostane krev i samotné NPC tělo; víc krevních značek na enemy.
 - Krevní rozstřik je menší a čistší, ne velké čtverce.
-- Menu otevírá skeleton_editor.html?v=78.
+- Menu otevírá skeleton_editor.html?v=111.
 - JS syntax zkontrolovaná.
 
 v79:
@@ -421,7 +421,7 @@ v79:
 - Přidaná kolize NPC mezi sebou.
 - Přidaná kolize NPC s hráčem.
 - NPC se už tolik nevrství přes sebe ani přes hráče.
-- Menu otevírá skeleton_editor.html?v=79.
+- Menu otevírá skeleton_editor.html?v=111.
 - JS syntax zkontrolovaná.
 
 v80:
@@ -434,7 +434,7 @@ v80:
 - NPC se spawnují z obou stran od vlny 2, množství z levé strany roste podle vlny.
 - Počet NPC z obou stran je přiměřený aktuální vlně.
 - Kolize NPC s NPC/hráčem zůstává.
-- Menu otevírá skeleton_editor.html?v=80.
+- Menu otevírá skeleton_editor.html?v=111.
 - JS syntax zkontrolovaná.
 
 v81:
@@ -444,7 +444,7 @@ v81:
 - Nábojnice po dopadu zůstane ležet na zemi až do ukončení hry/reloadu.
 - Různé zbraně mají lehce jiný výhoz nábojnice.
 - Shell fyzika běží i během hit-stopu, aby to nepůsobilo zaseknutě.
-- Menu otevírá skeleton_editor.html?v=81.
+- Menu otevírá skeleton_editor.html?v=111.
 - JS syntax zkontrolovaná.
 
 v82:
@@ -454,7 +454,7 @@ v82:
 - Nábojnice jen mírně vyskočí nahoru a potom padá dolů na zem.
 - Upravená fyzika nábojnic: menší výška, kratší oblouk, menší odskoky, rychlejší uklidnění na zemi.
 - Stejná úprava platí pro hráče i NPC.
-- Menu otevírá skeleton_editor.html?v=82.
+- Menu otevírá skeleton_editor.html?v=111.
 - JS syntax zkontrolovaná.
 
 v83:
@@ -463,7 +463,7 @@ v83:
 - Díry po kulkách a krevní cákance znovu fungují.
 - Opravené chybějící ezgif.com-animated-gif-maker.gif: fallback používá embedded GIF a přidaný je i placeholder soubor.
 - Tracking Prevention hlášky ze Supabase jsou browser warning při file:// / CDN a nejsou runtime chyba hry.
-- Menu otevírá skeleton_editor.html?v=83.
+- Menu otevírá skeleton_editor.html?v=111.
 - JS syntax zkontrolovaná.
 
 v84:
@@ -476,7 +476,7 @@ v84:
 - Lobby má výběr 3 map v okně VYBER MAPU.
 - Online lobby ukládá vybranou mapu do MADNESS_MISSION_MAP a posílá ji přes mission row.
 - real_mapa.html si mapu bere z URL ?mission= nebo z localStorage.
-- Menu otevírá skeleton_editor.html?v=84.
+- Menu otevírá skeleton_editor.html?v=111.
 - JS syntax zkontrolovaná.
 
 v85:
@@ -484,7 +484,7 @@ v85:
 - Vrácen helper drawImageDecal pro vykreslení nábojnic, děr a krevních cákanců.
 - Přidaná pojistka, aby nechyběly addBulletHole, addBloodDecal a drawPersistentDecalsLayer.
 - 3 mapy misí z v84 zůstávají.
-- Menu otevírá skeleton_editor.html?v=85.
+- Menu otevírá skeleton_editor.html?v=111.
 - JS syntax zkontrolovaná.
 
 v86:
@@ -507,7 +507,7 @@ v87:
 - Friendly NPC v lobby si občas náhodně zkusí emote.
 - Pokud emote_1/2/3 ještě není naanimovaný, NPC nespadne a použije idle/walk fallback.
 - Emote se spouští hlavně když NPC stojí a zrovna neútočí.
-- Menu otevírá skeleton_editor.html?v=87.
+- Menu otevírá skeleton_editor.html?v=111.
 - Loading no-loop fix z v86 zůstává.
 - JS syntax zkontrolovaná.
 
@@ -521,3 +521,211 @@ v88:
 - NPC emote systém z v87 zůstává.
 - 3 mise a předchozí fixy zůstávají.
 - JS syntax zkontrolovaná.
+
+v89:
+- Vrácené stabilní nábojnice jako dřív: čisté, persistentní, bez rozbité výškové fyziky.
+- Vrácené cákance krve na zdi/podlahu jako dřív.
+- Vrácená krev na NPC do stabilnější podoby.
+- Použité dobré čisté decal assety z v77.
+- Opravený anim editor: pokud chybí hlava, přidá default vrstvu hlavy.
+- Anim editor má tlačítko OPRAVIT HLAVU.
+- Anim editor má novou rychlost aktuální akce/útoku.
+- Rychlost akce se ukládá do anim.actionSpeeds.
+- Zpomalení/zrychlení akce platí i ve hře v lobby a v misích.
+- Lze zpomalit attack_l, attack_r, kick, emote_1, emote_2, emote_3, walk, idle atd.
+- Loading flow zůstává: index -> loading -> menu.
+- NPC emote systém zůstává.
+- JS syntax zkontrolovaná.
+
+v90:
+- Opraveno real_mapa.html: addBulletHole is not defined.
+- Decal helpery jsou vložené natvrdo a ve správném pořadí.
+- Opravené funkce: drawImageDecal, addBulletHole, addBloodDecal, drawPersistentDecalsLayer.
+- Nábojnice jsou stabilní jednoduché jako dřív.
+- Odstraněné zbytky rozbité shell physics.
+- Blood/decal systém je stabilní.
+- Anim speed a oprava hlavy zůstává.
+- Loading flow zůstává: index -> loading -> menu.
+- JS syntax zkontrolovaná.
+
+v91:
+- Každá střela, která trefí NPC, přidá přesně jednu díru do NPC.
+- Díry v NPC zůstávají i po smrti, protože se kopírují do mrtvoly.
+- Kolem každé díry v NPC se vykreslí krevní rozstřik.
+- Červené křížky po zásahu jsou odstraněné.
+- Díry ve zdi/mapě se tvoří jen když střela netrefí NPC a doletí mimo / narazí do mapy.
+- Odstraněné náhodné vytváření díry už při samotném výstřelu.
+- Nábojnice se vyhazuje ze zbraně a padá na podlahu s lehkou fyzikou.
+- Hráč má výraznější jemné dýchání.
+- NPC v lobby i v misích mají jemné dýchání, když stojí.
+- EnemyFire doplněný, pokud v souboru chyběl.
+- Loading flow zůstává: index -> loading -> menu.
+- JS syntax zkontrolovaná.
+
+v92:
+- Opraveno real_mapa.html: updateHud is not defined.
+- Přidaná robustní funkce updateHud.
+- HUD znovu aktualizuje vlnu, počet zabitých NPC, HP, zbraň, ammo, zásobníky, money, level a XP.
+- Fix platí při spawnWave i v hlavním update loopu.
+- Vše z v91 zůstává: díry v NPC, krev kolem zásahu, nábojnice, dýchání, 3 mise, emote systém.
+- Tracking Prevention hlášky ze Supabase jsou warning prohlížeče při file:// / CDN, ne crash hry.
+- JS syntax zkontrolovaná.
+
+v93:
+- Opraveno real_mapa.html: drawNpcChat is not defined.
+- Přidaná bezpečná funkce drawNpcChat pro NPC hlášky.
+- Přidaná pojistka roundRect fallback pro starší prohlížeče.
+- Vše z v92 zůstává: updateHud fix, díry v NPC, krev kolem zásahu, nábojnice, dýchání, 3 mise, emote systém.
+- Tracking Prevention hlášky ze Supabase jsou warning prohlížeče při file:// / CDN, ne crash hry.
+- JS syntax zkontrolovaná.
+
+v94:
+- Opravená viditelnost krve a děr na NPC.
+- Bug s nulovou výškou krve na NPC opravený: krev už není skrytá.
+- Každý zásah NPC přidá výraznou červenou krev + tmavou díru.
+- Díry a krev na NPC se kopírují do mrtvoly a zůstávají po smrti.
+- Dopady na NPC se kreslí nad tělem, aby nezmizely pod spritem.
+- Nábojnice jsou větší a viditelnější.
+- Nábojnice vylétnou ze strany zbraně / závěru a plynule letí až na podlahu.
+- Odstraněný efekt teleportu nábojnice na zem.
+- Díry ve zdech zůstávají jen pro střely, které netrefí NPC.
+- JS syntax zkontrolovaná.
+
+v95:
+- Nábojnice mají random výšku výletu.
+- Nábojnice se vyhazují ze strany závěru a plynule padají na podlahu.
+- Z NPC zásahů odstraněné canvas kruhy/černé díry.
+- NPC zásah teď používá jen krevní asset, žádné canvas díry.
+- Černý bullet-hole asset zůstává jen pro zdi/mapu, když střela netrefí NPC.
+- Díry/krev na NPC jsou pořád náhodně rozmístěné podle místa zásahu a zůstávají po smrti.
+- JS syntax zkontrolovaná.
+
+v96:
+- Přidaná lepší fyzika nábojnic.
+- Nábojnice po dopadu hledají blízké nábojnice a skládají se do hromádek.
+- Čím víc nábojnic na jednom místě, tím větší/vyšší hromádka.
+- Nábojnice se po dopadu od sebe jemně odtlačují, aby se nepřekrývaly.
+- Přidaná lepší fyzika mrtvých NPC.
+- Mrtvá NPC se při pádu ukládají do hromádek kolem ostatních mrtvol.
+- Čím víc mrtvol blízko sebe, tím víc se rozkládají/překládají do hromady.
+- Mrtvoly se jemně odtlačí, aby neležely přesně na sobě.
+- Vše z v95 zůstává: NPC krev assetem, černé díry jen na zdech, nábojnice ze strany závěru.
+- JS syntax zkontrolovaná.
+
+v97:
+- NPC krev už není kreslená jako plochá zemní stopa. Je přichycená na tělo NPC jako menší body wound/blood assety.
+- Když hráč nebo NPC projdou hromádkou nábojnic, část nábojnic se lehce rozkopne a pohne.
+- Přidaná plná death animace NPC: po smrti nejdřív padají, až potom se uloží mezi mrtvoly. Už nepadnou teleportem.
+- Delay další vlny čeká i na dokončení death animací.
+- Opravené otevření anim editoru přes file:// relativním odkazem openAnimEditor().
+- Zachovaná v96 fyzika hromádek nábojnic a mrtvol.
+
+v111:
+- Přidaný rain.mp3 a button.mp3.
+- První mise real_mapa používá rain.mp3 looping.
+- Lobby používá rain.mp3 looping.
+- Původní hudba hudba.mp3 zůstává jen v menu.
+- Střelba strelba3.mp3 je dostupná všude krom menu a v real_mapa je napojená přes pooled audio.
+- Všechna tlačítka/klikatelné prvky používají button.mp3.
+- Opravený audio unlock: zvuky se spouští po prvním kliknutí/klávese, aby je prohlížeč neblokoval.
+- Všude přidaný stylový červený/crosshair kurzor.
+- JS syntax zkontrolovaná.
+
+v111:
+- Přidaná krev na tlačítka v menu.
+- Krvavý horní okraj, kapky a skvrny přes tlačítka.
+- Efekt je jen CSS, nepřidává těžké assety.
+- Button sound, rain/music a cursor z v98 zůstávají.
+- JS syntax zkontrolovaná.
+
+v111:
+- Opraveno real_mapa.html: flashLightning is not defined.
+- Přidaná bezpečná funkce flashLightning.
+- Přidaný krátký bleskový overlay a malý shake.
+- Oprava nemění menu krev, audio, cursor ani ostatní změny z v99.
+- JS syntax zkontrolovaná.
+
+v111:
+- Opraveno real_mapa.html: worldToScreenX is not defined.
+- Doplněné funkce worldToScreenX, worldToScreenY, screenToWorldX a screenToWorldY.
+- Fix platí pro shadow, entity, střely, krev, nábojnice, déšť a mapové efekty.
+- Vše z v100 zůstává.
+- JS syntax zkontrolovaná.
+
+v111:
+- Opraveno real_mapa.html: movePlayer is not defined.
+- Doplněná funkce movePlayer.
+- Doplněná funkce centerLane.
+- Pohyb hráče znovu funguje přes WASD.
+- Směr hráče se bere podle pohybu nebo kurzoru.
+- Doplněný výpočet physVx/physVy pro animace, nábojnice a hromádky.
+- Přidaný decay knockbacku/recoilu, aby AWP odhoz nezůstal viset.
+- Provedená širší kontrola chybějících herních funkcí v real_mapa.html.
+- JS syntax zkontrolovaná.
+
+v111:
+- Nábojnice se při stání/procházení hromádkou hýbou opakovaně, ne jen jednou.
+- Každé další projití přes hromádku znovu rozhýbe random část nábojnic.
+- Interakce bere v potaz rychlost hráče/NPC, takže běh rozhazuje víc než stání.
+- Přidané jemné rozhýbání nábojnic i okolo mrtvol.
+- Opravené zásahy na NPC: je vidět malá tmavá rána, červený okraj, přilepená krev a krátký stékající detail.
+- Z NPC zásahu odstraněná wall/floor krev, která vypadala ploše.
+- Zásahy na NPC zůstávají i po smrti.
+- JS syntax zkontrolovaná + statická kontrola custom funkcí.
+
+v111:
+- Zbraň při chůzi už nevibruje jako Parkinson.
+- Snížený vysokofrekvenční gun sway a zpomalený armT při držení zbraně.
+- Vrácené červené zásahové díry na NPC ve stylu původního screenshotu.
+- NPC zásah má červený splash, tmavý střed a červený okraj.
+- Vrácená krev na zdi/pozadí při zásahu NPC.
+- Wall blood používá blood_splat.png, ne plochý floor flek.
+- Zásahy na NPC pořád zůstávají po smrti.
+- JS syntax zkontrolovaná + statická kontrola custom funkcí.
+
+v111:
+- Náboje se hýbou jen když přes ně opravdu projdeš / pohybuješ se přes ně.
+- Když stojíš na místě, náboje zůstávají stát.
+- Vrácená asset díra na NPC (bullet_hole.png) + krev kolem zásahu.
+- Vrácená a zesílená krev na zdi za NPC při zásahu.
+- JS syntax zkontrolovaná.
+
+v111:
+- blood_splatter_floor.png je na zdech i na podlahách.
+- blood_splat.png zůstává na NPC.
+- Beze změny logiky nábojů z v105.
+
+v111:
+- Opravené zásahy na NPC: hit už nepadá dolů po smrti NPC.
+- Při zásahu se uloží freeze pozice, takže díra/krev zůstane tam, kde byla při zásahu.
+- Zásah je víc přichycený na tělo/hlavu NPC a ne mimo sprite.
+- Headshot se drží v horní části, body hit ve středu těla.
+- Opravený konec první vlny: další vlna se spustí i když jsou mrtvá NPC už odfiltrovaná ze seznamu.
+- Blood_splatter_floor zůstává na zdi/podlaze, blood_splat na NPC.
+- JS syntax zkontrolovaná + statická kontrola custom funkcí.
+
+v111:
+- blood_splatter_floor ponechán perfektně na zdi a teď je výrazněji i na podlaze.
+- Na NPC je nově oboje: blood_splat + menší blood_splatter_floor.
+- Po zásahu NPC se přidává i floor krev pod/postřik na podlahu.
+- Bez změny SQL.
+
+v111:
+- NPC mají výrazně víc HP a vydrží déle.
+- Krev na zdi a podlaze má širší random měřítko.
+- Zásah už nedává vždy krev na obě plochy; teď je to random: někdy zeď, někdy podlaha, někdy oboje.
+- Na NPC zůstává oboje: blood_splat + menší blood_splatter_floor.
+
+v111:
+- Zpomalené houpání těla hráče.
+- Body bob je plynulejší a méně agresivní.
+- Snížená amplituda vertikálního houpání těla.
+- Zpomalený arm/body timing při držení zbraně.
+- Hráč už při chůzi nepůsobí tak rozházeně.
+- JS syntax zkontrolovaná.
+
+v111:
+- Zbraň hráče se automaticky naklání podle míření myší.
+- Když míříš nahoru, zbraň se zvedne nahoru místo držení rovně.
+- Když míříš dolů, zbraň se sklopí dolů.
+- Upravená pozice hlavně, muzzle flashe a eject portu, aby to sedělo s úhlem.

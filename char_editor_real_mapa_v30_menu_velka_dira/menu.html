@@ -30,13 +30,96 @@ button{border-radius:7px!important;box-shadow:0 0 16px rgba(0,0,0,.6)}
 
 .adminBtn{display:none!important}.adminBtn.adminVisible{display:block!important}
 </style>
-<script>try{console.log=console.warn=console.error=console.info=console.debug=function(){}}catch(e){}</script>
+<script>try{console.log=console.warn=console.error=console.info=console.debug=function(){}}catch(e){}function openAnimEditor(){ try{ location.href='./skeleton_editor.html?v=111'; }catch(e){ location.assign('./skeleton_editor.html?v=111'); } }
+</script>
+
+<style id="v111CursorStyle">
+html,body,canvas,button,a,input,select,textarea,[onclick]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M5 3 L25 15 L16 17 L13 27 L5 3 Z' fill='%23d7d7d7' stroke='%23000' stroke-width='2'/%3E%3Cpath d='M7 6 L21 15 L14 15.8 L12 23 Z' fill='%23a00000' opacity='.85'/%3E%3C/svg%3E") 4 3, crosshair!important}
+button,a,[onclick],select,input[type=range],input[type=file]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='15' cy='15' r='9' fill='%23a00000' stroke='%23000' stroke-width='3'/%3E%3Ccircle cx='15' cy='15' r='3' fill='%23ffd27a'/%3E%3Cpath d='M15 1v7M15 22v7M1 15h7M22 15h7' stroke='%23d7d7d7' stroke-width='2'/%3E%3C/svg%3E") 15 15, pointer!important}
+</style>
+
+
+<style id="v111MenuBloodButtons">
+/* v111 krvavé menu buttony */
+body .panel > button,
+#servers button,
+#settings button,
+#gameAlertModal button {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border-color: #5b0000 !important;
+  box-shadow:
+    inset 0 0 18px rgba(60,0,0,.55),
+    0 0 12px rgba(120,0,0,.22) !important;
+}
+body .panel > button::before,
+#servers button::before,
+#settings button::before,
+#gameAlertModal button::before {
+  content: "";
+  position: absolute;
+  left: -8%;
+  top: -7px;
+  width: 116%;
+  height: 21px;
+  z-index: 1;
+  pointer-events: none;
+  opacity: .92;
+  background:
+    radial-gradient(circle at 7% 5px, rgba(160,0,0,.95) 0 5px, transparent 6px),
+    radial-gradient(circle at 18% 9px, rgba(110,0,0,.92) 0 7px, transparent 8px),
+    radial-gradient(circle at 36% 4px, rgba(190,12,6,.90) 0 4px, transparent 5px),
+    radial-gradient(circle at 54% 8px, rgba(120,0,0,.92) 0 8px, transparent 9px),
+    radial-gradient(circle at 74% 5px, rgba(175,0,0,.92) 0 5px, transparent 6px),
+    radial-gradient(circle at 92% 10px, rgba(95,0,0,.90) 0 8px, transparent 9px),
+    linear-gradient(180deg, rgba(95,0,0,.96), rgba(150,0,0,.82) 42%, rgba(70,0,0,.55) 75%, transparent 100%);
+  filter: drop-shadow(0 2px 1px rgba(0,0,0,.75));
+}
+body .panel > button::after,
+#servers button::after,
+#settings button::after,
+#gameAlertModal button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: .82;
+  background:
+    radial-gradient(ellipse at 12% 32%, rgba(210,20,10,.85) 0 4px, transparent 5px),
+    radial-gradient(ellipse at 28% 68%, rgba(80,0,0,.90) 0 3px, transparent 4px),
+    radial-gradient(ellipse at 44% 42%, rgba(155,0,0,.78) 0 5px, transparent 6px),
+    radial-gradient(ellipse at 63% 74%, rgba(105,0,0,.82) 0 3px, transparent 4px),
+    radial-gradient(ellipse at 84% 38%, rgba(190,10,5,.80) 0 4px, transparent 5px),
+    linear-gradient(90deg, transparent, rgba(255,55,25,.08), transparent);
+  mix-blend-mode: screen;
+}
+body .panel > button:hover::before,
+#servers button:hover::before,
+#settings button:hover::before,
+#gameAlertModal button:hover::before {
+  opacity: 1;
+  transform: translateY(1px);
+}
+body .panel > button:hover {
+  filter: saturate(1.2) brightness(1.08);
+}
+body .panel > button > *,
+#servers button > *,
+#settings button > *,
+#gameAlertModal button > * {
+  position: relative;
+  z-index: 3;
+}
+</style>
+
 </head>
 <body>
 <img id="menuBgImg" src="./menu_bg.png" alt="">
 <button id="settingsBtn" title="Nastavení" onclick="openBox('settings')">⚙</button>
 <div id="gameAlertModal"><div id="gameAlertBox"><h2>HLÁŠENÍ</h2><div id="gameAlertText"></div><button onclick="closeGameAlert()">ZAVŘÍT</button></div></div>
-<div id="updateBox"><b>UPDATE 0.1</b><p>Nová verze menu, lobby a editoru.</p></div>
+<div id="updateBox"><b>UPDATE 0.1</b><p>Krvavé menu buttony.</p><p>Nová verze menu, lobby a editoru.</p></div>
 <div class="badges"><div class="badge">2026</div><div class="badge dim">NO QUALITY</div><div class="badge">CREATED BY LUKAMER</div><div class="badge">PROTECTED BY LUKCHEAT</div></div>
 <div class="wrap"><div class="panel">
   <h1>VELKÁ DÍRA 1</h1>
@@ -44,13 +127,14 @@ button{border-radius:7px!important;box-shadow:0 0 16px rgba(0,0,0,.6)}
 <button onclick="location.href='lobby.html'">HRÁT HRU</button>
   <button onclick="openServerList()">SERVER LIST</button>
   <button onclick="openBox('settings')">NASTAVENÍ</button>
-  <button id="adminAnimBtn" class="adminBtn" onclick="location.href='skeleton_editor.html?v=88'">ASSET KEYFRAMES v88</button>
+  <button id="adminAnimBtn" class="adminBtn" onclick="openAnimEditor()">ASSET KEYFRAMES v111</button>
   <button id="adminMenuBtn" class="adminBtn" onclick="location.href='admin.html'">ADMINMENU</button>
 </div></div>
 
 <div class="modal" id="servers"><div class="box"><h2>AKTUÁLNÍ SERVERY</h2><div id="serverList" style="display:flex;flex-direction:column;gap:8px;margin:10px 0"></div><button onclick="createServer()">VYTVOŘIT SERVER / LOBBY</button><button onclick="closeBoxes()">ZAVŘÍT</button></div></div>
-<div class="modal" id="settings"><div class="box"><h2>NASTAVENÍ</h2><p>Soubory: <b>hudba.mp3</b> a <b>strelba3.mp3</b>.</p><div class="setRow"><label><span>Grafika</span><span id="qualityLbl">střední</span></label><select id="qualitySel" onchange="setQuality(this.value)"><option value="low">nízká</option><option value="mid">střední</option><option value="high">vysoká</option></select></div><div class="setRow"><label><span>Hudba</span><span id="musicVolLbl">50%</span></label><input id="musicVol" type="range" min="0" max="100" value="50" oninput="setMusicVol(this.value)"></div><div class="setRow"><label><span>Střelba / SFX</span><span id="sfxVolLbl">80%</span></label><input id="sfxVol" type="range" min="0" max="100" value="80" oninput="setSfxVol(this.value)"></div><button onclick="closeBoxes()">ZAVŘÍT</button></div></div>
+<div class="modal" id="settings"><div class="box"><h2>NASTAVENÍ</h2><p>Soubory: <b>hudba.mp3</b> / tlačítka <b>button.mp3</b>.</p><div class="setRow"><label><span>Grafika</span><span id="qualityLbl">střední</span></label><select id="qualitySel" onchange="setQuality(this.value)"><option value="low">nízká</option><option value="mid">střední</option><option value="high">vysoká</option></select></div><div class="setRow"><label><span>Hudba</span><span id="musicVolLbl">50%</span></label><input id="musicVol" type="range" min="0" max="100" value="50" oninput="setMusicVol(this.value)"></div><div class="setRow"><label><span>Střelba / SFX</span><span id="sfxVolLbl">80%</span></label><input id="sfxVol" type="range" min="0" max="100" value="80" oninput="setSfxVol(this.value)"></div><button onclick="closeBoxes()">ZAVŘÍT</button></div></div>
 
+<audio id="music" src="hudba.mp3" loop preload="auto"></audio>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL="https://fokguuucpoejkxklwrpw.supabase.co";
@@ -190,4 +274,61 @@ setTimeout(unlockMenuAudio,400);
 
 </script>
 <audio id="menuMusic" src="hudba.mp3" loop preload="auto"></audio>
+
+<script id="v111GlobalAudio">
+(function(){
+  if(window.__v111AudioInstalled)return; window.__v111AudioInstalled=true;
+  const IS_MENU=/\/menu\.html(?:$|\?)/i.test(location.pathname)||/menu\.html/i.test(location.href);
+  const IS_LOBBY=/\/lobby\.html(?:$|\?)/i.test(location.pathname)||/lobby\.html/i.test(location.href);
+  const IS_MISSION=/\/real_mapa\.html(?:$|\?)/i.test(location.pathname)||/real_mapa\.html/i.test(location.href);
+  const VOL=()=>{try{return Math.max(0,Math.min(1,Number(localStorage.getItem('MADNESS_MUSIC_VOL')||50)/100))}catch(e){return .5}};
+  const SFX=()=>{try{return Math.max(0,Math.min(1,Number(localStorage.getItem('MADNESS_SFX_VOL')||80)/100))}catch(e){return .8}};
+  function make(src,loop,vol){
+    const a=new Audio(src);
+    a.loop=!!loop; a.preload='auto'; a.volume=vol;
+    a.setAttribute('playsinline','');
+    return a;
+  }
+  window.__v111BtnAudio=window.__v111BtnAudio||make('button.mp3',false,.42);
+  window.__v111ShotPool=window.__v111ShotPool||[make('strelba3.mp3',false,.65),make('strelba3.mp3',false,.65),make('strelba3.mp3',false,.65)];
+  window.__v111ShotIndex=window.__v111ShotIndex||0;
+  window.v111PlayButton=function(){
+    try{
+      const a=window.__v111BtnAudio;
+      a.volume=.35*SFX(); a.currentTime=0; a.play().catch(()=>{});
+    }catch(e){}
+  };
+  window.v111PlayShot=function(vol=1){
+    if(IS_MENU)return;
+    try{
+      const pool=window.__v111ShotPool;
+      const a=pool[window.__v111ShotIndex++%pool.length];
+      a.volume=Math.max(.05,Math.min(1,vol*SFX()));
+      a.currentTime=0; a.play().catch(()=>{});
+      return true;
+    }catch(e){return false}
+  };
+  window.v111StartPageAudio=function(){
+    try{
+      if(!window.__v111Music){
+        if(IS_MENU) window.__v111Music=make('hudba.mp3',true,.50*VOL());
+        else if(IS_LOBBY||IS_MISSION) window.__v111Music=make('rain.mp3',true,.62*VOL());
+      }
+      if(window.__v111Music){
+        window.__v111Music.volume=(IS_MENU?.50:.62)*VOL();
+        window.__v111Music.play().catch(()=>{});
+      }
+    }catch(e){}
+  };
+  function unlock(){ v111StartPageAudio(); v111PlayButton(); }
+  document.addEventListener('pointerdown',unlock,{once:true,capture:true});
+  document.addEventListener('keydown',unlock,{once:true,capture:true});
+  document.addEventListener('click',function(e){
+    const el=e.target&&e.target.closest?e.target.closest('button,a,[onclick],input,select,label'):null;
+    if(el)v111PlayButton();
+  },true);
+  window.addEventListener('load',()=>setTimeout(v111StartPageAudio,180));
+})();
+</script>
+
 </body></html>

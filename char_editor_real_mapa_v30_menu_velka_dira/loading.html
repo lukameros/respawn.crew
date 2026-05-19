@@ -3,13 +3,103 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta http-equiv="refresh" content="6;url=./menu.html?v=88">
+<meta http-equiv="refresh" content="6;url=./menu.html?v=111">
 <title>Velká díra 1 — Loading</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;height:100%;background:#020203;color:#eee;font-family:'Courier New',monospace;overflow:hidden}body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 50% 30%,rgba(120,0,0,.34),transparent 42%),linear-gradient(180deg,#09090b,#020203);z-index:0}.wrap{position:relative;z-index:1;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}.box{width:min(740px,92vw);background:rgba(6,6,8,.88);border:2px solid #8a0000;box-shadow:0 0 42px #000;padding:30px;border-radius:12px}h1{margin:0 0 10px;font-size:34px;letter-spacing:3px;color:#ffd6d6;text-shadow:2px 2px #000}.sub{color:#999;font-size:13px;margin-bottom:22px}.track{height:18px;background:#150000;border:1px solid #740000;box-shadow:inset 0 0 10px #000;border-radius:10px;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,#720000,#ffbd54);box-shadow:0 0 16px rgba(255,180,60,.5);transition:width .12s linear}#pct{margin-top:12px;color:#ffd27a;font-weight:bold}#file{margin-top:8px;color:#777;font-size:11px;min-height:16px;word-break:break-all}a{color:#ffd27a}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#020203;color:#eee;font-family:'Courier New',monospace;overflow:hidden}
+body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 50% 30%,rgba(120,0,0,.34),transparent 42%),linear-gradient(180deg,#09090b,#020203);z-index:0}
+.wrap{position:relative;z-index:1;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
+.box{width:min(740px,92vw);background:rgba(6,6,8,.88);border:2px solid #8a0000;box-shadow:0 0 42px #000;padding:30px;border-radius:12px}
+h1{margin:0 0 10px;font-size:34px;letter-spacing:3px;color:#ffd6d6;text-shadow:2px 2px #000}
+.sub{color:#999;font-size:13px;margin-bottom:22px}
+.track{height:18px;background:#150000;border:1px solid #740000;box-shadow:inset 0 0 10px #000;border-radius:10px;overflow:hidden}
+.fill{height:100%;width:0;background:linear-gradient(90deg,#720000,#ffbd54);box-shadow:0 0 16px rgba(255,180,60,.5);transition:width .12s linear}
+#pct{margin-top:12px;color:#ffd27a;font-weight:bold}
+#file{margin-top:8px;color:#777;font-size:11px;min-height:16px;word-break:break-all}
+a{color:#ffd27a}
 </style>
+
+<style id="v111CursorStyle">
+html,body,canvas,button,a,input,select,textarea,[onclick]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M5 3 L25 15 L16 17 L13 27 L5 3 Z' fill='%23d7d7d7' stroke='%23000' stroke-width='2'/%3E%3Cpath d='M7 6 L21 15 L14 15.8 L12 23 Z' fill='%23a00000' opacity='.85'/%3E%3C/svg%3E") 4 3, crosshair!important}
+button,a,[onclick],select,input[type=range],input[type=file]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='15' cy='15' r='9' fill='%23a00000' stroke='%23000' stroke-width='3'/%3E%3Ccircle cx='15' cy='15' r='3' fill='%23ffd27a'/%3E%3Cpath d='M15 1v7M15 22v7M1 15h7M22 15h7' stroke='%23d7d7d7' stroke-width='2'/%3E%3C/svg%3E") 15 15, pointer!important}
+</style>
+
 </head>
-<body><div class="wrap"><div class="box"><h1>VELKÁ DÍRA 1</h1><div class="sub">Načítání...</div><div class="track"><div class="fill" id="fill"></div></div><div id="pct">0%</div><div id="file">start</div><noscript><p><a href="./menu.html?v=88">Otevřít menu</a></p></noscript></div></div>
+<body>
+<div class="wrap"><div class="box">
+<h1>VELKÁ DÍRA 1</h1>
+<div class="sub">Načítání...</div>
+<div class="track"><div class="fill" id="fill"></div></div>
+<div id="pct">0%</div>
+<div id="file">start</div>
+<noscript><p><a href="./menu.html?v=111">Otevřít menu</a></p></noscript>
+</div></div>
 <script>
-(function(){var fill=document.getElementById('fill'),pct=document.getElementById('pct'),file=document.getElementById('file');var steps=['mapa','hráč','NPC','zbraně','animace','mise','menu'];var p=0,i=0,done=false;function go(){if(done)return;done=true;try{location.replace('./menu.html?v=88')}catch(e){location.href='./menu.html?v=88'}}function tick(){p=Math.min(100,p+Math.floor(8+Math.random()*13));fill.style.width=p+'%';pct.textContent=p+'%';file.textContent=steps[Math.min(steps.length-1,i++)]||'hotovo';if(p>=100){file.textContent='hotovo';setTimeout(go,260)}else setTimeout(tick,90)}setTimeout(tick,120);setTimeout(go,5200);})();
-</script></body></html>
+(function(){
+  var fill=document.getElementById('fill'), pct=document.getElementById('pct'), file=document.getElementById('file');
+  var steps=['mapa','hráč','NPC','zbraně','animace','mise','menu'];
+  var p=0,i=0,done=false;
+  function go(){if(done)return;done=true;try{location.replace('./menu.html?v=111')}catch(e){location.href='./menu.html?v=111'}}
+  function tick(){p=Math.min(100,p+Math.floor(8+Math.random()*13));fill.style.width=p+'%';pct.textContent=p+'%';file.textContent=steps[Math.min(steps.length-1,i++)]||'hotovo';if(p>=100){file.textContent='hotovo';setTimeout(go,260)}else setTimeout(tick,90)}
+  setTimeout(tick,120);setTimeout(go,5200);
+})();
+</script>
+
+<script id="v111GlobalAudio">
+(function(){
+  if(window.__v111AudioInstalled)return; window.__v111AudioInstalled=true;
+  const IS_MENU=/\/menu\.html(?:$|\?)/i.test(location.pathname)||/menu\.html/i.test(location.href);
+  const IS_LOBBY=/\/lobby\.html(?:$|\?)/i.test(location.pathname)||/lobby\.html/i.test(location.href);
+  const IS_MISSION=/\/real_mapa\.html(?:$|\?)/i.test(location.pathname)||/real_mapa\.html/i.test(location.href);
+  const VOL=()=>{try{return Math.max(0,Math.min(1,Number(localStorage.getItem('MADNESS_MUSIC_VOL')||50)/100))}catch(e){return .5}};
+  const SFX=()=>{try{return Math.max(0,Math.min(1,Number(localStorage.getItem('MADNESS_SFX_VOL')||80)/100))}catch(e){return .8}};
+  function make(src,loop,vol){
+    const a=new Audio(src);
+    a.loop=!!loop; a.preload='auto'; a.volume=vol;
+    a.setAttribute('playsinline','');
+    return a;
+  }
+  window.__v111BtnAudio=window.__v111BtnAudio||make('button.mp3',false,.42);
+  window.__v111ShotPool=window.__v111ShotPool||[make('strelba3.mp3',false,.65),make('strelba3.mp3',false,.65),make('strelba3.mp3',false,.65)];
+  window.__v111ShotIndex=window.__v111ShotIndex||0;
+  window.v111PlayButton=function(){
+    try{
+      const a=window.__v111BtnAudio;
+      a.volume=.35*SFX(); a.currentTime=0; a.play().catch(()=>{});
+    }catch(e){}
+  };
+  window.v111PlayShot=function(vol=1){
+    if(IS_MENU)return;
+    try{
+      const pool=window.__v111ShotPool;
+      const a=pool[window.__v111ShotIndex++%pool.length];
+      a.volume=Math.max(.05,Math.min(1,vol*SFX()));
+      a.currentTime=0; a.play().catch(()=>{});
+      return true;
+    }catch(e){return false}
+  };
+  window.v111StartPageAudio=function(){
+    try{
+      if(!window.__v111Music){
+        if(IS_MENU) window.__v111Music=make('hudba.mp3',true,.50*VOL());
+        else if(IS_LOBBY||IS_MISSION) window.__v111Music=make('rain.mp3',true,.62*VOL());
+      }
+      if(window.__v111Music){
+        window.__v111Music.volume=(IS_MENU?.50:.62)*VOL();
+        window.__v111Music.play().catch(()=>{});
+      }
+    }catch(e){}
+  };
+  function unlock(){ v111StartPageAudio(); v111PlayButton(); }
+  document.addEventListener('pointerdown',unlock,{once:true,capture:true});
+  document.addEventListener('keydown',unlock,{once:true,capture:true});
+  document.addEventListener('click',function(e){
+    const el=e.target&&e.target.closest?e.target.closest('button,a,[onclick],input,select,label'):null;
+    if(el)v111PlayButton();
+  },true);
+  window.addEventListener('load',()=>setTimeout(v111StartPageAudio,180));
+})();
+</script>
+
+</body></html>
