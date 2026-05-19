@@ -1,4 +1,4 @@
--- MADNESS RAIN / SUPABASE FULL RESET SETUP v33
+-- MADNESS RAIN / SUPABASE FULL RESET SETUP v29
 -- POZOR: Tohle smaže celé staré tabulky hry a vytvoří je znovu.
 -- Spusť celé v Supabase SQL Editoru.
 
@@ -41,7 +41,6 @@ create table public.madness_lobby_players (
   weapon_type text,
   avatar_src text,
   squad_name text,
-  level integer not null default 1,
   updated_at timestamptz not null default now(),
   primary key (server_id, player_id)
 );
@@ -166,5 +165,3 @@ create index if not exists madness_lobby_players_server_updated_idx on public.ma
 create index if not exists madness_player_stats_glory_idx on public.madness_player_stats (glory desc, level desc, kills desc);
 create index if not exists madness_squads_server_idx on public.madness_squads (server_id, updated_at desc);
 create index if not exists madness_squad_invites_to_idx on public.madness_squad_invites (server_id, to_player_id, status, created_at desc);
-
--- v33: lobby presence má level sloupec pro label LVLx(SQUAD)nick a HP bar.
