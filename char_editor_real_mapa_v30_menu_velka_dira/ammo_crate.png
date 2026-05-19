@@ -20,7 +20,7 @@ img.preview{max-width:96px;max-height:96px;image-rendering:auto}
 <div id="app" style="display:none">
 <button onclick="location.href='menu.html'">← MENU</button>
 <button onclick="location.href='char_editor_v2.html'">EDITOR</button>
-<button onclick="location.href='skeleton_editor.html?v=86'">ANIMACE</button>
+<button onclick="location.href='skeleton_editor.html?v=88'">ANIMACE</button>
 <h1>ADMINMENU</h1>
 
 <div class="panel">

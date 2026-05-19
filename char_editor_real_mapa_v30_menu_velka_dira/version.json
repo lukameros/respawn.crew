@@ -1,12 +1,157 @@
-self.addEventListener('install',event=>{self.skipWaiting()});
-self.addEventListener('activate',event=>{
-  event.waitUntil((async()=>{
-    try{
-      const keys=await caches.keys();
-      await Promise.all(keys.map(k=>caches.delete(k)));
-    }catch(e){}
-    try{await self.registration.unregister()}catch(e){}
-    try{await self.clients.claim()}catch(e){}
-  })());
-});
-self.addEventListener('fetch',event=>{});
+{
+  "version": "v88",
+  "files": {
+    "404.html": {
+      "size": 336,
+      "sha256": "c43b6e4d7371fb63c34b37cab67a917220fef705cbaeaf1bbf582fdad62238ab"
+    },
+    "admin.html": {
+      "size": 6046,
+      "sha256": "9827469f2d0a0e1a0e982750e6c26eb24ce79d3b9d21764d28b7dfc9cf9e36ad"
+    },
+    "ammo_crate.png": {
+      "size": 466494,
+      "sha256": "fa6ee7af41aebcc84a323475896758084d93d85a38f8178593d5785d30918c29"
+    },
+    "armored_enemy.png": {
+      "size": 419846,
+      "sha256": "12947e19d196a9ece0cf0e5abb040443fc4ef9cf331f378fa9539b4a79dbc5c4"
+    },
+    "avatars/avatar_1.png": {
+      "size": 15952,
+      "sha256": "6891e0199b80347bf5e9d1e93971c41aeeed42a1d2cd6bf1490bd6387acf5339"
+    },
+    "avatars/avatar_2.png": {
+      "size": 15106,
+      "sha256": "42e8d1ac2ec36c7358a7cd2edbaf4d59edad3422b0db34b8247101f2c93e909b"
+    },
+    "avatars/avatar_3.png": {
+      "size": 16853,
+      "sha256": "74aa1e33a548696f4c762d4ef3e0253a0b6715d6b768a67657422affe355bce7"
+    },
+    "avatars/jesus_lukamer.png": {
+      "size": 14041,
+      "sha256": "2bbc7acebe5e379bd8871fecc9653875efc691e489740b721e89f57ce3442683"
+    },
+    "awp_hold.png": {
+      "size": 319601,
+      "sha256": "4e90b82f4f1f50a215d7651b3d2b40e9cf849fbb59013009dd118989175929d7"
+    },
+    "bench_lavice.png": {
+      "size": 342602,
+      "sha256": "b86c326b218cec21bfa84b519e529a3638872d917fcbd173c0f2c116a075f1e9"
+    },
+    "blood_splat.png": {
+      "size": 458269,
+      "sha256": "2d706aad8c2d5ec529411c2523fdafed189273222f4da76f606b54f3760af3eb"
+    },
+    "blood_splatter_floor.png": {
+      "size": 4505,
+      "sha256": "397c4e46ace3ed77aa5a23a173bc81b8f3ae7d7defeec0ba4a1518d7815e3488"
+    },
+    "bullet_casing.png": {
+      "size": 220,
+      "sha256": "36a6af1fcf2f72a02877e5a4b6fe7c6df01f00dae3f2b7f9f3d74eaf0802116f"
+    },
+    "bullet_hole.png": {
+      "size": 706,
+      "sha256": "7b2614459a851c1e8969c05c70a2f098cc4e47c6dde82ea42abb180aa8abcfcd"
+    },
+    "char_editor_v2.html": {
+      "size": 863643,
+      "sha256": "0fad7137377c394b0a40315b4f1d57e653dfd42817a0daeba8d1fab9e03a81e3"
+    },
+    "char_editor_v2_real.html": {
+      "size": 863643,
+      "sha256": "0fad7137377c394b0a40315b4f1d57e653dfd42817a0daeba8d1fab9e03a81e3"
+    },
+    "char_editor_v2_real.html.js": {
+      "size": 863643,
+      "sha256": "0fad7137377c394b0a40315b4f1d57e653dfd42817a0daeba8d1fab9e03a81e3"
+    },
+    "clear_cache.html": {
+      "size": 941,
+      "sha256": "861dc84f0a8e86fc0feb16ea9050b8fc45a2218af432ff047a12415ab85b5c70"
+    },
+    "ezgif.com-animated-gif-maker.gif": {
+      "size": 43,
+      "sha256": "693d949d8c3fdc7fd4ace7c340b5f177a9f0c5be7bafee8bc93a7d88b7523d75"
+    },
+    "favicon.ico": {
+      "size": 1050,
+      "sha256": "dd36170633d342d7f50daf9a96a2d73a59fe69c0d420f4286f2b244faca89471"
+    },
+    "hudba.mp3": {
+      "size": 2722,
+      "sha256": "720796bba2bed8276bcef7c944f0224f9ad54509fb022cd0870a4ac60117137d"
+    },
+    "index.html": {
+      "size": 832,
+      "sha256": "f49db615c8d68e4f391cfc8c5f22c9d8a17f201872e15226021d663510c8ed1c"
+    },
+    "loading.html": {
+      "size": 2379,
+      "sha256": "1e763e8540c6fb71a79cb65858ba70f72d15c996c872f5bda431b1fa4be8e125"
+    },
+    "lobby.html": {
+      "size": 1074339,
+      "sha256": "c3894ada5558d19c9a2e54a7c703f485d0700ebe3e7f2860f3e04d0c7a189c94"
+    },
+    "lobby_crate.png": {
+      "size": 466494,
+      "sha256": "fa6ee7af41aebcc84a323475896758084d93d85a38f8178593d5785d30918c29"
+    },
+    "lobby_map.png": {
+      "size": 2307252,
+      "sha256": "0d2a4aaed1b75b242c1d3f7d0596cc23326a525eb71bfd2907293a5c5650b633"
+    },
+    "m4_hold.png": {
+      "size": 413100,
+      "sha256": "1fbd55d81d87a118aebe7f8ed7db151a9ffbfe2f5c222c85f0befd8f64c1f525"
+    },
+    "m60_hold.png": {
+      "size": 387088,
+      "sha256": "e1012a686bf02cdd4772167fd8411fcb6a3a6de08909f76b8e7493b3c5dccfe3"
+    },
+    "mapa.png": {
+      "size": 1887337,
+      "sha256": "f2ab59d9eecdfe97ebead67d485ab87a7d0dbe8ab79a1b37fc57202f220bbcdf"
+    },
+    "menu.html": {
+      "size": 14414,
+      "sha256": "8114f917ce24d035c5794d69fc9657f5e371c56e808b7cd13db26049e0e32b77"
+    },
+    "menu_bg.png": {
+      "size": 572899,
+      "sha256": "42cfb5b1f54698074e91eaa13091c0eeccbf817328ae3946a5a3b25ce44e70db"
+    },
+    "mission_map_2.png": {
+      "size": 2061434,
+      "sha256": "39f91876bf590a51bb75d113d07cedacc7bf5b636cb48cfb2574c539e585054b"
+    },
+    "mission_map_3.png": {
+      "size": 2479376,
+      "sha256": "216eb14fea00953057ca9b4a8fc14a6af5523086d816ee6675024216b0da33d5"
+    },
+    "real_mapa.html": {
+      "size": 1073323,
+      "sha256": "03da1598fceb9afe7abba5d6c489f5a80918c1f46aa8a4b1dea156ee860e61cf"
+    },
+    "real_mapa.html.js": {
+      "size": 1073323,
+      "sha256": "03da1598fceb9afe7abba5d6c489f5a80918c1f46aa8a4b1dea156ee860e61cf"
+    },
+    "skeleton_editor.html": {
+      "size": 839073,
+      "sha256": "477578e6506ed25bec4bdc58daf20e45b722cf40b8f61d82aee1587889227e20"
+    },
+    "strelba3.mp3": {
+      "size": 746,
+      "sha256": "05e5ead4e74f89612ec5e581f8243f10ed7ebeef3cd31f6640725e61ec79e08a"
+    },
+    "sw.js": {
+      "size": 367,
+      "sha256": "bded1535c2feeaf828af05b806192bf84276ef4dd318a2ab8d1a134e4a7ec0b6"
+    }
+  }
+}
