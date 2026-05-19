@@ -1,0 +1,64 @@
+<!DOCTYPE html><html lang="cs"><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0;url=./loading.html?v=120"><script>try{location.replace('./loading.html?v=120')}catch(e){location.href='./loading.html?v=120'}</script>
+<style id="v120CursorStyle">
+html,body,canvas,button,a,input,select,textarea,[onclick]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M5 3 L25 15 L16 17 L13 27 L5 3 Z' fill='%23d7d7d7' stroke='%23000' stroke-width='2'/%3E%3Cpath d='M7 6 L21 15 L14 15.8 L12 23 Z' fill='%23a00000' opacity='.85'/%3E%3C/svg%3E") 4 3, crosshair!important}
+button,a,[onclick],select,input[type=range],input[type=file]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='15' cy='15' r='9' fill='%23a00000' stroke='%23000' stroke-width='3'/%3E%3Ccircle cx='15' cy='15' r='3' fill='%23ffd27a'/%3E%3Cpath d='M15 1v7M15 22v7M1 15h7M22 15h7' stroke='%23d7d7d7' stroke-width='2'/%3E%3C/svg%3E") 15 15, pointer!important}
+</style>
+
+</head><body style="background:#050506;color:#ddd;font-family:monospace">Spouštím loading...
+<script id="v120GlobalAudio">
+(function(){
+  if(window.__v120AudioInstalled)return; window.__v120AudioInstalled=true;
+  const IS_MENU=/\/menu\.html(?:$|\?)/i.test(location.pathname)||/menu\.html/i.test(location.href);
+  const IS_LOBBY=/\/lobby\.html(?:$|\?)/i.test(location.pathname)||/lobby\.html/i.test(location.href);
+  const IS_MISSION=/\/real_mapa\.html(?:$|\?)/i.test(location.pathname)||/real_mapa\.html/i.test(location.href);
+  const VOL=()=>{try{return Math.max(0,Math.min(1,Number(localStorage.getItem('MADNESS_MUSIC_VOL')||50)/100))}catch(e){return .5}};
+  const SFX=()=>{try{return Math.max(0,Math.min(1,Number(localStorage.getItem('MADNESS_SFX_VOL')||80)/100))}catch(e){return .8}};
+  function make(src,loop,vol){
+    const a=new Audio(src);
+    a.loop=!!loop; a.preload='auto'; a.volume=vol;
+    a.setAttribute('playsinline','');
+    return a;
+  }
+  window.__v120BtnAudio=window.__v120BtnAudio||make('button.mp3',false,.42);
+  window.__v120ShotPool=window.__v120ShotPool||[make('strelba3.mp3',false,.65),make('strelba3.mp3',false,.65),make('strelba3.mp3',false,.65)];
+  window.__v120ShotIndex=window.__v120ShotIndex||0;
+  window.v120PlayButton=function(){
+    try{
+      const a=window.__v120BtnAudio;
+      a.volume=.35*SFX(); a.currentTime=0; a.play().catch(()=>{});
+    }catch(e){}
+  };
+  window.v120PlayShot=function(vol=1){
+    if(IS_MENU)return;
+    try{
+      const pool=window.__v120ShotPool;
+      const a=pool[window.__v120ShotIndex++%pool.length];
+      a.volume=Math.max(.05,Math.min(1,vol*SFX()));
+      a.currentTime=0; a.play().catch(()=>{});
+      return true;
+    }catch(e){return false}
+  };
+  window.v120StartPageAudio=function(){
+    try{
+      if(!window.__v120Music){
+        if(IS_MENU) window.__v120Music=make('hudba.mp3',true,.50*VOL());
+        else if(IS_LOBBY||IS_MISSION) window.__v120Music=make('rain.mp3',true,.62*VOL());
+      }
+      if(window.__v120Music){
+        window.__v120Music.volume=(IS_MENU?.50:.62)*VOL();
+        window.__v120Music.play().catch(()=>{});
+      }
+    }catch(e){}
+  };
+  function unlock(){ v120StartPageAudio(); v120PlayButton(); }
+  document.addEventListener('pointerdown',unlock,{once:true,capture:true});
+  document.addEventListener('keydown',unlock,{once:true,capture:true});
+  document.addEventListener('click',function(e){
+    const el=e.target&&e.target.closest?e.target.closest('button,a,[onclick],input,select,label'):null;
+    if(el)v120PlayButton();
+  },true);
+  /* v120: no auto audio on load, avoids missing mp3 console spam */
+})();
+</script>
+
+</body></html>
