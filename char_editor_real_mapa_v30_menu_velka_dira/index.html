@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEMENT VERZE 9.3 — FOXY ANIMAČNÍ EDITOR</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#101010;color:#ddd;font-family:'Courier New',monospace;font-size:12px}
+#app{display:flex;flex-direction:column;height:100vh}
+#toolbar{
+  background:#1c1c1c;border-bottom:1px solid #333;padding:5px 8px;
+  display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex-shrink:0;min-height:38px
+}
+.title{color:#ff9966;font-weight:bold;font-size:13px;margin-right:4px;letter-spacing:1px}
+.tbtn{
+  background:#2a2a2a;color:#bbb;border:1px solid #444;padding:3px 8px;cursor:pointer;border-radius:2px;
+  font-family:'Courier New',monospace;font-size:11px;white-space:nowrap
+}
+.tbtn:hover{background:#383838;color:#fff}
+.tbtn.active{background:#e87;color:#fff;border-color:#e87}
+.sep{width:1px;height:20px;background:#333;flex-shrink:0}
+#fps-wrap{display:flex;align-items:center;gap:4px;color:#888;font-size:11px}
+#fps-in{width:42px;background:#222;border:1px solid #444;color:#ddd;padding:2px 4px;font-family:'Courier New';font-size:11px;border-radius:2px;text-align:center}
+#main{display:flex;flex:1;overflow:hidden;min-height:0}
+#canvas-wrap{flex:1;position:relative;overflow:hidden;background:#151515;cursor:crosshair}
+#main-canvas{display:block;position:absolute;top:0;left:0;image-rendering:auto}
+#rightbar{width:260px;flex-shrink:0;background:#191919;border-left:1px solid #333;display:flex;flex-direction:column;overflow:hidden}
+.tabs{display:flex;border-bottom:1px solid #333}
+.tab{flex:1;text-align:center;padding:7px 4px;background:#202020;border:0;color:#777;cursor:pointer;font-family:'Courier New';font-size:10px}
+.tab.active{background:#2a1a0a;color:#ff9966}
+.panel-head{padding:6px 8px;background:#222;border-bottom:1px solid #333;font-size:10px;color:#777;text-transform:uppercase;letter-spacing:1px}
+.scroll{flex:1;overflow:auto;padding:5px}
+.scroll::-webkit-scrollbar{width:5px;height:5px}.scroll::-webkit-scrollbar-thumb{background:#333}
+.pi{padding:4px 6px;border-radius:2px;cursor:pointer;display:flex;align-items:center;gap:5px;margin-bottom:2px;border:1px solid transparent}
+.pi:hover{background:#252525}.pi.sel{background:#2a1a0a;border-color:#e87}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:#888}
+.pname{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+.eye{opacity:.45;cursor:pointer;font-size:10px}
+.asset-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.asset-card{background:#222;border:1px solid #333;border-radius:3px;padding:4px;cursor:pointer;min-height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.asset-card:hover{border-color:#e87;background:#2a241f}
+.asset-card img{max-width:62px;max-height:48px;object-fit:contain;image-rendering:auto}
+.asset-card .aname{font-size:9px;color:#aaa;text-align:center;word-break:break-all;max-height:22px;overflow:hidden}
+.small-note{color:#777;font-size:10px;line-height:1.35;padding:6px}
+#props{border-top:1px solid #333;padding:7px;font-size:11px;max-height:260px;overflow-y:auto}
+.plab{color:#666;display:block;margin-bottom:2px;margin-top:5px;font-size:10px;text-transform:uppercase}
+.pin{width:100%;background:#222;border:1px solid #444;color:#ddd;padding:2px 5px;border-radius:2px;font-family:'Courier New';font-size:11px}
+input[type=range].pin{padding:0;height:16px;background:none;border:none}
+#timeline{height:145px;flex-shrink:0;background:#151515;border-top:1px solid #333;display:flex;flex-direction:column}
+#tl-head{background:#1c1c1c;border-bottom:1px solid #2a2a2a;padding:3px 8px;display:flex;align-items:center;gap:5px;flex-shrink:0}
+#tl-head .tbtn{padding:2px 7px;font-size:10px}
+#tl-info{margin-left:auto;color:#555;font-size:10px}
+#tl-scroll{flex:1;overflow:auto;position:relative}
+#tl-scroll::-webkit-scrollbar{height:5px;width:5px}#tl-scroll::-webkit-scrollbar-thumb{background:#333}
+#tl-canvas{display:block}
+#status{padding:2px 8px;background:#111;border-top:1px solid #222;font-size:10px;color:#666;flex-shrink:0}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:200;align-items:center;justify-content:center}
+.modal.show{display:flex}
+.mbox{background:#1e1e1e;border:1px solid #444;border-radius:4px;padding:16px;min-width:310px;max-width:520px;max-height:90vh;overflow:auto}
+.mbox h3{color:#fff;margin-bottom:10px;font-size:13px}.mbox p{color:#aaa;margin-bottom:10px;font-size:11px;line-height:1.45}
+.mrow{display:flex;gap:6px;align-items:center;margin:6px 0}
+.mrow input,.mrow select{flex:1;background:#222;border:1px solid #444;color:#ddd;padding:5px;font-family:'Courier New';font-size:11px}
+#export-bar-wrap{background:#2a2a2a;height:5px;border-radius:3px;margin-bottom:10px}
+#export-bar{background:#e87;height:5px;border-radius:3px;width:0%;transition:width .1s}
+#export-canvas{max-width:100%;margin-bottom:8px;border:1px solid #333;display:none}
+
+#credit-mark{position:absolute;right:10px;bottom:8px;z-index:5;color:#777;background:rgba(18,18,18,.72);border:1px solid #333;border-radius:3px;padding:3px 7px;font-size:10px;letter-spacing:.3px;pointer-events:none}
+#credit-mark b{color:#ff9966;font-weight:bold}
+ .hidden{display:none!important}
+
+#test-canvas{width:100%;height:360px;background:#141414;border:1px solid #333;display:block;cursor:crosshair}
+.test-help{color:#aaa;font-size:11px;line-height:1.45;margin:8px 0}
+.role-row{display:flex;gap:4px;margin-top:4px}
+.role-row .tbtn{font-size:10px;padding:2px 5px}
+#weapon-panel{border-top:1px solid #333;padding:7px;background:#171717}
+#weapon-panel .tbtn{margin:2px 1px;font-size:10px;padding:2px 6px}
+
+.prop-actions{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px}
+.prop-actions .tbtn{font-size:10px;padding:3px 4px}
+.tool-hint{color:#777;font-size:10px;line-height:1.35;margin-top:6px;border-top:1px solid #2b2b2b;padding-top:6px}
+#layer-preset{margin-top:6px}
+
+
+
+/* === 8.3 modern readable UI override === */
+html,body{font-size:16px;background:radial-gradient(circle at 20% 0%,#172131 0,#0b0f17 45%,#07090d 100%);color:#e8edf7;font-family:Inter,Segoe UI,Arial,sans-serif}
+#toolbar{min-height:58px;padding:10px 14px;background:linear-gradient(135deg,rgba(19,30,46,.96),rgba(8,11,18,.98));border-bottom:1px solid rgba(93,166,255,.28);box-shadow:0 10px 40px rgba(0,0,0,.36);gap:9px}
+.title{font-size:18px;color:#f6f9ff;text-shadow:0 0 18px rgba(78,167,255,.55);letter-spacing:.7px}
+.tbtn{font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;font-weight:750;letter-spacing:.2px;border-radius:10px;padding:8px 12px;background:linear-gradient(180deg,rgba(34,51,76,.96),rgba(16,23,35,.96));border:1px solid rgba(115,173,255,.32);color:#dce9ff;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 8px 22px rgba(0,0,0,.25)}
+.tbtn:hover{background:linear-gradient(180deg,rgba(48,75,111,.98),rgba(20,31,48,.98));border-color:rgba(255,169,92,.72);color:#fff;transform:translateY(-1px)}
+.tbtn.active{background:linear-gradient(180deg,#ff9f43,#c45c1e);border-color:#ffc07a;color:#111827;text-shadow:none}
+.sep{height:30px;background:linear-gradient(180deg,transparent,rgba(93,166,255,.4),transparent)}
+#rightbar{width:340px;background:rgba(9,13,20,.96);border-left:1px solid rgba(93,166,255,.25);box-shadow:-16px 0 40px rgba(0,0,0,.26)}
+.tabs{border-bottom:1px solid rgba(93,166,255,.24)}
+.tab{font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;font-weight:850;padding:13px 8px;background:#0f1622;color:#9db6d8}
+.tab.active{background:linear-gradient(180deg,#1f3a5d,#111b2b);color:#fff;border-bottom:2px solid #ff9f43}
+.panel-head{font-size:13px;font-weight:850;color:#b9d6ff;background:rgba(26,39,59,.92);padding:11px 12px;border-bottom:1px solid rgba(93,166,255,.2)}
+.scroll{padding:10px}.pname,.small-note,.plab,.pin,.mrow input,.mrow select,#status,#tl-info,#fps-wrap,#fps-in{font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px}.small-note{line-height:1.5;color:#aebbd0}.plab{font-size:12px;color:#7fa6d9;font-weight:800}.pin,.mrow input,.mrow select{padding:8px 10px;border-radius:10px;background:#111a28;border:1px solid rgba(102,159,239,.28);color:#edf5ff}.asset-grid{grid-template-columns:repeat(3,1fr);gap:9px}.asset-card{min-height:112px;border-radius:14px;background:linear-gradient(180deg,rgba(24,36,55,.94),rgba(11,16,25,.94));border:1px solid rgba(107,161,236,.24);box-shadow:0 10px 28px rgba(0,0,0,.26)}.asset-card:hover{border-color:#ff9f43;background:linear-gradient(180deg,rgba(37,56,83,.98),rgba(18,27,42,.98))}.asset-card img{max-width:86px;max-height:72px}.asset-card .aname{font-size:12px;color:#dce9ff}.pi{padding:9px 10px;border-radius:10px}.pi:hover{background:#172236}.pi.sel{background:rgba(255,159,67,.16);border-color:#ff9f43}.dot{width:11px;height:11px}.eye{font-size:14px}#props{padding:12px;max-height:360px;background:#0c121c;border-top:1px solid rgba(93,166,255,.2)}.prop-actions{gap:7px}.prop-actions .tbtn,#weapon-panel .tbtn,#tl-head .tbtn{font-size:13px;padding:7px 9px}.tool-hint{font-size:13px;color:#9fb2cc;line-height:1.45}#weapon-panel{padding:11px;background:#0c121c;border-top:1px solid rgba(93,166,255,.2)}#timeline{height:188px;background:#0b1018;border-top:1px solid rgba(93,166,255,.23)}#tl-head{padding:9px 12px;background:#101826;gap:8px}#status{padding:7px 12px;background:#070b11;color:#8296b3}.mbox{background:linear-gradient(145deg,#111827,#080c13);border:1px solid rgba(112,169,255,.34);border-radius:18px;box-shadow:0 30px 100px rgba(0,0,0,.66);padding:22px}.mbox h3{font-size:22px}.mbox p{font-size:15px;line-height:1.55;color:#c4d1e5}#credit-mark{font-family:Inter,Segoe UI,Arial,sans-serif;font-size:13px;border-radius:10px;background:rgba(7,11,17,.72);border:1px solid rgba(93,166,255,.28);color:#b5c8e8;padding:8px 12px}#credit-mark b{color:#ffb86b}
+/* TEST 2D full-screen */
+#modal-test2d{background:rgba(2,5,10,.92);backdrop-filter:blur(8px)}
+#modal-test2d .mbox{width:96vw!important;max-width:none!important;height:92vh!important;max-height:none!important;display:flex;flex-direction:column;padding:18px;gap:12px;background:linear-gradient(145deg,rgba(15,23,36,.98),rgba(5,8,13,.98));border:1px solid rgba(108,171,255,.42)}
+#modal-test2d h3{font-size:28px;margin:0;color:#f5f9ff;text-shadow:0 0 24px rgba(87,166,255,.45)}
+.test-help{font-family:Inter,Segoe UI,Arial,sans-serif;color:#cfe2ff;font-size:17px;line-height:1.45;margin:0;background:rgba(16,28,44,.72);border:1px solid rgba(108,171,255,.22);border-radius:14px;padding:12px 14px}
+.test-topline{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.test-badge{font-size:15px;font-weight:850;color:#111827;background:linear-gradient(180deg,#ffb35f,#ff8d35);border-radius:999px;padding:8px 12px}
+.test-controls{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:0}.test-controls label{font-size:15px;color:#bcd2ef;font-weight:750;display:flex;gap:8px;align-items:center}.test-controls input[type=range]{width:150px}.test-hud{display:flex;gap:10px;flex-wrap:wrap}.test-chip{background:rgba(12,19,30,.86);border:1px solid rgba(112,169,255,.28);border-radius:12px;padding:8px 11px;color:#dce9ff;font-size:14px;font-weight:750}
+#test-canvas{flex:1;width:100%;height:100%;min-height:0;border-radius:18px;background:#070b12;border:1px solid rgba(117,181,255,.38);box-shadow:inset 0 0 70px rgba(0,0,0,.55),0 20px 80px rgba(0,0,0,.35)}
+#test-buttons{display:flex;gap:10px;align-items:center;justify-content:flex-end}.test-big-btn{font-size:16px!important;padding:11px 16px!important;border-radius:12px!important}
+
+/* === 8.4 české UI + kurzory + velikost ikon === */
+:root{--asset-card-h:112px;--asset-img:86px}
+.asset-card{min-height:var(--asset-card-h)!important}
+.asset-card img{max-width:var(--asset-img)!important;max-height:calc(var(--asset-img) * .84)!important}
+#canvas-wrap{cursor:grab}
+body.dragging #canvas-wrap{cursor:grabbing!important}
+body.tool-rotate #canvas-wrap{cursor:alias}
+body.tool-scale #canvas-wrap{cursor:nwse-resize}
+body.tool-select #canvas-wrap{cursor:grab}
+#icon-size-row{align-items:center;gap:10px;background:rgba(13,20,32,.75);border:1px solid rgba(116,181,255,.25);border-radius:12px;padding:9px 10px;margin:8px 0}
+#icon-size{accent-color:#ff9f43;cursor:ew-resize}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}
+.quick-grid .tbtn{font-size:13px;padding:7px 8px}
+#music-state{font-size:12px;color:#aac3e8;margin-left:6px}
+
+
+
+/* === 8.5 přesnější tmavé bojové UI, stylové modal okna, bílé/černé náhledy assetů === */
+:root{--line:#314866;--line2:#617fa8;--hot:#ff8a2a;--cyan:#77baff;--deep:#05080d;--panel:#0b111a;--panel2:#111a27;--asset-preview-bg:#05070b}
+*{scrollbar-width:thin;scrollbar-color:#4d6b91 #080d14}
+::-webkit-scrollbar{width:10px!important;height:10px!important}::-webkit-scrollbar-track{background:#070b11;border-left:1px solid rgba(119,186,255,.08)}::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#4f6f99,#1b2b40);border:2px solid #070b11;border-radius:999px}::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#7aa7dc,#2d486b)}
+body{background:linear-gradient(135deg,#04070b 0%,#0a1220 38%,#030509 100%);font-size:17px;cursor:default}
+#toolbar{background:linear-gradient(180deg,rgba(15,24,38,.98),rgba(5,8,13,.98));border-bottom:1px solid rgba(119,186,255,.34);box-shadow:0 0 0 1px rgba(255,255,255,.03) inset,0 18px 60px rgba(0,0,0,.48);min-height:70px}
+.title{font-size:20px;color:#f8fbff;text-transform:uppercase;text-shadow:0 0 10px rgba(119,186,255,.6),0 0 28px rgba(255,138,42,.23)}
+.tbtn,.tab,.pin,.mrow input,.mrow select{transition:background .12s,border-color .12s,transform .08s,box-shadow .12s}
+.tbtn{font-size:15px;border-radius:6px;border:1px solid rgba(119,186,255,.34);background:linear-gradient(180deg,#1d2d42 0%,#0b121c 55%,#07101a 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -1px 0 rgba(0,0,0,.8),0 0 0 1px rgba(0,0,0,.2);text-transform:uppercase;color:#e8f3ff}
+.tbtn:hover{border-color:#ff9d49;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 0 22px rgba(119,186,255,.14),0 0 18px rgba(255,138,42,.14);transform:translateY(-1px)}
+.tbtn.active{background:linear-gradient(180deg,#ffb15f,#ff7a1e 55%,#8e3e0b);border-color:#ffd09a;color:#08111c;box-shadow:0 0 22px rgba(255,138,42,.32),inset 0 1px 0 rgba(255,255,255,.35)}
+#rightbar{width:380px;background:linear-gradient(180deg,rgba(11,17,26,.98),rgba(4,7,12,.98));border-left:1px solid rgba(119,186,255,.28)}
+.panel-head{background:linear-gradient(90deg,rgba(22,35,53,.98),rgba(10,17,27,.98));border-top:1px solid rgba(255,255,255,.04);border-bottom:1px solid rgba(119,186,255,.18);font-size:14px;color:#d9ecff;text-shadow:0 0 12px rgba(119,186,255,.25)}
+.asset-card{user-select:none;-webkit-user-drag:element}.asset-card{position:relative;background:linear-gradient(180deg,rgba(18,28,43,.96),rgba(5,8,13,.96))!important;border:1px solid rgba(119,186,255,.25)!important;border-radius:10px!important;overflow:hidden}
+.asset-card::before{content:"";position:absolute;inset:8px 8px 28px 8px;border-radius:7px;background:var(--asset-preview-bg);background-image:linear-gradient(45deg,rgba(255,255,255,.07) 25%,transparent 25%,transparent 75%,rgba(255,255,255,.07) 75%),linear-gradient(45deg,rgba(255,255,255,.07) 25%,transparent 25%,transparent 75%,rgba(255,255,255,.07) 75%);background-position:0 0,8px 8px;background-size:16px 16px;border:1px solid rgba(255,255,255,.08)}
+.asset-card img,.asset-card .aname{position:relative;z-index:1}.asset-card .aname{font-weight:800;text-transform:uppercase;color:#dcecff}
+body.asset-bg-white{--asset-preview-bg:#f2f5f8}body.asset-bg-black{--asset-preview-bg:#05070b}
+.mbox{background:linear-gradient(145deg,#101a29,#05080e 65%,#030509);border:1px solid rgba(119,186,255,.42);border-radius:12px;box-shadow:0 0 0 1px rgba(255,255,255,.04) inset,0 0 80px rgba(0,0,0,.82),0 0 40px rgba(119,186,255,.12)}
+.mbox h3{font-size:24px;color:#f7fbff;text-transform:uppercase;border-bottom:1px solid rgba(119,186,255,.18);padding-bottom:10px}.mbox p,.mbox li{font-size:16px;color:#d0ddef}
+#status{font-size:14px;background:linear-gradient(90deg,#070b12,#0d1623);border-top:1px solid rgba(119,186,255,.18);color:#c7dcf6;min-height:30px;display:flex;align-items:center}
+#volume-wrap,#frame-tools{display:flex;align-items:center;gap:7px;background:rgba(5,9,15,.55);border:1px solid rgba(119,186,255,.18);border-radius:8px;padding:6px 8px;color:#c9def9;font-size:13px;font-weight:800}#music-volume{width:105px;accent-color:#ff8a2a}.mini-select{width:auto;min-width:74px;padding:6px 8px!important}
+#madness-panel{border-top:1px solid rgba(119,186,255,.22);padding:12px;background:linear-gradient(180deg,#0b121c,#060a10)}#madness-panel .panel-head{margin:-12px -12px 10px -12px}.mad-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.mad-grid .tbtn{font-size:13px;padding:8px}.mad-row{display:flex;gap:7px;align-items:center;margin-top:8px}.mad-row .pin{flex:1}.danger-note{font-size:13px;line-height:1.45;color:#9bb2ce;margin-top:9px}
+#canvas-wrap{background:radial-gradient(circle at 50% 38%,#152235 0,#080d15 52%,#030508 100%)}
+#tl-head{background:linear-gradient(180deg,#101a29,#080d15);border-bottom:1px solid rgba(119,186,255,.18)}#timeline{height:210px;border-top:1px solid rgba(119,186,255,.28)}
+
+
+/* === 8.7 rychlý tutorial overlay === */
+#quick-tutorial{position:fixed;inset:0;z-index:9999;display:none;pointer-events:none}
+#quick-tutorial.show{display:block}
+#qt-dim{position:absolute;inset:0;background:rgba(0,0,0,.52);backdrop-filter:blur(2px)}
+#qt-box{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);width:min(760px,calc(100vw - 32px));background:linear-gradient(145deg,#101826,#05080d);border:1px solid rgba(119,186,255,.45);box-shadow:0 25px 90px rgba(0,0,0,.75),0 0 36px rgba(75,145,255,.18);border-radius:18px;padding:18px 20px;pointer-events:auto;color:#eaf3ff}
+#qt-box h3{margin:0 0 8px 0;font-size:24px;letter-spacing:.5px;text-transform:uppercase;color:#fff}
+#qt-text{font-size:18px;line-height:1.45;color:#d8e7ff;margin:0 0 12px 0}
+#qt-count{font-size:13px;color:#8fb7e8;font-weight:900;letter-spacing:1px;text-transform:uppercase}
+#qt-progress-wrap{height:7px;background:#07101b;border:1px solid rgba(119,186,255,.25);border-radius:999px;overflow:hidden;margin:12px 0}
+#qt-progress{height:100%;width:0;background:linear-gradient(90deg,#77baff,#ff8a2a);box-shadow:0 0 18px rgba(255,138,42,.55)}
+#qt-actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+#qt-actions .tbtn{font-size:14px;padding:9px 13px}
+.qt-highlight{position:relative!important;z-index:10000!important;outline:3px solid #ff8a2a!important;box-shadow:0 0 0 6px rgba(255,138,42,.20),0 0 38px rgba(255,138,42,.55)!important;border-radius:10px!important}
+#quick-tutorial.qt-top #qt-box{top:34px;bottom:auto}
+#quick-tutorial.qt-left #qt-box{left:26px;right:auto;transform:none}
+#quick-tutorial.qt-right #qt-box{right:26px;left:auto;transform:none}
+
+
+
+/* === 8.8 menší základní zoom + tažné hrany panelů + oprava tutorialu === */
+:root{--ui-zoom:.8}
+#app{width:calc(100vw / var(--ui-zoom));height:calc(100vh / var(--ui-zoom));transform:scale(var(--ui-zoom));transform-origin:0 0}
+#right-resizer{width:10px;flex:0 0 10px;cursor:col-resize;background:linear-gradient(90deg,rgba(119,186,255,.06),rgba(119,186,255,.22),rgba(119,186,255,.06));border-left:1px solid rgba(119,186,255,.15);border-right:1px solid rgba(0,0,0,.35);position:relative}
+#right-resizer::after{content:"";position:absolute;top:50%;left:3px;width:4px;height:58px;transform:translateY(-50%);border-left:1px solid rgba(220,238,255,.55);border-right:1px solid rgba(220,238,255,.28)}
+#timeline-resizer{height:10px;flex:0 0 10px;cursor:row-resize;background:linear-gradient(180deg,rgba(119,186,255,.05),rgba(119,186,255,.22),rgba(119,186,255,.05));border-top:1px solid rgba(119,186,255,.16);border-bottom:1px solid rgba(0,0,0,.45);position:relative}
+#timeline-resizer::after{content:"";position:absolute;left:50%;top:3px;width:80px;height:4px;transform:translateX(-50%);border-top:1px solid rgba(220,238,255,.55);border-bottom:1px solid rgba(220,238,255,.28)}
+body.resizing-panel,body.resizing-panel *{user-select:none!important}
+body.resizing-x{cursor:col-resize!important}body.resizing-y{cursor:row-resize!important}
+#rightbar{min-width:240px;max-width:760px}
+#timeline{min-height:100px;max-height:520px}
+#quick-tutorial{z-index:999999!important}
+#qt-dim{z-index:1}
+#qt-box{z-index:4;max-height:min(42vh,420px);overflow:auto}
+#qt-actions{position:sticky;bottom:0;background:linear-gradient(180deg,rgba(5,8,13,0),#05080d 35%);padding-top:10px}
+.qt-highlight{z-index:3!important;outline-offset:2px!important}
+#main-canvas.qt-highlight{z-index:2!important}
+#quick-tutorial.qt-top #qt-box{top:auto!important;bottom:34px!important}
+#quick-tutorial.qt-left #qt-box,#quick-tutorial.qt-right #qt-box{top:50%!important;bottom:auto!important;transform:translateY(-50%)!important}
+#quick-tutorial.qt-left #qt-box{left:22px!important;right:auto!important}
+#quick-tutorial.qt-right #qt-box{right:22px!important;left:auto!important}
+
+
+/* === 8.9 oprava klikání na assety po 80% zoomu === */
+#main-canvas{pointer-events:auto!important}
+#canvas-wrap{pointer-events:auto!important}
+#right-resizer,#timeline-resizer{pointer-events:auto!important;z-index:20}
+#right-resizer{align-self:stretch}
+#quick-tutorial:not(.show){display:none!important;pointer-events:none!important}
+#quick-tutorial.show{pointer-events:none!important}
+#quick-tutorial.show #qt-box{pointer-events:auto!important}
+#qt-highlight{pointer-events:none!important}
+body.resizing-panel #main-canvas{pointer-events:none!important}
+
+
+/* === 9.1 fixy: minimalizace, skupiny, stejny zoom, robustni overlay === */
+body.tools-min #rightbar{display:none!important}
+body.tools-min #timeline{height:0!important;min-height:0!important;border:0!important;overflow:hidden!important}
+body.tools-min #status{display:none!important}
+body.tools-min #main{flex:1 1 auto!important}
+.group-outline{outline:1px solid rgba(255,179,95,.55)}
+#quick-tutorial.show{pointer-events:none!important}
+#quick-tutorial.show #qt-box{pointer-events:auto!important;max-height:calc(100vh - 70px);overflow:auto}
+#test-canvas{image-rendering:auto;touch-action:none}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="toolbar">
+    <span class="title">⚡ DEMENT VERZE 9.3 — FOXY ANIMAČNÍ EDITOR</span>
+    <div class="sep"></div>
+    <button class="tbtn active" id="btn-select">✦ VÝBĚR</button>
+    <button class="tbtn" id="btn-rotate">↻ ROTACE</button>
+    <button class="tbtn" id="btn-scale">⇲ VELIKOST</button>
+    <div class="sep"></div>
+    <button class="tbtn" id="btn-load">📁 NAHRÁT PNG</button>
+    <button class="tbtn" id="btn-loadgif">🎞 NAHRÁT GIF</button>
+    <button class="tbtn" id="btn-delpart">✕ SMAZAT</button>
+    <button class="tbtn" id="btn-clear-scene">VYČISTIT SCÉNU</button>
+    <button class="tbtn" id="btn-select-all">OZNAČIT VŠE</button>
+    <button class="tbtn" id="btn-group-parts">SLOŽIT</button>
+    <button class="tbtn" id="btn-ungroup-parts">ROZLOŽIT</button>
+    <button class="tbtn" id="btn-dup-part" title="Duplikovat vybraný asset/part">KOPIE</button>
+    <button class="tbtn" id="btn-auto-layers" title="Automaticky nastaví překrývání: boty &lt; body &lt; hlava">AUTO VRSTVY</button>
+    <button class="tbtn" id="btn-bg" title="Přepne pozadí editoru: mřížka / zelená / průhledná / bílá / černá">POZADÍ</button>
+    <button class="tbtn" id="btn-asset-bg" title="Přepne náhled assetů: černý / bílý podklad">NÁHLED: ČERNÝ</button>
+    <div class="sep"></div>
+    <button class="tbtn" id="btn-kf">◆ SNÍMEK</button>
+    <button class="tbtn" id="btn-play">▶ PŘEHRÁT</button>
+    <button class="tbtn" id="btn-stop">■ STOP</button>
+    <button class="tbtn" id="btn-repair-play" title="Resetuje zaseknuté přehrávání časové osy">OPRAVIT PLAY</button>
+    <button class="tbtn" id="btn-export">⬇ EXPORT GIF</button>
+    <button class="tbtn" id="btn-exportpng" title="Exportuje všechny snímky časové osy jako PNG sprite sheet">⬇ EXPORT PNG SNÍMKY</button>
+    <div class="sep"></div>
+    <button class="tbtn" id="btn-saveproj">💾 ULOŽIT</button>
+    <button class="tbtn" id="btn-loadproj">📂 NAČÍST</button>
+    <button class="tbtn" id="btn-news">🛈 NOVINKY</button>
+    <button class="tbtn" id="btn-tutorial" title="Rychlý návod a popis funkcí">? NÁVOD</button>
+    <button class="tbtn" id="btn-min-tools" title="Schová nástroje a časovou osu, aby bylo víc místa">MINIMALIZOVAT</button>
+    <button class="tbtn" id="btn-music" title="Zapne/vypne smyčku hudba.mp3 ze složky assets/audio">♪ HUDBA</button>
+    <div id="volume-wrap">HLASITOST <input id="music-volume" type="range" min="0" max="100" value="40"><span id="music-volume-val">40%</span></div>
+    <div class="sep"></div>
+    <button class="tbtn" id="btn-onion" title="Zobrazí předchozí a další snímek jako průhledný duch">DUCH SNÍMKŮ</button>
+    <button class="tbtn" id="btn-pingpong" title="Přehrávání dopředu a zpět">TAM/ZPĚT</button>
+    <button class="tbtn" id="btn-tween" title="Vloží mezisnímky mezi aktuální a další snímek">+MEZISNÍMKY</button>
+    <select class="pin mini-select" id="tween-count" title="Počet mezisnímků"><option value="1">1×</option><option value="2" selected>2×</option><option value="3">3×</option><option value="4">4×</option><option value="6">6×</option></select>
+    <button class="tbtn" id="btn-copypose" title="Zkopíruje pozice všech partů">KOPIE PÓZY</button>
+    <button class="tbtn" id="btn-pastepose" title="Vloží zkopírovanou pózu">VLOŽIT PÓZU</button>
+    <button class="tbtn" id="btn-test2d" title="Otevře prázdnou 2D testovací scénu WASD">TEST 2D</button>
+    <div id="frame-tools"><button class="tbtn" id="btn-prevframe" title="Předchozí snímek">◀</button><button class="tbtn" id="btn-nextframe" title="Další snímek">▶</button><button class="tbtn" id="btn-holdframe" title="Zduplikuje aktuální snímek pro pauzu v animaci">DRŽET</button><button class="tbtn" id="btn-prop-part" title="Propíše vybraný part do všech snímků">PART DO VŠECH</button></div>
+    <div class="sep"></div>
+    <div id="fps-wrap">FPS <input type="number" id="fps-in" value="12" min="-240" max="240" step="1"></div>
+  </div>
+
+  <div id="main">
+    <div id="canvas-wrap"><canvas id="main-canvas"></canvas><div id="credit-mark"><b>Projected by Lukamer</b> → všechna práva vyhrazena</div></div>
+    <div id="right-resizer" title="Táhni pro změnu šířky panelu"></div>
+    <div id="rightbar">
+      <div class="tabs">
+        <button class="tab active" data-tab="parts">ČÁSTI</button>
+        <button class="tab" data-tab="assets">ASSETY</button>
+      </div>
+      <div id="tab-parts" class="scroll">
+        <div class="panel-head">Vrstvy / části</div>
+        <div id="parts-list"></div>
+      </div>
+      <div id="tab-assets" class="scroll hidden">
+        <div class="panel-head">Asset knihovna</div>
+        <div class="small-note">
+          V balíčku jsou přidané Foxy/Madness sprity. Klikni na asset = vloží se do scény. Další PNG/WebP nahraješ přes NAHRÁT PNG, nebo doplníš soubory do složek:
+          <br>assets/sprites, assets/weapons, assets/body, assets/heads, assets/hands, assets/feet, assets/effects, assets/mapy...<br><b>Tip:</b> klik na asset z kategorie <b>mapy</b> ho nastaví jako mapu pro TEST 2D.
+        </div>
+        <div class="mrow" style="margin:4px 0 8px 0">
+          <select id="asset-filter">
+            <option value="all">všechny assety</option>
+            <option value="heads">hlavy</option>
+            <option value="body">body</option>
+            <option value="hands">ruce</option>
+            <option value="feet">boty/nohy</option>
+            <option value="shields">štíty</option>
+            <option value="silhouettes">siluety</option>
+            <option value="effects">efekty</option>
+            <option value="weapons">zbraně</option>
+            <option value="sprites">sprites</option>
+            <option value="sprites2">sprites2/nové</option>
+            <option value="mapy">mapy</option>
+          </select>
+        </div>
+        <input class="pin" id="asset-search" placeholder="hledat asset: hlava, body, ruka, mapa..." style="margin-bottom:8px">
+        <div class="mrow" id="icon-size-row"><span style="white-space:nowrap;color:#b9d6ff;font-weight:800">Velikost ikon</span><input id="icon-size" type="range" min="70" max="180" value="112"><span id="icon-size-val">112</span></div>
+        <div class="quick-grid">
+          <button class="tbtn" id="btn-sort-assets" type="button">SEŘADIT</button>
+          <button class="tbtn" id="btn-random-asset" type="button">NÁHODNÝ ASSET</button>
+        </div>
+        <div id="asset-grid" class="asset-grid"></div>
+      </div>
+      <div id="props">
+        <div id="prop-empty" style="color:#555;font-size:11px">Vyber part...</div>
+        <div id="prop-form" style="display:none">
+          <span class="plab">Název</span><input class="pin" type="text" id="p-name">
+          <span class="plab">X</span><input class="pin" type="number" id="p-x" step="1">
+          <span class="plab">Y</span><input class="pin" type="number" id="p-y" step="1">
+          <span class="plab">Rotace °</span><input class="pin" type="number" id="p-rot" step="0.1">
+          <span class="plab">Scale</span><input class="pin" type="range" id="p-scale" min="0.05" max="6" step="0.05">
+          <span class="plab">Z-vrstva</span><input class="pin" type="number" id="p-z" step="1">
+          <span class="plab">Flip X</span>
+          <label style="display:flex;gap:5px;color:#888;font-size:11px"><input type="checkbox" id="p-flipx"> zrcadlit</label>
+          <span class="plab">Role pro animace</span>
+          <select class="pin" id="p-role">
+            <option value="">auto / žádná</option>
+            <option value="head">hlava</option>
+            <option value="body">tělo</option>
+            <option value="handL">levá ruka</option>
+            <option value="handR">pravá ruka</option>
+            <option value="footL">levá bota/noha</option>
+            <option value="footR">pravá bota/noha</option>
+            <option value="weapon">zbraň</option>
+            <option value="muzzle">efekt výstřelu</option>
+            <option value="shield">štít</option>
+          </select>
+          <div class="role-row">
+            <button class="tbtn" type="button" id="role-handL">LEVÁ RUKA</button>
+            <button class="tbtn" type="button" id="role-handR">PRAVÁ RUKA</button>
+            <button class="tbtn" type="button" id="role-weapon">ZBRAŇ</button>
+          </div>
+          <span class="plab">Průhlednost</span><input class="pin" type="range" id="p-opacity" min="0" max="1" step="0.02">
+          <span class="plab">Zámek</span>
+          <label style="display:flex;gap:5px;color:#888;font-size:11px"><input type="checkbox" id="p-locked"> zamknout proti posunu</label>
+          <select class="pin" id="layer-preset">
+            <option value="madness">Madness pořadí: boty &lt; body &lt; ruce &lt; hlava &lt; zbraň</option>
+            <option value="bodyHead">Jen: body nad boty, hlava nad body</option>
+            <option value="manual">Ruční vrstvy</option>
+          </select>
+          <div class="prop-actions">
+            <button class="tbtn" type="button" id="z-back">Z -1</button>
+            <button class="tbtn" type="button" id="z-front">Z +1</button>
+            <button class="tbtn" type="button" id="z-bottom">ÚPLNĚ DOLŮ</button>
+            <button class="tbtn" type="button" id="z-top">ÚPLNĚ NAHORU</button>
+            <button class="tbtn" type="button" id="part-dup">DUPLIKOVAT</button>
+            <button class="tbtn" type="button" id="part-reset">RESET</button>
+            <button class="tbtn" type="button" id="part-center">STŘED</button>
+            <button class="tbtn" type="button" id="part-flip">ZRCADLIT X</button>
+            <button class="tbtn" type="button" id="part-hide">SKRÝT/ZOBRAZIT</button>
+            <button class="tbtn" type="button" id="part-rot-left">OTOČ -15°</button>
+            <button class="tbtn" type="button" id="part-rot-right">OTOČ +15°</button>
+            <button class="tbtn" type="button" id="part-scale-down">ZMENŠIT</button>
+            <button class="tbtn" type="button" id="part-scale-up">ZVĚTŠIT</button>
+            <button class="tbtn" type="button" id="part-snap">PŘICHYTIT K MŘÍŽCE</button>
+            <button class="tbtn" type="button" id="scene-center">VYCENTROVAT CELEK</button>
+          </div>
+          <div class="tool-hint">Ovládání: táhni myší = posun, R = rotace, S = velikost. Kolečko = velikost, Shift+kolečko = rotace. Šipky = jemný posun, Ctrl+D = duplikace, [ ] = vrstvy. Ikony v assetech zvětšíš/zmenšíš tažením posuvníku.</div>
+        </div>
+      </div>
+      <div id="madness-panel">
+        <div class="panel-head">Přesné animační nástroje</div>
+        <div class="mad-grid">
+          <button class="tbtn" id="mk-neutral" type="button">OZNAČ KLID</button>
+          <button class="tbtn" id="mk-extreme" type="button">OZNAČ EXTRÉM</button>
+          <button class="tbtn" id="mk-impact" type="button">OZNAČ DOPAD</button>
+          <button class="tbtn" id="mk-recoil" type="button">OZNAČ ZPĚTNÝ RÁZ</button>
+          <button class="tbtn" id="btn-freeze-part" type="button">ZMRAZIT PART</button>
+          <button class="tbtn" id="btn-unfreeze-all" type="button">ODEMKNOUT VŠE</button>
+          <button class="tbtn" id="btn-align-x" type="button">SROVNAT X</button>
+          <button class="tbtn" id="btn-align-y" type="button">SROVNAT Y</button>
+          <button class="tbtn" id="btn-copy-z" type="button">Z-VRSTVY DO VŠECH</button>
+          <button class="tbtn" id="btn-clean-hidden" type="button">SMAZAT SKRYTÉ</button>
+        </div>
+        <div class="mad-row"><span style="color:#bcd6f6;font-weight:800">Krok</span><select class="pin mini-select" id="nudge-step"><option value="1">1 px</option><option value="2">2 px</option><option value="5" selected>5 px</option><option value="10">10 px</option></select><button class="tbtn" id="btn-nudge-left" type="button">←</button><button class="tbtn" id="btn-nudge-right" type="button">→</button><button class="tbtn" id="btn-nudge-up" type="button">↑</button><button class="tbtn" id="btn-nudge-down" type="button">↓</button></div>
+        <div class="danger-note">Bez automatických animací. Tohle je ruční sada pro přesné pózování: značky snímků, držení snímku, propis partu do všech framů, zarovnání, mikroposun, zámky a kontrola vrstev.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="timeline">
+    <div id="timeline-resizer" title="Táhni pro změnu výšky časové osy"></div>
+    <div id="tl-head">
+      <span style="color:#666;font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-right:4px">Časová osa</span>
+      <button class="tbtn" id="btn-insert-before">+PŘED</button>
+      <button class="tbtn" id="btn-addframe">+ZA</button>
+      <button class="tbtn" id="btn-delframe">SMAZAT SNÍMEK</button>
+      <button class="tbtn" id="btn-dupframe">KOPIE</button>
+      <button class="tbtn" id="btn-clearall">VYČISTIT OSU</button>
+      <button class="tbtn" id="btn-reverse" title="Obrátí pořadí framů">OTOČIT POŘADÍ</button>
+      <button class="tbtn" id="btn-mirrorpose" title="Zrcadlí všechny party v póze">ZRCADLIT PÓZU</button>
+      <span id="tl-info">Snímek 0/0</span>
+    </div>
+    <div id="tl-scroll"><canvas id="tl-canvas"></canvas></div>
+  </div>
+  <div id="status">Připraveno. V=výběr R=rotace S=velikost K=uložit snímek Mezerník=přehrát ←→=snímky Del=smazat.</div>
+</div>
+
+<div class="modal" id="modal-news">
+  <div class="mbox">
+    <h3>DEMENT VERZE 8.7 — FOXY ANIMAČNÍ EDITOR</h3>
+    <p><b>Speciálně pro foxyho od Lukamera :-)</b></p>
+    <p>• Přidané sprity z balíčku: hlavy, body, ruce, nohy/doplňky a hotové části postav.</p>
+    <p>• Přidaný TUTORIAL s rychlým popisem všech funkcí přímo v editoru.</p>
+    <p>• Přidané hledání assetů, střed, zrcadlení, skrýt/zobrazit, otočení časové osy a zrcadlení pózy.</p>
+    <p>• TEST 2D je přes stránku, má větší texty, HUD, zoom postavy, rychlost, přepínání pozadí, mapy, nahrání vlastní JPG/PNG mapy a kolize se zdí.</p>
+    <p>• Vrstvení drží Madness pořadí: boty/nohy dole, body překrývá boty, ruce nad body, hlava překrývá body, zbraň/efekty nahoře.</p>
+    <p>• Nově: hlasitost hudby s výchozí hodnotou 40 %, bílé/černé náhledy assetů, modernější panely, stylové modaly, značky KLID/EXTRÉM/DOPAD/RÁZ, držení snímku a přesné mikroposuny.</p>
+    <p>• Automatické generátory chůze/útoku/střelby jsou odstraněné. Nově je editor dělaný na ruční skládání přesných póz, snímků, mezisnímků a značek.</p>
+    <button class="tbtn" id="news-close">Zavřít</button>
+  </div>
+</div>
+
+
+<div class="modal" id="modal-tutorial">
+  <div class="mbox" style="max-width:880px;width:880px;max-height:86vh;overflow:auto">
+    <h3>TUTORIAL — jednoduše pro animování postaviček</h3>
+    <p><b>Speciálně pro foxyho od Lukamera :-)</b></p>
+    <p><b>Rychlý postup:</b> 1) vpravo otevři ASSETY, 2) klikni na hlavu/body/ruku, 3) nastav roli partu, 4) dej AUTO VRSTVY, 5) nastav pózu, 6) dej SNÍMEK, 7) posuň snímek a změň pózu, 8) PŘEHRÁT nebo EXPORT GIF.</p>
+    <ol style="line-height:1.55;margin-left:18px;color:#ccc">
+      <li><b>ASSETY</b> — knihovna spritů z balíčku; klik vloží asset do scény.</li>
+      <li><b>Velikost ikon</b> — tažením posuvníku zvětšíš nebo zmenšíš náhledy assetů.</li>
+      <li><b>Hledání assetů</b> — filtruje podle názvu: head, body, hand, boty/nohy, mapa.</li>
+      <li><b>NAHRÁT PNG</b> — nahraje vlastní obrázky jako další party.</li>
+      <li><b>NAHRÁT GIF</b> — rozseká GIF do framů a vloží ho jako animovaný part.</li>
+      <li><b>VÝBĚR / ROTACE / VELIKOST</b> — režim pro posun, rotaci a zvětšování.</li>
+      <li><b>Kolečko myši</b> — zvětšení/zmenšení vybraného partu.</li>
+      <li><b>Shift + kolečko</b> — rychlá rotace vybraného partu.</li>
+      <li><b>Šipky</b> — jemný posun; Shift + šipky = větší posun.</li>
+      <li><b>Z-vrstva</b> — určuje, co je vpředu a co vzadu.</li>
+      <li><b>AUTO VRSTVY</b> — nastaví pořadí: boty → body → ruce → hlava → zbraň/efekty.</li>
+      <li><b>Role partu</b> — hlava/body/ruka/bota/zbraň; důležité pro auto animace.</li>
+      <li><b>Zámek</b> — zamkne part, aby se omylem neposunul.</li>
+      <li><b>Průhlednost</b> — průhlednost partu.</li>
+      <li><b>Zrcadlení X</b> — zrcadlení ruky, hlavy nebo těla.</li>
+      <li><b>Střed</b> — hodí vybraný part doprostřed plátna.</li>
+      <li><b>Skrýt/Zobrazit</b> — skryje nebo znovu ukáže part.</li>
+      <li><b>SNÍMEK</b> — uloží aktuální pózu do timeline.</li>
+      <li><b>+SNÍMEK / DUP</b> — přidá nebo duplikuje snímek.</li>
+      <li><b>Mezisnímky</b> — vloží mezisnímky mezi dvě pózy.</li>
+      <li><b>DUCH SNÍMKŮ</b> — ukáže okolní snímky průhledně jako vodítko.</li>
+      <li><b>TAM/ZPĚT</b> — animace jede dopředu a pak zpět.</li>
+      <li><b>Kopie/Vložit pózu</b> — kopíruje celou pózu všech partů.</li>
+      <li><b>Značky snímků</b> — KLID, EXTRÉM, DOPAD a RÁZ pro přesnější ruční animaci.</li>
+      <li><b>DRŽET</b> — duplikuje aktuální snímek, když má póza chvíli zůstat stát.</li>
+      <li><b>PART DO VŠECH</b> — propíše vybraný part do všech snímků, hodí se pro hlavu/body nebo zbraň.</li>
+      <li><b>Mikroposun</b> — šipky v panelu posunou vybraný part přesně o 1/2/5/10 px.</li>
+      <li><b>TEST 2D</b> — test přes stránku složené postavy; obsahuje zoom, rychlost, HUD, mapu, nahrání vlastní JPG/PNG mapy, automatické rozlišení podle mapy a kolize se zdí.</li>
+      <li><b>ZRCADLIT PÓZU</b> — zrcadlí celou aktuální pózu.</li>
+      <li><b>OTOČIT POŘADÍ</b> — obrátí pořadí framů v timeline.</li>
+      <li><b>ULOŽIT / NAČÍST</b> — ukládá projekt v prohlížeči.</li>
+      <li><b>EXPORT GIF</b> — vyrenderuje timeline do GIFu.</li>
+      <li><b>EXPORT PNG</b> — uloží aktuální pózu jako průhledný PNG.</li>
+      <li><b>HUDBA</b> — spustí/vypne loop soubor <code>assets/audio/hudba.mp3</code>. Hlasitost má vlastní posuvník a v základu je na 40 %.</li>
+      <li><b>PŘICHYTIT K MŘÍŽCE</b> — zarovná vybraný part na mřížku po 10 px.</li>
+      <li><b>VYCENTROVAT CELEK</b> — přesune složenou postavu doprostřed plátna.</li>
+    </ol>
+    <p><b>Klávesy:</b> V výběr, R rotace, S velikost, K uložit snímek, H držet snímek, mezerník přehrát, O duch snímků, P tam/zpět, T mezisnímky, X test, Ctrl+D duplikace, [ ] vrstvy, Delete smaže part, Q/E rotace, +/- velikost.</p>
+    <button class="tbtn" id="tutorial-run-fast">Znovu spustit rychlý tutorial</button>
+    <button class="tbtn" id="tutorial-close">Zavřít</button>
+  </div>
+</div>
+
+
+<div id="quick-tutorial" aria-live="polite">
+  <div id="qt-dim"></div>
+  <div id="qt-box">
+    <div id="qt-count">Krok 1/10</div>
+    <h3 id="qt-title">Rychlý tutorial</h3>
+    <p id="qt-text">Začínáme.</p>
+    <div id="qt-progress-wrap"><div id="qt-progress"></div></div>
+    <div id="qt-actions">
+      <button class="tbtn" id="qt-prev" type="button">Zpět</button>
+      <button class="tbtn" id="qt-next" type="button">Další</button>
+      <button class="tbtn" id="qt-skip" type="button">Přeskočit</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modal-save">
+  <div class="mbox">
+    <h3>Uložit projekt</h3>
+    <p>Zadej název. Uloží se části, pozice, rotace, velikost, vrstvy, snímky časové osy a vložené obrázky do paměti prohlížeče.</p>
+    <div class="mrow"><input id="save-name" placeholder="např. chuze_01"></div>
+    <button class="tbtn" id="save-do">ULOŽIT</button>
+    <button class="tbtn" id="save-close">Zrušit</button>
+  </div>
+</div>
+
+<div class="modal" id="modal-loadsave">
+  <div class="mbox">
+    <h3>Načíst uložený projekt</h3>
+    <p>Vyber uložený projekt z paměti prohlížeče.</p>
+    <div class="mrow"><select id="load-select"></select></div>
+    <button class="tbtn" id="load-do">NAČÍST</button>
+    <button class="tbtn" id="load-delete">SMAZAT ULOŽENÍ</button>
+    <button class="tbtn" id="load-close">Zrušit</button>
+  </div>
+</div>
+
+
+<div class="modal" id="modal-test2d">
+  <div class="mbox">
+    <div class="test-topline">
+      <h3>TEST 2D — SCÉNA PŘES STRÁNKU</h3>
+      <span class="test-badge">větší náhled • lepší ovládání • rychlý test postavy</span>
+    </div>
+    <div class="test-help">
+      WASD / šipky = pohyb, mezera = skok, levý klik = úder. Můžeš kliknout na mapu v assetech, nebo nahrát vlastní JPG/PNG/WebP mapu. TEST 2D automaticky nastaví rozlišení podle mapy a umí kolize se zdí podle tmavých linek ve zdi.
+    </div>
+    <div class="test-controls">
+      <label>ZVĚTŠENÍ POSTAVY <input id="test-scale" type="range" min="0.35" max="3.2" step="0.05" value="1.2"></label>
+      <label>RYCHLOST <input id="test-speed" type="range" min="0.5" max="2.2" step="0.1" value="1"></label>
+      <button class="tbtn test-big-btn" id="test-bg">POZADÍ: MŘÍŽKA</button>
+      <button class="tbtn test-big-btn" id="test-map-cycle">MAPA: ARMORY</button>
+      <button class="tbtn test-big-btn" id="test-collision">KOLIZE: ZAP</button>
+      <button class="tbtn test-big-btn" id="test-map-upload">NAHRÁT MAPU</button>
+      <input id="test-map-file" type="file" accept="image/png,image/jpeg,image/webp" style="display:none">
+      <button class="tbtn test-big-btn" id="test-reset">RESET POSTAVY</button>
+      <div class="test-hud">
+        <span class="test-chip" id="test-hud-action">AKCE: klid</span>
+        <span class="test-chip" id="test-hud-pos">X:0 Y:0</span>
+        <span class="test-chip" id="test-hud-parts">ČÁSTI: 0</span>
+        <span class="test-chip" id="test-hud-map">MAPA: armory</span>
+      </div>
+    </div>
+    <canvas id="test-canvas" width="1600" height="760"></canvas>
+    <div id="test-buttons">
+      <button class="tbtn test-big-btn" id="test-start">SPUSTIT TEST</button>
+      <button class="tbtn test-big-btn" id="test-stop">STOP</button>
+      <button class="tbtn test-big-btn" id="test-close">Zavřít</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modal-export">
+  <div class="mbox">
+    <h3>Export GIF</h3>
+    <p id="exp-msg">Renderuju snímky...</p>
+    <div id="export-bar-wrap"><div id="export-bar"></div></div>
+    <canvas id="export-canvas"></canvas>
+    <button class="tbtn" id="exp-close">Zavřít</button>
+  </div>
+</div>
+
+<audio id="bgm" src="assets/audio/hudba.mp3" loop preload="auto"></audio>
+<script>
+const MC=document.getElementById('main-canvas'), CTX=MC.getContext('2d');
+const TLC=document.getElementById('tl-canvas'), TLX=TLC.getContext('2d');
+const wrap=document.getElementById('canvas-wrap');
+let W=0,H=0,parts=[],frames=[],curF=0,sel=null,tool='select',playing=false,playTm=null,idCtr=0,onion=false,pingpong=false,copiedPose=null,canvasBg='grid',allSelected=false;
+let frameLabels={};
+const PROJECT_PREFIX='dement8_project_';
+
+function safeStorageGet(k){
+  try{return localStorage.getItem(k);}catch(e){return window.nameStore?window.nameStore[k]||null:null;}
+}
+function safeStorageSet(k,v){
+  try{localStorage.setItem(k,v);return true;}catch(e){window.nameStore=window.nameStore||{};window.nameStore[k]=v;return false;}
+}
+function safeStorageRemove(k){
+  try{localStorage.removeItem(k);}catch(e){if(window.nameStore)delete window.nameStore[k];}
+}
+function safeStorageKeys(){
+  try{return Object.keys(localStorage);}catch(e){return window.nameStore?Object.keys(window.nameStore):[];}
+}
+
+
+function resize(){W=wrap.offsetWidth;H=wrap.offsetHeight;MC.width=W;MC.height=H;draw();}
+window.addEventListener('resize',()=>{resize();drawTL();});
+
+function setStatus(t){document.getElementById('status').textContent=t;}
+function sortedParts(){return [...parts].sort((a,b)=>(a.z-b.z)||(a.id-b.id));}
+let playRAF=null,lastPlayStamp=0,playAccumulator=0,playDir=1;
+function clearPlaybackTimers(){
+  if(playTm){clearInterval(playTm);playTm=null;}
+  if(playRAF){cancelAnimationFrame(playRAF);playRAF=null;}
+}
+function stopPlayback(redraw=true){
+  playing=false;clearPlaybackTimers();lastPlayStamp=0;playAccumulator=0;
+  document.getElementById('btn-play')?.classList.remove('active');
+  if(redraw)draw();
+}
+function clampFps(){
+  const el=document.getElementById('fps-in');
+  let fps=parseInt(el?.value||'12',10);
+  if(!Number.isFinite(fps)||fps===0)fps=12;
+  fps=Math.max(-240,Math.min(240,fps));
+  if(el)el.value=fps;
+  return fps;
+}
+function frameDelayFromFps(){const fps=Math.abs(clampFps());return 1000/Math.max(1,fps);}
+function ensurePlayableTimeline(){
+  if(!parts.length){setStatus('Není co přehrát. Nejdřív vlož aspoň jeden asset.');return false;}
+  if(!frames.length){saveKeyframe();}
+  if(frames.length===1){frames.push(JSON.parse(JSON.stringify(frames[0])));drawTL();}
+  curF=Math.max(0,Math.min(curF,frames.length-1));
+  return frames.length>=2;
+}
+function playbackStep(){
+  let next=curF+playDir;
+  if(pingpong){
+    if(next>=frames.length){playDir=-1;next=Math.max(0,frames.length-2);}
+    if(next<0){playDir=1;next=Math.min(frames.length-1,1);}
+  }else{
+    next=(next+frames.length)%frames.length;
+  }
+  goTo(next);draw();
+}
+function startPlayback(){
+  stopPlayback(false);
+  if(!ensurePlayableTimeline())return;
+  const fps=clampFps();
+  playDir=fps<0?-1:1;
+  playing=true;
+  document.getElementById('btn-play')?.classList.add('active');
+  lastPlayStamp=performance.now();playAccumulator=0;
+  const loop=(now)=>{
+    if(!playing)return;
+    try{
+      if(!frames.length||!parts.length){stopPlayback(false);setStatus('Přehrávání zastavené: chybí snímky nebo assety.');return;}
+      const delay=frameDelayFromFps();
+      const delta=Math.min(250,Math.max(0,now-lastPlayStamp||0));
+      lastPlayStamp=now;playAccumulator+=delta;
+      let safety=0;
+      while(playAccumulator>=delay && safety<8){playAccumulator-=delay;playbackStep();safety++;}
+    }catch(err){
+      console.error('Chyba přehrávání:',err);
+      stopPlayback(false);
+      repairPlayback();
+      setStatus('Přehrávání se samo opravilo po chybě. Zkus znovu ▶ PŘEHRÁT.');
+      return;
+    }
+    playRAF=requestAnimationFrame(loop);
+  };
+  playRAF=requestAnimationFrame(loop);
+  setStatus('Přehrávání časové osy spuštěné. FPS: '+fps+'.');
+}
+function repairPlayback(){
+  stopPlayback(false);
+  clampFps();
+  testKeys={};
+  if(curF<0||curF>=frames.length)curF=0;
+  if(frames.length)applyFrame(curF);
+  draw();drawTL();
+  setStatus('Přehrávání resetované. Teď zkus znovu ▶ PŘEHRÁT.');
+}
+
+let gifRefreshActive=false;
+function startGifRefresh(){
+  if(gifRefreshActive)return;gifRefreshActive=true;
+  function tick(){
+    if(parts.some(p=>p.kind==='gif'&&p.visible!==false)){if(!playing&&!drag&&!testRunning)draw();requestAnimationFrame(tick);}else gifRefreshActive=false;
+  }
+  requestAnimationFrame(tick);
+}
+
+
+function draw(targetCtx,tw,th){
+  const ctx=targetCtx||CTX,w=tw||W,h=th||H;
+  ctx.clearRect(0,0,w,h);
+  if(canvasBg==='green'){ctx.fillStyle='#00ff00';ctx.fillRect(0,0,w,h);}
+  else if(canvasBg==='white'){ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);}
+  else if(canvasBg==='black'){ctx.fillStyle='#000000';ctx.fillRect(0,0,w,h);}
+  else if(canvasBg==='transparent'){ctx.clearRect(0,0,w,h);}
+  else{ctx.fillStyle='#151515';ctx.fillRect(0,0,w,h);ctx.strokeStyle='#1f1f1f';ctx.lineWidth=1;for(let x=0;x<w;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}for(let y=0;y<h;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}}
+
+  if(onion && !targetCtx && frames.length>1){
+    const saved=parts.map(p=>({id:p.id,x:p.x,y:p.y,rot:p.rot,scale:p.scale,flipX:p.flipX,z:p.z,visible:p.visible}));
+    const prev=Math.max(0,curF-1), next=Math.min(frames.length-1,curF+1);
+    ctx.save();ctx.globalAlpha=.22;
+    if(prev!==curF){applyFrame(prev);drawPartsOnly(ctx,false);}
+    ctx.globalAlpha=.16;
+    if(next!==curF){applyFrame(next);drawPartsOnly(ctx,false);}
+    ctx.restore();
+    for(const s of saved){const p=parts.find(x=>x.id===s.id);if(p)Object.assign(p,s);}
+  }
+
+  drawPartsOnly(ctx,!targetCtx);
+}
+
+function drawPartsOnly(ctx,allowSelection){
+  for(const p of sortedParts()){
+    if(!p.visible)continue;
+    const img=getPartImage(p);
+    ctx.save();
+    ctx.translate(p.x,p.y);ctx.rotate(p.rot);
+    ctx.globalAlpha=(p.opacity===undefined?1:p.opacity);
+    ctx.scale((p.flipX?-1:1)*p.scale,p.scale);
+    const hw=p.w/2,hh=p.h/2;
+    if(img)ctx.drawImage(img,-hw,-hh,p.w,p.h);
+    else{ctx.fillStyle='#aaa';ctx.fillRect(-hw,-hh,p.w,p.h);}
+    if(allowSelection&&(allSelected||(sel&&p.id===sel.id))){
+      ctx.strokeStyle=allSelected?'#77baff':'#e87';ctx.lineWidth=2/Math.max(.1,p.scale);
+      ctx.strokeRect(-hw,-hh,p.w,p.h);
+      ctx.fillStyle=allSelected?'#77baff':'#e87';ctx.beginPath();ctx.arc(0,0,4/Math.max(.1,p.scale),0,Math.PI*2);ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+
+function getPartImage(p){
+  if(p.kind==='gif'&&p.frames&&p.frames.length){
+    const fps=Math.abs(clampFps());
+    const idx=playing?Math.floor(Date.now()/Math.max(1,1000/fps))%p.frames.length:(curF%p.frames.length);
+    return p.frames[idx].img;
+  }
+  return p.img||null;
+}
+
+
+function guessRoleFromName(name,category=''){
+  const n=(name+' '+category).toLowerCase();
+  if(/head|hlava|mask|face/.test(n))return 'head';
+  if(/body|telo|torso|coat|trup/.test(n))return 'body';
+  if(/foot|boty|nohy|bota|shoe|noha/.test(n))return 'footL';
+  if(/hand|ruka|pest|fist|palm/.test(n))return 'handR';
+  if(/weapon|gun|pistol|rifle|knife|katana|zbran|mec|meč/.test(n))return 'weapon';
+  if(/muzzle|flash|effect|efekt/.test(n))return 'muzzle';
+  return '';
+}
+function defaultZForRole(role){
+  const map={footL:5,footR:5,body:20,handL:30,handR:31,head:45,weapon:55,muzzle:70,shield:18};
+  return map[role]??parts.length;
+}
+function applyAutoLayers(mode='madness'){
+  for(const p of parts){
+    if(!p.role)p.role=guessRoleFromName(p.name,p.category||'');
+    if(mode==='bodyHead'){if(p.role==='footL'||p.role==='footR')p.z=5;if(p.role==='body')p.z=20;if(p.role==='head')p.z=45;}
+    else if(mode!=='manual')p.z=defaultZForRole(p.role);
+  }
+  renderList();updateProps();draw();drawTL();setStatus('Vrstvy nastavené: boty < body < ruce < hlava < zbraň/efekty.');
+}
+function duplicatePart(){
+  if(!sel)return;
+  const p=sel;
+  const copy=Object.assign({},p,{id:++idCtr,name:p.name+'_copy',x:p.x+18,y:p.y+18,z:p.z+1,img:p.img,frames:p.frames||null});
+  parts.push(copy);selectPart(copy);drawTL();setStatus('Part duplikovaný.');
+}
+function resetPart(){if(!sel)return;sel.rot=0;sel.scale=1;sel.opacity=1;sel.flipX=false;updateProps();draw();setStatus('Transform resetovaný.');}
+function centerPart(){if(!sel)return;sel.x=W/2;sel.y=H/2;updateProps();draw();setStatus('Part vycentrovaný.');}
+function flipPart(){if(!sel)return;sel.flipX=!sel.flipX;updateProps();draw();setStatus('Part zrcadlený přes X.');}
+function hidePart(){if(!sel)return;sel.visible=sel.visible===false?true:false;renderList();draw();setStatus(sel.visible===false?'Část skrytá.':'Část zobrazená.');}
+function rotatePartStep(rad){if(!sel||sel.locked)return;sel.rot+=rad;updateProps();draw();setStatus('Rotace upravená.');}
+function scalePartStep(delta){if(!sel||sel.locked)return;sel.scale=Math.max(.03,Math.min(10,sel.scale+delta));updateProps();draw();setStatus('Velikost upravená.');}
+function snapSelectedToGrid(size=10){if(!sel||sel.locked)return;sel.x=Math.round(sel.x/size)*size;sel.y=Math.round(sel.y/size)*size;updateProps();draw();setStatus('Část přichycená k mřížce '+size+' px.');}
+function centerWholeCharacter(){if(!parts.length)return;let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;for(const p of parts){if(!p.visible)continue;const hw=p.w*p.scale/2,hh=p.h*p.scale/2;minX=Math.min(minX,p.x-hw);maxX=Math.max(maxX,p.x+hw);minY=Math.min(minY,p.y-hh);maxY=Math.max(maxY,p.y+hh);}const dx=W/2-(minX+maxX)/2,dy=H/2-(minY+maxY)/2;for(const p of parts){if(!p.locked){p.x+=dx;p.y+=dy;}}updateProps();draw();setStatus('Celá postava vycentrovaná.');}
+function moveLayer(delta){if(!sel)return;sel.z+=delta;updateProps();renderList();draw();}
+function sendLayer(top){if(!sel)return;const zs=parts.map(p=>p.z);sel.z=top?Math.max(0,...zs)+1:Math.min(0,...zs)-1;updateProps();renderList();draw();}
+
+function addImagePart(name,img,kind='image',extra={}){
+  const maxH=110, ratio=img.width/img.height;
+  const h=Math.min(img.height,maxH), w=h*ratio;
+  const guessedRole=extra.role||guessRoleFromName(name,extra.category||'');
+  const p=Object.assign({id:++idCtr,name,x:W/2,y:H/2,rot:0,scale:1,w,h,img,kind,visible:true,z:defaultZForRole(guessedRole),flipX:false,srcData:null,role:guessedRole,category:extra.category||'',opacity:1,locked:false},extra);
+  parts.push(p);selectPart(p);renderList();draw();drawTL();return p;
+}
+
+function addGifPart(name,frameImgs){
+  if(!frameImgs.length)return;
+  const first=frameImgs[0];
+  const maxH=120, ratio=first.width/first.height;
+  const h=Math.min(first.height,maxH), w=h*ratio;
+  const guessedRole=guessRoleFromName(name,'');
+  const p={id:++idCtr,name,x:W/2,y:H/2,rot:0,scale:1,w,h,img:first,kind:'gif',frames:frameImgs.map(img=>({img})),visible:true,z:defaultZForRole(guessedRole),flipX:false,srcData:null,role:guessedRole,opacity:1,locked:false};
+  parts.push(p);selectPart(p);renderList();draw();drawTL();return p;
+}
+
+function selectPart(p){sel=p;renderList();updateProps();draw();}
+function delPart(){if(!sel)return;parts=parts.filter(p=>p.id!==sel.id);sel=null;renderList();updateProps();draw();drawTL();setStatus('Part smazán.');}
+document.getElementById('btn-delpart').onclick=delPart;
+
+function hitTest(mx,my){
+  for(const p of [...sortedParts()].reverse()){
+    if(!p.visible)continue;
+    const dx=mx-p.x,dy=my-p.y,c=Math.cos(-p.rot),s=Math.sin(-p.rot);
+    const lx=c*dx-s*dy,ly=s*dx+c*dy,hw=p.w/2*p.scale,hh=p.h/2*p.scale;
+    if(lx>=-hw&&lx<=hw&&ly>=-hh&&ly<=hh)return p;
+  }
+  return null;
+}
+
+let drag=null;
+function getMouse(e){const r=MC.getBoundingClientRect(),t=e.touches?e.touches[0]:e;const sx=MC.width/Math.max(1,r.width);const sy=MC.height/Math.max(1,r.height);return{x:(t.clientX-r.left)*sx,y:(t.clientY-r.top)*sy};}
+function getCanvasPointFromClient(clientX,clientY){const r=MC.getBoundingClientRect();const sx=MC.width/Math.max(1,r.width);const sy=MC.height/Math.max(1,r.height);return{x:(clientX-r.left)*sx,y:(clientY-r.top)*sy};}
+async function addPackAssetAt(asset,x,y){if(!asset)return;if((asset.category||'')==='mapy'){await setTestMapByAsset(asset);setStatus('Mapa nastavená pro TEST 2D: '+(asset.name||asset.path));return;}const im=await loadImageURL(asset.path);const part=addImagePart(asset.name||asset.path.split('/').pop().replace(/\.[^.]+$/,''),im,'image',{srcData:null,category:asset.category||''});part.x=x;part.y=y;selectPart(part);draw();drawTL();setStatus('Asset vložen na plátno: '+(asset.name||asset.path));}
+function startDrag(e){if(playing)stopPlayback();const m=getMouse(e),hit=hitTest(m.x,m.y);if(hit){selectPart(hit);if(!hit.locked){drag={p:hit,sx:m.x,sy:m.y,ox:hit.x,oy:hit.y,orot:hit.rot,os:hit.scale};document.body.classList.add('dragging');}else setStatus('Část je zamčená. Odemkni ji v panelu.');}else{sel=null;renderList();updateProps();draw();}}
+function doDrag(e){if(!drag||drag.p.locked)return;const m=getMouse(e),dx=m.x-drag.sx,dy=m.y-drag.sy;if(tool==='rotate')drag.p.rot=drag.orot+dx*.013;else if(tool==='scale')drag.p.scale=Math.max(.05,drag.os+(dx+dy)*.006);else{drag.p.x=drag.ox+dx;drag.p.y=drag.oy+dy;}draw();updateProps();}
+MC.addEventListener('mousedown',startDrag);
+MC.addEventListener('touchstart',e=>{e.preventDefault();startDrag(e)},{passive:false});
+window.addEventListener('mousemove',doDrag);
+window.addEventListener('touchmove',e=>{if(drag){e.preventDefault();doDrag(e)}},{passive:false});
+window.addEventListener('mouseup',()=>{drag=null;document.body.classList.remove('dragging');});
+window.addEventListener('touchend',()=>{drag=null;document.body.classList.remove('dragging');});
+MC.addEventListener('wheel',e=>{if(!sel||sel.locked)return;e.preventDefault();if(e.shiftKey){sel.rot+=(-e.deltaY)*0.002;}else{sel.scale=Math.max(0.03,Math.min(10,sel.scale+(-e.deltaY)*0.0015));}updateProps();draw();},{passive:false});
+MC.addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='copy';});
+MC.addEventListener('drop',async e=>{e.preventDefault();let raw=e.dataTransfer.getData('application/x-foxy-asset')||e.dataTransfer.getData('text/plain');if(!raw)return;let asset=null;try{asset=JSON.parse(raw);}catch(err){asset=PACK_ASSETS.find(a=>a.path===raw||a.name===raw)||null;}if(!asset)return;const m=getCanvasPointFromClient(e.clientX,e.clientY);await addPackAssetAt(asset,m.x,m.y);});
+
+function renderList(){
+  const el=document.getElementById('parts-list');el.innerHTML='';
+  for(const p of [...parts].reverse()){
+    const d=document.createElement('div');d.className='pi'+(sel&&p.id===sel.id?' sel':'');
+    d.innerHTML='<span class="dot"></span><span class="pname"></span><span class="eye"></span>';
+    d.querySelector('.pname').textContent=(p.locked?'🔒 ':'')+p.name+(p.role?' ['+p.role+']':'')+' z:'+p.z;
+    d.querySelector('.pname').onclick=()=>selectPart(p);
+    const eye=d.querySelector('.eye');eye.textContent=p.visible?'👁':'○';
+    eye.onclick=ev=>{ev.stopPropagation();p.visible=!p.visible;renderList();draw();};
+    el.appendChild(d);
+  }
+}
+
+function updateProps(){
+  const form=document.getElementById('prop-form'),empty=document.getElementById('prop-empty');
+  if(!sel){form.style.display='none';empty.style.display='block';return;}
+  form.style.display='block';empty.style.display='none';
+  document.getElementById('p-name').value=sel.name;
+  document.getElementById('p-x').value=Math.round(sel.x);
+  document.getElementById('p-y').value=Math.round(sel.y);
+  document.getElementById('p-rot').value=+(sel.rot*180/Math.PI).toFixed(1);
+  document.getElementById('p-scale').value=sel.scale;
+  document.getElementById('p-z').value=sel.z;
+  document.getElementById('p-flipx').checked=!!sel.flipX;
+  document.getElementById('p-role').value=sel.role||'';
+  document.getElementById('p-opacity').value=(sel.opacity===undefined?1:sel.opacity);
+  document.getElementById('p-locked').checked=!!sel.locked;
+}
+document.getElementById('p-name').oninput=e=>{if(sel){sel.name=e.target.value;renderList();}};
+document.getElementById('p-x').oninput=e=>{if(sel){sel.x=+e.target.value;draw();}};
+document.getElementById('p-y').oninput=e=>{if(sel){sel.y=+e.target.value;draw();}};
+document.getElementById('p-rot').oninput=e=>{if(sel){sel.rot=+e.target.value*Math.PI/180;draw();}};
+document.getElementById('p-scale').oninput=e=>{if(sel){sel.scale=+e.target.value;draw();}};
+document.getElementById('p-z').oninput=e=>{if(sel){sel.z=+e.target.value;draw();renderList();}};
+document.getElementById('p-flipx').onchange=e=>{if(sel){sel.flipX=e.target.checked;draw();}};
+document.getElementById('p-role').onchange=e=>{if(sel){sel.role=e.target.value;if(document.getElementById('layer-preset').value!=='manual')sel.z=defaultZForRole(sel.role);updateProps();renderList();draw();}};
+document.getElementById('p-opacity').oninput=e=>{if(sel){sel.opacity=+e.target.value;draw();}};
+document.getElementById('p-locked').onchange=e=>{if(sel){sel.locked=e.target.checked;renderList();draw();}};
+document.getElementById('layer-preset').onchange=e=>applyAutoLayers(e.target.value);
+document.getElementById('z-back').onclick=()=>moveLayer(-1);
+document.getElementById('z-front').onclick=()=>moveLayer(1);
+document.getElementById('z-bottom').onclick=()=>sendLayer(false);
+document.getElementById('z-top').onclick=()=>sendLayer(true);
+document.getElementById('part-dup').onclick=duplicatePart;
+document.getElementById('part-reset').onclick=resetPart;
+document.getElementById('part-center').onclick=centerPart;
+document.getElementById('part-flip').onclick=flipPart;
+document.getElementById('part-hide').onclick=hidePart;
+document.getElementById('part-rot-left').onclick=()=>rotatePartStep(-Math.PI/12);
+document.getElementById('part-rot-right').onclick=()=>rotatePartStep(Math.PI/12);
+document.getElementById('part-scale-down').onclick=()=>scalePartStep(-0.1);
+document.getElementById('part-scale-up').onclick=()=>scalePartStep(0.1);
+document.getElementById('part-snap').onclick=()=>snapSelectedToGrid(10);
+document.getElementById('scene-center').onclick=centerWholeCharacter;
+document.getElementById('role-handL').onclick=()=>{if(sel){sel.role='handL';sel.z=defaultZForRole(sel.role);updateProps();renderList();draw();}};
+document.getElementById('role-handR').onclick=()=>{if(sel){sel.role='handR';sel.z=defaultZForRole(sel.role);updateProps();renderList();draw();}};
+document.getElementById('role-weapon').onclick=()=>{if(sel){sel.role='weapon';sel.z=defaultZForRole(sel.role);updateProps();renderList();draw();}};
+document.getElementById('btn-dup-part').onclick=duplicatePart;
+document.getElementById('btn-auto-layers').onclick=()=>applyAutoLayers('madness');
+document.getElementById('btn-bg').onclick=()=>{const order=['grid','green','white','black','transparent'];canvasBg=order[(order.indexOf(canvasBg)+1)%order.length];draw();setStatus('Pozadí plátna: '+({grid:'mřížka',green:'zelené',white:'bílé',black:'černé',transparent:'průhledné'}[canvasBg]||canvasBg));};
+document.body.classList.add('asset-bg-black');
+document.getElementById('btn-asset-bg').onclick=()=>{const white=document.body.classList.toggle('asset-bg-white');document.body.classList.toggle('asset-bg-black',!white);document.getElementById('btn-asset-bg').textContent=white?'NÁHLED: BÍLÝ':'NÁHLED: ČERNÝ';setStatus('Podklad náhledů assetů: '+(white?'bílý':'černý'));};
+
+function setTool(t){tool=t;['select','rotate','scale'].forEach(x=>document.getElementById('btn-'+x).classList.toggle('active',x===t));document.body.classList.remove('tool-select','tool-rotate','tool-scale');document.body.classList.add('tool-'+t);}
+document.getElementById('btn-select').onclick=()=>setTool('select');
+document.getElementById('btn-rotate').onclick=()=>setTool('rotate');
+document.getElementById('btn-scale').onclick=()=>setTool('scale');
+
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  document.getElementById('tab-parts').classList.toggle('hidden',b.dataset.tab!=='parts');
+  document.getElementById('tab-assets').classList.toggle('hidden',b.dataset.tab!=='assets');
+});
+
+function saveKeyframe(){
+  const kf={};
+  for(const p of parts)kf[p.id]={x:p.x,y:p.y,rot:p.rot,scale:p.scale,flipX:p.flipX||false,z:p.z,visible:p.visible,role:p.role||'',opacity:p.opacity===undefined?1:p.opacity,locked:!!p.locked};
+  if(curF>=frames.length){frames.push(kf);curF=frames.length-1;}else frames[curF]=kf;
+  drawTL();setStatus('◆ Snímek uložen: '+curF);
+}
+function applyFrame(f){const kf=frames[f];if(!kf)return;for(const p of parts){if(kf[p.id])Object.assign(p,kf[p.id]);}}
+function goTo(f){if(!frames.length)return;curF=Math.max(0,Math.min(frames.length-1,f));applyFrame(curF);draw();drawTL();updateProps();}
+document.getElementById('btn-kf').onclick=saveKeyframe;
+document.getElementById('btn-addframe').onclick=()=>{saveKeyframe();frames.splice(curF+1,0,JSON.parse(JSON.stringify(frames[curF])));curF++;drawTL();};
+document.getElementById('btn-delframe').onclick=()=>{if(frames.length<=1){frames=[];curF=0;}else{frames.splice(curF,1);curF=Math.min(curF,frames.length-1);applyFrame(curF);}draw();drawTL();};
+document.getElementById('btn-dupframe').onclick=()=>{if(!frames.length)saveKeyframe();frames.splice(curF+1,0,JSON.parse(JSON.stringify(frames[curF])));curF++;drawTL();};
+document.getElementById('btn-clearall').onclick=()=>{frames=[];curF=0;drawTL();setStatus('Časová osa vyčištěná.');};
+
+const TL_ROW=18,TL_LABEL=100,TL_FW=22;
+function drawTL(){
+  const rows=parts.length,cols=Math.max(frames.length,1);
+  TLC.width=Math.max(TL_LABEL+cols*TL_FW+60,document.getElementById('tl-scroll').offsetWidth);
+  TLC.height=rows*TL_ROW+22;
+  TLX.fillStyle='#151515';TLX.fillRect(0,0,TLC.width,TLC.height);
+  TLX.fillStyle='#1e1e1e';TLX.fillRect(0,0,TLC.width,22);
+  TLX.font='9px monospace';TLX.textAlign='center';
+  for(let f=0;f<cols;f++){const fx=TL_LABEL+f*TL_FW;TLX.strokeStyle='#2a2a2a';TLX.beginPath();TLX.moveTo(fx,0);TLX.lineTo(fx,TLC.height);TLX.stroke();TLX.fillStyle=f===curF?'#ff9f43':'#6f88a8';TLX.fillText(f,fx+TL_FW/2,15);if(frameLabels[f]){TLX.fillStyle='#77baff';TLX.fillText(String(frameLabels[f]).slice(0,3),fx+TL_FW/2,21);}}
+  for(let r=0;r<rows;r++){
+    const p=parts[r],ry=22+r*TL_ROW;TLX.fillStyle=r%2?'#171717':'#1b1b1b';TLX.fillRect(0,ry,TLC.width,TL_ROW);
+    TLX.fillStyle=sel&&sel.id===p.id?'#e87':'#777';TLX.textAlign='left';TLX.fillText(p.name.slice(0,14),8,ry+13);
+    for(let f=0;f<frames.length;f++)if(frames[f]&&frames[f][p.id]){const kx=TL_LABEL+f*TL_FW+TL_FW/2,ky=ry+TL_ROW/2;TLX.fillStyle='#e87';TLX.beginPath();TLX.moveTo(kx,ky-4);TLX.lineTo(kx+4,ky);TLX.lineTo(kx,ky+4);TLX.lineTo(kx-4,ky);TLX.closePath();TLX.fill();}
+  }
+  document.getElementById('tl-info').textContent=`Snímek ${curF}/${Math.max(frames.length-1,0)} (${frames.length} snímků)`;
+}
+TLC.addEventListener('mousedown',e=>{const r=TLC.getBoundingClientRect(),tx=e.clientX-r.left;if(tx>TL_LABEL){const f=Math.floor((tx-TL_LABEL)/TL_FW);if(f>=0&&f<frames.length)goTo(f);}});
+
+function fileToDataURL(file){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=rej;fr.readAsDataURL(file);});}
+function loadImageURL(url){return new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=url;});}
+
+document.getElementById('btn-load').onclick=()=>{const inp=document.createElement('input');inp.type='file';inp.accept='image/png,image/jpeg,image/webp';inp.multiple=true;inp.onchange=async e=>{for(const file of e.target.files){const data=await fileToDataURL(file);const im=await loadImageURL(data);addImagePart(file.name.replace(/\.[^.]+$/,''),im,'image',{srcData:data});}setStatus('PNG/JPG/WebP načteno.');};inp.click();};
+
+document.getElementById('btn-loadgif').onclick=()=>{const inp=document.createElement('input');inp.type='file';inp.accept='image/gif';inp.onchange=async e=>{
+  const file=e.target.files[0];if(!file)return;
+  const dataURL=await fileToDataURL(file);
+  const im=await loadImageURL(dataURL);
+  const p=addImagePart(file.name.replace(/\.[^.]+$/,''),im,'gif',{srcData:dataURL});
+  p.frames=[{img:im}];
+  startGifRefresh();
+  setStatus('GIF načtený. Editor ho průběžně překresluje, takže se má animace hýbat i v náhledu.');
+};inp.click();};
+
+document.getElementById('btn-play').onclick=()=>{if(playing){stopPlayback();setStatus('Přehrávání zastavené.');return;}startPlayback();};
+document.getElementById('btn-stop').onclick=()=>{stopPlayback();setStatus('Přehrávání zastavené.');};
+document.getElementById('btn-repair-play').onclick=repairPlayback;
+document.getElementById('fps-in').addEventListener('change',()=>{const fps=clampFps();if(playing){startPlayback();}else setStatus('FPS nastaveno: '+fps+'.');});
+
+async function serializeProject(){
+  const outParts=[];
+  for(const p of parts){
+    let src=p.srcData||null;
+    if(!src&&p.img){const c=document.createElement('canvas');c.width=p.img.naturalWidth||p.img.width;c.height=p.img.naturalHeight||p.img.height;c.getContext('2d').drawImage(p.img,0,0);src=c.toDataURL('image/png');}
+    outParts.push({id:p.id,name:p.name,x:p.x,y:p.y,rot:p.rot,scale:p.scale,w:p.w,h:p.h,kind:p.kind,visible:p.visible,z:p.z,flipX:p.flipX,role:p.role||'',category:p.category||'',opacity:p.opacity===undefined?1:p.opacity,locked:!!p.locked,srcData:src});
+  }
+  return {version:'8.5',savedAt:new Date().toISOString(),idCtr,curF,parts:outParts,frames,frameLabels};
+}
+async function loadProjectData(data){
+  parts=[];frames=data.frames||[];frameLabels=data.frameLabels||{};curF=data.curF||0;idCtr=data.idCtr||0;sel=null;
+  for(const sp of data.parts||[]){
+    let im=null;if(sp.srcData)im=await loadImageURL(sp.srcData);
+    parts.push(Object.assign({opacity:1,locked:false,role:'',category:''},sp,{img:im,frames:null}));
+  }
+  applyFrame(curF);renderList();draw();drawTL();updateProps();setStatus('Projekt načten.');
+}
+document.getElementById('btn-saveproj').onclick=()=>{document.getElementById('save-name').value='';document.getElementById('modal-save').classList.add('show');};
+document.getElementById('save-close').onclick=()=>document.getElementById('modal-save').classList.remove('show');
+document.getElementById('save-do').onclick=async()=>{const n=document.getElementById('save-name').value.trim();if(!n){setStatus('Chybí název savu.');return;}const data=await serializeProject();safeStorageSet(PROJECT_PREFIX+n,JSON.stringify(data));document.getElementById('modal-save').classList.remove('show');setStatus('Uloženo: '+n);};
+
+function listSaves(){return safeStorageKeys().filter(k=>k.startsWith(PROJECT_PREFIX)).map(k=>k.slice(PROJECT_PREFIX.length)).sort();}
+document.getElementById('btn-loadproj').onclick=()=>{const selEl=document.getElementById('load-select');selEl.innerHTML='';for(const n of listSaves()){const o=document.createElement('option');o.value=n;o.textContent=n;selEl.appendChild(o);}document.getElementById('modal-loadsave').classList.add('show');};
+document.getElementById('load-close').onclick=()=>document.getElementById('modal-loadsave').classList.remove('show');
+document.getElementById('load-do').onclick=async()=>{const n=document.getElementById('load-select').value;if(!n)return;const raw=safeStorageGet(PROJECT_PREFIX+n);if(raw)await loadProjectData(JSON.parse(raw));document.getElementById('modal-loadsave').classList.remove('show');};
+document.getElementById('load-delete').onclick=()=>{const n=document.getElementById('load-select').value;if(n){safeStorageRemove(PROJECT_PREFIX+n);document.getElementById('btn-loadproj').click();setStatus('Save smazán: '+n);}};
+
+document.getElementById('btn-clear-scene').onclick=()=>{parts=[];frames=[];curF=0;sel=null;renderList();updateProps();draw();drawTL();setStatus('Scéna vyčištěná.');};
+
+
+function renderSceneToCanvasCanvas(outW,outH){
+  const c=document.createElement('canvas');c.width=Math.max(1,Math.round(outW));c.height=Math.max(1,Math.round(outH));
+  const ctx=c.getContext('2d');
+  ctx.save();
+  const sx=c.width/Math.max(1,W), sy=c.height/Math.max(1,H);
+  ctx.scale(sx,sy);
+  draw(ctx,W,H);
+  ctx.restore();
+  return c;
+}
+function restorePartState(saved,savedF){
+  for(const st of saved){const p=parts.find(x=>x.id===st.id);if(p)Object.assign(p,st);}
+  curF=Math.max(0,Math.min(savedF,Math.max(0,frames.length-1)));
+  if(frames.length)applyFrame(curF);
+  renderList();updateProps();draw();drawTL();
+}
+
+function exportCurrentPNG(){
+  if(!parts.length){setStatus('Není co exportovat.');return;}
+  if(!frames.length)saveKeyframe();
+  const total=Math.max(1,frames.length);
+  const ew=Math.max(320,Math.min(960,Math.round(W||640)));
+  const eh=Math.max(220,Math.min(720,Math.round(H||420)));
+  const cols=Math.min(8,Math.max(1,Math.ceil(Math.sqrt(total))));
+  const rows=Math.ceil(total/cols);
+  const sheet=document.createElement('canvas');sheet.width=cols*ew;sheet.height=rows*eh;
+  const sctx=sheet.getContext('2d');
+  const saved=JSON.parse(JSON.stringify(parts.map(p=>({id:p.id,x:p.x,y:p.y,rot:p.rot,scale:p.scale,flipX:p.flipX,z:p.z,visible:p.visible,opacity:p.opacity,locked:p.locked}))));
+  const savedF=curF;
+  for(let f=0;f<total;f++){
+    applyFrame(f);
+    const c=renderSceneToCanvasCanvas(ew,eh);
+    sctx.drawImage(c,(f%cols)*ew,Math.floor(f/cols)*eh);
+  }
+  restorePartState(saved,savedF);
+  const a=document.createElement('a');a.href=sheet.toDataURL('image/png');a.download='foxy_timeline_vsechny_snimky_'+Date.now()+'.png';a.click();
+  setStatus('PNG export hotový: všechny snímky časové osy jako sprite sheet. Počet snímků: '+total+'.');
+}
+document.getElementById('btn-exportpng').onclick=exportCurrentPNG;
+
+const bgm=document.getElementById('bgm');
+let musicOn=false;
+bgm.volume=.40; // základ snížený o 60 % = hraje na 40 %
+const musicVolume=document.getElementById('music-volume');
+const musicVolumeVal=document.getElementById('music-volume-val');
+function applyMusicVolume(v){const n=Math.max(0,Math.min(100,parseInt(v||'40',10)));bgm.volume=n/100;if(musicVolumeVal)musicVolumeVal.textContent=n+'%';}
+if(musicVolume){musicVolume.oninput=e=>{applyMusicVolume(e.target.value);setStatus('Hlasitost hudby: '+e.target.value+' %.');};applyMusicVolume(musicVolume.value);}
+document.getElementById('btn-music').onclick=async()=>{
+  try{
+    if(!musicOn){bgm.loop=true;applyMusicVolume(musicVolume?.value||40);await bgm.play();musicOn=true;document.getElementById('btn-music').classList.add('active');setStatus('Hudba spuštěná ve smyčce. Základní hlasitost je 40 %.');}
+    else{bgm.pause();musicOn=false;document.getElementById('btn-music').classList.remove('active');setStatus('Hudba vypnutá.');}
+  }catch(err){setStatus('Hudba nejde spustit. Zkontroluj assets/audio/hudba.mp3.');}
+};
+
+
+// ============================================================
+// OFFLINE GIF ENCODER — bez CDN, funguje i přes file://
+// ============================================================
+function _gifWriteShort(arr,v){arr.push(v&255,(v>>8)&255);}
+function _gifBitsToBytes(codes,minCodeSize){
+  let out=[], cur=0, bits=0, codeSize=minCodeSize+1;
+  let clear=1<<minCodeSize, end=clear+1, next=end+1;
+  function write(code){
+    cur |= code<<bits; bits += codeSize;
+    while(bits>=8){out.push(cur&255);cur>>=8;bits-=8;}
+  }
+  write(clear);
+  for(const code of codes){
+    write(code);
+    next++;
+    if(next === (1<<codeSize) && codeSize<12) codeSize++;
+    if(next>=4095){write(clear); codeSize=minCodeSize+1; next=end+1;}
+  }
+  write(end);
+  if(bits>0)out.push(cur&255);
+  return out;
+}
+function _gifLzwIndexed(indices,minCodeSize){
+  // Robustní režim: žádný chybný slovník. Každý pixel zapisujeme po CLEAR kódu,
+  // takže GIF dekodéry nedostanou rozbitá LZW data. Soubor je větší, ale čitelný.
+  const clear=1<<minCodeSize, end=clear+1;
+  let out=[],cur=0,bits=0,codeSize=minCodeSize+1;
+  function write(code){cur|=(code<<bits);bits+=codeSize;while(bits>=8){out.push(cur&255);cur>>=8;bits-=8;}}
+  write(clear);
+  for(const px of indices){write(px);write(clear);}
+  write(end);
+  if(bits>0)out.push(cur&255);
+  return out;
+}
+function _gifBlocks(arr,bytes){
+  for(let i=0;i<bytes.length;i+=255){
+    const chunk=bytes.slice(i,i+255);
+    arr.push(chunk.length,...chunk);
+  }
+  arr.push(0);
+}
+function _mapToPalette(r,g,b,a){
+  if(a<30)return 0;
+  // 3-3-2 palette, index 1..255. Index 0 = transparent/dark bg.
+  const ri=r>>5, gi=g>>5, bi=b>>6;
+  return 1 + ((ri<<5) | (gi<<2) | bi);
+}
+function _paletteRGB(idx){
+  if(idx===0)return [0,0,0];
+  idx--;
+  const ri=(idx>>5)&7, gi=(idx>>2)&7, bi=idx&3;
+  return [Math.round(ri*255/7),Math.round(gi*255/7),Math.round(bi*255/3)];
+}
+function makeGifFromCanvases(canvases,delayMs){
+  const w=canvases[0].width, h=canvases[0].height;
+  const arr=[];
+  arr.push(...[...'GIF89a'].map(c=>c.charCodeAt(0)));
+  _gifWriteShort(arr,w); _gifWriteShort(arr,h);
+  arr.push(0xF7); // global color table 256
+  arr.push(0);    // bg index
+  arr.push(0);    // aspect
+  for(let i=0;i<256;i++){const [r,g,b]=_paletteRGB(i);arr.push(r,g,b);}
+  // Netscape loop extension
+  arr.push(0x21,0xFF,0x0B,...[...'NETSCAPE2.0'].map(c=>c.charCodeAt(0)),0x03,0x01,0x00,0x00,0x00);
+  const delay=Math.max(2,Math.round(delayMs/10));
+  for(const canvas of canvases){
+    const ctx=canvas.getContext('2d');
+    const data=ctx.getImageData(0,0,w,h).data;
+    const idx=[];
+    for(let i=0;i<data.length;i+=4)idx.push(_mapToPalette(data[i],data[i+1],data[i+2],data[i+3]));
+    // Graphic Control Extension
+    arr.push(0x21,0xF9,0x04,0x08); // disposal, bez transparency flagu kvůli artefaktům
+    _gifWriteShort(arr,delay);
+    arr.push(0x00,0x00); // transparent index nepoužit + terminator
+    // Image descriptor
+    arr.push(0x2C); _gifWriteShort(arr,0); _gifWriteShort(arr,0); _gifWriteShort(arr,w); _gifWriteShort(arr,h); arr.push(0);
+    arr.push(8); // min LZW code size
+    const lzw=_gifLzwIndexed(idx,8);
+    _gifBlocks(arr,lzw);
+  }
+  arr.push(0x3B);
+  return new Blob([new Uint8Array(arr)],{type:'image/gif'});
+}
+
+document.getElementById('btn-export').onclick=async()=>{
+  if(!frames.length)saveKeyframe();
+  const modal=document.getElementById('modal-export'),msg=document.getElementById('exp-msg'),bar=document.getElementById('export-bar');
+  modal.classList.add('show');bar.style.width='0%';msg.textContent='Renderuju snímky offline...';
+  const fps=Math.abs(clampFps()),ew=Math.max(320,Math.min(640,Math.round(W||640))),eh=Math.max(220,Math.min(420,Math.round(H||420)));
+  const canvases=[];
+  const saved=JSON.parse(JSON.stringify(parts.map(p=>({id:p.id,x:p.x,y:p.y,rot:p.rot,scale:p.scale,flipX:p.flipX,z:p.z,visible:p.visible}))));
+  const savedF=curF;
+  for(let f=0;f<frames.length;f++){
+    applyFrame(f);
+    const c=renderSceneToCanvasCanvas(ew,eh);
+    canvases.push(c);
+    bar.style.width=Math.round((f+1)/frames.length*70)+'%';
+    await new Promise(r=>setTimeout(r,5));
+  }
+  restorePartState(saved,savedF);
+  msg.textContent='Kóduji GIF offline...';bar.style.width='80%';
+  const blob=makeGifFromCanvases(canvases,Math.round(1000/Math.max(1,fps)));
+  bar.style.width='100%';
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='foxy_animace_export.gif';a.click();
+  msg.textContent='Hotovo. GIF exportovaný bez CDN.';
+};
+
+document.getElementById('exp-close').onclick=()=>document.getElementById('modal-export').classList.remove('show');
+
+document.getElementById('btn-news').onclick=()=>document.getElementById('modal-news').classList.add('show');
+document.getElementById('news-close').onclick=()=>document.getElementById('modal-news').classList.remove('show');
+document.getElementById('btn-tutorial').onclick=()=>{stopPlayback(false);if(typeof stopTestLoop==='function')stopTestLoop();testKeys={};document.getElementById('modal-tutorial').classList.add('show');};
+document.getElementById('tutorial-close').onclick=()=>document.getElementById('modal-tutorial').classList.remove('show');
+
+// ============================================================
+// RYCHLÝ TUTORIAL — každý krok se drží cca 5 sekund
+// ============================================================
+const QUICK_TUTORIAL_KEY='foxy_quick_tutorial_seen_8_9';
+const qt=document.getElementById('quick-tutorial');
+const qtTitle=document.getElementById('qt-title');
+const qtText=document.getElementById('qt-text');
+const qtCount=document.getElementById('qt-count');
+const qtProgress=document.getElementById('qt-progress');
+let qtIndex=0,qtTimer=null,qtStart=0,qtRAF=null,qtHighlighted=null;
+const QUICK_STEPS=[
+  {title:'1) Assety',text:'Vpravo otevři ASSETY. Kliknutím vložíš hlavu, body, ruce, boty, efekty nebo mapu do scény.',target:'#rightbar .tabs',pos:'left'},
+  {title:'2) Skládání postavy',text:'Vybraný asset táhni myší po plátně. Kolečkem měníš velikost, Shift + kolečko otáčí. Tlačítka tutorialu už zůstávají nahoře nad plátnem a nepřekryje je animační pozadí.',target:'#canvas-wrap',pos:'top'},
+  {title:'3) Role partu',text:'U každé části nastav roli: hlava, tělo, ruka, bota nebo zbraň. Díky tomu funguje správné vrstvení.',target:'#p-role',pos:'right'},
+  {title:'4) Vrstvy',text:'Důležité pořadí: boty dole, body nad botami, ruce nad body, hlava nad body, zbraň a efekty nahoře.',target:'#layer-preset',pos:'right'},
+  {title:'5) Přesné posuny',text:'Mikroposun 1 / 2 / 5 / 10 px se hodí pro přesné animace. Vyber part a používej šipky v panelu.',target:'#madness-panel',pos:'right'},
+  {title:'6) Snímky',text:'Nastav pózu a klikni na SNÍMEK. Pak posuň časovou osu, změň pózu a ulož další snímek.',target:'#timeline',pos:'top'},
+  {title:'7) Duch snímků',text:'DUCH SNÍMKŮ zobrazí předchozí a další pozici průhledně. Hodí se pro plynulé ruční animování.',target:'#btn-onion',pos:'top'},
+  {title:'8) Mezisnímky',text:'MEZISNÍMKY dopočítají přechod mezi dvěma pózami. Používej je opatrně a pak ručně dolaď.',target:'#btn-tween',pos:'top'},
+  {title:'9) TEST 2D',text:'TEST 2D spustí velkou testovací scénu. Umí mapy z assets/mapy, vlastní JPG/PNG/WebP mapu a kolize se zdí.',target:'#btn-test2d',pos:'top'},
+  {title:'10) Export',text:'EXPORT GIF vyrenderuje timeline do animace. EXPORT PNG uloží všechny snímky časové osy jako sprite sheet.',target:'#btn-export',pos:'top'}
+];
+function qtClearHighlight(){if(qtHighlighted){qtHighlighted.classList.remove('qt-highlight');qtHighlighted=null;}}
+function qtShowStep(i){
+  clearTimeout(qtTimer);cancelAnimationFrame(qtRAF);qtClearHighlight();
+  qtIndex=Math.max(0,Math.min(QUICK_STEPS.length-1,i));
+  const step=QUICK_STEPS[qtIndex];
+  qt.className='show '+(step.pos==='top'?'qt-top':step.pos==='left'?'qt-left':step.pos==='right'?'qt-right':'');
+  qtTitle.textContent=step.title;qtText.textContent=step.text;qtCount.textContent='Krok '+(qtIndex+1)+'/'+QUICK_STEPS.length+' • každý popis drží 5 sekund';
+  const el=document.querySelector(step.target);
+  if(el){qtHighlighted=el;el.classList.add('qt-highlight');try{el.scrollIntoView({block:'center',inline:'center',behavior:'smooth'});}catch(e){}}
+  qtStart=performance.now();
+  function anim(now){const p=Math.min(1,(now-qtStart)/5000);qtProgress.style.width=(p*100).toFixed(1)+'%';if(p<1)qtRAF=requestAnimationFrame(anim);}
+  qtRAF=requestAnimationFrame(anim);
+  qtTimer=setTimeout(()=>{if(qtIndex<QUICK_STEPS.length-1)qtShowStep(qtIndex+1);else qtStop(true);},5000);
+}
+function qtStartTutorial(force=false){testKeys={};stopPlayback();
+  try{if(!force&&localStorage.getItem(QUICK_TUTORIAL_KEY)==='1')return;}catch(e){}
+  qt.classList.add('show');qtShowStep(0);
+}
+function qtStop(markSeen=true){
+  clearTimeout(qtTimer);cancelAnimationFrame(qtRAF);qtClearHighlight();qt.className='';qtProgress.style.width='0%';
+  if(markSeen){try{localStorage.setItem(QUICK_TUTORIAL_KEY,'1');}catch(e){}}
+}
+document.getElementById('qt-next').onclick=()=>{if(qtIndex<QUICK_STEPS.length-1)qtShowStep(qtIndex+1);else qtStop(true);};
+document.getElementById('qt-prev').onclick=()=>qtShowStep(qtIndex-1);
+document.getElementById('qt-skip').onclick=()=>qtStop(true);
+document.getElementById('tutorial-run-fast').onclick=()=>{document.getElementById('modal-tutorial').classList.remove('show');qtStartTutorial(true);};
+
+
+
+function selectAllParts(){allSelected=true;sel=null;renderList();updateProps();draw();setStatus('Označené všechny party. Tlačítkem SLOŽIT z nich uděláš jeden celek.');}
+function groupAllParts(){
+  if(!parts.length){setStatus('Není co složit.');return;}
+  stopPlayback();
+  const c=document.createElement('canvas');c.width=W;c.height=H;const ctx=c.getContext('2d');
+  const oldSel=sel,oldAll=allSelected;sel=null;allSelected=false;draw(ctx,W,H);
+  const im=new Image();im.onload=()=>{
+    const children=parts.map(p=>Object.assign({},p));
+    const p={id:++idCtr,name:'slozeny_asset',x:W/2,y:H/2,rot:0,scale:1,w:W,h:H,img:im,kind:'image',visible:true,z:999,flipX:false,role:'group',opacity:1,locked:false,children};
+    parts=[p];selectPart(p);drawTL();setStatus('Postava složená do jednoho celkového assetu.');
+  };
+  im.src=c.toDataURL('image/png');sel=oldSel;allSelected=oldAll;
+}
+function ungroupSelected(){
+  if(!sel||!sel.children){setStatus('Vyber složený asset.');return;}
+  parts=sel.children.map(ch=>Object.assign({},ch,{id:++idCtr}));sel=null;allSelected=true;renderList();updateProps();draw();drawTL();setStatus('Složený asset rozložený zpět na party.');
+}
+document.getElementById('btn-select-all').onclick=selectAllParts;
+document.getElementById('btn-group-parts').onclick=groupAllParts;
+document.getElementById('btn-ungroup-parts').onclick=ungroupSelected;
+document.getElementById('btn-min-tools').onclick=()=>{const on=document.body.classList.toggle('tools-min');document.getElementById('btn-min-tools').textContent=on?'ZOBRAZIT NÁSTROJE':'MINIMALIZOVAT';setTimeout(()=>{resize();draw();},60);};
+
+function currentPose(){
+  const pose={};
+  for(const p of parts)pose[p.id]={x:p.x,y:p.y,rot:p.rot,scale:p.scale,flipX:p.flipX||false,z:p.z,visible:p.visible,role:p.role||'',opacity:p.opacity===undefined?1:p.opacity,locked:!!p.locked};
+  return pose;
+}
+function applyPose(pose){
+  for(const p of parts){if(pose[p.id])Object.assign(p,pose[p.id]);}
+  draw();updateProps();drawTL();
+}
+function lerp(a,b,t){return a+(b-a)*t;}
+function interpPose(a,b,t){
+  const out={};
+  for(const p of parts){
+    const A=a[p.id]||{},B=b[p.id]||A;
+    out[p.id]={
+      x:lerp(A.x??p.x,B.x??p.x,t),
+      y:lerp(A.y??p.y,B.y??p.y,t),
+      rot:lerp(A.rot??p.rot,B.rot??p.rot,t),
+      scale:lerp(A.scale??p.scale,B.scale??p.scale,t),
+      flipX:t<.5?(A.flipX??p.flipX):(B.flipX??p.flipX),
+      z:B.z??A.z??p.z,
+      visible:B.visible??A.visible??p.visible,
+      opacity:B.opacity??A.opacity??p.opacity??1,
+      locked:B.locked??A.locked??p.locked??false
+    };
+  }
+  return out;
+}
+document.getElementById('btn-onion').onclick=()=>{onion=!onion;document.getElementById('btn-onion').classList.toggle('active',onion);draw();setStatus(onion?'DUCH SNÍMKŮ zapnutý.':'DUCH SNÍMKŮ vypnutý.');};
+document.getElementById('btn-pingpong').onclick=()=>{pingpong=!pingpong;document.getElementById('btn-pingpong').classList.toggle('active',pingpong);setStatus(pingpong?'TAM/ZPĚT zapnutý.':'TAM/ZPĚT vypnutý.');};
+document.getElementById('btn-copypose').onclick=()=>{copiedPose=currentPose();setStatus('Póza zkopírovaná.');};
+document.getElementById('btn-pastepose').onclick=()=>{if(!copiedPose){setStatus('Není zkopírovaná žádná póza.');return;}applyPose(copiedPose);saveKeyframe();setStatus('Póza vložená a uložená jako snímek.');};
+document.getElementById('btn-tween').onclick=()=>{
+  if(frames.length<2){setStatus('Mezisnímky potřebují aspoň 2 snímky.');return;}
+  const a=frames[curF], b=frames[Math.min(curF+1,frames.length-1)];
+  if(!a||!b||curF>=frames.length-1){setStatus('Není další snímek pro mezisnímky.');return;}
+  const count=parseInt(document.getElementById('tween-count')?.value||'2',10);
+  const inserted=[];
+  for(let i=1;i<=count;i++)inserted.push(interpPose(a,b,i/(count+1)));
+  frames.splice(curF+1,0,...inserted);
+  drawTL();setStatus('Vloženo '+count+' mezisnímků mezi snímky '+curF+' a '+(curF+count+1)+'.');
+};
+// Automatické generátory chůze/útoku byly odstraněné. Animace se skládá ručně přes snímky, pózy a mezisnímky.
+
+function markFrame(label){
+  if(!frames.length)saveKeyframe();
+  frameLabels[curF]=label;
+  drawTL();setStatus('Snímek '+curF+' označen jako: '+label+'.');
+}
+function holdFrame(){
+  if(!frames.length)saveKeyframe();
+  const copy=JSON.parse(JSON.stringify(frames[curF]));
+  frames.splice(curF+1,0,copy);
+  curF++;
+  drawTL();setStatus('Přidaný držící snímek. Animace se na póze chvíli zastaví.');
+}
+function propagateSelectedPartToAllFrames(){
+  if(!sel){setStatus('Vyber part, který chceš propsat do všech snímků.');return;}
+  if(!frames.length)saveKeyframe();
+  const data={x:sel.x,y:sel.y,rot:sel.rot,scale:sel.scale,flipX:!!sel.flipX,z:sel.z,visible:sel.visible,role:sel.role||'',opacity:sel.opacity===undefined?1:sel.opacity,locked:!!sel.locked};
+  for(const fr of frames)fr[sel.id]=Object.assign({},fr[sel.id]||{},data);
+  drawTL();setStatus('Vybraný part propsaný do všech snímků.');
+}
+function copyZLayersToAllFrames(){
+  if(!frames.length)saveKeyframe();
+  for(const fr of frames){for(const p of parts){fr[p.id]=Object.assign({},fr[p.id]||{}, {z:p.z, role:p.role||''});}}
+  drawTL();setStatus('Z-vrstvy propsané do všech snímků.');
+}
+function freezeSelectedPart(){if(!sel){setStatus('Vyber part.');return;}sel.locked=true;updateProps();renderList();draw();setStatus('Part zamčený pro přesné pózování.');}
+function unfreezeAll(){for(const p of parts)p.locked=false;updateProps();renderList();draw();setStatus('Všechny party odemčené.');}
+function alignSelected(axis){
+  if(!sel){setStatus('Vyber part, podle kterého se má srovnávat.');return;}
+  for(const p of parts){if(p!==sel&&!p.locked){if(axis==='x')p.x=sel.x;else p.y=sel.y;}}
+  draw();updateProps();setStatus(axis==='x'?'Party srovnané podle X.':'Party srovnané podle Y.');
+}
+function cleanHiddenParts(){const before=parts.length;parts=parts.filter(p=>p.visible!==false);if(sel&&!parts.includes(sel))sel=null;renderList();updateProps();draw();drawTL();setStatus('Smazané skryté party: '+(before-parts.length));}
+function nudgeSelected(dx,dy){if(!sel||sel.locked){setStatus('Vyber odemčený part.');return;}sel.x+=dx;sel.y+=dy;updateProps();draw();}
+function insertFrameBefore(){const pose=currentPose();frames.splice(curF,0,pose);drawTL();setStatus('Snímek vložen před aktuální.');}
+function goPrevFrame(){if(frames.length)goTo(curF-1);}
+function goNextFrame(){if(frames.length)goTo(curF+1);}
+document.getElementById('mk-neutral').onclick=()=>markFrame('KLID');
+document.getElementById('mk-extreme').onclick=()=>markFrame('EXT');
+document.getElementById('mk-impact').onclick=()=>markFrame('DOPAD');
+document.getElementById('mk-recoil').onclick=()=>markFrame('RÁZ');
+document.getElementById('btn-freeze-part').onclick=freezeSelectedPart;
+document.getElementById('btn-unfreeze-all').onclick=unfreezeAll;
+document.getElementById('btn-align-x').onclick=()=>alignSelected('x');
+document.getElementById('btn-align-y').onclick=()=>alignSelected('y');
+document.getElementById('btn-copy-z').onclick=copyZLayersToAllFrames;
+document.getElementById('btn-clean-hidden').onclick=cleanHiddenParts;
+document.getElementById('btn-holdframe').onclick=holdFrame;
+document.getElementById('btn-prop-part').onclick=propagateSelectedPartToAllFrames;
+document.getElementById('btn-prevframe').onclick=goPrevFrame;
+document.getElementById('btn-nextframe').onclick=goNextFrame;
+document.getElementById('btn-insert-before').onclick=insertFrameBefore;
+for(const [id,dx,dy] of [['btn-nudge-left',-1,0],['btn-nudge-right',1,0],['btn-nudge-up',0,-1],['btn-nudge-down',0,1]]){
+  const el=document.getElementById(id); if(el)el.onclick=()=>{const step=parseInt(document.getElementById('nudge-step')?.value||'5',10);nudgeSelected(dx*step,dy*step);};
+}
+
+const testModal=document.getElementById('modal-test2d');
+const testCanvas=document.getElementById('test-canvas');
+const testCtx=testCanvas.getContext('2d');
+let testRunning=false,testRAF=null,testKeys={},testBgMode='grid',testCollisionOn=true;
+let testPlayer={x:800,y:520,vx:0,vy:0,onGround:true,dir:1,action:'idle',actionT:0,shots:0};
+let testMapAssets=[];
+let currentTestMap=null;
+let currentTestMapIndex=0;
+
+function fileToDataURL(file){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=rej;fr.readAsDataURL(file);});}
+function getTestHudMap(){return document.getElementById('test-hud-map');}
+function getMapAssets(){return PACK_ASSETS.filter(a=>a.category==='mapy');}
+async function ensureMapAssets(){testMapAssets=getMapAssets();if(!currentTestMap&&testMapAssets.length){await setTestMapByAsset(testMapAssets[0]);currentTestMapIndex=0;}}
+function setTestMapLabel(name){const el=getTestHudMap();if(el)el.textContent='MAPA: '+(name||'žádná');const btn=document.getElementById('test-map-cycle');if(btn)btn.textContent='MAPA: '+String(name||'ŽÁDNÁ').toUpperCase();}
+function buildMapCollision(mapObj){
+  if(!mapObj||!mapObj.img){return;}
+  const c=document.createElement('canvas');c.width=mapObj.img.width;c.height=mapObj.img.height;
+  const cx=c.getContext('2d',{willReadFrequently:true});cx.drawImage(mapObj.img,0,0);
+  mapObj.maskCanvas=c;mapObj.maskCtx=cx;
+}
+async function setTestMapByAsset(asset){
+  const im=await loadImageURL(asset.path);
+  currentTestMap={name:asset.name||'mapa',img:im,asset};
+  buildMapCollision(currentTestMap);
+  setTestMapLabel(currentTestMap.name);
+  resizeTestCanvas();
+  resetTestPlayer();
+  drawTestPreview();
+  setStatus('Mapa pro TEST 2D nastavená: '+currentTestMap.name);
+}
+async function setTestMapByFile(file){
+  const data=await fileToDataURL(file);
+  const im=await loadImageURL(data);
+  currentTestMap={name:file.name.replace(/\.[^.]+$/,''),img:im,srcData:data};
+  buildMapCollision(currentTestMap);
+  setTestMapLabel(currentTestMap.name);
+  resizeTestCanvas();
+  resetTestPlayer();
+  drawTestPreview();
+  setStatus('Vlastní mapa načtená: '+currentTestMap.name);
+}
+function resizeTestCanvas(){
+  const parent=testCanvas.parentElement;
+  const parentW=Math.max(900, (parent.clientWidth||1200)-8);
+  let logicalW=1600, logicalH=760;
+  if(currentTestMap&&currentTestMap.img){logicalW=currentTestMap.img.width;logicalH=currentTestMap.img.height;}
+  testCanvas.width=logicalW; testCanvas.height=logicalH;
+  const ratio=logicalW/logicalH;
+  const cssW=Math.min(parentW, logicalW);
+  const cssH=Math.round(cssW/ratio);
+  testCanvas.style.width=cssW+'px';
+  testCanvas.style.height=cssH+'px';
+}
+function testSceneFloor(){return currentTestMap&&currentTestMap.img ? testCanvas.height-70 : testCanvas.height-95;}
+function findGroundY(x,startY){
+  if(!testCollisionOn||!currentTestMap||!currentTestMap.maskCtx)return startY;
+  let y=Math.min(testCanvas.height-60, startY);
+  while(y<testCanvas.height-20 && !collidesAt(x,y+2)) y++;
+  return y;
+}
+function resetTestPlayer(){
+  const startX=Math.round(testCanvas.width*0.5);
+  let startY=Math.round(testCanvas.height*0.72);
+  testPlayer={x:startX,y:startY,vx:0,vy:0,onGround:false,dir:1,action:'idle',actionT:0,shots:0};
+  if(currentTestMap){
+    startY=findGroundY(startX, Math.round(testCanvas.height*0.55));
+    testPlayer.y=startY;
+    testPlayer.onGround=true;
+  }else{
+    testPlayer.y=testSceneFloor()-45;
+    testPlayer.onGround=true;
+  }
+}
+function testDrawBackground(ctx,w,h){
+  if(currentTestMap&&currentTestMap.img){ctx.drawImage(currentTestMap.img,0,0,w,h);return;}
+  const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,'#101a29');g.addColorStop(.55,'#080d16');g.addColorStop(1,'#05070b');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+  if(testBgMode==='green'){ctx.fillStyle='#00ff00';ctx.fillRect(0,0,w,h);} 
+  else if(testBgMode==='dark'){
+    ctx.fillStyle='rgba(255,255,255,.035)';for(let i=0;i<90;i++){const x=(i*97)%Math.max(1,w),y=(i*53)%Math.max(1,h);ctx.fillRect(x,y,2,2);} 
+  } else {
+    ctx.strokeStyle='rgba(118,174,255,.12)';ctx.lineWidth=1;for(let x=-80;x<w+80;x+=64){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x+h*.25,h);ctx.stroke();}for(let y=0;y<h;y+=64){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+  }
+  const floor=testSceneFloor();ctx.fillStyle='rgba(255,159,67,.12)';ctx.fillRect(0,floor,w,h-floor);ctx.strokeStyle='rgba(255,179,95,.55)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,floor);ctx.lineTo(w,floor);ctx.stroke();
+}
+function mapPixelSolid(x,y){
+  if(!testCollisionOn||!currentTestMap||!currentTestMap.maskCtx)return false;
+  x=Math.floor(x); y=Math.floor(y);
+  if(x<0||y<0||x>=currentTestMap.img.width||y>=currentTestMap.img.height)return true;
+  const d=currentTestMap.maskCtx.getImageData(x,y,1,1).data;
+  if(d[3]<20)return false;
+  const bright=(d[0]+d[1]+d[2])/3;
+  return bright<72;
+}
+function collidesAt(px,py){
+  if(!currentTestMap||!testCollisionOn)return false;
+  const pts=[[-22,-110],[0,-110],[22,-110],[-22,-74],[22,-74],[-22,-40],[22,-40],[-16,-6],[16,-6],[0,-6]];
+  for(const [ox,oy] of pts){if(mapPixelSolid(px+ox,py+oy))return true;}
+  return false;
+}
+function drawTestPreview(){
+  const ctx=testCtx,w=testCanvas.width,h=testCanvas.height;
+  ctx.clearRect(0,0,w,h);testDrawBackground(ctx,w,h);testDrawParts(ctx,testPlayer.x,testPlayer.y,testPlayer.action,testPlayer.actionT);
+}
+function testDrawParts(ctx, x, y, action, t){
+  ctx.save();
+  ctx.translate(x,y);
+  ctx.scale(testPlayer.dir,1);
+  const baseScale=parseFloat(document.getElementById('test-scale')?.value||'1.2');
+  ctx.scale(baseScale,baseScale);
+  let pose=currentPose();
+  const tt=Math.min(1,t/22);
+  const now=Date.now();
+  for(const p of parts){
+    if(!pose[p.id])pose[p.id]={x:p.x,y:p.y,rot:p.rot,scale:p.scale,flipX:p.flipX,z:p.z,visible:p.visible};
+    const q=pose[p.id];
+    q.x=(p.x-W/2);
+    q.y=(p.y-H/2);
+    if(action==='run'){
+      q.y+=Math.sin(now/75)*2.5;
+      if(/foot|bota|boty|nohy/i.test(p.name)||p.role==='footL'||p.role==='footR'){q.x+=Math.sin(now/75+(p.id%2)*Math.PI)*10;q.rot+=Math.sin(now/95+(p.id%2)*Math.PI)*.18;}
+      if(/hand|ruka|pest/i.test(p.name)||p.role==='handL'||p.role==='handR'){q.x+=Math.sin(now/90+(p.id%2)*Math.PI)*6;q.rot+=Math.sin(now/95+(p.id%2)*Math.PI)*.14;}
+    }
+    if(action==='jump'){q.y-=8;if(p.role==='handR'||/ruka|hand|pest/i.test(p.name))q.rot-=0.32;}
+    if(action==='hit'){if(p.role==='handR'||p.role==='weapon'||/weapon|pistol|zbran|ruka|pest/i.test(p.name)){q.x+=Math.sin(tt*Math.PI)*36;q.rot+=Math.sin(tt*Math.PI)*0.55;}}
+  }
+  for(const p of sortedParts()){
+    if(!p.visible)continue;
+    const q=pose[p.id]; if(!q)continue;
+    const img=getPartImage(p);
+    ctx.save();ctx.translate(q.x,q.y);ctx.rotate(q.rot);ctx.scale((q.flipX?-1:1)*q.scale,q.scale);
+    if(img)ctx.drawImage(img,-p.w/2,-p.h/2,p.w,p.h);
+    else{ctx.fillStyle='#fff';ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);}
+    ctx.restore();
+  }
+  ctx.restore();
+}
+function stopTestLoop(){if(testRAF){cancelAnimationFrame(testRAF);testRAF=null;}testRunning=false;testKeys={};}
+function testLoop(){
+  if(!testRunning)return;
+  const ctx=testCtx,w=testCanvas.width,h=testCanvas.height;
+  ctx.clearRect(0,0,w,h);testDrawBackground(ctx,w,h);
+  const speed=parseFloat(document.getElementById('test-speed')?.value||'1');
+  const left=testKeys['a']||testKeys['A']||testKeys['ArrowLeft'],right=testKeys['d']||testKeys['D']||testKeys['ArrowRight'];
+  if(left){testPlayer.vx=-4.4*speed;testPlayer.dir=-1;} else if(right){testPlayer.vx=4.4*speed;testPlayer.dir=1;} else testPlayer.vx*=0.70;
+  if((testKeys[' ']||testKeys['w']||testKeys['W']||testKeys['ArrowUp'])&&testPlayer.onGround){testPlayer.vy=-13.2*speed;testPlayer.onGround=false;testPlayer.action='jump';testPlayer.actionT=0;}
+  testPlayer.vy+=0.68*speed;
+  let nx=testPlayer.x+testPlayer.vx;
+  if(currentTestMap&&testCollisionOn){
+    if(collidesAt(nx,testPlayer.y)){ while(Math.abs(nx-testPlayer.x)>0.5 && collidesAt(nx,testPlayer.y)) nx-=Math.sign(testPlayer.vx||1); testPlayer.vx=0; }
+  }
+  testPlayer.x=Math.max(35,Math.min(w-35,nx));
+  let ny=testPlayer.y+testPlayer.vy;
+  if(currentTestMap&&testCollisionOn){
+    if(collidesAt(testPlayer.x,ny)){
+      if(testPlayer.vy>0){while(ny>0 && collidesAt(testPlayer.x,ny))ny-=1; testPlayer.onGround=true;}
+      testPlayer.vy=0;
+    }else testPlayer.onGround=false;
+  } else {
+    const floor=testSceneFloor()-45;if(ny>=floor){ny=floor;testPlayer.vy=0;testPlayer.onGround=true;} else testPlayer.onGround=false;
+  }
+  testPlayer.y=ny;
+  if(testPlayer.actionT>0)testPlayer.actionT--;
+  if(testPlayer.actionT<=0)testPlayer.action=(Math.abs(testPlayer.vx)>0.7?'run':'idle');
+  testDrawParts(ctx,testPlayer.x,testPlayer.y,testPlayer.action,testPlayer.actionT);
+  ctx.fillStyle='rgba(4,8,14,.72)';ctx.fillRect(18,18,660,96);ctx.strokeStyle='rgba(116,181,255,.35)';ctx.strokeRect(18,18,660,96);
+  ctx.fillStyle='#eaf3ff';ctx.font='700 18px Inter, Segoe UI, Arial';ctx.fillText('WASD / šipky pohyb • mezerník skok • klik úder • mapa = kolize se zdí',34,50);
+  ctx.fillStyle='#ffb35f';ctx.font='800 16px Inter, Segoe UI, Arial';ctx.fillText('Když nahraješ JPG/PNG/WebP mapu, test ji automaticky použije a nastaví rozlišení podle ní.',34,80);
+  const a=document.getElementById('test-hud-action'),pos=document.getElementById('test-hud-pos'),pc=document.getElementById('test-hud-parts');
+  if(a)a.textContent='AKCE: '+testPlayer.action;if(pos)pos.textContent='X:'+Math.round(testPlayer.x)+' Y:'+Math.round(testPlayer.y);if(pc)pc.textContent='ČÁSTI: '+parts.length;
+  testRAF=requestAnimationFrame(testLoop);
+}
+document.getElementById('btn-test2d').onclick=async()=>{stopPlayback(false);testKeys={};testModal.classList.add('show');await ensureMapAssets();setTimeout(()=>{resizeTestCanvas();resetTestPlayer();drawTestPreview();},30);};
+document.getElementById('test-close').onclick=()=>{stopTestLoop();testModal.classList.remove('show');};
+document.getElementById('test-start').onclick=async()=>{stopTestLoop();await ensureMapAssets();resizeTestCanvas();resetTestPlayer();testRunning=true;testRAF=requestAnimationFrame(testLoop);};
+document.getElementById('test-stop').onclick=()=>{stopTestLoop();drawTestPreview();};
+document.getElementById('test-reset').onclick=()=>{resetTestPlayer();drawTestPreview();};
+document.getElementById('test-bg').onclick=e=>{testBgMode=testBgMode==='grid'?'dark':(testBgMode==='dark'?'green':'grid');e.currentTarget.textContent='POZADÍ: '+({grid:'MŘÍŽKA',dark:'TMAVÉ',green:'ZELENÉ'}[testBgMode]||testBgMode);if(!currentTestMap)drawTestPreview();};
+document.getElementById('test-collision').onclick=e=>{testCollisionOn=!testCollisionOn;e.currentTarget.textContent='KOLIZE: '+(testCollisionOn?'ZAP':'VYP');setStatus('Kolize v TEST 2D: '+(testCollisionOn?'zapnuté':'vypnuté'));};
+document.getElementById('test-map-cycle').onclick=async()=>{testMapAssets=getMapAssets();if(!testMapAssets.length){setStatus('V assets/mapy zatím není žádná mapa.');return;}currentTestMapIndex=(currentTestMapIndex+1)%testMapAssets.length;await setTestMapByAsset(testMapAssets[currentTestMapIndex]);};
+document.getElementById('test-map-upload').onclick=()=>document.getElementById('test-map-file').click();
+document.getElementById('test-map-file').onchange=async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;await setTestMapByFile(f);e.target.value='';};
+window.addEventListener('resize',()=>{if(testModal.classList.contains('show')){resizeTestCanvas();drawTestPreview();}});
+window.addEventListener('keydown',e=>{if(testModal.classList.contains('show')){testKeys[e.key]=true;if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))e.preventDefault();}});
+window.addEventListener('keyup',e=>{testKeys[e.key]=false;});
+testCanvas.addEventListener('mousedown',e=>{if(e.button===0){testPlayer.action='hit';testPlayer.actionT=20;}});
+
+
+function mirrorPose(){
+  if(!parts.length)return;
+  const cx=W/2;
+  for(const p of parts){p.x=cx-(p.x-cx);p.flipX=!p.flipX;p.rot=-p.rot;}
+  updateProps();draw();setStatus('Aktuální póza zrcadlená.');
+}
+function reverseTimeline(){
+  if(frames.length<2){setStatus('Časová osa nemá co otočit.');return;}
+  frames.reverse();curF=frames.length-1-curF;applyFrame(curF);drawTL();setStatus('Časová osa otočená pozpátku.');
+}
+document.getElementById('btn-mirrorpose').onclick=mirrorPose;
+document.getElementById('btn-reverse').onclick=reverseTimeline;
+
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
+  if(e.key==='v'||e.key==='V')setTool('select');
+  if(e.key==='r'||e.key==='R')setTool('rotate');
+  if(e.key==='s'||e.key==='S')setTool('scale');
+  if(e.key==='k'||e.key==='K')saveKeyframe();
+  if(e.key==='o'||e.key==='O')document.getElementById('btn-onion').click();
+  if(e.key==='p'||e.key==='P')document.getElementById('btn-pingpong').click();
+  if(e.key==='t'||e.key==='T')document.getElementById('btn-tween').click();
+  if(e.key==='h'||e.key==='H')holdFrame();
+  if(e.key==='x'||e.key==='X')document.getElementById('btn-test2d').click();
+  if(e.key===' '){e.preventDefault();document.getElementById('btn-play').click();}
+  if(!sel&&e.key==='ArrowRight'){e.preventDefault();goTo(curF+1);}
+  if(!sel&&e.key==='ArrowLeft'){e.preventDefault();goTo(curF-1);}
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='d'){e.preventDefault();duplicatePart();}
+  if(sel&&!sel.locked&&['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();const step=e.shiftKey?10:1;if(e.key==='ArrowUp')sel.y-=step;if(e.key==='ArrowDown')sel.y+=step;if(e.key==='ArrowLeft')sel.x-=step;if(e.key==='ArrowRight')sel.x+=step;updateProps();draw();}
+  if(sel&&(e.key==='['||e.key===']')){e.preventDefault();moveLayer(e.key===']'?1:-1);}
+  if(sel&&!sel.locked&&(e.key==='+'||e.key==='='||e.key==='-')){e.preventDefault();sel.scale=Math.max(.03,sel.scale+(e.key==='-'?-.05:.05));updateProps();draw();}
+  if(sel&&!sel.locked&&(e.key==='q'||e.key==='Q'||e.key==='e'||e.key==='E')){e.preventDefault();sel.rot+=(e.key.toLowerCase()==='e'?0.05:-0.05);updateProps();draw();}
+  if(e.key==='Delete'||e.key==='Backspace')delPart();
+});
+
+const EMBEDDED_MANIFEST={"version":"9.2-fix-prehravani-timeline","title":"DEMENT VERZE 9.3 — FOXY ANIMAČNÍ EDITOR","note":"Stabilizace přehrávání časové osy, bezpečný restart přehrávače, oprava zaseknutého PLAY a kontrola FPS.","credit":"Projected by Lukamer → všechna práva vyhrazena","special":"Speciálně pro foxyho od Lukamera :-)","folders":["sprites","weapons","body","heads","hands","feet","backgrounds","effects","props","shields","silhouettes","sprites2","mapy"],"assets":[{"name":"head_001","category":"heads","path":"assets/heads/sprite_001.png"},{"name":"head_002","category":"heads","path":"assets/heads/sprite_002.png"},{"name":"head_003","category":"heads","path":"assets/heads/sprite_003.png"},{"name":"head_004","category":"heads","path":"assets/heads/sprite_004.png"},{"name":"head_005","category":"heads","path":"assets/heads/sprite_005.png"},{"name":"head_006","category":"heads","path":"assets/heads/sprite_006.png"},{"name":"head_007","category":"heads","path":"assets/heads/sprite_007.png"},{"name":"head_008","category":"heads","path":"assets/heads/sprite_008.png"},{"name":"full_character_009","category":"sprites","path":"assets/sprites/sprite_009.png"},{"name":"full_character_010","category":"sprites","path":"assets/sprites/sprite_010.png"},{"name":"full_character_011","category":"sprites","path":"assets/sprites/sprite_011.png"},{"name":"head_012","category":"heads","path":"assets/heads/sprite_012.png"},{"name":"head_013","category":"heads","path":"assets/heads/sprite_013.png"},{"name":"head_014","category":"heads","path":"assets/heads/sprite_014.png"},{"name":"head_015","category":"heads","path":"assets/heads/sprite_015.png"},{"name":"head_016","category":"heads","path":"assets/heads/sprite_016.png"},{"name":"head_017","category":"heads","path":"assets/heads/sprite_017.png"},{"name":"head_018","category":"heads","path":"assets/heads/sprite_018.png"},{"name":"head_019","category":"heads","path":"assets/heads/sprite_019.png"},{"name":"hand_020","category":"hands","path":"assets/hands/sprite_020.png"},{"name":"hand_021","category":"hands","path":"assets/hands/sprite_021.png"},{"name":"head_022","category":"heads","path":"assets/heads/sprite_022.png"},{"name":"head_023","category":"heads","path":"assets/heads/sprite_023.png"},{"name":"head_024","category":"heads","path":"assets/heads/sprite_024.png"},{"name":"head_025","category":"heads","path":"assets/heads/sprite_025.png"},{"name":"head_026","category":"heads","path":"assets/heads/sprite_026.png"},{"name":"head_027","category":"heads","path":"assets/heads/sprite_027.png"},{"name":"head_028","category":"heads","path":"assets/heads/sprite_028.png"},{"name":"head_029","category":"heads","path":"assets/heads/sprite_029.png"},{"name":"body_030","category":"body","path":"assets/body/sprite_030.png"},{"name":"body_031","category":"body","path":"assets/body/sprite_031.png"},{"name":"body_032","category":"body","path":"assets/body/sprite_032.png"},{"name":"body_033","category":"body","path":"assets/body/sprite_033.png"},{"name":"body_034","category":"body","path":"assets/body/sprite_034.png"},{"name":"body_035","category":"body","path":"assets/body/sprite_035.png"},{"name":"body_036","category":"body","path":"assets/body/sprite_036.png"},{"name":"body_037","category":"body","path":"assets/body/sprite_037.png"},{"name":"body_038","category":"body","path":"assets/body/sprite_038.png"},{"name":"body_039","category":"body","path":"assets/body/sprite_039.png"},{"name":"body_040","category":"body","path":"assets/body/sprite_040.png"},{"name":"body_041","category":"body","path":"assets/body/sprite_041.png"},{"name":"body_042","category":"body","path":"assets/body/sprite_042.png"},{"name":"body_043","category":"body","path":"assets/body/sprite_043.png"},{"name":"body_044","category":"body","path":"assets/body/sprite_044.png"},{"name":"body_045","category":"body","path":"assets/body/sprite_045.png"},{"name":"body_046","category":"body","path":"assets/body/sprite_046.png"},{"name":"body_047","category":"body","path":"assets/body/sprite_047.png"},{"name":"hand_048","category":"hands","path":"assets/hands/sprite_048.png"},{"name":"hand_049","category":"hands","path":"assets/hands/sprite_049.png"},{"name":"hand_050","category":"hands","path":"assets/hands/sprite_050.png"},{"name":"hand_051","category":"hands","path":"assets/hands/sprite_051.png"},{"name":"hand_052","category":"hands","path":"assets/hands/sprite_052.png"},{"name":"hand_053","category":"hands","path":"assets/hands/sprite_053.png"},{"name":"hand_054","category":"hands","path":"assets/hands/sprite_054.png"},{"name":"hand_055","category":"hands","path":"assets/hands/sprite_055.png"},{"name":"hand_056","category":"hands","path":"assets/hands/sprite_056.png"},{"name":"hand_057","category":"hands","path":"assets/hands/sprite_057.png"},{"name":"hand_058","category":"hands","path":"assets/hands/sprite_058.png"},{"name":"hand_059","category":"hands","path":"assets/hands/sprite_059.png"},{"name":"hand_060","category":"hands","path":"assets/hands/sprite_060.png"},{"name":"hand_061","category":"hands","path":"assets/hands/sprite_061.png"},{"name":"hand_062","category":"hands","path":"assets/hands/sprite_062.png"},{"name":"hand_063","category":"hands","path":"assets/hands/sprite_063.png"},{"name":"hand_064","category":"hands","path":"assets/hands/sprite_064.png"},{"name":"hand_065","category":"hands","path":"assets/hands/sprite_065.png"},{"name":"accessory_066","category":"effects","path":"assets/effects/sprite_066.png"},{"name":"accessory_067","category":"effects","path":"assets/effects/sprite_067.png"},{"name":"accessory_068","category":"effects","path":"assets/effects/sprite_068.png"},{"name":"hand_069","category":"hands","path":"assets/hands/sprite_069.png"},{"name":"hand_070","category":"hands","path":"assets/hands/sprite_070.png"},{"name":"hand_071","category":"hands","path":"assets/hands/sprite_071.png"},{"name":"hand_072","category":"hands","path":"assets/hands/sprite_072.png"},{"name":"accessory_073","category":"effects","path":"assets/effects/sprite_073.png"},{"name":"accessory_074","category":"effects","path":"assets/effects/sprite_074.png"},{"name":"accessory_075","category":"effects","path":"assets/effects/sprite_075.png"},{"name":"hand_076","category":"hands","path":"assets/hands/sprite_076.png"},{"name":"hand_077","category":"hands","path":"assets/hands/sprite_077.png"},{"name":"hand_078","category":"hands","path":"assets/hands/sprite_078.png"},{"name":"hand_079","category":"hands","path":"assets/hands/sprite_079.png"},{"name":"hand_080","category":"hands","path":"assets/hands/sprite_080.png"},{"name":"hand_081","category":"hands","path":"assets/hands/sprite_081.png"},{"name":"feet_082","category":"feet","path":"assets/feet/sprite_082.png"},{"name":"feet_083","category":"feet","path":"assets/feet/sprite_083.png"},{"name":"new_asset_001","category":"sprites2","path":"assets/sprites2/s2_sprite_001.png"},{"name":"new_asset_002","category":"sprites2","path":"assets/sprites2/s2_sprite_002.png"},{"name":"new_asset_003","category":"sprites2","path":"assets/sprites2/s2_sprite_003.png"},{"name":"new_asset_004","category":"sprites2","path":"assets/sprites2/s2_sprite_004.png"},{"name":"new_asset_005","category":"sprites2","path":"assets/sprites2/s2_sprite_005.png"},{"name":"new_asset_006","category":"sprites2","path":"assets/sprites2/s2_sprite_006.png"},{"name":"new_asset_007","category":"sprites2","path":"assets/sprites2/s2_sprite_007.png"},{"name":"new_asset_008","category":"sprites2","path":"assets/sprites2/s2_sprite_008.png"},{"name":"new_asset_009","category":"sprites2","path":"assets/sprites2/s2_sprite_009.png"},{"name":"new_asset_010","category":"sprites2","path":"assets/sprites2/s2_sprite_010.png"},{"name":"new_asset_011","category":"sprites2","path":"assets/sprites2/s2_sprite_011.png"},{"name":"new_asset_012","category":"sprites2","path":"assets/sprites2/s2_sprite_012.png"},{"name":"new_asset_013","category":"sprites2","path":"assets/sprites2/s2_sprite_013.png"},{"name":"new_asset_014","category":"sprites2","path":"assets/sprites2/s2_sprite_014.png"},{"name":"new_asset_015","category":"sprites2","path":"assets/sprites2/s2_sprite_015.png"},{"name":"new_asset_016","category":"sprites2","path":"assets/sprites2/s2_sprite_016.png"},{"name":"new_asset_017","category":"sprites2","path":"assets/sprites2/s2_sprite_017.png"},{"name":"new_asset_018","category":"sprites2","path":"assets/sprites2/s2_sprite_018.png"},{"name":"new_asset_019","category":"sprites2","path":"assets/sprites2/s2_sprite_019.png"},{"name":"new_asset_020","category":"sprites2","path":"assets/sprites2/s2_sprite_020.png"},{"name":"new_asset_021","category":"sprites2","path":"assets/sprites2/s2_sprite_021.png"},{"name":"new_asset_022","category":"sprites2","path":"assets/sprites2/s2_sprite_022.png"},{"name":"new_asset_023","category":"sprites2","path":"assets/sprites2/s2_sprite_023.png"},{"name":"new_asset_024","category":"sprites2","path":"assets/sprites2/s2_sprite_024.png"},{"name":"new_asset_025","category":"sprites2","path":"assets/sprites2/s2_sprite_025.png"},{"name":"new_asset_026","category":"sprites2","path":"assets/sprites2/s2_sprite_026.png"},{"name":"new_asset_027","category":"sprites2","path":"assets/sprites2/s2_sprite_027.png"},{"name":"new_asset_028","category":"sprites2","path":"assets/sprites2/s2_sprite_028.png"},{"name":"new_asset_029","category":"sprites2","path":"assets/sprites2/s2_sprite_029.png"},{"name":"new_asset_030","category":"sprites2","path":"assets/sprites2/s2_sprite_030.png"},{"name":"new_asset_031","category":"sprites2","path":"assets/sprites2/s2_sprite_031.png"},{"name":"new_asset_032","category":"sprites2","path":"assets/sprites2/s2_sprite_032.png"},{"name":"new_asset_033","category":"sprites2","path":"assets/sprites2/s2_sprite_033.png"},{"name":"new_asset_034","category":"sprites2","path":"assets/sprites2/s2_sprite_034.png"},{"name":"new_asset_035","category":"sprites2","path":"assets/sprites2/s2_sprite_035.png"},{"name":"new_asset_036","category":"sprites2","path":"assets/sprites2/s2_sprite_036.png"},{"name":"new_asset_037","category":"sprites2","path":"assets/sprites2/s2_sprite_037.png"},{"name":"new_asset_038","category":"sprites2","path":"assets/sprites2/s2_sprite_038.png"},{"name":"new_asset_039","category":"sprites2","path":"assets/sprites2/s2_sprite_039.png"},{"name":"new_asset_040","category":"sprites2","path":"assets/sprites2/s2_sprite_040.png"},{"name":"mapa_armory","category":"mapy","path":"assets/mapy/armory_mapa.png"}]};
+let PACK_ASSETS=[];
+async function loadPackManifest(){
+  PACK_ASSETS=(EMBEDDED_MANIFEST.assets||[]);
+  renderAssetGrid();
+}
+function renderAssetGrid(){
+  const grid=document.getElementById('asset-grid');
+  const filterEl=document.getElementById('asset-filter');
+  const filter=filterEl?filterEl.value:'all';
+  grid.innerHTML='';
+  const searchEl=document.getElementById('asset-search');
+  const q=(searchEl&&searchEl.value||'').toLowerCase().trim();
+  const list=PACK_ASSETS.filter(a=>(filter==='all'||a.category===filter) && (!q || (a.name||'').toLowerCase().includes(q) || (a.path||'').toLowerCase().includes(q)));
+  if(!list.length){grid.innerHTML='<div class="small-note">V této kategorii nejsou žádné assety — vše bylo smazané.</div>';return;}
+  for(const a of list){
+    const card=document.createElement('div');card.className='asset-card';
+    const img=document.createElement('img');img.src=a.path;
+    const nm=document.createElement('div');nm.className='aname';nm.textContent=a.name||a.path.split('/').pop();
+    card.appendChild(img);card.appendChild(nm);
+    card.draggable=true;
+    card.title='Klik = vložit doprostřed. Táhni na plátno = vložit na přesné místo.';
+    card.addEventListener('dragstart',e=>{stopPlayback();e.dataTransfer.effectAllowed='copy';e.dataTransfer.setData('application/x-foxy-asset',JSON.stringify(a));e.dataTransfer.setData('text/plain',a.path||a.name||'');setStatus('Táhni asset na plátno a pusť ho tam, kam ho chceš vložit.');});
+    card.onclick=async()=>{if((a.category||'')==='mapy'){await setTestMapByAsset(a);return;}const im=await loadImageURL(a.path);addImagePart(a.name||a.path.split('/').pop().replace(/\.[^.]+$/,''),im,'image',{srcData:null,category:a.category||''});};
+    grid.appendChild(card);
+  }
+}
+
+const iconSizeEl=document.getElementById('icon-size');
+const iconSizeVal=document.getElementById('icon-size-val');
+function applyIconSize(v){document.documentElement.style.setProperty('--asset-card-h',v+'px');document.documentElement.style.setProperty('--asset-img',Math.round(v*.77)+'px');if(iconSizeVal)iconSizeVal.textContent=v;}
+if(iconSizeEl){iconSizeEl.oninput=e=>applyIconSize(e.target.value);applyIconSize(iconSizeEl.value);}
+const sortBtn=document.getElementById('btn-sort-assets');if(sortBtn)sortBtn.onclick=()=>{PACK_ASSETS.sort((a,b)=>(a.category+a.name).localeCompare(b.category+b.name));renderAssetGrid();setStatus('Assety seřazené.');};
+const randomBtn=document.getElementById('btn-random-asset');if(randomBtn)randomBtn.onclick=async()=>{const filter=document.getElementById('asset-filter')?.value||'all';const list=PACK_ASSETS.filter(a=>filter==='all'||a.category===filter);if(!list.length)return;const a=list[Math.floor(Math.random()*list.length)];const im=await loadImageURL(a.path);addImagePart(a.name||a.path.split('/').pop().replace(/\.[^.]+$/,''),im,'image',{srcData:null,category:a.category||''});setStatus('Vložen náhodný asset: '+(a.name||a.path));};
+
+const assetFilterEl=document.getElementById('asset-filter');
+if(assetFilterEl)assetFilterEl.onchange=renderAssetGrid;
+const assetSearchEl=document.getElementById('asset-search');
+if(assetSearchEl)assetSearchEl.oninput=renderAssetGrid;
+
+
+// ============================================================
+// 8.8 TAŽNÉ HRANY PANELŮ — pravý panel + spodní časová osa
+// ============================================================
+function initResizablePanels(){
+  const right=document.getElementById('rightbar');
+  const rx=document.getElementById('right-resizer');
+  const tl=document.getElementById('timeline');
+  const ty=document.getElementById('timeline-resizer');
+  const zoom=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ui-zoom'))||0.8;
+  const savedW=parseInt(safeStorageGet('foxy_editor_rightbar_w_8_9')||'',10);
+  const savedH=parseInt(safeStorageGet('foxy_editor_timeline_h_8_9')||'',10);
+  if(savedW)right.style.width=Math.max(240,Math.min(760,savedW))+'px';
+  if(savedH)tl.style.height=Math.max(100,Math.min(520,savedH))+'px';
+  if(rx)rx.addEventListener('mousedown',e=>{
+    e.preventDefault();document.body.classList.add('resizing-panel','resizing-x');
+    function move(ev){const cssX=ev.clientX/zoom;const appW=window.innerWidth/zoom;const w=Math.max(240,Math.min(760,appW-cssX));right.style.width=w+'px';resize();drawTL();safeStorageSet('foxy_editor_rightbar_w_8_9',String(Math.round(w)));}
+    function up(){document.body.classList.remove('resizing-panel','resizing-x');window.removeEventListener('mousemove',move);window.removeEventListener('mouseup',up);}
+    window.addEventListener('mousemove',move);window.addEventListener('mouseup',up);
+  });
+  if(ty)ty.addEventListener('mousedown',e=>{
+    e.preventDefault();document.body.classList.add('resizing-panel','resizing-y');
+    const startY=e.clientY/zoom,startH=tl.offsetHeight;
+    function move(ev){const y=ev.clientY/zoom;const h=Math.max(100,Math.min(520,startH-(y-startY)));tl.style.height=h+'px';resize();drawTL();safeStorageSet('foxy_editor_timeline_h_8_9',String(Math.round(h)));}
+    function up(){document.body.classList.remove('resizing-panel','resizing-y');window.removeEventListener('mousemove',move);window.removeEventListener('mouseup',up);}
+    window.addEventListener('mousemove',move);window.addEventListener('mouseup',up);
+  });
+}
+initResizablePanels();
+
+resize();drawTL();loadPackManifest();setTool('select');setStatus('Foxy editor 9.3 připravený. Mapa v assets/mapy, TEST 2D umí automatické rozlišení podle mapy, nahrání JPG/PNG mapy a kolize se zdí.');
+setTimeout(()=>{try{if(localStorage.getItem(QUICK_TUTORIAL_KEY)!=='1')qtStartTutorial(false);else document.getElementById('modal-news').classList.add('show');}catch(e){qtStartTutorial(true);}},500);
+</script>
+</body>
+</html>
