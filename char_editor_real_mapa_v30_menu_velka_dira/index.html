@@ -2,75 +2,1105 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta http-equiv="refresh" content="0;url=./loading.html?v=136">
-<title>Velká díra 1</title>
-<style>html,body{margin:0;height:100%;background:#050506;color:#ddd;font-family:monospace;display:grid;place-items:center}</style>
-<script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEMENT VERZE 8.3 — FOXY ANIMATION EDITOR</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#101010;color:#ddd;font-family:'Courier New',monospace;font-size:12px}
+#app{display:flex;flex-direction:column;height:100vh}
+#toolbar{
+  background:#1c1c1c;border-bottom:1px solid #333;padding:5px 8px;
+  display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex-shrink:0;min-height:38px
+}
+.title{color:#ff9966;font-weight:bold;font-size:13px;margin-right:4px;letter-spacing:1px}
+.tbtn{
+  background:#2a2a2a;color:#bbb;border:1px solid #444;padding:3px 8px;cursor:pointer;border-radius:2px;
+  font-family:'Courier New',monospace;font-size:11px;white-space:nowrap
+}
+.tbtn:hover{background:#383838;color:#fff}
+.tbtn.active{background:#e87;color:#fff;border-color:#e87}
+.sep{width:1px;height:20px;background:#333;flex-shrink:0}
+#fps-wrap{display:flex;align-items:center;gap:4px;color:#888;font-size:11px}
+#fps-in{width:42px;background:#222;border:1px solid #444;color:#ddd;padding:2px 4px;font-family:'Courier New';font-size:11px;border-radius:2px;text-align:center}
+#main{display:flex;flex:1;overflow:hidden;min-height:0}
+#canvas-wrap{flex:1;position:relative;overflow:hidden;background:#151515;cursor:crosshair}
+#main-canvas{display:block;position:absolute;top:0;left:0;image-rendering:auto}
+#rightbar{width:260px;flex-shrink:0;background:#191919;border-left:1px solid #333;display:flex;flex-direction:column;overflow:hidden}
+.tabs{display:flex;border-bottom:1px solid #333}
+.tab{flex:1;text-align:center;padding:7px 4px;background:#202020;border:0;color:#777;cursor:pointer;font-family:'Courier New';font-size:10px}
+.tab.active{background:#2a1a0a;color:#ff9966}
+.panel-head{padding:6px 8px;background:#222;border-bottom:1px solid #333;font-size:10px;color:#777;text-transform:uppercase;letter-spacing:1px}
+.scroll{flex:1;overflow:auto;padding:5px}
+.scroll::-webkit-scrollbar{width:5px;height:5px}.scroll::-webkit-scrollbar-thumb{background:#333}
+.pi{padding:4px 6px;border-radius:2px;cursor:pointer;display:flex;align-items:center;gap:5px;margin-bottom:2px;border:1px solid transparent}
+.pi:hover{background:#252525}.pi.sel{background:#2a1a0a;border-color:#e87}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:#888}
+.pname{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+.eye{opacity:.45;cursor:pointer;font-size:10px}
+.asset-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.asset-card{background:#222;border:1px solid #333;border-radius:3px;padding:4px;cursor:pointer;min-height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.asset-card:hover{border-color:#e87;background:#2a241f}
+.asset-card img{max-width:62px;max-height:48px;object-fit:contain;image-rendering:auto}
+.asset-card .aname{font-size:9px;color:#aaa;text-align:center;word-break:break-all;max-height:22px;overflow:hidden}
+.small-note{color:#777;font-size:10px;line-height:1.35;padding:6px}
+#props{border-top:1px solid #333;padding:7px;font-size:11px;max-height:260px;overflow-y:auto}
+.plab{color:#666;display:block;margin-bottom:2px;margin-top:5px;font-size:10px;text-transform:uppercase}
+.pin{width:100%;background:#222;border:1px solid #444;color:#ddd;padding:2px 5px;border-radius:2px;font-family:'Courier New';font-size:11px}
+input[type=range].pin{padding:0;height:16px;background:none;border:none}
+#timeline{height:145px;flex-shrink:0;background:#151515;border-top:1px solid #333;display:flex;flex-direction:column}
+#tl-head{background:#1c1c1c;border-bottom:1px solid #2a2a2a;padding:3px 8px;display:flex;align-items:center;gap:5px;flex-shrink:0}
+#tl-head .tbtn{padding:2px 7px;font-size:10px}
+#tl-info{margin-left:auto;color:#555;font-size:10px}
+#tl-scroll{flex:1;overflow:auto;position:relative}
+#tl-scroll::-webkit-scrollbar{height:5px;width:5px}#tl-scroll::-webkit-scrollbar-thumb{background:#333}
+#tl-canvas{display:block}
+#status{padding:2px 8px;background:#111;border-top:1px solid #222;font-size:10px;color:#666;flex-shrink:0}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:200;align-items:center;justify-content:center}
+.modal.show{display:flex}
+.mbox{background:#1e1e1e;border:1px solid #444;border-radius:4px;padding:16px;min-width:310px;max-width:520px;max-height:90vh;overflow:auto}
+.mbox h3{color:#fff;margin-bottom:10px;font-size:13px}.mbox p{color:#aaa;margin-bottom:10px;font-size:11px;line-height:1.45}
+.mrow{display:flex;gap:6px;align-items:center;margin:6px 0}
+.mrow input,.mrow select{flex:1;background:#222;border:1px solid #444;color:#ddd;padding:5px;font-family:'Courier New';font-size:11px}
+#export-bar-wrap{background:#2a2a2a;height:5px;border-radius:3px;margin-bottom:10px}
+#export-bar{background:#e87;height:5px;border-radius:3px;width:0%;transition:width .1s}
+#export-canvas{max-width:100%;margin-bottom:8px;border:1px solid #333;display:none}
 
-function currentUserNickLower(){
-  try{
-    const params=new URLSearchParams(location.search);
-    const vals=[
-      params.get('nick'),
-      params.get('user'),
-      localStorage.getItem('MADNESS_PLAYER_NAME'),
-      localStorage.getItem('RESPAWN_NICK'),
-      localStorage.getItem('squad_session')
-    ];
-    for(let v of vals){
-      if(!v)continue;
-      v=String(v).trim();
-      try{const o=JSON.parse(v);v=o.nick||o.name||o.user||o.player||v}catch(e){}
-      v=String(v||'').trim().toLowerCase();
-      if(v)return v;
+#credit-mark{position:absolute;right:10px;bottom:8px;z-index:5;color:#777;background:rgba(18,18,18,.72);border:1px solid #333;border-radius:3px;padding:3px 7px;font-size:10px;letter-spacing:.3px;pointer-events:none}
+#credit-mark b{color:#ff9966;font-weight:bold}
+ .hidden{display:none!important}
+
+#test-canvas{width:100%;height:360px;background:#141414;border:1px solid #333;display:block;cursor:crosshair}
+.test-help{color:#aaa;font-size:11px;line-height:1.45;margin:8px 0}
+.role-row{display:flex;gap:4px;margin-top:4px}
+.role-row .tbtn{font-size:10px;padding:2px 5px}
+#weapon-panel{border-top:1px solid #333;padding:7px;background:#171717}
+#weapon-panel .tbtn{margin:2px 1px;font-size:10px;padding:2px 6px}
+
+.prop-actions{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px}
+.prop-actions .tbtn{font-size:10px;padding:3px 4px}
+.tool-hint{color:#777;font-size:10px;line-height:1.35;margin-top:6px;border-top:1px solid #2b2b2b;padding-top:6px}
+#layer-preset{margin-top:6px}
+
+
+
+/* === 8.3 modern readable UI override === */
+html,body{font-size:16px;background:radial-gradient(circle at 20% 0%,#172131 0,#0b0f17 45%,#07090d 100%);color:#e8edf7;font-family:Inter,Segoe UI,Arial,sans-serif}
+#toolbar{min-height:58px;padding:10px 14px;background:linear-gradient(135deg,rgba(19,30,46,.96),rgba(8,11,18,.98));border-bottom:1px solid rgba(93,166,255,.28);box-shadow:0 10px 40px rgba(0,0,0,.36);gap:9px}
+.title{font-size:18px;color:#f6f9ff;text-shadow:0 0 18px rgba(78,167,255,.55);letter-spacing:.7px}
+.tbtn{font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;font-weight:750;letter-spacing:.2px;border-radius:10px;padding:8px 12px;background:linear-gradient(180deg,rgba(34,51,76,.96),rgba(16,23,35,.96));border:1px solid rgba(115,173,255,.32);color:#dce9ff;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 8px 22px rgba(0,0,0,.25)}
+.tbtn:hover{background:linear-gradient(180deg,rgba(48,75,111,.98),rgba(20,31,48,.98));border-color:rgba(255,169,92,.72);color:#fff;transform:translateY(-1px)}
+.tbtn.active{background:linear-gradient(180deg,#ff9f43,#c45c1e);border-color:#ffc07a;color:#111827;text-shadow:none}
+.sep{height:30px;background:linear-gradient(180deg,transparent,rgba(93,166,255,.4),transparent)}
+#rightbar{width:340px;background:rgba(9,13,20,.96);border-left:1px solid rgba(93,166,255,.25);box-shadow:-16px 0 40px rgba(0,0,0,.26)}
+.tabs{border-bottom:1px solid rgba(93,166,255,.24)}
+.tab{font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;font-weight:850;padding:13px 8px;background:#0f1622;color:#9db6d8}
+.tab.active{background:linear-gradient(180deg,#1f3a5d,#111b2b);color:#fff;border-bottom:2px solid #ff9f43}
+.panel-head{font-size:13px;font-weight:850;color:#b9d6ff;background:rgba(26,39,59,.92);padding:11px 12px;border-bottom:1px solid rgba(93,166,255,.2)}
+.scroll{padding:10px}.pname,.small-note,.plab,.pin,.mrow input,.mrow select,#status,#tl-info,#fps-wrap,#fps-in{font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px}.small-note{line-height:1.5;color:#aebbd0}.plab{font-size:12px;color:#7fa6d9;font-weight:800}.pin,.mrow input,.mrow select{padding:8px 10px;border-radius:10px;background:#111a28;border:1px solid rgba(102,159,239,.28);color:#edf5ff}.asset-grid{grid-template-columns:repeat(3,1fr);gap:9px}.asset-card{min-height:112px;border-radius:14px;background:linear-gradient(180deg,rgba(24,36,55,.94),rgba(11,16,25,.94));border:1px solid rgba(107,161,236,.24);box-shadow:0 10px 28px rgba(0,0,0,.26)}.asset-card:hover{border-color:#ff9f43;background:linear-gradient(180deg,rgba(37,56,83,.98),rgba(18,27,42,.98))}.asset-card img{max-width:86px;max-height:72px}.asset-card .aname{font-size:12px;color:#dce9ff}.pi{padding:9px 10px;border-radius:10px}.pi:hover{background:#172236}.pi.sel{background:rgba(255,159,67,.16);border-color:#ff9f43}.dot{width:11px;height:11px}.eye{font-size:14px}#props{padding:12px;max-height:360px;background:#0c121c;border-top:1px solid rgba(93,166,255,.2)}.prop-actions{gap:7px}.prop-actions .tbtn,#weapon-panel .tbtn,#tl-head .tbtn{font-size:13px;padding:7px 9px}.tool-hint{font-size:13px;color:#9fb2cc;line-height:1.45}#weapon-panel{padding:11px;background:#0c121c;border-top:1px solid rgba(93,166,255,.2)}#timeline{height:188px;background:#0b1018;border-top:1px solid rgba(93,166,255,.23)}#tl-head{padding:9px 12px;background:#101826;gap:8px}#status{padding:7px 12px;background:#070b11;color:#8296b3}.mbox{background:linear-gradient(145deg,#111827,#080c13);border:1px solid rgba(112,169,255,.34);border-radius:18px;box-shadow:0 30px 100px rgba(0,0,0,.66);padding:22px}.mbox h3{font-size:22px}.mbox p{font-size:15px;line-height:1.55;color:#c4d1e5}#credit-mark{font-family:Inter,Segoe UI,Arial,sans-serif;font-size:13px;border-radius:10px;background:rgba(7,11,17,.72);border:1px solid rgba(93,166,255,.28);color:#b5c8e8;padding:8px 12px}#credit-mark b{color:#ffb86b}
+/* TEST 2D full-screen */
+#modal-test2d{background:rgba(2,5,10,.92);backdrop-filter:blur(8px)}
+#modal-test2d .mbox{width:96vw!important;max-width:none!important;height:92vh!important;max-height:none!important;display:flex;flex-direction:column;padding:18px;gap:12px;background:linear-gradient(145deg,rgba(15,23,36,.98),rgba(5,8,13,.98));border:1px solid rgba(108,171,255,.42)}
+#modal-test2d h3{font-size:28px;margin:0;color:#f5f9ff;text-shadow:0 0 24px rgba(87,166,255,.45)}
+.test-help{font-family:Inter,Segoe UI,Arial,sans-serif;color:#cfe2ff;font-size:17px;line-height:1.45;margin:0;background:rgba(16,28,44,.72);border:1px solid rgba(108,171,255,.22);border-radius:14px;padding:12px 14px}
+.test-topline{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.test-badge{font-size:15px;font-weight:850;color:#111827;background:linear-gradient(180deg,#ffb35f,#ff8d35);border-radius:999px;padding:8px 12px}
+.test-controls{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:0}.test-controls label{font-size:15px;color:#bcd2ef;font-weight:750;display:flex;gap:8px;align-items:center}.test-controls input[type=range]{width:150px}.test-hud{display:flex;gap:10px;flex-wrap:wrap}.test-chip{background:rgba(12,19,30,.86);border:1px solid rgba(112,169,255,.28);border-radius:12px;padding:8px 11px;color:#dce9ff;font-size:14px;font-weight:750}
+#test-canvas{flex:1;width:100%;height:100%;min-height:0;border-radius:18px;background:#070b12;border:1px solid rgba(117,181,255,.38);box-shadow:inset 0 0 70px rgba(0,0,0,.55),0 20px 80px rgba(0,0,0,.35)}
+#test-buttons{display:flex;gap:10px;align-items:center;justify-content:flex-end}.test-big-btn{font-size:16px!important;padding:11px 16px!important;border-radius:12px!important}
+
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="toolbar">
+    <span class="title">⚡ DEMENT VERZE 8.3 — FOXY ANIMATION EDITOR</span>
+    <div class="sep"></div>
+    <button class="tbtn active" id="btn-select">✦ SELECT</button>
+    <button class="tbtn" id="btn-rotate">↻ ROTATE</button>
+    <button class="tbtn" id="btn-scale">⇲ SCALE</button>
+    <div class="sep"></div>
+    <button class="tbtn" id="btn-load">📁 LOAD PNG</button>
+    <button class="tbtn" id="btn-loadgif">🎞 LOAD GIF</button>
+    <button class="tbtn" id="btn-delpart">✕ DEL</button>
+    <button class="tbtn" id="btn-clear-scene">CLEAR SCENE</button>
+    <button class="tbtn" id="btn-dup-part" title="Duplikovat vybraný asset/part">DUP</button>
+    <button class="tbtn" id="btn-auto-layers" title="Automaticky nastaví překrývání: boty &lt; body &lt; hlava">AUTO VRSTVY</button>
+    <button class="tbtn" id="btn-bg" title="Přepne pozadí editoru: mřížka / zelená / průhledná">BG</button>
+    <div class="sep"></div>
+    <button class="tbtn" id="btn-kf">◆ KEYFRAME</button>
+    <button class="tbtn" id="btn-play">▶ PLAY</button>
+    <button class="tbtn" id="btn-stop">■ STOP</button>
+    <button class="tbtn" id="btn-export">⬇ EXPORT GIF</button>
+    <div class="sep"></div>
+    <button class="tbtn" id="btn-saveproj">💾 SAVE</button>
+    <button class="tbtn" id="btn-loadproj">📂 LOAD SAVE</button>
+    <button class="tbtn" id="btn-news">🛈 NOVINKY</button>
+    <button class="tbtn" id="btn-tutorial" title="Rychlý návod a popis funkcí">? TUTORIAL</button>
+    <div class="sep"></div>
+    <button class="tbtn" id="btn-onion" title="Zobrazí předchozí a další frame jako průhledný ghost">ONION</button>
+    <button class="tbtn" id="btn-pingpong" title="Přehrávání dopředu a zpět">PINGPONG</button>
+    <button class="tbtn" id="btn-tween" title="Vloží mezisnímky mezi aktuální a další frame">+TWEEN</button>
+    <button class="tbtn" id="btn-copypose" title="Zkopíruje pozice všech partů">COPY POSE</button>
+    <button class="tbtn" id="btn-pastepose" title="Vloží zkopírovanou pózu">PASTE POSE</button>
+    <button class="tbtn" id="btn-walkcycle" title="Vygeneruje jednoduchý walk cycle">AUTO WALK</button>
+    <button class="tbtn" id="btn-attackcycle" title="Vygeneruje jednoduchý attack/shoot cycle">AUTO ATTACK</button>
+    <button class="tbtn" id="btn-test2d" title="Otevře prázdnou 2D testovací scénu WASD">TEST 2D</button>
+    <button class="tbtn" id="btn-weaponhold" title="Vygeneruje pózu držení zbraně">WEAPON HOLD</button>
+    <button class="tbtn" id="btn-shootcycle" title="Vygeneruje střelbu">SHOOT</button>
+    <button class="tbtn" id="btn-reloadcycle" title="Vygeneruje reload animaci">RELOAD</button>
+    <div class="sep"></div>
+    <div id="fps-wrap">FPS <input type="number" id="fps-in" value="12" min="1" max="60"></div>
+  </div>
+
+  <div id="main">
+    <div id="canvas-wrap"><canvas id="main-canvas"></canvas><div id="credit-mark"><b>Projected by Lukamer</b> → all rights reserved</div></div>
+    <div id="rightbar">
+      <div class="tabs">
+        <button class="tab active" data-tab="parts">PARTS</button>
+        <button class="tab" data-tab="assets">ASSETY</button>
+      </div>
+      <div id="tab-parts" class="scroll">
+        <div class="panel-head">Vrstvy / části</div>
+        <div id="parts-list"></div>
+      </div>
+      <div id="tab-assets" class="scroll hidden">
+        <div class="panel-head">Asset knihovna</div>
+        <div class="small-note">
+          V balíčku jsou přidané Foxy/Madness sprity. Klikni na asset = vloží se do scény. Další PNG/WebP nahraješ přes LOAD PNG, nebo doplníš soubory do složek:
+          <br>assets/sprites, assets/weapons, assets/body, assets/heads, assets/hands, assets/feet, assets/effects...
+        </div>
+        <div class="mrow" style="margin:4px 0 8px 0">
+          <select id="asset-filter">
+            <option value="all">všechny assety</option>
+            <option value="heads">heads</option>
+            <option value="body">body</option>
+            <option value="hands">hands</option>
+            <option value="feet">feet</option>
+            <option value="shields">shields</option>
+            <option value="silhouettes">silhouettes</option>
+            <option value="effects">effects</option>
+            <option value="weapons">weapons</option>
+            <option value="sprites">sprites</option>
+            <option value="sprites2">sprites2/new</option>
+          </select>
+        </div>
+        <input class="pin" id="asset-search" placeholder="hledat asset: head, body, hand..." style="margin-bottom:8px">
+        <div id="asset-grid" class="asset-grid"></div>
+      </div>
+      <div id="props">
+        <div id="prop-empty" style="color:#555;font-size:11px">Vyber part...</div>
+        <div id="prop-form" style="display:none">
+          <span class="plab">Název</span><input class="pin" type="text" id="p-name">
+          <span class="plab">X</span><input class="pin" type="number" id="p-x" step="1">
+          <span class="plab">Y</span><input class="pin" type="number" id="p-y" step="1">
+          <span class="plab">Rotace °</span><input class="pin" type="number" id="p-rot" step="0.1">
+          <span class="plab">Scale</span><input class="pin" type="range" id="p-scale" min="0.05" max="6" step="0.05">
+          <span class="plab">Z-vrstva</span><input class="pin" type="number" id="p-z" step="1">
+          <span class="plab">Flip X</span>
+          <label style="display:flex;gap:5px;color:#888;font-size:11px"><input type="checkbox" id="p-flipx"> zrcadlit</label>
+          <span class="plab">Role pro animace</span>
+          <select class="pin" id="p-role">
+            <option value="">auto / žádná</option>
+            <option value="head">hlava</option>
+            <option value="body">tělo</option>
+            <option value="handL">levá ruka</option>
+            <option value="handR">pravá ruka</option>
+            <option value="footL">levá bota/noha</option>
+            <option value="footR">pravá bota/noha</option>
+            <option value="weapon">zbraň</option>
+            <option value="muzzle">muzzle efekt</option>
+            <option value="shield">štít</option>
+          </select>
+          <div class="role-row">
+            <button class="tbtn" type="button" id="role-handL">L HAND</button>
+            <button class="tbtn" type="button" id="role-handR">R HAND</button>
+            <button class="tbtn" type="button" id="role-weapon">WEAPON</button>
+          </div>
+          <span class="plab">Průhlednost</span><input class="pin" type="range" id="p-opacity" min="0" max="1" step="0.02">
+          <span class="plab">Lock</span>
+          <label style="display:flex;gap:5px;color:#888;font-size:11px"><input type="checkbox" id="p-locked"> zamknout proti posunu</label>
+          <select class="pin" id="layer-preset">
+            <option value="madness">Madness pořadí: boty &lt; body &lt; ruce &lt; hlava &lt; zbraň</option>
+            <option value="bodyHead">Jen: body nad boty, hlava nad body</option>
+            <option value="manual">Ruční vrstvy</option>
+          </select>
+          <div class="prop-actions">
+            <button class="tbtn" type="button" id="z-back">Z -1</button>
+            <button class="tbtn" type="button" id="z-front">Z +1</button>
+            <button class="tbtn" type="button" id="z-bottom">ÚPLNĚ DOLŮ</button>
+            <button class="tbtn" type="button" id="z-top">ÚPLNĚ NAHORU</button>
+            <button class="tbtn" type="button" id="part-dup">DUPLIKOVAT</button>
+            <button class="tbtn" type="button" id="part-reset">RESET</button>
+            <button class="tbtn" type="button" id="part-center">CENTER</button>
+            <button class="tbtn" type="button" id="part-flip">FLIP X</button>
+            <button class="tbtn" type="button" id="part-hide">HIDE/SHOW</button>
+          </div>
+          <div class="tool-hint">Ovládání: táhni myší = posun, R = rotace, S = scale. Kolečko = scale, Shift+kolečko = rotace. Šipky = jemný posun, Ctrl+D = duplikovat, [ ] = vrstvy.</div>
+        </div>
+      </div>
+      <div id="weapon-panel">
+        <div class="panel-head">Zbraň / akce</div>
+        <button class="tbtn" id="wp-hold">držení</button>
+        <button class="tbtn" id="wp-shoot">střelba</button>
+        <button class="tbtn" id="wp-reload">reload</button>
+        <button class="tbtn" id="wp-hit">melee hit</button>
+        <div class="small-note">Nastav role partů: handL/handR/weapon. Pak generuj pózy.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="timeline">
+    <div id="tl-head">
+      <span style="color:#666;font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-right:4px">Timeline</span>
+      <button class="tbtn" id="btn-addframe">+FRAME</button>
+      <button class="tbtn" id="btn-delframe">-FRAME</button>
+      <button class="tbtn" id="btn-dupframe">DUP</button>
+      <button class="tbtn" id="btn-clearall">CLEAR TL</button>
+      <button class="tbtn" id="btn-reverse" title="Obrátí pořadí framů">REVERSE</button>
+      <button class="tbtn" id="btn-mirrorpose" title="Zrcadlí všechny party v póze">MIRROR POSE</button>
+      <span id="tl-info">Frame 0/0</span>
+    </div>
+    <div id="tl-scroll"><canvas id="tl-canvas"></canvas></div>
+  </div>
+  <div id="status">Připraveno. V=Select R=Rotate S=Scale K=Keyframe Space=Play ←→=frames Del=smazat.</div>
+</div>
+
+<div class="modal" id="modal-news">
+  <div class="mbox">
+    <h3>DEMENT VERZE 8.3 — FOXY ANIMATION EDITOR</h3>
+    <p><b>Speciálně pro foxyho od Lukamera :-)</b></p>
+    <p>• Přidané sprity z balíčku: hlavy, body, ruce, nohy/accessories a hotové character části.</p>
+    <p>• Přidaný TUTORIAL s rychlým popisem všech funkcí přímo v editoru.</p>
+    <p>• Přidané hledání assetů, center, flip, hide/show, reverse timeline a mirror pose.</p>
+    <p>• TEST 2D je teď full-page, má větší texty, HUD, zoom postavy, rychlost, přepínání pozadí a kameru.</p>
+    <p>• Vrstvení drží Madness pořadí: boty/nohy dole, body překrývá boty, ruce nad body, hlava překrývá body, zbraň/efekty nahoře.</p>
+    <p>• Editor pořád umí: LOAD PNG/GIF, keyframy, onion skin, pingpong, tween, copy/paste pose, auto walk, attack, shoot, reload, test 2D, save/load a export GIF.</p>
+    <button class="tbtn" id="news-close">Zavřít</button>
+  </div>
+</div>
+
+
+<div class="modal" id="modal-tutorial">
+  <div class="mbox" style="max-width:880px;width:880px;max-height:86vh;overflow:auto">
+    <h3>TUTORIAL — jednoduše pro animování postaviček</h3>
+    <p><b>Speciálně pro foxyho od Lukamera :-)</b></p>
+    <p><b>Rychlý postup:</b> 1) vpravo otevři ASSETY, 2) klikni na hlavu/body/ruku, 3) nastav roli partu, 4) dej AUTO VRSTVY, 5) nastav pózu, 6) dej KEYFRAME, 7) posuň frame a změň pózu, 8) PLAY nebo EXPORT GIF.</p>
+    <ol style="line-height:1.55;margin-left:18px;color:#ccc">
+      <li><b>ASSETY</b> — knihovna spritů z balíčku; klik vloží asset do scény.</li>
+      <li><b>Hledání assetů</b> — filtruje podle názvu: head, body, hand, feet.</li>
+      <li><b>LOAD PNG</b> — nahraje vlastní obrázky jako další party.</li>
+      <li><b>LOAD GIF</b> — rozseká GIF do framů a vloží ho jako animovaný part.</li>
+      <li><b>SELECT / ROTATE / SCALE</b> — režim pro posun, rotaci a zvětšování.</li>
+      <li><b>Kolečko myši</b> — zvětšení/zmenšení vybraného partu.</li>
+      <li><b>Shift + kolečko</b> — rychlá rotace vybraného partu.</li>
+      <li><b>Šipky</b> — jemný posun; Shift + šipky = větší posun.</li>
+      <li><b>Z-vrstva</b> — určuje, co je vpředu a co vzadu.</li>
+      <li><b>AUTO VRSTVY</b> — nastaví pořadí: boty → body → ruce → hlava → zbraň/efekty.</li>
+      <li><b>Role partu</b> — head/body/hand/foot/weapon; důležité pro auto animace.</li>
+      <li><b>Lock</b> — zamkne part, aby se omylem neposunul.</li>
+      <li><b>Opacity</b> — průhlednost partu.</li>
+      <li><b>Flip X</b> — zrcadlení ruky, hlavy nebo těla.</li>
+      <li><b>Center</b> — hodí vybraný part doprostřed plátna.</li>
+      <li><b>Hide/Show</b> — skryje nebo znovu ukáže part.</li>
+      <li><b>KEYFRAME</b> — uloží aktuální pózu do timeline.</li>
+      <li><b>+FRAME / DUP</b> — přidá nebo duplikuje snímek.</li>
+      <li><b>TWEEN</b> — vloží mezisnímky mezi dvě pózy.</li>
+      <li><b>ONION</b> — ukáže okolní snímky průhledně jako vodítko.</li>
+      <li><b>PINGPONG</b> — animace jede dopředu a pak zpět.</li>
+      <li><b>COPY/PASTE POSE</b> — kopíruje celou pózu všech partů.</li>
+      <li><b>AUTO WALK</b> — rychle vygeneruje chůzi.</li>
+      <li><b>AUTO ATTACK / SHOOT / RELOAD</b> — rychlé akční animace.</li>
+      <li><b>WEAPON HOLD</b> — nastaví jednoduché držení zbraně.</li>
+      <li><b>TEST 2D</b> — full-page test složené postavy; obsahuje zoom, rychlost, HUD, kameru, pozadí a reset hráče.</li>
+      <li><b>MIRROR POSE</b> — zrcadlí celou aktuální pózu.</li>
+      <li><b>REVERSE</b> — obrátí pořadí framů v timeline.</li>
+      <li><b>SAVE / LOAD SAVE</b> — ukládá projekt v prohlížeči.</li>
+      <li><b>EXPORT GIF</b> — vyrenderuje timeline do GIFu.</li>
+    </ol>
+    <p><b>Klávesy:</b> V select, R rotate, S scale, K keyframe, Space play, O onion, P pingpong, T tween, F shoot, X test, Ctrl+D duplikace, [ ] vrstvy, Delete smaže part.</p>
+    <button class="tbtn" id="tutorial-close">Zavřít</button>
+  </div>
+</div>
+
+<div class="modal" id="modal-save">
+  <div class="mbox">
+    <h3>Uložit projekt</h3>
+    <p>Zadej název. Uloží se parts, pozice, rotace, scale, vrstvy, frame timeline a vložené obrázky do LocalStorage.</p>
+    <div class="mrow"><input id="save-name" placeholder="např. walk_01"></div>
+    <button class="tbtn" id="save-do">ULOŽIT</button>
+    <button class="tbtn" id="save-close">Zrušit</button>
+  </div>
+</div>
+
+<div class="modal" id="modal-loadsave">
+  <div class="mbox">
+    <h3>Načíst uložený projekt</h3>
+    <p>Vyber uložený projekt z LocalStorage.</p>
+    <div class="mrow"><select id="load-select"></select></div>
+    <button class="tbtn" id="load-do">NAČÍST</button>
+    <button class="tbtn" id="load-delete">SMAZAT SAVE</button>
+    <button class="tbtn" id="load-close">Zrušit</button>
+  </div>
+</div>
+
+
+<div class="modal" id="modal-test2d">
+  <div class="mbox">
+    <div class="test-topline">
+      <h3>TEST 2D — FULL PAGE SCÉNA</h3>
+      <span class="test-badge">větší náhled • lepší ovládání • rychlý test postavy</span>
+    </div>
+    <div class="test-help">
+      WASD / šipky = pohyb, mezera = jump, levý klik = melee hit, F = střelba, R = reload. Test používá přímo složené party z editoru a roztáhne scénu přes skoro celou stránku.
+    </div>
+    <div class="test-controls">
+      <label>ZOOM POSTAVY <input id="test-scale" type="range" min="0.35" max="3.2" step="0.05" value="1.2"></label>
+      <label>RYCHLOST <input id="test-speed" type="range" min="0.5" max="2.2" step="0.1" value="1"></label>
+      <button class="tbtn test-big-btn" id="test-bg">BG: GRID</button>
+      <button class="tbtn test-big-btn" id="test-camera">CAMERA: FOLLOW</button>
+      <button class="tbtn test-big-btn" id="test-reset">RESET PLAYER</button>
+      <div class="test-hud">
+        <span class="test-chip" id="test-hud-action">ACTION: idle</span>
+        <span class="test-chip" id="test-hud-pos">X:0 Y:0</span>
+        <span class="test-chip" id="test-hud-parts">PARTS: 0</span>
+      </div>
+    </div>
+    <canvas id="test-canvas" width="1600" height="760"></canvas>
+    <div id="test-buttons">
+      <button class="tbtn test-big-btn" id="test-start">START TEST</button>
+      <button class="tbtn test-big-btn" id="test-stop">STOP</button>
+      <button class="tbtn test-big-btn" id="test-close">Zavřít</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modal-export">
+  <div class="mbox">
+    <h3>Export GIF</h3>
+    <p id="exp-msg">Renderuju snímky...</p>
+    <div id="export-bar-wrap"><div id="export-bar"></div></div>
+    <canvas id="export-canvas"></canvas>
+    <button class="tbtn" id="exp-close">Zavřít</button>
+  </div>
+</div>
+
+<script>
+const MC=document.getElementById('main-canvas'), CTX=MC.getContext('2d');
+const TLC=document.getElementById('tl-canvas'), TLX=TLC.getContext('2d');
+const wrap=document.getElementById('canvas-wrap');
+let W=0,H=0,parts=[],frames=[],curF=0,sel=null,tool='select',playing=false,playTm=null,idCtr=0,onion=false,pingpong=false,copiedPose=null,canvasBg='grid';
+const PROJECT_PREFIX='dement8_project_';
+
+function safeStorageGet(k){
+  try{return localStorage.getItem(k);}catch(e){return window.nameStore?window.nameStore[k]||null:null;}
+}
+function safeStorageSet(k,v){
+  try{localStorage.setItem(k,v);return true;}catch(e){window.nameStore=window.nameStore||{};window.nameStore[k]=v;return false;}
+}
+function safeStorageRemove(k){
+  try{localStorage.removeItem(k);}catch(e){if(window.nameStore)delete window.nameStore[k];}
+}
+function safeStorageKeys(){
+  try{return Object.keys(localStorage);}catch(e){return window.nameStore?Object.keys(window.nameStore):[];}
+}
+
+
+function resize(){W=wrap.offsetWidth;H=wrap.offsetHeight;MC.width=W;MC.height=H;draw();}
+window.addEventListener('resize',()=>{resize();drawTL();});
+
+function setStatus(t){document.getElementById('status').textContent=t;}
+function sortedParts(){return [...parts].sort((a,b)=>(a.z-b.z)||(a.id-b.id));}
+
+function draw(targetCtx,tw,th){
+  const ctx=targetCtx||CTX,w=tw||W,h=th||H;
+  ctx.clearRect(0,0,w,h);
+  if(canvasBg==='green'){ctx.fillStyle='#00ff00';ctx.fillRect(0,0,w,h);}
+  else if(canvasBg==='transparent'){ctx.clearRect(0,0,w,h);}
+  else{ctx.fillStyle='#151515';ctx.fillRect(0,0,w,h);ctx.strokeStyle='#1f1f1f';ctx.lineWidth=1;for(let x=0;x<w;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}for(let y=0;y<h;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}}
+
+  if(onion && !targetCtx && frames.length>1){
+    const saved=parts.map(p=>({id:p.id,x:p.x,y:p.y,rot:p.rot,scale:p.scale,flipX:p.flipX,z:p.z,visible:p.visible}));
+    const prev=Math.max(0,curF-1), next=Math.min(frames.length-1,curF+1);
+    ctx.save();ctx.globalAlpha=.22;
+    if(prev!==curF){applyFrame(prev);drawPartsOnly(ctx,false);}
+    ctx.globalAlpha=.16;
+    if(next!==curF){applyFrame(next);drawPartsOnly(ctx,false);}
+    ctx.restore();
+    for(const s of saved){const p=parts.find(x=>x.id===s.id);if(p)Object.assign(p,s);}
+  }
+
+  drawPartsOnly(ctx,!targetCtx);
+}
+
+function drawPartsOnly(ctx,allowSelection){
+  for(const p of sortedParts()){
+    if(!p.visible)continue;
+    const img=getPartImage(p);
+    ctx.save();
+    ctx.translate(p.x,p.y);ctx.rotate(p.rot);
+    ctx.globalAlpha=(p.opacity===undefined?1:p.opacity);
+    ctx.scale((p.flipX?-1:1)*p.scale,p.scale);
+    const hw=p.w/2,hh=p.h/2;
+    if(img)ctx.drawImage(img,-hw,-hh,p.w,p.h);
+    else{ctx.fillStyle='#aaa';ctx.fillRect(-hw,-hh,p.w,p.h);}
+    if(allowSelection&&sel&&p.id===sel.id){
+      ctx.strokeStyle='#e87';ctx.lineWidth=2/Math.max(.1,p.scale);
+      ctx.strokeRect(-hw,-hh,p.w,p.h);
+      ctx.fillStyle='#e87';ctx.beginPath();ctx.arc(0,0,4/Math.max(.1,p.scale),0,Math.PI*2);ctx.fill();
     }
-  }catch(e){}
+    ctx.restore();
+  }
+}
+
+function getPartImage(p){
+  if(p.kind==='gif'&&p.frames&&p.frames.length){
+    const fps=parseInt(document.getElementById('fps-in').value)||12;
+    const idx=playing?Math.floor(Date.now()/Math.max(1,1000/fps))%p.frames.length:(curF%p.frames.length);
+    return p.frames[idx].img;
+  }
+  return p.img||null;
+}
+
+
+function guessRoleFromName(name,category=''){
+  const n=(name+' '+category).toLowerCase();
+  if(/head|hlava|mask|face/.test(n))return 'head';
+  if(/body|telo|torso|coat|trup/.test(n))return 'body';
+  if(/foot|feet|bota|shoe|noha/.test(n))return 'footL';
+  if(/hand|ruka|pest|fist|palm/.test(n))return 'handR';
+  if(/weapon|gun|pistol|rifle|knife|katana|zbran|mec|meč/.test(n))return 'weapon';
+  if(/muzzle|flash|effect|efekt/.test(n))return 'muzzle';
   return '';
 }
-function isAdminNick(){
-  const n=currentUserNickLower();
-  return n==='lukamer'||n==='foxy'||n.includes('foxy')||n.includes('lukamer');
+function defaultZForRole(role){
+  const map={footL:5,footR:5,body:20,handL:30,handR:31,head:45,weapon:55,muzzle:70,shield:18};
+  return map[role]??parts.length;
 }
-function rememberAdminNickFromUrl(){
-  try{
-    const n=currentUserNickLower();
-    if(isAdminNick()&&n){
-      localStorage.setItem('MADNESS_PLAYER_NAME',n.includes('foxy')?'foxy':'lukamer');
-      localStorage.setItem('RESPAWN_NICK',n.includes('foxy')?'foxy':'lukamer');
+function applyAutoLayers(mode='madness'){
+  for(const p of parts){
+    if(!p.role)p.role=guessRoleFromName(p.name,p.category||'');
+    if(mode==='bodyHead'){if(p.role==='footL'||p.role==='footR')p.z=5;if(p.role==='body')p.z=20;if(p.role==='head')p.z=45;}
+    else if(mode!=='manual')p.z=defaultZForRole(p.role);
+  }
+  renderList();updateProps();draw();drawTL();setStatus('Vrstvy nastavené: boty < body < ruce < hlava < zbraň/efekty.');
+}
+function duplicatePart(){
+  if(!sel)return;
+  const p=sel;
+  const copy=Object.assign({},p,{id:++idCtr,name:p.name+'_copy',x:p.x+18,y:p.y+18,z:p.z+1,img:p.img,frames:p.frames||null});
+  parts.push(copy);selectPart(copy);drawTL();setStatus('Part duplikovaný.');
+}
+function resetPart(){if(!sel)return;sel.rot=0;sel.scale=1;sel.opacity=1;sel.flipX=false;updateProps();draw();setStatus('Transform resetovaný.');}
+function centerPart(){if(!sel)return;sel.x=W/2;sel.y=H/2;updateProps();draw();setStatus('Part vycentrovaný.');}
+function flipPart(){if(!sel)return;sel.flipX=!sel.flipX;updateProps();draw();setStatus('Part zrcadlený přes X.');}
+function hidePart(){if(!sel)return;sel.visible=sel.visible===false?true:false;renderList();draw();setStatus(sel.visible===false?'Part skrytý.':'Part zobrazený.');}
+function moveLayer(delta){if(!sel)return;sel.z+=delta;updateProps();renderList();draw();}
+function sendLayer(top){if(!sel)return;const zs=parts.map(p=>p.z);sel.z=top?Math.max(0,...zs)+1:Math.min(0,...zs)-1;updateProps();renderList();draw();}
+
+function addImagePart(name,img,kind='image',extra={}){
+  const maxH=110, ratio=img.width/img.height;
+  const h=Math.min(img.height,maxH), w=h*ratio;
+  const guessedRole=extra.role||guessRoleFromName(name,extra.category||'');
+  const p=Object.assign({id:++idCtr,name,x:W/2,y:H/2,rot:0,scale:1,w,h,img,kind,visible:true,z:defaultZForRole(guessedRole),flipX:false,srcData:null,role:guessedRole,category:extra.category||'',opacity:1,locked:false},extra);
+  parts.push(p);selectPart(p);renderList();draw();drawTL();return p;
+}
+
+function addGifPart(name,frameImgs){
+  if(!frameImgs.length)return;
+  const first=frameImgs[0];
+  const maxH=120, ratio=first.width/first.height;
+  const h=Math.min(first.height,maxH), w=h*ratio;
+  const guessedRole=guessRoleFromName(name,'');
+  const p={id:++idCtr,name,x:W/2,y:H/2,rot:0,scale:1,w,h,img:first,kind:'gif',frames:frameImgs.map(img=>({img})),visible:true,z:defaultZForRole(guessedRole),flipX:false,srcData:null,role:guessedRole,opacity:1,locked:false};
+  parts.push(p);selectPart(p);renderList();draw();drawTL();return p;
+}
+
+function selectPart(p){sel=p;renderList();updateProps();draw();}
+function delPart(){if(!sel)return;parts=parts.filter(p=>p.id!==sel.id);sel=null;renderList();updateProps();draw();drawTL();setStatus('Part smazán.');}
+document.getElementById('btn-delpart').onclick=delPart;
+
+function hitTest(mx,my){
+  for(const p of [...sortedParts()].reverse()){
+    if(!p.visible)continue;
+    const dx=mx-p.x,dy=my-p.y,c=Math.cos(-p.rot),s=Math.sin(-p.rot);
+    const lx=c*dx-s*dy,ly=s*dx+c*dy,hw=p.w/2*p.scale,hh=p.h/2*p.scale;
+    if(lx>=-hw&&lx<=hw&&ly>=-hh&&ly<=hh)return p;
+  }
+  return null;
+}
+
+let drag=null;
+function getMouse(e){const r=MC.getBoundingClientRect(),t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top};}
+function startDrag(e){const m=getMouse(e),hit=hitTest(m.x,m.y);if(hit){selectPart(hit);if(!hit.locked)drag={p:hit,sx:m.x,sy:m.y,ox:hit.x,oy:hit.y,orot:hit.rot,os:hit.scale};else setStatus('Part je zamčený. Odemkni ho v panelu.');}else{sel=null;renderList();updateProps();draw();}}
+function doDrag(e){if(!drag||drag.p.locked)return;const m=getMouse(e),dx=m.x-drag.sx,dy=m.y-drag.sy;if(tool==='rotate')drag.p.rot=drag.orot+dx*.013;else if(tool==='scale')drag.p.scale=Math.max(.05,drag.os+(dx+dy)*.006);else{drag.p.x=drag.ox+dx;drag.p.y=drag.oy+dy;}draw();updateProps();}
+MC.addEventListener('mousedown',startDrag);
+MC.addEventListener('touchstart',e=>{e.preventDefault();startDrag(e)},{passive:false});
+window.addEventListener('mousemove',doDrag);
+window.addEventListener('touchmove',e=>{if(drag){e.preventDefault();doDrag(e)}},{passive:false});
+window.addEventListener('mouseup',()=>drag=null);
+window.addEventListener('touchend',()=>drag=null);
+MC.addEventListener('wheel',e=>{if(!sel||sel.locked)return;e.preventDefault();if(e.shiftKey){sel.rot+=(-e.deltaY)*0.002;}else{sel.scale=Math.max(0.03,Math.min(10,sel.scale+(-e.deltaY)*0.0015));}updateProps();draw();},{passive:false});
+
+function renderList(){
+  const el=document.getElementById('parts-list');el.innerHTML='';
+  for(const p of [...parts].reverse()){
+    const d=document.createElement('div');d.className='pi'+(sel&&p.id===sel.id?' sel':'');
+    d.innerHTML='<span class="dot"></span><span class="pname"></span><span class="eye"></span>';
+    d.querySelector('.pname').textContent=(p.locked?'🔒 ':'')+p.name+(p.role?' ['+p.role+']':'')+' z:'+p.z;
+    d.querySelector('.pname').onclick=()=>selectPart(p);
+    const eye=d.querySelector('.eye');eye.textContent=p.visible?'👁':'○';
+    eye.onclick=ev=>{ev.stopPropagation();p.visible=!p.visible;renderList();draw();};
+    el.appendChild(d);
+  }
+}
+
+function updateProps(){
+  const form=document.getElementById('prop-form'),empty=document.getElementById('prop-empty');
+  if(!sel){form.style.display='none';empty.style.display='block';return;}
+  form.style.display='block';empty.style.display='none';
+  document.getElementById('p-name').value=sel.name;
+  document.getElementById('p-x').value=Math.round(sel.x);
+  document.getElementById('p-y').value=Math.round(sel.y);
+  document.getElementById('p-rot').value=+(sel.rot*180/Math.PI).toFixed(1);
+  document.getElementById('p-scale').value=sel.scale;
+  document.getElementById('p-z').value=sel.z;
+  document.getElementById('p-flipx').checked=!!sel.flipX;
+  document.getElementById('p-role').value=sel.role||'';
+  document.getElementById('p-opacity').value=(sel.opacity===undefined?1:sel.opacity);
+  document.getElementById('p-locked').checked=!!sel.locked;
+}
+document.getElementById('p-name').oninput=e=>{if(sel){sel.name=e.target.value;renderList();}};
+document.getElementById('p-x').oninput=e=>{if(sel){sel.x=+e.target.value;draw();}};
+document.getElementById('p-y').oninput=e=>{if(sel){sel.y=+e.target.value;draw();}};
+document.getElementById('p-rot').oninput=e=>{if(sel){sel.rot=+e.target.value*Math.PI/180;draw();}};
+document.getElementById('p-scale').oninput=e=>{if(sel){sel.scale=+e.target.value;draw();}};
+document.getElementById('p-z').oninput=e=>{if(sel){sel.z=+e.target.value;draw();renderList();}};
+document.getElementById('p-flipx').onchange=e=>{if(sel){sel.flipX=e.target.checked;draw();}};
+document.getElementById('p-role').onchange=e=>{if(sel){sel.role=e.target.value;if(document.getElementById('layer-preset').value!=='manual')sel.z=defaultZForRole(sel.role);updateProps();renderList();draw();}};
+document.getElementById('p-opacity').oninput=e=>{if(sel){sel.opacity=+e.target.value;draw();}};
+document.getElementById('p-locked').onchange=e=>{if(sel){sel.locked=e.target.checked;renderList();draw();}};
+document.getElementById('layer-preset').onchange=e=>applyAutoLayers(e.target.value);
+document.getElementById('z-back').onclick=()=>moveLayer(-1);
+document.getElementById('z-front').onclick=()=>moveLayer(1);
+document.getElementById('z-bottom').onclick=()=>sendLayer(false);
+document.getElementById('z-top').onclick=()=>sendLayer(true);
+document.getElementById('part-dup').onclick=duplicatePart;
+document.getElementById('part-reset').onclick=resetPart;
+document.getElementById('part-center').onclick=centerPart;
+document.getElementById('part-flip').onclick=flipPart;
+document.getElementById('part-hide').onclick=hidePart;
+document.getElementById('role-handL').onclick=()=>{if(sel){sel.role='handL';sel.z=defaultZForRole(sel.role);updateProps();renderList();draw();}};
+document.getElementById('role-handR').onclick=()=>{if(sel){sel.role='handR';sel.z=defaultZForRole(sel.role);updateProps();renderList();draw();}};
+document.getElementById('role-weapon').onclick=()=>{if(sel){sel.role='weapon';sel.z=defaultZForRole(sel.role);updateProps();renderList();draw();}};
+document.getElementById('btn-dup-part').onclick=duplicatePart;
+document.getElementById('btn-auto-layers').onclick=()=>applyAutoLayers('madness');
+document.getElementById('btn-bg').onclick=()=>{canvasBg=canvasBg==='grid'?'green':canvasBg==='green'?'transparent':'grid';draw();setStatus('Pozadí: '+canvasBg);};
+
+function setTool(t){tool=t;['select','rotate','scale'].forEach(x=>document.getElementById('btn-'+x).classList.toggle('active',x===t));}
+document.getElementById('btn-select').onclick=()=>setTool('select');
+document.getElementById('btn-rotate').onclick=()=>setTool('rotate');
+document.getElementById('btn-scale').onclick=()=>setTool('scale');
+
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  document.getElementById('tab-parts').classList.toggle('hidden',b.dataset.tab!=='parts');
+  document.getElementById('tab-assets').classList.toggle('hidden',b.dataset.tab!=='assets');
+});
+
+function saveKeyframe(){
+  const kf={};
+  for(const p of parts)kf[p.id]={x:p.x,y:p.y,rot:p.rot,scale:p.scale,flipX:p.flipX||false,z:p.z,visible:p.visible,role:p.role||'',opacity:p.opacity===undefined?1:p.opacity,locked:!!p.locked};
+  if(curF>=frames.length){frames.push(kf);curF=frames.length-1;}else frames[curF]=kf;
+  drawTL();setStatus('◆ Keyframe uložen: '+curF);
+}
+function applyFrame(f){const kf=frames[f];if(!kf)return;for(const p of parts){if(kf[p.id])Object.assign(p,kf[p.id]);}}
+function goTo(f){if(!frames.length)return;curF=Math.max(0,Math.min(frames.length-1,f));applyFrame(curF);draw();drawTL();updateProps();}
+document.getElementById('btn-kf').onclick=saveKeyframe;
+document.getElementById('btn-addframe').onclick=()=>{saveKeyframe();frames.splice(curF+1,0,JSON.parse(JSON.stringify(frames[curF])));curF++;drawTL();};
+document.getElementById('btn-delframe').onclick=()=>{if(frames.length<=1){frames=[];curF=0;}else{frames.splice(curF,1);curF=Math.min(curF,frames.length-1);applyFrame(curF);}draw();drawTL();};
+document.getElementById('btn-dupframe').onclick=()=>{if(!frames.length)saveKeyframe();frames.splice(curF+1,0,JSON.parse(JSON.stringify(frames[curF])));curF++;drawTL();};
+document.getElementById('btn-clearall').onclick=()=>{frames=[];curF=0;drawTL();setStatus('Timeline vyčištěná.');};
+
+const TL_ROW=18,TL_LABEL=100,TL_FW=22;
+function drawTL(){
+  const rows=parts.length,cols=Math.max(frames.length,1);
+  TLC.width=Math.max(TL_LABEL+cols*TL_FW+60,document.getElementById('tl-scroll').offsetWidth);
+  TLC.height=rows*TL_ROW+22;
+  TLX.fillStyle='#151515';TLX.fillRect(0,0,TLC.width,TLC.height);
+  TLX.fillStyle='#1e1e1e';TLX.fillRect(0,0,TLC.width,22);
+  TLX.font='9px monospace';TLX.textAlign='center';
+  for(let f=0;f<cols;f++){const fx=TL_LABEL+f*TL_FW;TLX.strokeStyle='#2a2a2a';TLX.beginPath();TLX.moveTo(fx,0);TLX.lineTo(fx,TLC.height);TLX.stroke();TLX.fillStyle=f===curF?'#e87':'#555';TLX.fillText(f,fx+TL_FW/2,15);}
+  for(let r=0;r<rows;r++){
+    const p=parts[r],ry=22+r*TL_ROW;TLX.fillStyle=r%2?'#171717':'#1b1b1b';TLX.fillRect(0,ry,TLC.width,TL_ROW);
+    TLX.fillStyle=sel&&sel.id===p.id?'#e87':'#777';TLX.textAlign='left';TLX.fillText(p.name.slice(0,14),8,ry+13);
+    for(let f=0;f<frames.length;f++)if(frames[f]&&frames[f][p.id]){const kx=TL_LABEL+f*TL_FW+TL_FW/2,ky=ry+TL_ROW/2;TLX.fillStyle='#e87';TLX.beginPath();TLX.moveTo(kx,ky-4);TLX.lineTo(kx+4,ky);TLX.lineTo(kx,ky+4);TLX.lineTo(kx-4,ky);TLX.closePath();TLX.fill();}
+  }
+  document.getElementById('tl-info').textContent=`Frame ${curF}/${Math.max(frames.length-1,0)} (${frames.length} frames)`;
+}
+TLC.addEventListener('mousedown',e=>{const r=TLC.getBoundingClientRect(),tx=e.clientX-r.left;if(tx>TL_LABEL){const f=Math.floor((tx-TL_LABEL)/TL_FW);if(f>=0&&f<frames.length)goTo(f);}});
+
+function fileToDataURL(file){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=rej;fr.readAsDataURL(file);});}
+function loadImageURL(url){return new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=url;});}
+
+document.getElementById('btn-load').onclick=()=>{const inp=document.createElement('input');inp.type='file';inp.accept='image/png,image/jpeg,image/webp';inp.multiple=true;inp.onchange=async e=>{for(const file of e.target.files){const data=await fileToDataURL(file);const im=await loadImageURL(data);addImagePart(file.name.replace(/\.[^.]+$/,''),im,'image',{srcData:data});}setStatus('PNG/JPG/WebP načteno.');};inp.click();};
+
+document.getElementById('btn-loadgif').onclick=()=>{const inp=document.createElement('input');inp.type='file';inp.accept='image/gif';inp.onchange=async e=>{
+  const file=e.target.files[0];if(!file)return;
+  const dataURL=await fileToDataURL(file);
+  const im=await loadImageURL(dataURL);
+  const p=addImagePart(file.name.replace(/\.[^.]+$/,''),im,'gif',{srcData:dataURL});
+  p.frames=[{img:im}];
+  setStatus('GIF načten jako asset. Rozklad na snímky je vypnutý kvůli offline/file režimu bez CDN.');
+};inp.click();};
+
+document.getElementById('btn-play').onclick=()=>{if(playing||frames.length<2)return;playing=true;const fps=parseInt(document.getElementById('fps-in').value)||12;let f=curF,dir=1;playTm=setInterval(()=>{if(pingpong){f+=dir;if(f>=frames.length-1){f=frames.length-1;dir=-1;}if(f<=0){f=0;dir=1;}}else{f=(f+1)%frames.length;}goTo(f);draw();},1000/fps);};
+document.getElementById('btn-stop').onclick=()=>{playing=false;clearInterval(playTm);draw();};
+
+async function serializeProject(){
+  const outParts=[];
+  for(const p of parts){
+    let src=p.srcData||null;
+    if(!src&&p.img){const c=document.createElement('canvas');c.width=p.img.naturalWidth||p.img.width;c.height=p.img.naturalHeight||p.img.height;c.getContext('2d').drawImage(p.img,0,0);src=c.toDataURL('image/png');}
+    outParts.push({id:p.id,name:p.name,x:p.x,y:p.y,rot:p.rot,scale:p.scale,w:p.w,h:p.h,kind:p.kind,visible:p.visible,z:p.z,flipX:p.flipX,role:p.role||'',category:p.category||'',opacity:p.opacity===undefined?1:p.opacity,locked:!!p.locked,srcData:src});
+  }
+  return {version:'8.1',savedAt:new Date().toISOString(),idCtr,curF,parts:outParts,frames};
+}
+async function loadProjectData(data){
+  parts=[];frames=data.frames||[];curF=data.curF||0;idCtr=data.idCtr||0;sel=null;
+  for(const sp of data.parts||[]){
+    let im=null;if(sp.srcData)im=await loadImageURL(sp.srcData);
+    parts.push(Object.assign({opacity:1,locked:false,role:'',category:''},sp,{img:im,frames:null}));
+  }
+  applyFrame(curF);renderList();draw();drawTL();updateProps();setStatus('Projekt načten.');
+}
+document.getElementById('btn-saveproj').onclick=()=>{document.getElementById('save-name').value='';document.getElementById('modal-save').classList.add('show');};
+document.getElementById('save-close').onclick=()=>document.getElementById('modal-save').classList.remove('show');
+document.getElementById('save-do').onclick=async()=>{const n=document.getElementById('save-name').value.trim();if(!n){setStatus('Chybí název savu.');return;}const data=await serializeProject();safeStorageSet(PROJECT_PREFIX+n,JSON.stringify(data));document.getElementById('modal-save').classList.remove('show');setStatus('Uloženo: '+n);};
+
+function listSaves(){return safeStorageKeys().filter(k=>k.startsWith(PROJECT_PREFIX)).map(k=>k.slice(PROJECT_PREFIX.length)).sort();}
+document.getElementById('btn-loadproj').onclick=()=>{const selEl=document.getElementById('load-select');selEl.innerHTML='';for(const n of listSaves()){const o=document.createElement('option');o.value=n;o.textContent=n;selEl.appendChild(o);}document.getElementById('modal-loadsave').classList.add('show');};
+document.getElementById('load-close').onclick=()=>document.getElementById('modal-loadsave').classList.remove('show');
+document.getElementById('load-do').onclick=async()=>{const n=document.getElementById('load-select').value;if(!n)return;const raw=safeStorageGet(PROJECT_PREFIX+n);if(raw)await loadProjectData(JSON.parse(raw));document.getElementById('modal-loadsave').classList.remove('show');};
+document.getElementById('load-delete').onclick=()=>{const n=document.getElementById('load-select').value;if(n){safeStorageRemove(PROJECT_PREFIX+n);document.getElementById('btn-loadproj').click();setStatus('Save smazán: '+n);}};
+
+document.getElementById('btn-clear-scene').onclick=()=>{parts=[];frames=[];curF=0;sel=null;renderList();updateProps();draw();drawTL();setStatus('Scéna vyčištěná.');};
+
+
+// ============================================================
+// OFFLINE GIF ENCODER — bez CDN, funguje i přes file://
+// ============================================================
+function _gifWriteShort(arr,v){arr.push(v&255,(v>>8)&255);}
+function _gifBitsToBytes(codes,minCodeSize){
+  let out=[], cur=0, bits=0, codeSize=minCodeSize+1;
+  let clear=1<<minCodeSize, end=clear+1, next=end+1;
+  function write(code){
+    cur |= code<<bits; bits += codeSize;
+    while(bits>=8){out.push(cur&255);cur>>=8;bits-=8;}
+  }
+  write(clear);
+  for(const code of codes){
+    write(code);
+    next++;
+    if(next === (1<<codeSize) && codeSize<12) codeSize++;
+    if(next>=4095){write(clear); codeSize=minCodeSize+1; next=end+1;}
+  }
+  write(end);
+  if(bits>0)out.push(cur&255);
+  return out;
+}
+function _gifLzwIndexed(indices,minCodeSize){
+  // jednoduchý LZW: pixelové indexy jako kódy + clear podle limitu.
+  return _gifBitsToBytes(indices,minCodeSize);
+}
+function _gifBlocks(arr,bytes){
+  for(let i=0;i<bytes.length;i+=255){
+    const chunk=bytes.slice(i,i+255);
+    arr.push(chunk.length,...chunk);
+  }
+  arr.push(0);
+}
+function _mapToPalette(r,g,b,a){
+  if(a<30)return 0;
+  // 3-3-2 palette, index 1..255. Index 0 = transparent/dark bg.
+  const ri=r>>5, gi=g>>5, bi=b>>6;
+  return 1 + ((ri<<5) | (gi<<2) | bi);
+}
+function _paletteRGB(idx){
+  if(idx===0)return [0,0,0];
+  idx--;
+  const ri=(idx>>5)&7, gi=(idx>>2)&7, bi=idx&3;
+  return [Math.round(ri*255/7),Math.round(gi*255/7),Math.round(bi*255/3)];
+}
+function makeGifFromCanvases(canvases,delayMs){
+  const w=canvases[0].width, h=canvases[0].height;
+  const arr=[];
+  arr.push(...[...'GIF89a'].map(c=>c.charCodeAt(0)));
+  _gifWriteShort(arr,w); _gifWriteShort(arr,h);
+  arr.push(0xF7); // global color table 256
+  arr.push(0);    // bg index
+  arr.push(0);    // aspect
+  for(let i=0;i<256;i++){const [r,g,b]=_paletteRGB(i);arr.push(r,g,b);}
+  // Netscape loop extension
+  arr.push(0x21,0xFF,0x0B,...[...'NETSCAPE2.0'].map(c=>c.charCodeAt(0)),0x03,0x01,0x00,0x00,0x00);
+  const delay=Math.max(2,Math.round(delayMs/10));
+  for(const canvas of canvases){
+    const ctx=canvas.getContext('2d');
+    const data=ctx.getImageData(0,0,w,h).data;
+    const idx=[];
+    for(let i=0;i<data.length;i+=4)idx.push(_mapToPalette(data[i],data[i+1],data[i+2],data[i+3]));
+    // Graphic Control Extension
+    arr.push(0x21,0xF9,0x04,0x09); // transparency flag
+    _gifWriteShort(arr,delay);
+    arr.push(0x00,0x00); // transparent index 0 + terminator
+    // Image descriptor
+    arr.push(0x2C); _gifWriteShort(arr,0); _gifWriteShort(arr,0); _gifWriteShort(arr,w); _gifWriteShort(arr,h); arr.push(0);
+    arr.push(8); // min LZW code size
+    const lzw=_gifLzwIndexed(idx,8);
+    _gifBlocks(arr,lzw);
+  }
+  arr.push(0x3B);
+  return new Blob([new Uint8Array(arr)],{type:'image/gif'});
+}
+
+document.getElementById('btn-export').onclick=async()=>{
+  if(!frames.length)saveKeyframe();
+  const modal=document.getElementById('modal-export'),msg=document.getElementById('exp-msg'),bar=document.getElementById('export-bar');
+  modal.classList.add('show');bar.style.width='0%';msg.textContent='Renderuju snímky offline...';
+  const fps=parseInt(document.getElementById('fps-in').value)||12,ew=Math.min(W,480),eh=Math.min(H,320);
+  const canvases=[];
+  const saved=JSON.parse(JSON.stringify(parts.map(p=>({id:p.id,x:p.x,y:p.y,rot:p.rot,scale:p.scale,flipX:p.flipX,z:p.z,visible:p.visible}))));
+  const savedF=curF;
+  for(let f=0;f<frames.length;f++){
+    applyFrame(f);
+    const c=document.createElement('canvas');c.width=ew;c.height=eh;
+    draw(c.getContext('2d'),ew,eh);
+    canvases.push(c);
+    bar.style.width=Math.round((f+1)/frames.length*70)+'%';
+    await new Promise(r=>setTimeout(r,5));
+  }
+  for(const s of saved){const p=parts.find(x=>x.id===s.id);if(p)Object.assign(p,s);}
+  curF=savedF;applyFrame(curF);draw();drawTL();
+  msg.textContent='Kóduji GIF offline...';bar.style.width='80%';
+  const blob=makeGifFromCanvases(canvases,Math.round(1000/fps));
+  bar.style.width='100%';
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='dement_verze_8_export.gif';a.click();
+  msg.textContent='Hotovo. GIF exportovaný bez CDN.';
+};
+
+document.getElementById('exp-close').onclick=()=>document.getElementById('modal-export').classList.remove('show');
+
+document.getElementById('btn-news').onclick=()=>document.getElementById('modal-news').classList.add('show');
+document.getElementById('news-close').onclick=()=>document.getElementById('modal-news').classList.remove('show');
+document.getElementById('btn-tutorial').onclick=()=>document.getElementById('modal-tutorial').classList.add('show');
+document.getElementById('tutorial-close').onclick=()=>document.getElementById('modal-tutorial').classList.remove('show');
+
+
+function currentPose(){
+  const pose={};
+  for(const p of parts)pose[p.id]={x:p.x,y:p.y,rot:p.rot,scale:p.scale,flipX:p.flipX||false,z:p.z,visible:p.visible,role:p.role||'',opacity:p.opacity===undefined?1:p.opacity,locked:!!p.locked};
+  return pose;
+}
+function applyPose(pose){
+  for(const p of parts){if(pose[p.id])Object.assign(p,pose[p.id]);}
+  draw();updateProps();drawTL();
+}
+function lerp(a,b,t){return a+(b-a)*t;}
+function interpPose(a,b,t){
+  const out={};
+  for(const p of parts){
+    const A=a[p.id]||{},B=b[p.id]||A;
+    out[p.id]={
+      x:lerp(A.x??p.x,B.x??p.x,t),
+      y:lerp(A.y??p.y,B.y??p.y,t),
+      rot:lerp(A.rot??p.rot,B.rot??p.rot,t),
+      scale:lerp(A.scale??p.scale,B.scale??p.scale,t),
+      flipX:t<.5?(A.flipX??p.flipX):(B.flipX??p.flipX),
+      z:B.z??A.z??p.z,
+      visible:B.visible??A.visible??p.visible,
+      opacity:B.opacity??A.opacity??p.opacity??1,
+      locked:B.locked??A.locked??p.locked??false
+    };
+  }
+  return out;
+}
+document.getElementById('btn-onion').onclick=()=>{onion=!onion;document.getElementById('btn-onion').classList.toggle('active',onion);draw();setStatus(onion?'ONION zapnutý.':'ONION vypnutý.');};
+document.getElementById('btn-pingpong').onclick=()=>{pingpong=!pingpong;document.getElementById('btn-pingpong').classList.toggle('active',pingpong);setStatus(pingpong?'PINGPONG zapnutý.':'PINGPONG vypnutý.');};
+document.getElementById('btn-copypose').onclick=()=>{copiedPose=currentPose();setStatus('Póza zkopírovaná.');};
+document.getElementById('btn-pastepose').onclick=()=>{if(!copiedPose){setStatus('Není zkopírovaná žádná póza.');return;}applyPose(copiedPose);saveKeyframe();setStatus('Póza vložená a uložená jako keyframe.');};
+document.getElementById('btn-tween').onclick=()=>{
+  if(frames.length<2){setStatus('Tween potřebuje aspoň 2 keyframy.');return;}
+  const a=frames[curF], b=frames[Math.min(curF+1,frames.length-1)];
+  if(!a||!b||curF>=frames.length-1){setStatus('Není další frame pro tween.');return;}
+  const one=interpPose(a,b,1/3), two=interpPose(a,b,2/3);
+  frames.splice(curF+1,0,one,two);
+  drawTL();setStatus('Vloženy 2 mezisnímky mezi frame '+curF+' a '+(curF+3)+'.');
+};
+function autoCycle(kind){
+  if(!parts.length){setStatus('Nejdřív vlož assety/party.');return;}
+  frames=[];curF=0;
+  const base=currentPose();
+  const ids=parts.map(p=>p.id);
+  const findByName=(txt)=>parts.find(p=>p.name.toLowerCase().includes(txt));
+  const hands=parts.filter(p=>/hand|ruka|pest|palec|pistol/i.test(p.name));
+  const bodies=parts.filter(p=>/body|telo|bodies/i.test(p.name));
+  const heads=parts.filter(p=>/head|hlava|heads/i.test(p.name));
+  const feet=parts.filter(p=>/foot|bota|feet/i.test(p.name));
+  const make=(i,total)=>{
+    const pose=JSON.parse(JSON.stringify(base));
+    const phase=Math.sin((i/total)*Math.PI*2);
+    const phase2=Math.cos((i/total)*Math.PI*2);
+    for(const p of parts){
+      const q=pose[p.id]; if(!q)continue;
+      if(kind==='walk'){
+        if(hands.includes(p)){q.rot+=(phase*.45);q.y+=phase2*3;}
+        if(feet.includes(p)){q.x+=phase*7;q.y+=Math.abs(phase)*2;q.rot+=phase*.25;}
+        if(bodies.includes(p)){q.y+=phase2*2;}
+        if(heads.includes(p)){q.y+=phase2*1.5;}
+      }else{
+        if(hands.includes(p)||/weapon|gun|pistol|weapons/i.test(p.name)){q.x+=Math.max(0,phase)*18;q.rot-=Math.max(0,phase)*.25;}
+        if(bodies.includes(p)){q.x-=Math.max(0,phase)*4;}
+        if(heads.includes(p)){q.rot+=phase*.08;}
+      }
     }
-  }catch(e){}
+    return pose;
+  };
+  const total=kind==='walk'?8:6;
+  for(let i=0;i<total;i++)frames.push(make(i,total));
+  curF=0;applyFrame(0);draw();drawTL();setStatus(kind==='walk'?'AUTO WALK vytvořen.':'AUTO ATTACK vytvořen.');
 }
-rememberAdminNickFromUrl();
+document.getElementById('btn-walkcycle').onclick=()=>autoCycle('walk');
+document.getElementById('btn-attackcycle').onclick=()=>autoCycle('attack');
 
-try{location.replace('./loading.html?v=136')}catch(e){location.href='./loading.html?v=136'}</script>
 
-<style id="v136CursorStyle">
-html,body,canvas,button,a,input,select,textarea,[onclick]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M5 3 L25 15 L16 17 L13 27 L5 3 Z' fill='%23d7d7d7' stroke='%23000' stroke-width='2'/%3E%3Cpath d='M7 6 L21 15 L14 15.8 L12 23 Z' fill='%23a00000' opacity='.85'/%3E%3C/svg%3E") 4 3, crosshair!important}
-button,a,[onclick],select,input[type=range],input[type=file]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='15' cy='15' r='9' fill='%23a00000' stroke='%23000' stroke-width='3'/%3E%3Ccircle cx='15' cy='15' r='3' fill='%23ffd27a'/%3E%3Cpath d='M15 1v7M15 22v7M1 15h7M22 15h7' stroke='%23d7d7d7' stroke-width='2'/%3E%3C/svg%3E") 15 15, pointer!important}
-</style>
 
-<link rel="icon" href="favicon.ico">
-</head><body>Spouštím loading...
-<script id="v136GlobalAudio">
-(function(){
-  if(window.__v136AudioInstalled)return; window.__v136AudioInstalled=true;
-  const IS_MENU=/\/menu\.html(?:$|\?)/i.test(location.pathname)||/menu\.html/i.test(location.href);
-  const IS_LOBBY=/\/lobby\.html(?:$|\?)/i.test(location.pathname)||/lobby\.html/i.test(location.href);
-  const IS_MISSION=/\/real_mapa\.html(?:$|\?)/i.test(location.pathname)||/real_mapa\.html/i.test(location.href);
-  const VOL=()=>{try{return Math.max(0,Math.min(1,Number(localStorage.getItem('MADNESS_MUSIC_VOL')||50)/100))}catch(e){return .5}};
-  const SFX=()=>{try{return Math.max(0,Math.min(1,Number(localStorage.getItem('MADNESS_SFX_VOL')||90)/100))}catch(e){return .9}};
-  function make(src,loop,vol){const a=new Audio(src);a.loop=!!loop;a.preload='auto';a.volume=vol;a.setAttribute('playsinline','');return a}
-  window.v136DuckRain=function(){};
-  window.v136PlayButton=function(){try{const a=make('button.mp3',false,.38*SFX());a.play().catch(()=>{})}catch(e){}};
-  window.v136PlayShot=function(vol=1){if(IS_MENU)return false;try{const a=make('strelba3.mp3',false,Math.max(.12,Math.min(1,vol*SFX())));a.play().catch(()=>{});return true}catch(e){return false}};
-  window.v136StartPageAudio=function(){try{if(!window.__v136Music){if(IS_MENU)window.__v136Music=make('hudba.mp3',true,.55*VOL());else if(IS_LOBBY||IS_MISSION)window.__v136Music=make('rain.mp3',true,.62*VOL())}if(window.__v136Music){window.__v136Music.volume=(IS_MENU?.55:.62)*VOL();window.__v136Music.play().catch(()=>{})}}catch(e){}};
-  function unlock(){v136StartPageAudio()}
-  document.addEventListener('pointerdown',unlock,{once:true,capture:true});
-  document.addEventListener('keydown',unlock,{once:true,capture:true});
-  document.addEventListener('click',function(e){const el=e.target&&e.target.closest?e.target.closest('button,a,[onclick],input,select,label'):null;if(el){v136PlayButton();v136StartPageAudio()}},true);
-  window.addEventListener('load',()=>setTimeout(v136StartPageAudio,260));
-})();
+function findRole(role){
+  return parts.find(p=>p.role===role) || null;
+}
+function findRoles(...roles){
+  return parts.filter(p=>roles.includes(p.role));
+}
+function guessRolePart(role, words){
+  return findRole(role) || parts.find(p=>words.some(w=>p.name.toLowerCase().includes(w))) || null;
+}
+function ensureFrameFromCurrent(){
+  if(!frames.length)saveKeyframe();
+}
+function makeActionFrames(kind){
+  if(!parts.length){setStatus('Nejdřív vlož assety/party.');return;}
+  const base=currentPose();
+  frames=[];curF=0;
+  const handL=guessRolePart('handL',['leva','left','hand','ruka']);
+  const handR=guessRolePart('handR',['prava','right','pest','ruka']);
+  const weapon=guessRolePart('weapon',['weapon','gun','pistol','zbran','rifle']);
+  const body=guessRolePart('body',['body','telo','bodies']);
+  const head=guessRolePart('head',['head','hlava','heads']);
+  function poseMod(fn){
+    const p=JSON.parse(JSON.stringify(base));
+    fn(p);
+    return p;
+  }
+  function modPart(pose, part, cb){
+    if(part && pose[part.id])cb(pose[part.id],part);
+  }
+  if(kind==='hold'){
+    frames.push(poseMod(p=>{
+      modPart(p,handR,q=>{q.x+=18;q.y-=2;q.rot=-0.15;});
+      modPart(p,handL,q=>{q.x+=4;q.y+=8;q.rot=0.25;});
+      modPart(p,weapon,q=>{q.x+=26;q.y-=4;q.rot=0.0;});
+      modPart(p,body,q=>{q.rot=-0.03;});
+    }));
+  }
+  if(kind==='shoot'){
+    frames.push(poseMod(p=>{modPart(p,handR,q=>{q.x+=16;q.rot=-0.10});modPart(p,weapon,q=>{q.x+=24;q.rot=0});}));
+    frames.push(poseMod(p=>{modPart(p,handR,q=>{q.x+=24;q.rot=-0.18});modPart(p,handL,q=>{q.x+=6;q.y+=6});modPart(p,weapon,q=>{q.x+=36;q.rot=-0.02});modPart(p,body,q=>{q.x-=3});}));
+    frames.push(poseMod(p=>{modPart(p,handR,q=>{q.x+=10;q.rot=-0.05});modPart(p,weapon,q=>{q.x+=16;q.y+=1;q.rot=0.03});modPart(p,body,q=>{q.x-=6});modPart(p,head,q=>{q.rot=0.08});}));
+    frames.push(poseMod(p=>{modPart(p,handR,q=>{q.x+=18;q.rot=-0.10});modPart(p,weapon,q=>{q.x+=24;q.rot=0});}));
+  }
+  if(kind==='reload'){
+    frames.push(poseMod(p=>{modPart(p,weapon,q=>{q.x+=20;q.rot=0.2});modPart(p,handL,q=>{q.x-=4;q.y+=18;q.rot=0.7});}));
+    frames.push(poseMod(p=>{modPart(p,weapon,q=>{q.x+=16;q.y+=10;q.rot=0.85});modPart(p,handL,q=>{q.x+=12;q.y+=25;q.rot=1.2});modPart(p,handR,q=>{q.x+=12;q.y+=6;q.rot=0.25});}));
+    frames.push(poseMod(p=>{modPart(p,weapon,q=>{q.x+=18;q.y+=4;q.rot=0.35});modPart(p,handL,q=>{q.x+=18;q.y+=8;q.rot=0.45});}));
+    frames.push(poseMod(p=>{modPart(p,weapon,q=>{q.x+=24;q.y-=2;q.rot=0});modPart(p,handL,q=>{q.x+=5;q.y+=6;q.rot=0.25});}));
+  }
+  if(kind==='hit'){
+    frames.push(poseMod(p=>{modPart(p,handR,q=>{q.x-=8;q.rot=-0.8});modPart(p,weapon,q=>{q.x-=4;q.rot=-0.6});}));
+    frames.push(poseMod(p=>{modPart(p,handR,q=>{q.x+=34;q.rot=0.35});modPart(p,weapon,q=>{q.x+=42;q.rot=0.25});modPart(p,body,q=>{q.x+=5;q.rot=0.08});}));
+    frames.push(poseMod(p=>{modPart(p,handR,q=>{q.x+=18;q.rot=0});modPart(p,weapon,q=>{q.x+=20;q.rot=0});}));
+  }
+  if(!frames.length)return;
+  curF=0;applyFrame(0);draw();drawTL();setStatus(kind.toUpperCase()+' animace vytvořená.');
+}
+document.getElementById('btn-weaponhold').onclick=()=>makeActionFrames('hold');
+document.getElementById('btn-shootcycle').onclick=()=>makeActionFrames('shoot');
+document.getElementById('btn-reloadcycle').onclick=()=>makeActionFrames('reload');
+document.getElementById('wp-hold').onclick=()=>makeActionFrames('hold');
+document.getElementById('wp-shoot').onclick=()=>makeActionFrames('shoot');
+document.getElementById('wp-reload').onclick=()=>makeActionFrames('reload');
+document.getElementById('wp-hit').onclick=()=>makeActionFrames('hit');
+
+const testModal=document.getElementById('modal-test2d');
+const testCanvas=document.getElementById('test-canvas');
+const testCtx=testCanvas.getContext('2d');
+let testRunning=false,testKeys={},testBgMode='grid',testCameraFollow=true;
+let testPlayer={x:800,y:520,vx:0,vy:0,onGround:true,dir:1,action:'idle',actionT:0,shots:0};
+function resizeTestCanvas(){
+  const rect=testCanvas.getBoundingClientRect();
+  const dpr=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+  testCanvas.width=Math.max(900,Math.floor(rect.width*dpr));
+  testCanvas.height=Math.max(480,Math.floor(rect.height*dpr));
+  testCtx.setTransform(dpr,0,0,dpr,0,0);
+}
+function resetTestPlayer(){
+  const rect=testCanvas.getBoundingClientRect();
+  testPlayer={x:rect.width/2,y:rect.height-155,vx:0,vy:0,onGround:true,dir:1,action:'idle',actionT:0,shots:0};
+}
+function testSceneFloor(){return testCanvas.getBoundingClientRect().height-95;}
+function testDrawBackground(ctx,w,h){
+  const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,'#101a29');g.addColorStop(.55,'#080d16');g.addColorStop(1,'#05070b');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+  if(testBgMode==='green'){ctx.fillStyle='#00ff00';ctx.fillRect(0,0,w,h);} 
+  else if(testBgMode==='dark'){
+    ctx.fillStyle='rgba(255,255,255,.035)';for(let i=0;i<90;i++){const x=(i*97)%Math.max(1,w),y=(i*53)%Math.max(1,h);ctx.fillRect(x,y,2,2);} 
+  } else {
+    ctx.strokeStyle='rgba(118,174,255,.12)';ctx.lineWidth=1;for(let x=-80;x<w+80;x+=64){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x+h*.25,h);ctx.stroke();}for(let y=0;y<h;y+=64){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+  }
+  const floor=testSceneFloor();ctx.fillStyle='rgba(255,159,67,.12)';ctx.fillRect(0,floor,w,h-floor);ctx.strokeStyle='rgba(255,179,95,.55)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,floor);ctx.lineTo(w,floor);ctx.stroke();
+}
+function testDrawParts(ctx, x, y, action, t){
+  ctx.save();
+  ctx.translate(x,y);
+  ctx.scale(testPlayer.dir,1);
+  const baseScale=parseFloat(document.getElementById('test-scale')?.value||'1.2');
+  ctx.scale(baseScale,baseScale);
+  let pose=currentPose();
+  const tt=Math.min(1,t/22);
+  const now=Date.now();
+  for(const p of parts){
+    if(!pose[p.id])pose[p.id]={x:p.x,y:p.y,rot:p.rot,scale:p.scale,flipX:p.flipX,z:p.z,visible:p.visible};
+    const q=pose[p.id];
+    q.x=(p.x-W/2);
+    q.y=(p.y-H/2);
+    if(action==='run'){
+      q.y+=Math.sin(now/75)*2.5;
+      if(/foot|bota|feet/i.test(p.name)||p.role==='footL'||p.role==='footR'){q.x+=Math.sin(now/75+(p.id%2)*Math.PI)*10;q.rot+=Math.sin(now/95+(p.id%2)*Math.PI)*.18;}
+      if(/hand|ruka|pest/i.test(p.name)||p.role==='handL'||p.role==='handR'){q.x+=Math.sin(now/90+(p.id%2)*Math.PI)*6;q.rot+=Math.sin(now/95+(p.id%2)*Math.PI)*.14;}
+    }
+    if(action==='jump'){q.y-=8;if(p.role==='handR'||/ruka|hand|pest/i.test(p.name))q.rot-=0.32;}
+    if(action==='hit'){if(p.role==='handR'||p.role==='weapon'||/weapon|pistol|zbran|ruka|pest/i.test(p.name)){q.x+=Math.sin(tt*Math.PI)*36;q.rot+=Math.sin(tt*Math.PI)*0.55;}}
+    if(action==='shoot'){if(p.role==='weapon'||/weapon|pistol|zbran|gun/i.test(p.name)){q.x+=Math.sin(tt*Math.PI)*26;q.rot-=0.11;} if(p.role==='handR')q.x+=Math.sin(tt*Math.PI)*18;}
+    if(action==='reload'){if(p.role==='weapon'||/weapon|pistol|zbran|gun/i.test(p.name)){q.y+=Math.sin(tt*Math.PI)*26;q.rot+=Math.sin(tt*Math.PI)*1.0;} if(p.role==='handL')q.y+=Math.sin(tt*Math.PI)*22;}
+  }
+  for(const p of sortedParts()){
+    if(!p.visible)continue;
+    const q=pose[p.id]; if(!q)continue;
+    const img=getPartImage(p);
+    ctx.save();ctx.translate(q.x,q.y);ctx.rotate(q.rot);ctx.scale((q.flipX?-1:1)*q.scale,q.scale);
+    if(img)ctx.drawImage(img,-p.w/2,-p.h/2,p.w,p.h);
+    else{ctx.fillStyle='#fff';ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);}
+    ctx.restore();
+  }
+  ctx.restore();
+}
+function testLoop(){
+  if(!testRunning)return;
+  const rect=testCanvas.getBoundingClientRect(),ctx=testCtx,w=rect.width,h=rect.height;
+  ctx.clearRect(0,0,w,h);testDrawBackground(ctx,w,h);
+  const speed=parseFloat(document.getElementById('test-speed')?.value||'1');
+  const left=testKeys['a']||testKeys['A']||testKeys['ArrowLeft'],right=testKeys['d']||testKeys['D']||testKeys['ArrowRight'];
+  if(left){testPlayer.vx=-4.4*speed;testPlayer.dir=-1;} else if(right){testPlayer.vx=4.4*speed;testPlayer.dir=1;} else testPlayer.vx*=0.70;
+  if((testKeys[' ']||testKeys['w']||testKeys['W']||testKeys['ArrowUp'])&&testPlayer.onGround){testPlayer.vy=-13.2*speed;testPlayer.onGround=false;testPlayer.action='jump';testPlayer.actionT=0;}
+  testPlayer.vy+=0.68*speed;testPlayer.x+=testPlayer.vx;testPlayer.y+=testPlayer.vy;
+  const floor=testSceneFloor()-45;if(testPlayer.y>=floor){testPlayer.y=floor;testPlayer.vy=0;testPlayer.onGround=true;}
+  testPlayer.x=Math.max(60,Math.min(w-60,testPlayer.x));
+  if(testPlayer.actionT>0)testPlayer.actionT--;
+  if(testPlayer.actionT<=0)testPlayer.action=(Math.abs(testPlayer.vx)>0.7?'run':'idle');
+  testDrawParts(ctx,testPlayer.x,testPlayer.y,testPlayer.action,testPlayer.actionT);
+  ctx.fillStyle='rgba(4,8,14,.72)';ctx.fillRect(18,18,520,92);ctx.strokeStyle='rgba(116,181,255,.35)';ctx.strokeRect(18,18,520,92);
+  ctx.fillStyle='#eaf3ff';ctx.font='700 18px Inter, Segoe UI, Arial';ctx.fillText('WASD / šipky pohyb • SPACE jump • klik hit • F shoot • R reload',34,50);
+  ctx.fillStyle='#ffb35f';ctx.font='800 16px Inter, Segoe UI, Arial';ctx.fillText('Testovací scéna je jen náhled — export pořád dělá timeline.',34,80);
+  const a=document.getElementById('test-hud-action'),pos=document.getElementById('test-hud-pos'),pc=document.getElementById('test-hud-parts');
+  if(a)a.textContent='ACTION: '+testPlayer.action;if(pos)pos.textContent='X:'+Math.round(testPlayer.x)+' Y:'+Math.round(testPlayer.y);if(pc)pc.textContent='PARTS: '+parts.length;
+  requestAnimationFrame(testLoop);
+}
+document.getElementById('btn-test2d').onclick=()=>{testModal.classList.add('show');setTimeout(()=>{resizeTestCanvas();resetTestPlayer();testDrawBackground(testCtx,testCanvas.getBoundingClientRect().width,testCanvas.getBoundingClientRect().height);},30);};
+document.getElementById('test-close').onclick=()=>{testRunning=false;testModal.classList.remove('show');};
+document.getElementById('test-start').onclick=()=>{resizeTestCanvas();resetTestPlayer();testRunning=true;testLoop();};
+document.getElementById('test-stop').onclick=()=>{testRunning=false;};
+document.getElementById('test-reset').onclick=()=>{resetTestPlayer();};
+document.getElementById('test-bg').onclick=e=>{testBgMode=testBgMode==='grid'?'dark':(testBgMode==='dark'?'green':'grid');e.currentTarget.textContent='BG: '+testBgMode.toUpperCase();};
+document.getElementById('test-camera').onclick=e=>{testCameraFollow=!testCameraFollow;e.currentTarget.textContent='CAMERA: '+(testCameraFollow?'FOLLOW':'STATIC');};
+window.addEventListener('resize',()=>{if(testModal.classList.contains('show'))resizeTestCanvas();});
+window.addEventListener('keydown',e=>{testKeys[e.key]=true;if(testRunning&&e.key.toLowerCase()==='r'){testPlayer.action='reload';testPlayer.actionT=28;}if(testRunning&&e.key.toLowerCase()==='f'){testPlayer.action='shoot';testPlayer.actionT=18;testPlayer.shots++;}});
+window.addEventListener('keyup',e=>{testKeys[e.key]=false;});
+testCanvas.addEventListener('mousedown',e=>{if(e.button===0){testPlayer.action='hit';testPlayer.actionT=20;}});
+
+
+function mirrorPose(){
+  if(!parts.length)return;
+  const cx=W/2;
+  for(const p of parts){p.x=cx-(p.x-cx);p.flipX=!p.flipX;p.rot=-p.rot;}
+  updateProps();draw();setStatus('Aktuální póza zrcadlená.');
+}
+function reverseTimeline(){
+  if(frames.length<2){setStatus('Timeline nemá co otočit.');return;}
+  frames.reverse();curF=frames.length-1-curF;applyFrame(curF);drawTL();setStatus('Timeline otočená pozpátku.');
+}
+document.getElementById('btn-mirrorpose').onclick=mirrorPose;
+document.getElementById('btn-reverse').onclick=reverseTimeline;
+
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
+  if(e.key==='v'||e.key==='V')setTool('select');
+  if(e.key==='r'||e.key==='R')setTool('rotate');
+  if(e.key==='s'||e.key==='S')setTool('scale');
+  if(e.key==='k'||e.key==='K')saveKeyframe();
+  if(e.key==='o'||e.key==='O')document.getElementById('btn-onion').click();
+  if(e.key==='p'||e.key==='P')document.getElementById('btn-pingpong').click();
+  if(e.key==='t'||e.key==='T')document.getElementById('btn-tween').click();
+  if(e.key==='f'||e.key==='F')document.getElementById('btn-shootcycle').click();
+  if(e.key==='x'||e.key==='X')document.getElementById('btn-test2d').click();
+  if(e.key===' '){e.preventDefault();document.getElementById('btn-play').click();}
+  if(!sel&&e.key==='ArrowRight'){e.preventDefault();goTo(curF+1);}
+  if(!sel&&e.key==='ArrowLeft'){e.preventDefault();goTo(curF-1);}
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='d'){e.preventDefault();duplicatePart();}
+  if(sel&&!sel.locked&&['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();const step=e.shiftKey?10:1;if(e.key==='ArrowUp')sel.y-=step;if(e.key==='ArrowDown')sel.y+=step;if(e.key==='ArrowLeft')sel.x-=step;if(e.key==='ArrowRight')sel.x+=step;updateProps();draw();}
+  if(sel&&(e.key==='['||e.key===']')){e.preventDefault();moveLayer(e.key===']'?1:-1);}
+  if(sel&&!sel.locked&&(e.key==='+'||e.key==='='||e.key==='-')){e.preventDefault();sel.scale=Math.max(.03,sel.scale+(e.key==='-'?-.05:.05));updateProps();draw();}
+  if(sel&&!sel.locked&&(e.key==='q'||e.key==='Q'||e.key==='e'||e.key==='E')){e.preventDefault();sel.rot+=(e.key.toLowerCase()==='e'?0.05:-0.05);updateProps();draw();}
+  if(e.key==='Delete'||e.key==='Backspace')delPart();
+});
+
+const EMBEDDED_MANIFEST={"version":"8.3-foxy-test2d","title":"DEMENT VERZE 8.3 — FOXY ANIMATION EDITOR","note":"Větší modernější UI, full-page TEST 2D a doplněné nové assety.","credit":"Projected by Lukamer → all rights reserved","special":"Speciálně pro foxyho od Lukamera :-)","folders":["sprites","weapons","body","heads","hands","feet","backgrounds","effects","props","shields","silhouettes","sprites2"],"assets":[{"name":"head_001","category":"heads","path":"assets/heads/sprite_001.png"},{"name":"head_002","category":"heads","path":"assets/heads/sprite_002.png"},{"name":"head_003","category":"heads","path":"assets/heads/sprite_003.png"},{"name":"head_004","category":"heads","path":"assets/heads/sprite_004.png"},{"name":"head_005","category":"heads","path":"assets/heads/sprite_005.png"},{"name":"head_006","category":"heads","path":"assets/heads/sprite_006.png"},{"name":"head_007","category":"heads","path":"assets/heads/sprite_007.png"},{"name":"head_008","category":"heads","path":"assets/heads/sprite_008.png"},{"name":"full_character_009","category":"sprites","path":"assets/sprites/sprite_009.png"},{"name":"full_character_010","category":"sprites","path":"assets/sprites/sprite_010.png"},{"name":"full_character_011","category":"sprites","path":"assets/sprites/sprite_011.png"},{"name":"head_012","category":"heads","path":"assets/heads/sprite_012.png"},{"name":"head_013","category":"heads","path":"assets/heads/sprite_013.png"},{"name":"head_014","category":"heads","path":"assets/heads/sprite_014.png"},{"name":"head_015","category":"heads","path":"assets/heads/sprite_015.png"},{"name":"head_016","category":"heads","path":"assets/heads/sprite_016.png"},{"name":"head_017","category":"heads","path":"assets/heads/sprite_017.png"},{"name":"head_018","category":"heads","path":"assets/heads/sprite_018.png"},{"name":"head_019","category":"heads","path":"assets/heads/sprite_019.png"},{"name":"hand_020","category":"hands","path":"assets/hands/sprite_020.png"},{"name":"hand_021","category":"hands","path":"assets/hands/sprite_021.png"},{"name":"head_022","category":"heads","path":"assets/heads/sprite_022.png"},{"name":"head_023","category":"heads","path":"assets/heads/sprite_023.png"},{"name":"head_024","category":"heads","path":"assets/heads/sprite_024.png"},{"name":"head_025","category":"heads","path":"assets/heads/sprite_025.png"},{"name":"head_026","category":"heads","path":"assets/heads/sprite_026.png"},{"name":"head_027","category":"heads","path":"assets/heads/sprite_027.png"},{"name":"head_028","category":"heads","path":"assets/heads/sprite_028.png"},{"name":"head_029","category":"heads","path":"assets/heads/sprite_029.png"},{"name":"body_030","category":"body","path":"assets/body/sprite_030.png"},{"name":"body_031","category":"body","path":"assets/body/sprite_031.png"},{"name":"body_032","category":"body","path":"assets/body/sprite_032.png"},{"name":"body_033","category":"body","path":"assets/body/sprite_033.png"},{"name":"body_034","category":"body","path":"assets/body/sprite_034.png"},{"name":"body_035","category":"body","path":"assets/body/sprite_035.png"},{"name":"body_036","category":"body","path":"assets/body/sprite_036.png"},{"name":"body_037","category":"body","path":"assets/body/sprite_037.png"},{"name":"body_038","category":"body","path":"assets/body/sprite_038.png"},{"name":"body_039","category":"body","path":"assets/body/sprite_039.png"},{"name":"body_040","category":"body","path":"assets/body/sprite_040.png"},{"name":"body_041","category":"body","path":"assets/body/sprite_041.png"},{"name":"body_042","category":"body","path":"assets/body/sprite_042.png"},{"name":"body_043","category":"body","path":"assets/body/sprite_043.png"},{"name":"body_044","category":"body","path":"assets/body/sprite_044.png"},{"name":"body_045","category":"body","path":"assets/body/sprite_045.png"},{"name":"body_046","category":"body","path":"assets/body/sprite_046.png"},{"name":"body_047","category":"body","path":"assets/body/sprite_047.png"},{"name":"hand_048","category":"hands","path":"assets/hands/sprite_048.png"},{"name":"hand_049","category":"hands","path":"assets/hands/sprite_049.png"},{"name":"hand_050","category":"hands","path":"assets/hands/sprite_050.png"},{"name":"hand_051","category":"hands","path":"assets/hands/sprite_051.png"},{"name":"hand_052","category":"hands","path":"assets/hands/sprite_052.png"},{"name":"hand_053","category":"hands","path":"assets/hands/sprite_053.png"},{"name":"hand_054","category":"hands","path":"assets/hands/sprite_054.png"},{"name":"hand_055","category":"hands","path":"assets/hands/sprite_055.png"},{"name":"hand_056","category":"hands","path":"assets/hands/sprite_056.png"},{"name":"hand_057","category":"hands","path":"assets/hands/sprite_057.png"},{"name":"hand_058","category":"hands","path":"assets/hands/sprite_058.png"},{"name":"hand_059","category":"hands","path":"assets/hands/sprite_059.png"},{"name":"hand_060","category":"hands","path":"assets/hands/sprite_060.png"},{"name":"hand_061","category":"hands","path":"assets/hands/sprite_061.png"},{"name":"hand_062","category":"hands","path":"assets/hands/sprite_062.png"},{"name":"hand_063","category":"hands","path":"assets/hands/sprite_063.png"},{"name":"hand_064","category":"hands","path":"assets/hands/sprite_064.png"},{"name":"hand_065","category":"hands","path":"assets/hands/sprite_065.png"},{"name":"accessory_066","category":"effects","path":"assets/effects/sprite_066.png"},{"name":"accessory_067","category":"effects","path":"assets/effects/sprite_067.png"},{"name":"accessory_068","category":"effects","path":"assets/effects/sprite_068.png"},{"name":"hand_069","category":"hands","path":"assets/hands/sprite_069.png"},{"name":"hand_070","category":"hands","path":"assets/hands/sprite_070.png"},{"name":"hand_071","category":"hands","path":"assets/hands/sprite_071.png"},{"name":"hand_072","category":"hands","path":"assets/hands/sprite_072.png"},{"name":"accessory_073","category":"effects","path":"assets/effects/sprite_073.png"},{"name":"accessory_074","category":"effects","path":"assets/effects/sprite_074.png"},{"name":"accessory_075","category":"effects","path":"assets/effects/sprite_075.png"},{"name":"hand_076","category":"hands","path":"assets/hands/sprite_076.png"},{"name":"hand_077","category":"hands","path":"assets/hands/sprite_077.png"},{"name":"hand_078","category":"hands","path":"assets/hands/sprite_078.png"},{"name":"hand_079","category":"hands","path":"assets/hands/sprite_079.png"},{"name":"hand_080","category":"hands","path":"assets/hands/sprite_080.png"},{"name":"hand_081","category":"hands","path":"assets/hands/sprite_081.png"},{"name":"feet_082","category":"feet","path":"assets/feet/sprite_082.png"},{"name":"feet_083","category":"feet","path":"assets/feet/sprite_083.png"},{"name":"new_asset_001","category":"sprites2","path":"assets/sprites2/s2_sprite_001.png"},{"name":"new_asset_002","category":"sprites2","path":"assets/sprites2/s2_sprite_002.png"},{"name":"new_asset_003","category":"sprites2","path":"assets/sprites2/s2_sprite_003.png"},{"name":"new_asset_004","category":"sprites2","path":"assets/sprites2/s2_sprite_004.png"},{"name":"new_asset_005","category":"sprites2","path":"assets/sprites2/s2_sprite_005.png"},{"name":"new_asset_006","category":"sprites2","path":"assets/sprites2/s2_sprite_006.png"},{"name":"new_asset_007","category":"sprites2","path":"assets/sprites2/s2_sprite_007.png"},{"name":"new_asset_008","category":"sprites2","path":"assets/sprites2/s2_sprite_008.png"},{"name":"new_asset_009","category":"sprites2","path":"assets/sprites2/s2_sprite_009.png"},{"name":"new_asset_010","category":"sprites2","path":"assets/sprites2/s2_sprite_010.png"},{"name":"new_asset_011","category":"sprites2","path":"assets/sprites2/s2_sprite_011.png"},{"name":"new_asset_012","category":"sprites2","path":"assets/sprites2/s2_sprite_012.png"},{"name":"new_asset_013","category":"sprites2","path":"assets/sprites2/s2_sprite_013.png"},{"name":"new_asset_014","category":"sprites2","path":"assets/sprites2/s2_sprite_014.png"},{"name":"new_asset_015","category":"sprites2","path":"assets/sprites2/s2_sprite_015.png"},{"name":"new_asset_016","category":"sprites2","path":"assets/sprites2/s2_sprite_016.png"},{"name":"new_asset_017","category":"sprites2","path":"assets/sprites2/s2_sprite_017.png"},{"name":"new_asset_018","category":"sprites2","path":"assets/sprites2/s2_sprite_018.png"},{"name":"new_asset_019","category":"sprites2","path":"assets/sprites2/s2_sprite_019.png"},{"name":"new_asset_020","category":"sprites2","path":"assets/sprites2/s2_sprite_020.png"},{"name":"new_asset_021","category":"sprites2","path":"assets/sprites2/s2_sprite_021.png"},{"name":"new_asset_022","category":"sprites2","path":"assets/sprites2/s2_sprite_022.png"},{"name":"new_asset_023","category":"sprites2","path":"assets/sprites2/s2_sprite_023.png"},{"name":"new_asset_024","category":"sprites2","path":"assets/sprites2/s2_sprite_024.png"},{"name":"new_asset_025","category":"sprites2","path":"assets/sprites2/s2_sprite_025.png"},{"name":"new_asset_026","category":"sprites2","path":"assets/sprites2/s2_sprite_026.png"},{"name":"new_asset_027","category":"sprites2","path":"assets/sprites2/s2_sprite_027.png"},{"name":"new_asset_028","category":"sprites2","path":"assets/sprites2/s2_sprite_028.png"},{"name":"new_asset_029","category":"sprites2","path":"assets/sprites2/s2_sprite_029.png"},{"name":"new_asset_030","category":"sprites2","path":"assets/sprites2/s2_sprite_030.png"},{"name":"new_asset_031","category":"sprites2","path":"assets/sprites2/s2_sprite_031.png"},{"name":"new_asset_032","category":"sprites2","path":"assets/sprites2/s2_sprite_032.png"},{"name":"new_asset_033","category":"sprites2","path":"assets/sprites2/s2_sprite_033.png"},{"name":"new_asset_034","category":"sprites2","path":"assets/sprites2/s2_sprite_034.png"},{"name":"new_asset_035","category":"sprites2","path":"assets/sprites2/s2_sprite_035.png"},{"name":"new_asset_036","category":"sprites2","path":"assets/sprites2/s2_sprite_036.png"},{"name":"new_asset_037","category":"sprites2","path":"assets/sprites2/s2_sprite_037.png"},{"name":"new_asset_038","category":"sprites2","path":"assets/sprites2/s2_sprite_038.png"},{"name":"new_asset_039","category":"sprites2","path":"assets/sprites2/s2_sprite_039.png"},{"name":"new_asset_040","category":"sprites2","path":"assets/sprites2/s2_sprite_040.png"}]};
+let PACK_ASSETS=[];
+async function loadPackManifest(){
+  PACK_ASSETS=(EMBEDDED_MANIFEST.assets||[]);
+  renderAssetGrid();
+}
+function renderAssetGrid(){
+  const grid=document.getElementById('asset-grid');
+  const filterEl=document.getElementById('asset-filter');
+  const filter=filterEl?filterEl.value:'all';
+  grid.innerHTML='';
+  const searchEl=document.getElementById('asset-search');
+  const q=(searchEl&&searchEl.value||'').toLowerCase().trim();
+  const list=PACK_ASSETS.filter(a=>(filter==='all'||a.category===filter) && (!q || (a.name||'').toLowerCase().includes(q) || (a.path||'').toLowerCase().includes(q)));
+  if(!list.length){grid.innerHTML='<div class="small-note">V této kategorii nejsou žádné assety — vše bylo smazané.</div>';return;}
+  for(const a of list){
+    const card=document.createElement('div');card.className='asset-card';
+    const img=document.createElement('img');img.src=a.path;
+    const nm=document.createElement('div');nm.className='aname';nm.textContent=a.name||a.path.split('/').pop();
+    card.appendChild(img);card.appendChild(nm);
+    card.onclick=async()=>{const im=await loadImageURL(a.path);addImagePart(a.name||a.path.split('/').pop().replace(/\.[^.]+$/,''),im,'image',{srcData:null,category:a.category||''});};
+    grid.appendChild(card);
+  }
+}
+const assetFilterEl=document.getElementById('asset-filter');
+if(assetFilterEl)assetFilterEl.onchange=renderAssetGrid;
+const assetSearchEl=document.getElementById('asset-search');
+if(assetSearchEl)assetSearchEl.oninput=renderAssetGrid;
+
+resize();drawTL();loadPackManifest();setStatus('Foxy editor 8.3 připravený. TEST 2D je full-page, UI je větší a nové assety jsou v ASSETY.');
+setTimeout(()=>document.getElementById('modal-news').classList.add('show'),250);
 </script>
-
-</body></html>
+</body>
+</html>

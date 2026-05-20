@@ -1,0 +1,638 @@
+{
+  "version": "8.3-foxy-test2d",
+  "title": "DEMENT VERZE 8.3 — FOXY ANIMATION EDITOR",
+  "note": "Větší modernější UI, full-page TEST 2D a doplněné nové assety.",
+  "credit": "Projected by Lukamer → all rights reserved",
+  "special": "Speciálně pro foxyho od Lukamera :-)",
+  "folders": [
+    "sprites",
+    "weapons",
+    "body",
+    "heads",
+    "hands",
+    "feet",
+    "backgrounds",
+    "effects",
+    "props",
+    "shields",
+    "silhouettes",
+    "sprites2"
+  ],
+  "assets": [
+    {
+      "name": "head_001",
+      "category": "heads",
+      "path": "assets/heads/sprite_001.png"
+    },
+    {
+      "name": "head_002",
+      "category": "heads",
+      "path": "assets/heads/sprite_002.png"
+    },
+    {
+      "name": "head_003",
+      "category": "heads",
+      "path": "assets/heads/sprite_003.png"
+    },
+    {
+      "name": "head_004",
+      "category": "heads",
+      "path": "assets/heads/sprite_004.png"
+    },
+    {
+      "name": "head_005",
+      "category": "heads",
+      "path": "assets/heads/sprite_005.png"
+    },
+    {
+      "name": "head_006",
+      "category": "heads",
+      "path": "assets/heads/sprite_006.png"
+    },
+    {
+      "name": "head_007",
+      "category": "heads",
+      "path": "assets/heads/sprite_007.png"
+    },
+    {
+      "name": "head_008",
+      "category": "heads",
+      "path": "assets/heads/sprite_008.png"
+    },
+    {
+      "name": "full_character_009",
+      "category": "sprites",
+      "path": "assets/sprites/sprite_009.png"
+    },
+    {
+      "name": "full_character_010",
+      "category": "sprites",
+      "path": "assets/sprites/sprite_010.png"
+    },
+    {
+      "name": "full_character_011",
+      "category": "sprites",
+      "path": "assets/sprites/sprite_011.png"
+    },
+    {
+      "name": "head_012",
+      "category": "heads",
+      "path": "assets/heads/sprite_012.png"
+    },
+    {
+      "name": "head_013",
+      "category": "heads",
+      "path": "assets/heads/sprite_013.png"
+    },
+    {
+      "name": "head_014",
+      "category": "heads",
+      "path": "assets/heads/sprite_014.png"
+    },
+    {
+      "name": "head_015",
+      "category": "heads",
+      "path": "assets/heads/sprite_015.png"
+    },
+    {
+      "name": "head_016",
+      "category": "heads",
+      "path": "assets/heads/sprite_016.png"
+    },
+    {
+      "name": "head_017",
+      "category": "heads",
+      "path": "assets/heads/sprite_017.png"
+    },
+    {
+      "name": "head_018",
+      "category": "heads",
+      "path": "assets/heads/sprite_018.png"
+    },
+    {
+      "name": "head_019",
+      "category": "heads",
+      "path": "assets/heads/sprite_019.png"
+    },
+    {
+      "name": "hand_020",
+      "category": "hands",
+      "path": "assets/hands/sprite_020.png"
+    },
+    {
+      "name": "hand_021",
+      "category": "hands",
+      "path": "assets/hands/sprite_021.png"
+    },
+    {
+      "name": "head_022",
+      "category": "heads",
+      "path": "assets/heads/sprite_022.png"
+    },
+    {
+      "name": "head_023",
+      "category": "heads",
+      "path": "assets/heads/sprite_023.png"
+    },
+    {
+      "name": "head_024",
+      "category": "heads",
+      "path": "assets/heads/sprite_024.png"
+    },
+    {
+      "name": "head_025",
+      "category": "heads",
+      "path": "assets/heads/sprite_025.png"
+    },
+    {
+      "name": "head_026",
+      "category": "heads",
+      "path": "assets/heads/sprite_026.png"
+    },
+    {
+      "name": "head_027",
+      "category": "heads",
+      "path": "assets/heads/sprite_027.png"
+    },
+    {
+      "name": "head_028",
+      "category": "heads",
+      "path": "assets/heads/sprite_028.png"
+    },
+    {
+      "name": "head_029",
+      "category": "heads",
+      "path": "assets/heads/sprite_029.png"
+    },
+    {
+      "name": "body_030",
+      "category": "body",
+      "path": "assets/body/sprite_030.png"
+    },
+    {
+      "name": "body_031",
+      "category": "body",
+      "path": "assets/body/sprite_031.png"
+    },
+    {
+      "name": "body_032",
+      "category": "body",
+      "path": "assets/body/sprite_032.png"
+    },
+    {
+      "name": "body_033",
+      "category": "body",
+      "path": "assets/body/sprite_033.png"
+    },
+    {
+      "name": "body_034",
+      "category": "body",
+      "path": "assets/body/sprite_034.png"
+    },
+    {
+      "name": "body_035",
+      "category": "body",
+      "path": "assets/body/sprite_035.png"
+    },
+    {
+      "name": "body_036",
+      "category": "body",
+      "path": "assets/body/sprite_036.png"
+    },
+    {
+      "name": "body_037",
+      "category": "body",
+      "path": "assets/body/sprite_037.png"
+    },
+    {
+      "name": "body_038",
+      "category": "body",
+      "path": "assets/body/sprite_038.png"
+    },
+    {
+      "name": "body_039",
+      "category": "body",
+      "path": "assets/body/sprite_039.png"
+    },
+    {
+      "name": "body_040",
+      "category": "body",
+      "path": "assets/body/sprite_040.png"
+    },
+    {
+      "name": "body_041",
+      "category": "body",
+      "path": "assets/body/sprite_041.png"
+    },
+    {
+      "name": "body_042",
+      "category": "body",
+      "path": "assets/body/sprite_042.png"
+    },
+    {
+      "name": "body_043",
+      "category": "body",
+      "path": "assets/body/sprite_043.png"
+    },
+    {
+      "name": "body_044",
+      "category": "body",
+      "path": "assets/body/sprite_044.png"
+    },
+    {
+      "name": "body_045",
+      "category": "body",
+      "path": "assets/body/sprite_045.png"
+    },
+    {
+      "name": "body_046",
+      "category": "body",
+      "path": "assets/body/sprite_046.png"
+    },
+    {
+      "name": "body_047",
+      "category": "body",
+      "path": "assets/body/sprite_047.png"
+    },
+    {
+      "name": "hand_048",
+      "category": "hands",
+      "path": "assets/hands/sprite_048.png"
+    },
+    {
+      "name": "hand_049",
+      "category": "hands",
+      "path": "assets/hands/sprite_049.png"
+    },
+    {
+      "name": "hand_050",
+      "category": "hands",
+      "path": "assets/hands/sprite_050.png"
+    },
+    {
+      "name": "hand_051",
+      "category": "hands",
+      "path": "assets/hands/sprite_051.png"
+    },
+    {
+      "name": "hand_052",
+      "category": "hands",
+      "path": "assets/hands/sprite_052.png"
+    },
+    {
+      "name": "hand_053",
+      "category": "hands",
+      "path": "assets/hands/sprite_053.png"
+    },
+    {
+      "name": "hand_054",
+      "category": "hands",
+      "path": "assets/hands/sprite_054.png"
+    },
+    {
+      "name": "hand_055",
+      "category": "hands",
+      "path": "assets/hands/sprite_055.png"
+    },
+    {
+      "name": "hand_056",
+      "category": "hands",
+      "path": "assets/hands/sprite_056.png"
+    },
+    {
+      "name": "hand_057",
+      "category": "hands",
+      "path": "assets/hands/sprite_057.png"
+    },
+    {
+      "name": "hand_058",
+      "category": "hands",
+      "path": "assets/hands/sprite_058.png"
+    },
+    {
+      "name": "hand_059",
+      "category": "hands",
+      "path": "assets/hands/sprite_059.png"
+    },
+    {
+      "name": "hand_060",
+      "category": "hands",
+      "path": "assets/hands/sprite_060.png"
+    },
+    {
+      "name": "hand_061",
+      "category": "hands",
+      "path": "assets/hands/sprite_061.png"
+    },
+    {
+      "name": "hand_062",
+      "category": "hands",
+      "path": "assets/hands/sprite_062.png"
+    },
+    {
+      "name": "hand_063",
+      "category": "hands",
+      "path": "assets/hands/sprite_063.png"
+    },
+    {
+      "name": "hand_064",
+      "category": "hands",
+      "path": "assets/hands/sprite_064.png"
+    },
+    {
+      "name": "hand_065",
+      "category": "hands",
+      "path": "assets/hands/sprite_065.png"
+    },
+    {
+      "name": "accessory_066",
+      "category": "effects",
+      "path": "assets/effects/sprite_066.png"
+    },
+    {
+      "name": "accessory_067",
+      "category": "effects",
+      "path": "assets/effects/sprite_067.png"
+    },
+    {
+      "name": "accessory_068",
+      "category": "effects",
+      "path": "assets/effects/sprite_068.png"
+    },
+    {
+      "name": "hand_069",
+      "category": "hands",
+      "path": "assets/hands/sprite_069.png"
+    },
+    {
+      "name": "hand_070",
+      "category": "hands",
+      "path": "assets/hands/sprite_070.png"
+    },
+    {
+      "name": "hand_071",
+      "category": "hands",
+      "path": "assets/hands/sprite_071.png"
+    },
+    {
+      "name": "hand_072",
+      "category": "hands",
+      "path": "assets/hands/sprite_072.png"
+    },
+    {
+      "name": "accessory_073",
+      "category": "effects",
+      "path": "assets/effects/sprite_073.png"
+    },
+    {
+      "name": "accessory_074",
+      "category": "effects",
+      "path": "assets/effects/sprite_074.png"
+    },
+    {
+      "name": "accessory_075",
+      "category": "effects",
+      "path": "assets/effects/sprite_075.png"
+    },
+    {
+      "name": "hand_076",
+      "category": "hands",
+      "path": "assets/hands/sprite_076.png"
+    },
+    {
+      "name": "hand_077",
+      "category": "hands",
+      "path": "assets/hands/sprite_077.png"
+    },
+    {
+      "name": "hand_078",
+      "category": "hands",
+      "path": "assets/hands/sprite_078.png"
+    },
+    {
+      "name": "hand_079",
+      "category": "hands",
+      "path": "assets/hands/sprite_079.png"
+    },
+    {
+      "name": "hand_080",
+      "category": "hands",
+      "path": "assets/hands/sprite_080.png"
+    },
+    {
+      "name": "hand_081",
+      "category": "hands",
+      "path": "assets/hands/sprite_081.png"
+    },
+    {
+      "name": "feet_082",
+      "category": "feet",
+      "path": "assets/feet/sprite_082.png"
+    },
+    {
+      "name": "feet_083",
+      "category": "feet",
+      "path": "assets/feet/sprite_083.png"
+    },
+    {
+      "name": "new_asset_001",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_001.png"
+    },
+    {
+      "name": "new_asset_002",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_002.png"
+    },
+    {
+      "name": "new_asset_003",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_003.png"
+    },
+    {
+      "name": "new_asset_004",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_004.png"
+    },
+    {
+      "name": "new_asset_005",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_005.png"
+    },
+    {
+      "name": "new_asset_006",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_006.png"
+    },
+    {
+      "name": "new_asset_007",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_007.png"
+    },
+    {
+      "name": "new_asset_008",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_008.png"
+    },
+    {
+      "name": "new_asset_009",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_009.png"
+    },
+    {
+      "name": "new_asset_010",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_010.png"
+    },
+    {
+      "name": "new_asset_011",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_011.png"
+    },
+    {
+      "name": "new_asset_012",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_012.png"
+    },
+    {
+      "name": "new_asset_013",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_013.png"
+    },
+    {
+      "name": "new_asset_014",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_014.png"
+    },
+    {
+      "name": "new_asset_015",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_015.png"
+    },
+    {
+      "name": "new_asset_016",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_016.png"
+    },
+    {
+      "name": "new_asset_017",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_017.png"
+    },
+    {
+      "name": "new_asset_018",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_018.png"
+    },
+    {
+      "name": "new_asset_019",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_019.png"
+    },
+    {
+      "name": "new_asset_020",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_020.png"
+    },
+    {
+      "name": "new_asset_021",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_021.png"
+    },
+    {
+      "name": "new_asset_022",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_022.png"
+    },
+    {
+      "name": "new_asset_023",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_023.png"
+    },
+    {
+      "name": "new_asset_024",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_024.png"
+    },
+    {
+      "name": "new_asset_025",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_025.png"
+    },
+    {
+      "name": "new_asset_026",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_026.png"
+    },
+    {
+      "name": "new_asset_027",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_027.png"
+    },
+    {
+      "name": "new_asset_028",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_028.png"
+    },
+    {
+      "name": "new_asset_029",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_029.png"
+    },
+    {
+      "name": "new_asset_030",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_030.png"
+    },
+    {
+      "name": "new_asset_031",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_031.png"
+    },
+    {
+      "name": "new_asset_032",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_032.png"
+    },
+    {
+      "name": "new_asset_033",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_033.png"
+    },
+    {
+      "name": "new_asset_034",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_034.png"
+    },
+    {
+      "name": "new_asset_035",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_035.png"
+    },
+    {
+      "name": "new_asset_036",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_036.png"
+    },
+    {
+      "name": "new_asset_037",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_037.png"
+    },
+    {
+      "name": "new_asset_038",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_038.png"
+    },
+    {
+      "name": "new_asset_039",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_039.png"
+    },
+    {
+      "name": "new_asset_040",
+      "category": "sprites2",
+      "path": "assets/sprites2/s2_sprite_040.png"
+    }
+  ]
+}
